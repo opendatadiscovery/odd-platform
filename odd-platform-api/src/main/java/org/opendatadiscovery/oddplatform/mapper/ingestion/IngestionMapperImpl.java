@@ -38,9 +38,6 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransforme
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.GraphRelationshipPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipPojo;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
@@ -82,8 +79,6 @@ import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestio
 @Slf4j
 public class IngestionMapperImpl implements IngestionMapper {
     private final DatasetFieldIngestionMapper datasetFieldIngestionMapper;
-    private final DatasetERDRelationIngestionMapper erdRelationIngestionMapper;
-    private final DatasetGraphRelationIngestionMapper graphRelationIngestionMapper;
     private final DatasetVersionHashCalculator datasetVersionHashCalculator;
 
     private static final List<Pair<Predicate<DataEntity>, DataEntityClassDto>> ENTITY_CLASS_DISCRIMINATOR = List.of(
@@ -263,20 +258,13 @@ public class IngestionMapperImpl implements IngestionMapper {
                 """, dataEntity.getOddrn());
         }
 
-        final Map<RelationshipPojo, List<ErdRelationshipPojo>> erdMap =
-            erdRelationIngestionMapper.mapERDRelations(dataset.getRelationshipsList());
-        final Map<RelationshipPojo, GraphRelationshipPojo> grapMap =
-            graphRelationIngestionMapper.mapGraphRelations(dataset.getRelationshipsList());
-
         final String structureHash = datasetVersionHashCalculator.calculateStructureHash(dataset.getFieldList());
 
         return new DataSetIngestionDto(
             dataset.getParentOddrn(),
             datasetFieldIngestionMapper.mapFields(dataset.getFieldList()),
             structureHash,
-            dataset.getRowsNumber(),
-            erdMap,
-            grapMap
+            dataset.getRowsNumber()
         );
     }
 

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationship;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationshipList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationshipType;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
-import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipList;
 import org.opendatadiscovery.oddplatform.dto.RelationshipDto;
 
 @Mapper(config = MapperConfig.class,
@@ -15,8 +15,8 @@ import org.opendatadiscovery.oddplatform.dto.RelationshipDto;
         DataEntityMapper.class,
     })
 public abstract class RelationshipMapper {
-    public RelationshipList mapListToRelationshipList(final List<RelationshipDto> relationshipDtos) {
-        return new RelationshipList()
+    public DatasetRelationshipList mapListToRelationshipList(final List<RelationshipDto> relationshipDtos) {
+        return new DatasetRelationshipList()
             .items(mapToRelationshipList(relationshipDtos))
             .pageInfo(new PageInfo().total((long) relationshipDtos.size()).hasNext(false));
     }

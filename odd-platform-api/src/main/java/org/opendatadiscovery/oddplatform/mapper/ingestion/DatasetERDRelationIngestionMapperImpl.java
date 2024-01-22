@@ -18,14 +18,15 @@ public class DatasetERDRelationIngestionMapperImpl implements DatasetERDRelation
     private final DatasetRelationIngestionMapper relationIngestionMapper;
 
     @Override
-    public Map<RelationshipPojo, List<ErdRelationshipPojo>> mapERDRelations(final List<Relationship> relationships) {
+    public Map<RelationshipPojo, List<ErdRelationshipPojo>> mapERDRelations(final List<Relationship> relationships,
+                                                                            final Long dataSourceId) {
         if (CollectionUtils.isEmpty(relationships)) {
             return Map.of();
         }
 
         return relationships.stream()
             .filter(item -> item.getErdRelationship() != null)
-            .collect(Collectors.toMap(relationIngestionMapper::mapToPojo,
+            .collect(Collectors.toMap(item -> relationIngestionMapper.mapToPojo(item, dataSourceId),
                 relationship -> new ArrayList<>(mapERDRelation(relationship.getErdRelationship())), (a, b) -> b));
     }
 

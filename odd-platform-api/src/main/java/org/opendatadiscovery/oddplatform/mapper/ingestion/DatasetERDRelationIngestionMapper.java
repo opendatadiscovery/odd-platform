@@ -8,7 +8,8 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipPojo;
 
 public interface DatasetERDRelationIngestionMapper {
-    Map<RelationshipPojo, List<ErdRelationshipPojo>> mapERDRelations(List<Relationship> erdRelationship);
+    Map<RelationshipPojo, List<ErdRelationshipPojo>> mapERDRelations(final List<Relationship> erdRelationship,
+                                                                     final Long dataSourceId);
 
     List<ErdRelationshipPojo> mapERDRelation(ERDRelationship field);
 }

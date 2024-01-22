@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Map;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.DisplayName;
@@ -104,7 +103,7 @@ class DatasetVersionMapperTest {
         dataEntityIngestionDto.setDataSet(
             new DataEntityIngestionDto.DataSetIngestionDto(
                 "parentOddrn", null, "structHash",
-                1L, Map.of(), Map.of()));
+                1L));
         final long expectedVersion = 1L;
         final EnrichedDataEntityIngestionDto dto =
             new EnrichedDataEntityIngestionDto(expectedVersion, null, dataEntityIngestionDto);

@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataSetApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersionDiffList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationshipList;
 import org.opendatadiscovery.oddplatform.api.contract.model.ERDRelationshipDetailsList;
 import org.opendatadiscovery.oddplatform.api.contract.model.GraphRelationshipDetailsList;
-import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipList;
 import org.opendatadiscovery.oddplatform.service.DatasetVersionService;
 import org.opendatadiscovery.oddplatform.service.ERDRelationshipsService;
 import org.opendatadiscovery.oddplatform.service.GraphRelationshipsService;
@@ -55,8 +55,8 @@ public class DatasetController implements DataSetApi {
     }
 
     @Override
-    public Mono<ResponseEntity<RelationshipList>> getDataSetRelationships(final Long dataEntityId,
-                                                                          final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<DatasetRelationshipList>> getDataSetRelationships(final Long dataEntityId,
+                                                                                 final ServerWebExchange exchange) {
         return relationshipsService.getRelationsByDatasetId(dataEntityId)
             .map(ResponseEntity::ok);
     }

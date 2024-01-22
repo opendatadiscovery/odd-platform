@@ -1,25 +1,23 @@
-package org.opendatadiscovery.oddplatform.service.ingestion.processor;
+package org.opendatadiscovery.oddplatform.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opendatadiscovery.oddplatform.dto.RelationshipStatusDto;
-import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
-import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataSetIngestionDto;
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.RelationshipList;
+import org.opendatadiscovery.oddplatform.mapper.ingestion.DatasetERDRelationIngestionMapper;
+import org.opendatadiscovery.oddplatform.mapper.ingestion.DatasetGraphRelationIngestionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GraphRelationshipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveERDRelationshipsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGraphRelationshipsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveRelationshipsRepository;
@@ -28,52 +26,45 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class RelationshipsIngestionRequestProcessor implements IngestionRequestProcessor {
+@RequiredArgsConstructor
+public class RelationshipsIngestionServiceImpl implements RelationshipsIngestionService {
+    private final DatasetERDRelationIngestionMapper erdRelationIngestionMapper;
+    private final DatasetGraphRelationIngestionMapper graphRelationIngestionMapper;
+    private final ReactiveDataSourceRepository dataSourceRepository;
     private final ReactiveRelationshipsRepository relationshipsRepository;
     private final ReactiveERDRelationshipsRepository erdRelationshipsRepository;
     private final ReactiveGraphRelationshipsRepository graphRelationshipsRepository;
 
     @Override
-    public Mono<Void> process(final IngestionRequest request) {
-        final List<DataSetIngestionDto> dataSets = request.getAllEntities()
-            .stream()
-            .map(DataEntityIngestionDto::getDataSet)
-            .filter(Objects::nonNull)
-            .toList();
-
-        final Set<String> datasetOddrn = request.getAllEntities().stream()
-            .filter(item -> item.getDataSet() != null)
-            .map(DataEntityIngestionDto::getOddrn)
-            .collect(Collectors.toSet());
-
-        return relationshipsRepository.getRelationshipByDatasetOddrns(datasetOddrn)
-            .collectList()
-            .flatMap(existedPojos -> handleERDRelations(existedPojos, dataSets)
-                .then(handleGraphRelations(existedPojos, dataSets))
-                .then(removeRelationships(existedPojos, dataSets)));
+    public Mono<Void> ingestRelationships(final RelationshipList relationshipList) {
+        return dataSourceRepository.getIdByOddrnForUpdate(relationshipList.getDataSourceOddrn())
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("dataSource", relationshipList.getDataSourceOddrn())))
+            .flatMap(ds -> processRelationships(relationshipList.getItems(), ds));
     }
 
-    @Override
-    public boolean shouldProcess(final IngestionRequest request) {
-        return request.getAllEntities()
-            .stream()
-            .filter(item -> item.getDataSet() != null)
-            .anyMatch(item -> !item.getDataSet().erdRelationDto().isEmpty()
-                || !item.getDataSet().graphRelationDto().isEmpty());
+    private Mono<Void> processRelationships(final List<Relationship> items, final Long dataSourceId) {
+        final Map<RelationshipPojo, List<ErdRelationshipPojo>> erdMap =
+            erdRelationIngestionMapper.mapERDRelations(items, dataSourceId);
+        final Map<RelationshipPojo, GraphRelationshipPojo> graphMap =
+            graphRelationIngestionMapper.mapGraphRelations(items, dataSourceId);
+
+        final Set<String> ingestedRelations = new HashSet<>();
+
+        ingestedRelations.addAll(erdMap.keySet().stream().map(RelationshipPojo::getRelationshipOddrn).toList());
+        ingestedRelations.addAll(graphMap.keySet().stream().map(RelationshipPojo::getRelationshipOddrn).toList());
+
+        return relationshipsRepository.getRelationshipByDataSourceId(dataSourceId)
+            .collectList()
+            .flatMap(existedPojos -> handleERDRelations(existedPojos, erdMap)
+                .then(handleGraphRelations(existedPojos, graphMap))
+                .then(removeRelationships(existedPojos, ingestedRelations)));
     }
 
     private Mono<Void> handleERDRelations(final List<RelationshipPojo> existedPojos,
-                                          final List<DataSetIngestionDto> dataSets) {
+                                          final Map<RelationshipPojo, List<ErdRelationshipPojo>> erdMap) {
         final Map<RelationshipPojo, List<ErdRelationshipPojo>> erdToCreate = new HashMap<>();
         final Map<Long, Pair<RelationshipPojo, List<ErdRelationshipPojo>>> erdToUpdateMap = new HashMap<>();
-
-        final Map<RelationshipPojo, List<ErdRelationshipPojo>> erdMap = dataSets.stream()
-            .map(DataSetIngestionDto::erdRelationDto)
-            .filter(MapUtils::isNotEmpty)
-            .flatMap(item -> item.entrySet().stream())
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         erdMap.forEach((key, value) -> {
             final RelationshipPojo oldPojo = getExistedRelationByOddrn(existedPojos, key);
@@ -157,17 +148,11 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
     }
 
     private Mono<Void> handleGraphRelations(final List<RelationshipPojo> existedPojos,
-                                            final List<DataSetIngestionDto> dataSets) {
+                                            final Map<RelationshipPojo, GraphRelationshipPojo> graphMap) {
         final Map<RelationshipPojo, GraphRelationshipPojo> graphToCreate = new HashMap<>();
         final Map<Long, Pair<RelationshipPojo, GraphRelationshipPojo>> graphToUpdate = new HashMap<>();
 
-        final Map<RelationshipPojo, GraphRelationshipPojo> grapMap = dataSets.stream()
-            .map(DataSetIngestionDto::graphRelationDto)
-            .filter(MapUtils::isNotEmpty)
-            .flatMap(item -> item.entrySet().stream())
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        grapMap.forEach((key, value) -> {
+        graphMap.forEach((key, value) -> {
             final RelationshipPojo oldPojo = getExistedRelationByOddrn(existedPojos, key);
 
             if (oldPojo != null) {
@@ -209,16 +194,7 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
     }
 
     private Mono<Void> removeRelationships(final List<RelationshipPojo> existedPojos,
-                                           final List<DataSetIngestionDto> dataSets) {
-        final Set<String> ingestedRelations = dataSets.stream().map(item -> {
-            final List<RelationshipPojo> relationshipList = new ArrayList<>();
-
-            relationshipList.addAll(item.erdRelationDto().keySet().stream().toList());
-            relationshipList.addAll(item.graphRelationDto().keySet().stream().toList());
-
-            return relationshipList;
-        }).flatMap(Collection::stream).map(RelationshipPojo::getRelationshipOddrn).collect(Collectors.toSet());
-
+                                           final Set<String> ingestedRelations) {
         final List<RelationshipPojo> toRemove =
             existedPojos.stream().filter(existedPojo -> !ingestedRelations.contains(existedPojo.getRelationshipOddrn()))
                 .map(item -> item.setRelationshipStatus(RelationshipStatusDto.DELETED.getId())).toList();

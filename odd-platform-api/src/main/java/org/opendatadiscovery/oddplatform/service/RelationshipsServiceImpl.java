@@ -2,7 +2,7 @@ package org.opendatadiscovery.oddplatform.service;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationship;
-import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationshipList;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.RelationshipMapper;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveRelationshipsRepository;
@@ -16,7 +16,7 @@ public class RelationshipsServiceImpl implements RelationshipsService {
     private final RelationshipMapper relationshipMapper;
 
     @Override
-    public Mono<RelationshipList> getRelationsByDatasetId(final Long dataEntityId) {
+    public Mono<DatasetRelationshipList> getRelationsByDatasetId(final Long dataEntityId) {
         return relationshipsRepository.getRelationsByDatasetId(dataEntityId)
             .collectList()
             .map(relationshipMapper::mapListToRelationshipList);

@@ -19,14 +19,15 @@ public class DatasetGraphRelationIngestionMapperImpl implements DatasetGraphRela
     private final DatasetRelationIngestionMapper relationIngestionMapper;
 
     @Override
-    public Map<RelationshipPojo, GraphRelationshipPojo> mapGraphRelations(final List<Relationship> relationships) {
+    public Map<RelationshipPojo, GraphRelationshipPojo> mapGraphRelations(final List<Relationship> relationships,
+                                                                          final Long dataSourceId) {
         if (CollectionUtils.isEmpty(relationships)) {
             return Map.of();
         }
 
         return relationships.stream()
             .filter(item -> item.getGraphRelationship() != null)
-            .collect(Collectors.toMap(relationIngestionMapper::mapToPojo,
+            .collect(Collectors.toMap(item -> relationIngestionMapper.mapToPojo(item, dataSourceId),
                 relationship -> mapGraphRelation(relationship.getGraphRelationship()), (a, b) -> b));
     }
 

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DatasetRelationIngestionMapperImpl implements DatasetRelationIngestionMapper {
     @Override
-    public RelationshipPojo mapToPojo(final Relationship relationship) {
+    public RelationshipPojo mapToPojo(final Relationship relationship, final Long dataSourceId) {
         if (relationship == null) {
             return null;
         }
@@ -19,6 +19,7 @@ public class DatasetRelationIngestionMapperImpl implements DatasetRelationIngest
         final RelationshipPojo relationshipPojo = new RelationshipPojo();
 
         relationshipPojo.setName(relationship.getName());
+        relationshipPojo.setDataSourceId(dataSourceId);
         relationshipPojo.setRelationshipOddrn(relationship.getOddrn());
         relationshipPojo.setIsManualyCreated(false);
         relationshipPojo.setSourceDatasetOddrn(relationship.getSourceDatasetOddrn());

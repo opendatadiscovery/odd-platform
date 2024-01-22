@@ -10,7 +10,9 @@ public interface ReactiveRelationshipsRepository extends ReactiveCRUDRepository<
 
     Flux<RelationshipPojo> getRelationshipByDatasetOddrns(final Set<String> oddrns);
 
+    Flux<RelationshipPojo> getRelationshipByDataSourceId(final Long dataSourceId);
+
     Flux<RelationshipDto> getRelationsByDatasetId(final Long dataEntityId);
 
-    Mono<RelationshipDto> getRelationshipById(Long relationshipId);
+    Mono<RelationshipDto> getRelationshipById(final Long relationshipId);
 }

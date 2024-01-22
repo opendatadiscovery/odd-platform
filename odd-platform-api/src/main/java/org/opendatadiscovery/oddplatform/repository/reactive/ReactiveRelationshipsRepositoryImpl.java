@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.select;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.ERD_RELATIONSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.RELATIONSHIP;
@@ -50,6 +51,14 @@ public class ReactiveRelationshipsRepositoryImpl
         return jooqReactiveOperations.flux(DSL.select(RELATIONSHIP)
                 .from(RELATIONSHIP)
                 .where(RELATIONSHIP.SOURCE_DATASET_ODDRN.in(oddrns).or(RELATIONSHIP.TARGET_DATASET_ODDRN.in(oddrns))))
+            .map(r -> r.into(RelationshipPojo.class));
+    }
+
+    @Override
+    public Flux<RelationshipPojo> getRelationshipByDataSourceId(final Long dataSourceId) {
+        return jooqReactiveOperations.flux(select(RELATIONSHIP)
+                .from(RELATIONSHIP)
+                .where(RELATIONSHIP.DATA_SOURCE_ID.eq(dataSourceId)))
             .map(r -> r.into(RelationshipPojo.class));
     }
 

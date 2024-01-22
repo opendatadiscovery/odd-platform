@@ -8,7 +8,8 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.GraphRelationshipPoj
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipPojo;
 
 public interface DatasetGraphRelationIngestionMapper {
-    Map<RelationshipPojo, GraphRelationshipPojo> mapGraphRelations(List<Relationship> relationships);
+    Map<RelationshipPojo, GraphRelationshipPojo> mapGraphRelations(final List<Relationship> relationships,
+                                                                   final Long dataSourceId);
 
-    GraphRelationshipPojo mapGraphRelation(GraphRelationship field);
+    GraphRelationshipPojo mapGraphRelation(final GraphRelationship field);
 }

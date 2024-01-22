@@ -3934,7 +3934,7 @@ components:
         - field_id
         - value
 
-    RelationshipList:
+    DatasetRelationshipList:
       type: object
       properties:
         items:
