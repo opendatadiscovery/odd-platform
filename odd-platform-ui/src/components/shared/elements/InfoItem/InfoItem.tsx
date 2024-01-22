@@ -1,32 +1,23 @@
 import React, { type FC, type ReactElement } from 'react';
 import type { SxProps } from '@mui/system';
-import { Grid, type GridSize } from '@mui/material';
+import { Box } from '@mui/material';
 
 interface InfoItemProps {
   label: ReactElement;
-  labelWidth?: GridSize;
   info: ReactElement;
   sx?: SxProps;
 }
 
-const InfoItem: FC<InfoItemProps> = ({ labelWidth, label, sx, info }) => {
-  const getXS = () => {
-    if (labelWidth === 12) return 12;
-    if (typeof labelWidth === 'number') return (12 - labelWidth) as GridSize;
-    return 'auto';
-  };
+const InfoItem: FC<InfoItemProps> = ({ label, sx, info }) => (
+  <Box display='flex' flexWrap='wrap' sx={sx} flexShrink={1}>
+    <Box display='flex' flexGrow={0.03} alignItems='center'>
+      {label}
+    </Box>
 
-  return (
-    <Grid container sx={sx}>
-      <Grid item xs={labelWidth ?? 'auto'} display='flex' alignItems='center'>
-        {label}
-      </Grid>
-
-      <Grid item xs={getXS()} display='flex' alignItems='center'>
-        {info}
-      </Grid>
-    </Grid>
-  );
-};
+    <Box display='flex' alignItems='center' flexWrap='wrap'>
+      {info}
+    </Box>
+  </Box>
+);
 
 export default InfoItem;

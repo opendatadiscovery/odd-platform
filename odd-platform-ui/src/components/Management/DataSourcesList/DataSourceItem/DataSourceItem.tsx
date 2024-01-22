@@ -110,7 +110,6 @@ const DataSourceItem: FC<DataSourceItemProps> = ({ dataSource }) => {
           {!isHidden && (
             <InfoItem
               sx={{ p: 1, backgroundColor: 'warning.light', borderRadius: 1 }}
-              labelWidth={0.4}
               label={<AlertIcon fill='#E59900' width={24} height={24} />}
               info={
                 <Typography variant='body1'>
