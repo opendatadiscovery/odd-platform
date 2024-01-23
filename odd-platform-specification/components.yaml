@@ -3989,7 +3989,7 @@ components:
     ERDRelationshipDetails:
       type: object
       properties:
-        erd_relationships_id:
+        erd_relationship_id:
           type: integer
           format: int64
         fields_pairs:

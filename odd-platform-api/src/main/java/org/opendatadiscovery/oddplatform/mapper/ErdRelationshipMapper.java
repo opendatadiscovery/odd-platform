@@ -13,7 +13,7 @@ import org.thymeleaf.util.ArrayUtils;
 public class ErdRelationshipMapper {
     public ERDRelationshipDetails mapPojoToDetails(final ErdRelationshipDetailsPojo erd) {
         return new ERDRelationshipDetails()
-            .erdRelationshipsId(erd.getId())
+            .erdRelationshipId(erd.getId())
             .fieldsPairs(mapPairs(erd.getSourceDatasetFieldOddrn(), erd.getTargetDatasetFieldOddrn()))
             .isIdentifying(erd.getIsIdentifying())
             .cardinality(erd.getCardinality());
