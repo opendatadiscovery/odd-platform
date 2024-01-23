@@ -18,7 +18,6 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
 import org.opendatadiscovery.oddplatform.dto.RelationshipDto;
 import org.opendatadiscovery.oddplatform.dto.RelationshipStatusDto;
-import org.opendatadiscovery.oddplatform.dto.RelationshipTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipDetailsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GraphRelationshipPojo;
@@ -95,19 +94,13 @@ public class ReactiveRelationshipsRepositoryImpl
                 .and(RELATIONSHIPS.RELATIONSHIP_STATUS.notEqual(RelationshipStatusDto.DELETED.getId()))
             );
 
-        final ResultQuery<Record> query = switch (type) {
-            case ERD -> joinStep.where(RELATIONSHIPS.RELATIONSHIP_TYPE.eq(RelationshipTypeDto.ERD.name()));
-            case GRAPH -> joinStep.where(RELATIONSHIPS.RELATIONSHIP_TYPE.eq(RelationshipTypeDto.GRAPH.name()));
-            default -> joinStep;
-        };
+        final ResultQuery<Record> query =
+            RelationshipsType.ALL == type
+                ? joinStep
+                : joinStep.where(RELATIONSHIPS.RELATIONSHIP_TYPE.eq(type.getValue()));
 
         return jooqReactiveOperations.flux(query)
-            .map(r -> new RelationshipDto(r.into(RELATIONSHIPS).into(RelationshipsPojo.class),
-                r.into(srcDataEntity).into(DataEntityPojo.class),
-                r.into(trgtDataEntity).into(DataEntityPojo.class),
-                r.into(ERD_RELATIONSHIP_DETAILS).into(ErdRelationshipDetailsPojo.class),
-                r.into(GRAPH_RELATIONSHIP).into(GraphRelationshipPojo.class))
-            );
+            .map(r -> mapToDto(r.into(RELATIONSHIPS).into(RelationshipsPojo.class), r, srcDataEntity, trgtDataEntity));
     }
 
     @Override
@@ -121,12 +114,7 @@ public class ReactiveRelationshipsRepositoryImpl
         final SelectConditionStep<Record> query = relationshipGenericQuery.where(RELATIONSHIPS.ID.eq(relationshipId));
 
         return jooqReactiveOperations.mono(query)
-            .map(r -> new RelationshipDto(r.into(RELATIONSHIPS).into(RelationshipsPojo.class),
-                r.into(srcDataEntity).into(DataEntityPojo.class),
-                r.into(trgtDataEntity).into(DataEntityPojo.class),
-                r.into(ERD_RELATIONSHIP_DETAILS).into(ErdRelationshipDetailsPojo.class),
-                r.into(GRAPH_RELATIONSHIP).into(GraphRelationshipPojo.class))
-            );
+            .map(r -> mapToDto(r.into(RELATIONSHIPS).into(RelationshipsPojo.class), r, srcDataEntity, trgtDataEntity));
     }
 
     @Override
@@ -167,27 +155,18 @@ public class ReactiveRelationshipsRepositoryImpl
             .leftJoin(GRAPH_RELATIONSHIP)
             .on(GRAPH_RELATIONSHIP.RELATIONSHIP_ID.eq(relationshipCTE.field(RELATIONSHIPS.ID)));
 
-        final ResultQuery<Record> resultQuery = switch (type) {
-            case ERD -> generalQuery
-                .where(relationshipCTE.field(RELATIONSHIPS.RELATIONSHIP_TYPE).eq(RelationshipTypeDto.ERD.name()))
-                .groupBy(groupByFields);
-            case GRAPH -> generalQuery
-                .where(relationshipCTE.field(RELATIONSHIPS.RELATIONSHIP_TYPE).eq(RelationshipTypeDto.GRAPH.name()))
-                .groupBy(groupByFields);
-            default -> generalQuery.groupBy(groupByFields);
-        };
+        final ResultQuery<Record> resultQuery =
+            RelationshipsType.ALL == type
+                ? generalQuery.groupBy(groupByFields)
+                : generalQuery.where(relationshipCTE.field(RELATIONSHIPS.RELATIONSHIP_TYPE).eq(type.getValue()))
+                    .groupBy(groupByFields);
 
         return jooqReactiveOperations.flux(resultQuery)
             .collectList()
             .flatMap(record -> jooqQueryHelper.pageifyResult(
                 record,
-                r -> new RelationshipDto(
-                    jooqRecordHelper.remapCte(r, relationshipCTE.getName(), RELATIONSHIPS)
-                        .into(RelationshipsPojo.class),
-                    r.into(srcDataEntity).into(DataEntityPojo.class),
-                    r.into(trgtDataEntity).into(DataEntityPojo.class),
-                    r.into(ERD_RELATIONSHIP_DETAILS).into(ErdRelationshipDetailsPojo.class),
-                    r.into(GRAPH_RELATIONSHIP).into(GraphRelationshipPojo.class)),
+                r -> mapToDto(jooqRecordHelper.remapCte(r, relationshipCTE.getName(), RELATIONSHIPS)
+                    .into(RelationshipsPojo.class), r, srcDataEntity, trgtDataEntity),
                 fetchCount(inputQuery)));
     }
 
@@ -207,5 +186,17 @@ public class ReactiveRelationshipsRepositoryImpl
             .on(ERD_RELATIONSHIP_DETAILS.RELATIONSHIP_ID.eq(RELATIONSHIPS.ID))
             .leftJoin(GRAPH_RELATIONSHIP)
             .on(GRAPH_RELATIONSHIP.RELATIONSHIP_ID.eq(RELATIONSHIPS.ID));
+    }
+
+    private RelationshipDto mapToDto(final RelationshipsPojo pojo, final Record record,
+                                     final Table<DataEntityRecord> srcDataEntity,
+                                     final Table<DataEntityRecord> trgtDataEntity) {
+        return RelationshipDto.builder()
+            .relationshipPojo(pojo)
+            .sourceDataEntity(srcDataEntity != null ? record.into(srcDataEntity).into(DataEntityPojo.class) : null)
+            .targetDataEntity(trgtDataEntity != null ? record.into(trgtDataEntity).into(DataEntityPojo.class) : null)
+            .erdRelationshipDetailsPojo(record.into(ERD_RELATIONSHIP_DETAILS).into(ErdRelationshipDetailsPojo.class))
+            .graphRelationshipPojo(record.into(GRAPH_RELATIONSHIP).into(GraphRelationshipPojo.class))
+            .build();
     }
 }
