@@ -14,7 +14,7 @@ const InfoItem: FC<InfoItemProps> = ({ label, sx, info }) => (
       {label}
     </Box>
 
-    <Box display='flex' alignItems='center' flexWrap='wrap'>
+    <Box display='flex' alignItems='center' flexWrap='wrap' width='100%'>
       {info}
     </Box>
   </Box>

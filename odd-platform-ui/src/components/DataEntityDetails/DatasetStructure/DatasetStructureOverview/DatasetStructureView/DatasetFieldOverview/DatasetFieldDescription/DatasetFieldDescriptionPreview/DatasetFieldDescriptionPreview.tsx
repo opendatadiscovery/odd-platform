@@ -10,16 +10,13 @@ interface DatasetFieldDescriptionPreviewProps {
 const DatasetFieldDescriptionPreview: FC<DatasetFieldDescriptionPreviewProps> = ({
   isDescriptionEmpty,
   value,
-}) => (
-  <div>
-    {!isDescriptionEmpty ? (
-      <Markdown value={value} variant='subtitle1' />
-    ) : (
-      <Typography mt={1} variant='subtitle1'>
-        Description is not created yet
-      </Typography>
-    )}
-  </div>
-);
+}) =>
+  !isDescriptionEmpty ? (
+    <Markdown value={value} variant='subtitle1' />
+  ) : (
+    <Typography mt={1} variant='subtitle1'>
+      Description is not created yet
+    </Typography>
+  );
 
 export default DatasetFieldDescriptionPreview;

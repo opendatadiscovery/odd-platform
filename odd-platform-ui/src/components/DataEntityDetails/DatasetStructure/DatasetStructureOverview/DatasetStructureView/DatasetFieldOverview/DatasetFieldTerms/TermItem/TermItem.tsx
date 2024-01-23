@@ -46,8 +46,9 @@ const TermItem: FC<TermItemProps> = ({
 
   return (
     <InfoItem
+      sx={{ width: '100%' }}
       label={
-        <Box p={0.75} display='flex' flexWrap='nowrap' alignItems='center'>
+        <Box p={0.75} display='flex' flexWrap='nowrap' alignItems='center' gap={0.5}>
           <Link to={termDetailsLink}>
             <Typography color='button.link.normal.color'>{name}</Typography>
           </Link>
@@ -56,6 +57,7 @@ const TermItem: FC<TermItemProps> = ({
       }
       info={
         <CollapsibleInfoContainer
+          style={{ width: '100%' }}
           content={<Markdown value={definition} />}
           actions={
             !isDescriptionLink ? (

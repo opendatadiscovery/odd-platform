@@ -98,7 +98,7 @@ const Markdown: FC<MarkdownProps> = ({
   ) : (
     <MDEditor.Markdown
       source={value}
-      style={{ width: 'inherit', backgroundColor: 'inherit', whiteSpace: 'pre-wrap' }}
+      style={{ width: '100%', backgroundColor: 'inherit' }}
       wrapperElement={wrapperElement}
       disableCopy={disableCopy}
       components={{
