@@ -6,40 +6,29 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import java.util.List;
 import java.util.Map;
 import org.jooq.JSONB;
-import org.mapstruct.Mapper;
-import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationship;
 import org.opendatadiscovery.oddplatform.api.contract.model.GraphRelationshipAttributes;
 import org.opendatadiscovery.oddplatform.api.contract.model.GraphRelationshipDetails;
-import org.opendatadiscovery.oddplatform.api.contract.model.GraphRelationshipDetailsList;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GraphRelationshipPojo;
+import org.springframework.stereotype.Component;
 
-@Mapper(config = MapperConfig.class,
-    uses = {
-        DateTimeMapper.class,
-        DataEntityMapper.class,
-    })
-public abstract class GraphRelationshipMapper {
-    public GraphRelationshipDetailsList mapToDetails(final DatasetRelationship relationship,
-                                                     final List<GraphRelationshipPojo> graphList) {
-        return new GraphRelationshipDetailsList()
-            .datasetRelationship(relationship)
-            .items(mapPojoListToDetailsList(graphList));
-    }
-
-    private List<GraphRelationshipDetails> mapPojoListToDetailsList(final List<GraphRelationshipPojo> graphList) {
-        return graphList.stream()
-            .map(this::mapPojoToDetails)
-            .toList();
-    }
-
+@Component
+public class GraphRelationshipMapper {
     public GraphRelationshipDetails mapPojoToDetails(final GraphRelationshipPojo pojo) {
+        if (pojo == null) {
+            return null;
+        }
+
         return new GraphRelationshipDetails()
-            .graphRelationshipsId(pojo.getId())
-            .isDirected(pojo.getIsDerected())
+            .graphRelationshipId(pojo.getId())
+            .isDirected(pojo.getIsDirected())
             .attributes(mapGraphAttributes(pojo.getSpecificAttributes()));
     }
 
     private List<GraphRelationshipAttributes> mapGraphAttributes(final JSONB specificAttributes) {
+        if (specificAttributes == null) {
+            return List.of();
+        }
+
         final ObjectReader reader = new ObjectMapper().readerFor(Map.class);
 
         try {

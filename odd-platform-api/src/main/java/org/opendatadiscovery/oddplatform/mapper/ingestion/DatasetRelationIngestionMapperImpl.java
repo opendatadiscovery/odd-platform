@@ -3,7 +3,7 @@ package org.opendatadiscovery.oddplatform.mapper.ingestion;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.RelationshipStatusDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipsPojo;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
 
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DatasetRelationIngestionMapperImpl implements DatasetRelationIngestionMapper {
     @Override
-    public RelationshipPojo mapToPojo(final Relationship relationship, final Long dataSourceId) {
+    public RelationshipsPojo mapToPojo(final Relationship relationship, final Long dataSourceId) {
         if (relationship == null) {
             return null;
         }
 
-        final RelationshipPojo relationshipPojo = new RelationshipPojo();
+        final RelationshipsPojo relationshipPojo = new RelationshipsPojo();
 
         relationshipPojo.setName(relationship.getName());
         relationshipPojo.setDataSourceId(dataSourceId);

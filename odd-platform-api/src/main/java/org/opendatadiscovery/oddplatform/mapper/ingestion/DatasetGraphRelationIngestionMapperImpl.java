@@ -9,7 +9,7 @@ import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.GraphRelationship;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GraphRelationshipPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipsPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class DatasetGraphRelationIngestionMapperImpl implements DatasetGraphRela
     private final DatasetRelationIngestionMapper relationIngestionMapper;
 
     @Override
-    public Map<RelationshipPojo, GraphRelationshipPojo> mapGraphRelations(final List<Relationship> relationships,
+    public Map<RelationshipsPojo, GraphRelationshipPojo> mapGraphRelations(final List<Relationship> relationships,
                                                                           final Long dataSourceId) {
         if (CollectionUtils.isEmpty(relationships)) {
             return Map.of();
@@ -34,7 +34,7 @@ public class DatasetGraphRelationIngestionMapperImpl implements DatasetGraphRela
     @Override
     public GraphRelationshipPojo mapGraphRelation(final GraphRelationship graphRelationship) {
         return new GraphRelationshipPojo()
-            .setIsDerected(graphRelationship.getIsDirected())
+            .setIsDirected(graphRelationship.getIsDirected())
             .setSpecificAttributes(JSONB.valueOf(JSONSerDeUtils.serializeJson(graphRelationship.getAttributes())));
     }
 }

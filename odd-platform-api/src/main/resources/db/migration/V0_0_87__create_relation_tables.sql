@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS relationship
+CREATE TABLE IF NOT EXISTS relationships
 (
     id                         bigserial PRIMARY KEY,
     name                       varchar(512),
@@ -14,26 +14,26 @@ CREATE TABLE IF NOT EXISTS relationship
     CONSTRAINT relationship_fk_data_source FOREIGN KEY (data_source_id) REFERENCES data_source (id)
 );
 
-CREATE TABLE IF NOT EXISTS erd_relationship
+CREATE TABLE IF NOT EXISTS erd_relationship_details
 (
     id                         bigserial PRIMARY KEY,
     relationship_id            bigint,
-    source_dataset_field_oddrn varchar(512),
-    target_dataset_field_oddrn varchar(512),
+    source_dataset_field_oddrn varchar(512)[],
+    target_dataset_field_oddrn varchar(512)[],
     is_identifying             boolean,
     cardinality                varchar(256),
 
-    CONSTRAINT erd_relationship_fk_relationship FOREIGN KEY (relationship_id) REFERENCES relationship (id)
+    CONSTRAINT erd_relationship_fk_relationship FOREIGN KEY (relationship_id) REFERENCES relationships (id)
 );
 
 CREATE TABLE IF NOT EXISTS graph_relationship
 (
     id                      bigserial PRIMARY KEY,
     relationship_id         bigint,
-    is_derected             boolean,
+    is_directed             boolean,
     specific_attributes     jsonb,
 
-    CONSTRAINT graph_relationship_fk_relationship FOREIGN KEY (relationship_id) REFERENCES relationship (id)
+    CONSTRAINT graph_relationship_fk_relationship FOREIGN KEY (relationship_id) REFERENCES relationships (id)
 );
 
 

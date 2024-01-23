@@ -5,11 +5,8 @@ import org.opendatadiscovery.oddplatform.api.contract.api.DataSetApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersionDiffList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationshipList;
-import org.opendatadiscovery.oddplatform.api.contract.model.ERDRelationshipDetailsList;
-import org.opendatadiscovery.oddplatform.api.contract.model.GraphRelationshipDetailsList;
+import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
 import org.opendatadiscovery.oddplatform.service.DatasetVersionService;
-import org.opendatadiscovery.oddplatform.service.ERDRelationshipsService;
-import org.opendatadiscovery.oddplatform.service.GraphRelationshipsService;
 import org.opendatadiscovery.oddplatform.service.RelationshipsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +18,6 @@ import reactor.core.publisher.Mono;
 public class DatasetController implements DataSetApi {
     private final DatasetVersionService datasetVersionService;
     private final RelationshipsService relationshipsService;
-    private final ERDRelationshipsService erdRelationshipsService;
-    private final GraphRelationshipsService graphRelationshipsService;
 
     @Override
     public Mono<ResponseEntity<DataSetStructure>> getDataSetStructureByVersionId(
@@ -56,26 +51,9 @@ public class DatasetController implements DataSetApi {
 
     @Override
     public Mono<ResponseEntity<DatasetRelationshipList>> getDataSetRelationships(final Long dataEntityId,
+                                                                                 final RelationshipsType type,
                                                                                  final ServerWebExchange exchange) {
-        return relationshipsService.getRelationsByDatasetId(dataEntityId)
-            .map(ResponseEntity::ok);
-    }
-
-    @Override
-    public Mono<ResponseEntity<ERDRelationshipDetailsList>>
-        getDataSetErdRelationshipsById(final Long dataEntityId,
-                                   final Long relationshipsId,
-                                   final ServerWebExchange exchange) {
-        return erdRelationshipsService.getDataSetErdRelationshipsById(dataEntityId, relationshipsId)
-            .map(ResponseEntity::ok);
-    }
-
-    @Override
-    public Mono<ResponseEntity<GraphRelationshipDetailsList>>
-        getDataSetGraphRelationshipsById(final Long dataEntityId,
-                                     final Long relationshipsId,
-                                     final ServerWebExchange exchange) {
-        return graphRelationshipsService.getDataSetGraphRelationshipsById(relationshipsId)
+        return relationshipsService.getRelationsByDatasetId(dataEntityId, type)
             .map(ResponseEntity::ok);
     }
 }

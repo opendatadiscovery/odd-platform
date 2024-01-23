@@ -14,9 +14,9 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.RelationshipList;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.DatasetERDRelationIngestionMapper;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.DatasetGraphRelationIngestionMapper;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipDetailsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GraphRelationshipPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipsPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveERDRelationshipsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGraphRelationshipsRepository;
@@ -44,15 +44,15 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
     }
 
     private Mono<Void> processRelationships(final List<Relationship> items, final Long dataSourceId) {
-        final Map<RelationshipPojo, List<ErdRelationshipPojo>> erdMap =
+        final Map<RelationshipsPojo, ErdRelationshipDetailsPojo> erdMap =
             erdRelationIngestionMapper.mapERDRelations(items, dataSourceId);
-        final Map<RelationshipPojo, GraphRelationshipPojo> graphMap =
+        final Map<RelationshipsPojo, GraphRelationshipPojo> graphMap =
             graphRelationIngestionMapper.mapGraphRelations(items, dataSourceId);
 
         final Set<String> ingestedRelations = new HashSet<>();
 
-        ingestedRelations.addAll(erdMap.keySet().stream().map(RelationshipPojo::getRelationshipOddrn).toList());
-        ingestedRelations.addAll(graphMap.keySet().stream().map(RelationshipPojo::getRelationshipOddrn).toList());
+        ingestedRelations.addAll(erdMap.keySet().stream().map(RelationshipsPojo::getRelationshipOddrn).toList());
+        ingestedRelations.addAll(graphMap.keySet().stream().map(RelationshipsPojo::getRelationshipOddrn).toList());
 
         return relationshipsRepository.getRelationshipByDataSourceId(dataSourceId)
             .collectList()
@@ -61,41 +61,29 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
                 .then(removeRelationships(existedPojos, ingestedRelations)));
     }
 
-    private Mono<Void> handleERDRelations(final List<RelationshipPojo> existedPojos,
-                                          final Map<RelationshipPojo, List<ErdRelationshipPojo>> erdMap) {
-        final Map<RelationshipPojo, List<ErdRelationshipPojo>> erdToCreate = new HashMap<>();
-        final Map<Long, Pair<RelationshipPojo, List<ErdRelationshipPojo>>> erdToUpdateMap = new HashMap<>();
+    private Mono<Void> handleERDRelations(final List<RelationshipsPojo> existedPojos,
+                                          final Map<RelationshipsPojo, ErdRelationshipDetailsPojo> erdMap) {
+        final Map<RelationshipsPojo, ErdRelationshipDetailsPojo> erdToCreate = new HashMap<>();
+        final Map<Long, Pair<RelationshipsPojo, ErdRelationshipDetailsPojo>> erdToUpdateMap = new HashMap<>();
 
-        erdMap.forEach((key, value) -> {
-            final RelationshipPojo oldPojo = getExistedRelationByOddrn(existedPojos, key);
-
-            if (oldPojo != null) {
-                key.setId(oldPojo.getId());
-                erdToUpdateMap.put(key.getId(), Pair.of(key, value));
-            } else {
-                erdToCreate.put(key, value);
-            }
-        });
+        fillUpdateAndCreateMaps(existedPojos, erdMap, erdToUpdateMap, erdToCreate);
 
         return updateExistedERDRelations(erdToUpdateMap)
             .then(
                 Flux.fromIterable(erdToCreate.entrySet())
                     .flatMap(element -> relationshipsRepository.create(element.getKey())
                         .flatMap(relationshipPojo -> {
-                            final List<ErdRelationshipPojo> toCreate =
-                                element.getValue().stream()
-                                    .map(item -> item.setRelationshipId(relationshipPojo.getId()))
-                                    .toList();
-
-                            return erdRelationshipsRepository.bulkCreate(toCreate).collectList();
+                            final ErdRelationshipDetailsPojo toCreate =
+                                element.getValue().setRelationshipId(relationshipPojo.getId());
+                            return erdRelationshipsRepository.create(toCreate);
                         })
                     ).collectList()
             )
             .then();
     }
 
-    private Mono<List<ErdRelationshipPojo>>
-        updateExistedERDRelations(final Map<Long, Pair<RelationshipPojo, List<ErdRelationshipPojo>>> erdToUpdateMap) {
+    private Mono<List<ErdRelationshipDetailsPojo>>
+        updateExistedERDRelations(final Map<Long, Pair<RelationshipsPojo, ErdRelationshipDetailsPojo>> erdToUpdateMap) {
         final List<Long> relationshipIds = erdToUpdateMap.values()
             .stream()
             .map(relationshipPojoListPair -> relationshipPojoListPair.getKey().getId())
@@ -103,66 +91,44 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
 
         return erdRelationshipsRepository.findERDSByRelationIds(relationshipIds)
             .flatMap(existedErds -> {
-                final Set<ErdRelationshipPojo> toCreate = new HashSet<>();
-                final Set<ErdRelationshipPojo> toUpdate = new HashSet<>();
-                final Set<Long> toDelete = new HashSet<>();
+                final Set<ErdRelationshipDetailsPojo> toUpdate = new HashSet<>();
 
-                for (final ErdRelationshipPojo erdPojo : existedErds) {
-                    final List<ErdRelationshipPojo> ingestErd =
-                        erdToUpdateMap.get(erdPojo.getRelationshipId()).getValue();
-                    final ErdRelationshipPojo pojoToUpdate = ingestErd.stream()
-                        .filter(ingestPojo ->
-                            ingestPojo.getSourceDatasetFieldOddrn().equals(erdPojo.getSourceDatasetFieldOddrn())
-                                && ingestPojo.getTargetDatasetFieldOddrn().equals(erdPojo.getTargetDatasetFieldOddrn()))
-                        .findFirst()
-                        .orElse(null);
+                existedErds.forEach(existedErd -> {
+                    final ErdRelationshipDetailsPojo ingested
+                        = erdToUpdateMap.get(existedErd.getRelationshipId()).getValue();
+                    ingested.setId(existedErd.getId());
+                    ingested.setRelationshipId(existedErd.getRelationshipId());
+                    toUpdate.add(ingested);
+                });
 
-                    if (pojoToUpdate == null) {
-                        toDelete.add(erdPojo.getId());
-                    } else {
-                        pojoToUpdate.setId(erdPojo.getId());
-                        pojoToUpdate.setRelationshipId(erdPojo.getRelationshipId());
-                        toUpdate.add(pojoToUpdate);
-                    }
-                }
-
-                for (final Pair<RelationshipPojo, List<ErdRelationshipPojo>> value : erdToUpdateMap.values()) {
-                    value.getValue().stream()
-                        .filter(erdRelationshipPojo -> erdRelationshipPojo.getRelationshipId() == null)
-                        .forEach(erdRelationshipPojo -> {
-                            erdRelationshipPojo.setRelationshipId(value.getKey().getId());
-                            toCreate.add(erdRelationshipPojo);
-                        });
-                }
-
-                final List<RelationshipPojo> relationsToUpdate = erdToUpdateMap.values().stream()
-                    .map(Pair::getKey)
-                    .toList();
-
-                return Flux.fromIterable(relationsToUpdate).collectList()
-                    .flatMap(element -> relationshipsRepository.bulkUpdate(relationsToUpdate).collectList())
-                    .then(erdRelationshipsRepository.delete(toDelete).collectList())
-                    .then(erdRelationshipsRepository.bulkUpdate(toUpdate).collectList())
-                    .then(erdRelationshipsRepository.bulkCreate(toCreate).collectList());
+                return Flux.fromIterable(erdToUpdateMap.values().stream()
+                        .map(Pair::getKey)
+                        .toList()
+                    ).collectList()
+                    .flatMap(element -> relationshipsRepository.bulkUpdate(element).collectList())
+                    .then(erdRelationshipsRepository.bulkUpdate(toUpdate).collectList());
             });
     }
 
-    private Mono<Void> handleGraphRelations(final List<RelationshipPojo> existedPojos,
-                                            final Map<RelationshipPojo, GraphRelationshipPojo> graphMap) {
-        final Map<RelationshipPojo, GraphRelationshipPojo> graphToCreate = new HashMap<>();
-        final Map<Long, Pair<RelationshipPojo, GraphRelationshipPojo>> graphToUpdate = new HashMap<>();
+    private Mono<Void> handleGraphRelations(final List<RelationshipsPojo> existedPojos,
+                                            final Map<RelationshipsPojo, GraphRelationshipPojo> graphMap) {
+        final Map<RelationshipsPojo, GraphRelationshipPojo> graphToCreate = new HashMap<>();
+        final Map<Long, Pair<RelationshipsPojo, GraphRelationshipPojo>> graphToUpdate = new HashMap<>();
 
-        graphMap.forEach((key, value) -> {
-            final RelationshipPojo oldPojo = getExistedRelationByOddrn(existedPojos, key);
+        fillUpdateAndCreateMaps(existedPojos, graphMap, graphToUpdate, graphToCreate);
 
-            if (oldPojo != null) {
-                key.setId(oldPojo.getId());
-                graphToUpdate.put(key.getId(), Pair.of(key, value));
-            } else {
-                graphToCreate.put(key, value);
-            }
-        });
+        return updateExistedGraphRelations(graphToUpdate).then(Flux.fromIterable(graphToCreate.entrySet())
+            .flatMap(element -> relationshipsRepository.create(element.getKey())
+                .flatMap(relationshipPojo -> {
+                    element.getValue().setRelationshipId(relationshipPojo.getId());
+                    return graphRelationshipsRepository.create(element.getValue());
+                })
+            ).collectList()
+        ).then();
+    }
 
+    private Mono<List<GraphRelationshipPojo>>
+        updateExistedGraphRelations(final Map<Long, Pair<RelationshipsPojo, GraphRelationshipPojo>> graphToUpdate) {
         final List<Long> relationshipIds = graphToUpdate.values()
             .stream()
             .map(relationshipPojoListPair -> relationshipPojoListPair.getKey().getId())
@@ -171,31 +137,23 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
         return graphRelationshipsRepository.findGraphsByRelationIds(relationshipIds)
             .flatMap(item -> {
                 final Set<GraphRelationshipPojo> toUpdate = new HashSet<>();
-                for (final GraphRelationshipPojo graphPojo : item) {
+                item.forEach(graphPojo -> {
                     final GraphRelationshipPojo ingestedPojo =
                         graphToUpdate.get(graphPojo.getRelationshipId()).getValue();
-
                     ingestedPojo.setId(graphPojo.getId());
                     ingestedPojo.setRelationshipId(graphPojo.getRelationshipId());
                     toUpdate.add(ingestedPojo);
-                }
+                });
 
                 return Flux.fromIterable(graphToUpdate.values())
                     .flatMap(element -> relationshipsRepository.update(element.getKey())).collectList()
                     .then(graphRelationshipsRepository.bulkUpdate(toUpdate).collectList());
-            }).then(Flux.fromIterable(graphToCreate.entrySet())
-                .flatMap(element -> relationshipsRepository.create(element.getKey())
-                    .flatMap(relationshipPojo -> {
-                        element.getValue().setRelationshipId(relationshipPojo.getId());
-                        return graphRelationshipsRepository.create(element.getValue());
-                    })
-                ).collectList()
-            ).then();
+            });
     }
 
-    private Mono<Void> removeRelationships(final List<RelationshipPojo> existedPojos,
+    private Mono<Void> removeRelationships(final List<RelationshipsPojo> existedPojos,
                                            final Set<String> ingestedRelations) {
-        final List<RelationshipPojo> toRemove =
+        final List<RelationshipsPojo> toRemove =
             existedPojos.stream().filter(existedPojo -> !ingestedRelations.contains(existedPojo.getRelationshipOddrn()))
                 .map(item -> item.setRelationshipStatus(RelationshipStatusDto.DELETED.getId())).toList();
 
@@ -203,8 +161,24 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
             .flatMap(items -> relationshipsRepository.bulkUpdate(items).collectList()).then();
     }
 
-    private RelationshipPojo getExistedRelationByOddrn(final List<RelationshipPojo> existedPojos,
-                                                       final RelationshipPojo key) {
+    private void fillUpdateAndCreateMaps(final List<RelationshipsPojo> existedPojos,
+                                         final Map<RelationshipsPojo, ?> ingestMap,
+                                         final Map toUpdateMap,
+                                         final Map toCreatteMap) {
+        ingestMap.forEach((key, value) -> {
+            final RelationshipsPojo oldPojo = getExistedRelationByOddrn(existedPojos, key);
+
+            if (oldPojo != null) {
+                key.setId(oldPojo.getId());
+                toUpdateMap.put(key.getId(), Pair.of(key, value));
+            } else {
+                toCreatteMap.put(key, value);
+            }
+        });
+    }
+
+    private RelationshipsPojo getExistedRelationByOddrn(final List<RelationshipsPojo> existedPojos,
+                                                        final RelationshipsPojo key) {
         return existedPojos.stream()
             .filter(existedPojo ->
                 key.getRelationshipOddrn().equals(existedPojo.getRelationshipOddrn()))

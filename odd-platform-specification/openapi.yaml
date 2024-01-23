@@ -1775,6 +1775,7 @@ paths:
       operationId: getDataSetRelationships
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/RelationshipTypeParam'
       responses:
         '200':
           description: OK
@@ -1782,42 +1783,6 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/DatasetRelationshipList'
-      tags:
-        - dataSet
-
-  /api/datasets/{data_entity_id}/graphrelationships/{relationships_id}:
-    get:
-      summary: Get list of relationships for dataset
-      description: Get information about DataSet's relationships for dataset by DataSet's id
-      operationId: getDataSetGraphRelationshipsById
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
-        - $ref: './components.yaml/#/components/parameters/RelationshipsIdParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/GraphRelationshipDetailsList'
-      tags:
-        - dataSet
-
-  /api/datasets/{data_entity_id}/erdrelationships/{relationships_id}:
-    get:
-      summary: Get list of relationships for dataset
-      description: Get information about DataSet's relationships for dataset by DataSet's id
-      operationId: getDataSetErdRelationshipsById
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
-        - $ref: './components.yaml/#/components/parameters/RelationshipsIdParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/ERDRelationshipDetailsList'
       tags:
         - dataSet
 
@@ -3865,3 +3830,40 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - referenceData
+
+  /api/relationships:
+    get:
+      summary: Get list of relationships
+      description: Get information about DataSet's relationships
+      operationId: getRelationships
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - $ref: './components.yaml/#/components/parameters/RelationshipTypeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DatasetRelationshipList'
+      tags:
+        - relationship
+
+  /api/relationships/{relationships_id}:
+    get:
+      summary: Get relationships by id
+      description: Get information about DataSet's relationships for dataset by  id
+      operationId: getRelationshipsById
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/RelationshipIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DatasetRelationship'
+      tags:
+        - relationship

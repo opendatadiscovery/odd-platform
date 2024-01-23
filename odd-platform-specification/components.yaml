@@ -3969,6 +3969,10 @@ components:
           type: string
         type:
           $ref: '#/components/schemas/DatasetRelationshipType'
+        erd_relationship:
+          $ref: '#/components/schemas/ERDRelationshipDetails'
+        graph_relationship:
+          $ref: '#/components/schemas/GraphRelationshipDetails'
       required:
         - name
         - oddrn
@@ -3982,53 +3986,38 @@ components:
         - ERD
         - GRAPH
 
-    ERDRelationshipDetailsList:
-      type: object
-      properties:
-        dataset_relationship:
-          $ref: '#/components/schemas/DatasetRelationship'
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/ERDRelationshipDetails'
-      required:
-        - items
-
     ERDRelationshipDetails:
       type: object
       properties:
         erd_relationships_id:
           type: integer
           format: int64
-        source_dataset_field_oddrn:
-          type: string
-        target_dataset_field_oddrn:
-          type: string
+        fields_pairs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ERDRelationshipPairs'
         is_identifying:
           type: boolean
         cardinality:
           type: string
       required:
-        - erd_relationships_id
-        - source_dataset_field_oddrn
-        - target_dataset_field_oddrn
+        - fields_pairs
 
-    GraphRelationshipDetailsList:
+    ERDRelationshipPairs:
       type: object
       properties:
-        dataset_relationship:
-          $ref: '#/components/schemas/DatasetRelationship'
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/GraphRelationshipDetails'
+        source_dataset_field_oddrn:
+          type: string
+        target_dataset_field_oddrn:
+          type: string
       required:
-        - items
+        - source_dataset_field_oddrn
+        - target_dataset_field_oddrn
 
     GraphRelationshipDetails:
       type: object
       properties:
-        graph_relationships_id:
+        graph_relationship_id:
           type: integer
           format: int64
         is_directed:
@@ -4048,6 +4037,13 @@ components:
       required:
         - field
         - value
+
+    RelationshipsType:
+      type: string
+      enum:
+        - ERD
+        - GRAPH
+        - ALL
 
   parameters:
     PageParam:
@@ -4214,13 +4210,20 @@ components:
         type: integer
         format: int64
 
-    RelationshipsIdParam:
-      name: relationships_id
+    RelationshipIdParam:
+      name: relationship_id
       in: path
       required: true
       schema:
         type: integer
         format: int64
+
+    RelationshipTypeParam:
+      name: type
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/RelationshipsType'
 
   responses:
     Deleted:
