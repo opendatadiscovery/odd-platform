@@ -48,7 +48,6 @@ public class ReactiveRelationshipsRepositoryImpl
     private static final String DATA_ENTITY_CTE = "data_entity_cte";
     private static final String SOURCE_DATA_ENTITY = "source_data_entity";
     private static final String TARGET_DATA_ENTITY = "target_data_entity";
-    private static final String IS_ERD_RELATION = "is_erd";
 
     private final JooqRecordHelper jooqRecordHelper;
 

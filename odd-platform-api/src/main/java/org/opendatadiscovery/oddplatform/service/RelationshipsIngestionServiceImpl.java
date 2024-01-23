@@ -64,22 +64,28 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
 
     private Mono<Void> handleERDRelations(final List<RelationshipsPojo> existedPojos,
                                           final Map<RelationshipsPojo, ErdRelationshipDetailsPojo> erdMap) {
-        final Map<RelationshipsPojo, ErdRelationshipDetailsPojo> erdToCreate = new HashMap<>();
+        final Map<String, Pair<RelationshipsPojo, ErdRelationshipDetailsPojo>> erdToCreate = new HashMap<>();
         final Map<Long, Pair<RelationshipsPojo, ErdRelationshipDetailsPojo>> erdToUpdateMap = new HashMap<>();
 
         fillUpdateAndCreateMaps(existedPojos, erdMap, erdToUpdateMap, erdToCreate, RelationshipTypeDto.ERD);
 
         return updateExistedERDRelations(erdToUpdateMap)
-            .then(
-                Flux.fromIterable(erdToCreate.entrySet())
-                    .flatMap(element -> relationshipsRepository.create(element.getKey())
-                        .flatMap(relationshipPojo -> {
-                            final ErdRelationshipDetailsPojo toCreate =
-                                element.getValue().setRelationshipId(relationshipPojo.getId());
-                            return erdRelationshipsRepository.create(toCreate);
-                        })
-                    ).collectList()
-            )
+            .then(Flux.fromIterable(erdToCreate.values())
+                .collectList()
+                .flatMap(pairs -> {
+                    final List<RelationshipsPojo> relationships = pairs.stream().map(Pair::getKey).toList();
+                    return relationshipsRepository.bulkCreate(relationships)
+                        .collectList()
+                        .flatMap(createdRelationships -> {
+                            createdRelationships.forEach(createdRelationship ->
+                                    erdToCreate.get(createdRelationship.getRelationshipOddrn())
+                                        .getValue().setRelationshipId(createdRelationship.getId())
+                            );
+
+                            return erdRelationshipsRepository.bulkCreate(erdToCreate.values().stream()
+                                .map(Pair::getValue).toList()).collectList();
+                        });
+                }))
             .then();
     }
 
@@ -113,19 +119,29 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
 
     private Mono<Void> handleGraphRelations(final List<RelationshipsPojo> existedPojos,
                                             final Map<RelationshipsPojo, GraphRelationshipPojo> graphMap) {
-        final Map<RelationshipsPojo, GraphRelationshipPojo> graphToCreate = new HashMap<>();
+        final Map<String, Pair<RelationshipsPojo, GraphRelationshipPojo>> graphToCreate = new HashMap<>();
         final Map<Long, Pair<RelationshipsPojo, GraphRelationshipPojo>> graphToUpdate = new HashMap<>();
 
         fillUpdateAndCreateMaps(existedPojos, graphMap, graphToUpdate, graphToCreate, RelationshipTypeDto.GRAPH);
 
-        return updateExistedGraphRelations(graphToUpdate).then(Flux.fromIterable(graphToCreate.entrySet())
-            .flatMap(element -> relationshipsRepository.create(element.getKey())
-                .flatMap(relationshipPojo -> {
-                    element.getValue().setRelationshipId(relationshipPojo.getId());
-                    return graphRelationshipsRepository.create(element.getValue());
-                })
-            ).collectList()
-        ).then();
+        return updateExistedGraphRelations(graphToUpdate)
+            .then(Flux.fromIterable(graphToCreate.values())
+                .collectList()
+                .flatMap(pairs -> {
+                    final List<RelationshipsPojo> relationships = pairs.stream().map(Pair::getKey).toList();
+                    return relationshipsRepository.bulkCreate(relationships)
+                        .collectList()
+                        .flatMap(createdRelationships -> {
+                            createdRelationships.forEach(createdRelationship ->
+                                    graphToCreate.get(createdRelationship.getRelationshipOddrn())
+                                        .getValue().setRelationshipId(createdRelationship.getId())
+                            );
+
+                            return graphRelationshipsRepository.bulkCreate(graphToCreate.values().stream()
+                                .map(Pair::getValue).toList()).collectList();
+                        });
+                }))
+            .then();
     }
 
     private Mono<List<GraphRelationshipPojo>>
@@ -176,7 +192,7 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
                 key.setId(oldPojo.getId());
                 toUpdateMap.put(key.getId(), Pair.of(key, value));
             } else {
-                toCreatteMap.put(key, value);
+                toCreatteMap.put(key.getRelationshipOddrn(), Pair.of(key, value));
             }
         });
     }
