@@ -9,6 +9,5 @@ public record RelationshipDto(RelationshipsPojo relationshipPojo,
                               DataEntityPojo sourceDataEntity,
                               DataEntityPojo targetDataEntity,
                               ErdRelationshipDetailsPojo erdRelationshipDetailsPojo,
-                              GraphRelationshipPojo graphRelationshipPojo,
-                              boolean isErd) {
+                              GraphRelationshipPojo graphRelationshipPojo) {
 }

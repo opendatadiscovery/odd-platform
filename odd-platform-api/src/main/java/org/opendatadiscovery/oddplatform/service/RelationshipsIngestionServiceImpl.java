@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opendatadiscovery.oddplatform.dto.RelationshipStatusDto;
+import org.opendatadiscovery.oddplatform.dto.RelationshipTypeDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.RelationshipList;
@@ -66,7 +67,7 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
         final Map<RelationshipsPojo, ErdRelationshipDetailsPojo> erdToCreate = new HashMap<>();
         final Map<Long, Pair<RelationshipsPojo, ErdRelationshipDetailsPojo>> erdToUpdateMap = new HashMap<>();
 
-        fillUpdateAndCreateMaps(existedPojos, erdMap, erdToUpdateMap, erdToCreate);
+        fillUpdateAndCreateMaps(existedPojos, erdMap, erdToUpdateMap, erdToCreate, RelationshipTypeDto.ERD);
 
         return updateExistedERDRelations(erdToUpdateMap)
             .then(
@@ -115,7 +116,7 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
         final Map<RelationshipsPojo, GraphRelationshipPojo> graphToCreate = new HashMap<>();
         final Map<Long, Pair<RelationshipsPojo, GraphRelationshipPojo>> graphToUpdate = new HashMap<>();
 
-        fillUpdateAndCreateMaps(existedPojos, graphMap, graphToUpdate, graphToCreate);
+        fillUpdateAndCreateMaps(existedPojos, graphMap, graphToUpdate, graphToCreate, RelationshipTypeDto.GRAPH);
 
         return updateExistedGraphRelations(graphToUpdate).then(Flux.fromIterable(graphToCreate.entrySet())
             .flatMap(element -> relationshipsRepository.create(element.getKey())
@@ -164,9 +165,12 @@ public class RelationshipsIngestionServiceImpl implements RelationshipsIngestion
     private void fillUpdateAndCreateMaps(final List<RelationshipsPojo> existedPojos,
                                          final Map<RelationshipsPojo, ?> ingestMap,
                                          final Map toUpdateMap,
-                                         final Map toCreatteMap) {
+                                         final Map toCreatteMap,
+                                         final RelationshipTypeDto type) {
         ingestMap.forEach((key, value) -> {
             final RelationshipsPojo oldPojo = getExistedRelationByOddrn(existedPojos, key);
+
+            key.setRelationshipType(type.name());
 
             if (oldPojo != null) {
                 key.setId(oldPojo.getId());

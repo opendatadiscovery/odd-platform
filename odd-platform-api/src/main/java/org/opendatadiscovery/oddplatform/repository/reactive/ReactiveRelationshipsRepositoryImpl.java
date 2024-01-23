@@ -18,6 +18,7 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
 import org.opendatadiscovery.oddplatform.dto.RelationshipDto;
 import org.opendatadiscovery.oddplatform.dto.RelationshipStatusDto;
+import org.opendatadiscovery.oddplatform.dto.RelationshipTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipDetailsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GraphRelationshipPojo;
@@ -96,12 +97,8 @@ public class ReactiveRelationshipsRepositoryImpl
             );
 
         final ResultQuery<Record> query = switch (type) {
-            case ERD -> joinStep.where(DSL.notExists(
-                select().from(GRAPH_RELATIONSHIP)
-                    .where(GRAPH_RELATIONSHIP.RELATIONSHIP_ID.eq(RELATIONSHIPS.ID))));
-            case GRAPH -> joinStep.where(DSL.notExists(
-                select().from(ERD_RELATIONSHIP_DETAILS)
-                    .where(ERD_RELATIONSHIP_DETAILS.RELATIONSHIP_ID.eq(RELATIONSHIPS.ID))));
+            case ERD -> joinStep.where(RELATIONSHIPS.RELATIONSHIP_TYPE.eq(RelationshipTypeDto.ERD.name()));
+            case GRAPH -> joinStep.where(RELATIONSHIPS.RELATIONSHIP_TYPE.eq(RelationshipTypeDto.GRAPH.name()));
             default -> joinStep;
         };
 
@@ -110,8 +107,7 @@ public class ReactiveRelationshipsRepositoryImpl
                 r.into(srcDataEntity).into(DataEntityPojo.class),
                 r.into(trgtDataEntity).into(DataEntityPojo.class),
                 r.into(ERD_RELATIONSHIP_DETAILS).into(ErdRelationshipDetailsPojo.class),
-                r.into(GRAPH_RELATIONSHIP).into(GraphRelationshipPojo.class),
-                r.get(IS_ERD_RELATION, Boolean.class))
+                r.into(GRAPH_RELATIONSHIP).into(GraphRelationshipPojo.class))
             );
     }
 
@@ -130,8 +126,7 @@ public class ReactiveRelationshipsRepositoryImpl
                 r.into(srcDataEntity).into(DataEntityPojo.class),
                 r.into(trgtDataEntity).into(DataEntityPojo.class),
                 r.into(ERD_RELATIONSHIP_DETAILS).into(ErdRelationshipDetailsPojo.class),
-                r.into(GRAPH_RELATIONSHIP).into(GraphRelationshipPojo.class),
-                r.get(IS_ERD_RELATION, Boolean.class))
+                r.into(GRAPH_RELATIONSHIP).into(GraphRelationshipPojo.class))
             );
     }
 
@@ -163,11 +158,6 @@ public class ReactiveRelationshipsRepositoryImpl
                 trgtDataEntity.asterisk(),
                 ERD_RELATIONSHIP_DETAILS.asterisk(),
                 GRAPH_RELATIONSHIP.asterisk())
-            .select(DSL.exists(
-                    DSL.select().from(ERD_RELATIONSHIP_DETAILS)
-                        .where(ERD_RELATIONSHIP_DETAILS.RELATIONSHIP_ID.eq(relationshipCTE.field(RELATIONSHIPS.ID))))
-                .as(IS_ERD_RELATION)
-            )
             .from(relationshipCTE.getName())
             .leftJoin(srcDataEntity)
             .on(relationshipCTE.field(RELATIONSHIPS.SOURCE_DATASET_ODDRN).eq(srcDataEntity.field(DATA_ENTITY.ODDRN)))
@@ -180,14 +170,10 @@ public class ReactiveRelationshipsRepositoryImpl
 
         final ResultQuery<Record> resultQuery = switch (type) {
             case ERD -> generalQuery
-                .where(DSL.notExists(
-                    select().from(GRAPH_RELATIONSHIP)
-                        .where(GRAPH_RELATIONSHIP.RELATIONSHIP_ID.eq(relationshipCTE.field(RELATIONSHIPS.ID)))))
+                .where(relationshipCTE.field(RELATIONSHIPS.RELATIONSHIP_TYPE).eq(RelationshipTypeDto.ERD.name()))
                 .groupBy(groupByFields);
             case GRAPH -> generalQuery
-                .where(DSL.notExists(
-                    select().from(ERD_RELATIONSHIP_DETAILS)
-                        .where(ERD_RELATIONSHIP_DETAILS.RELATIONSHIP_ID.eq(relationshipCTE.field(RELATIONSHIPS.ID)))))
+                .where(relationshipCTE.field(RELATIONSHIPS.RELATIONSHIP_TYPE).eq(RelationshipTypeDto.GRAPH.name()))
                 .groupBy(groupByFields);
             default -> generalQuery.groupBy(groupByFields);
         };
@@ -202,8 +188,7 @@ public class ReactiveRelationshipsRepositoryImpl
                     r.into(srcDataEntity).into(DataEntityPojo.class),
                     r.into(trgtDataEntity).into(DataEntityPojo.class),
                     r.into(ERD_RELATIONSHIP_DETAILS).into(ErdRelationshipDetailsPojo.class),
-                    r.into(GRAPH_RELATIONSHIP).into(GraphRelationshipPojo.class),
-                    r.get(IS_ERD_RELATION, Boolean.class)),
+                    r.into(GRAPH_RELATIONSHIP).into(GraphRelationshipPojo.class)),
                 fetchCount(inputQuery)));
     }
 
@@ -214,11 +199,6 @@ public class ReactiveRelationshipsRepositoryImpl
                 trgtDataEntity.asterisk(),
                 ERD_RELATIONSHIP_DETAILS.asterisk(),
                 GRAPH_RELATIONSHIP.asterisk())
-            .select(DSL.exists(
-                    DSL.select().from(ERD_RELATIONSHIP_DETAILS)
-                        .where(ERD_RELATIONSHIP_DETAILS.RELATIONSHIP_ID.eq(RELATIONSHIPS.ID)))
-                .as(IS_ERD_RELATION)
-            )
             .from(RELATIONSHIPS)
             .leftJoin(srcDataEntity)
             .on(RELATIONSHIPS.SOURCE_DATASET_ODDRN.eq(srcDataEntity.field(DATA_ENTITY.ODDRN)))

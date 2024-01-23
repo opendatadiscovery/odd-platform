@@ -8,6 +8,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationshipL
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationshipType;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.RelationshipDto;
+import org.opendatadiscovery.oddplatform.dto.RelationshipTypeDto;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +39,9 @@ public class RelationshipMapper {
             .targetDatasetOddrn(item.relationshipPojo().getTargetDatasetOddrn())
             .sourceDataEntityId(item.sourceDataEntity() != null ? item.sourceDataEntity().getId() : null)
             .targetDataEntityId(item.targetDataEntity() != null ? item.targetDataEntity().getId() : null)
-            .type(item.isErd() ? DatasetRelationshipType.ERD : DatasetRelationshipType.GRAPH)
+            .type(RelationshipTypeDto.ERD.name().equals(item.relationshipPojo().getRelationshipType())
+                ? DatasetRelationshipType.ERD
+                : DatasetRelationshipType.GRAPH)
             .erdRelationship(erdRelationshipMapper.mapPojoToDetails(item.erdRelationshipDetailsPojo()))
             .graphRelationship(graphRelationshipMapper.mapPojoToDetails(item.graphRelationshipPojo()));
     }
