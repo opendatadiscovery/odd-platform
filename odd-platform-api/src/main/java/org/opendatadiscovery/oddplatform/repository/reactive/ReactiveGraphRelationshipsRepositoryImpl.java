@@ -34,19 +34,18 @@ public class ReactiveGraphRelationshipsRepositoryImpl
     @Override
     @ReactiveTransactional
     public Mono<Void> deleteByRelationId(final Long relationshipId) {
-        return jooqReactiveOperations.mono(DSL.deleteFrom(GRAPH_RELATIONSHIP)
-                .where(GRAPH_RELATIONSHIP.RELATIONSHIP_ID.eq(relationshipId)))
+        return jooqReactiveOperations.mono(
+                DSL.deleteFrom(GRAPH_RELATIONSHIP).where(GRAPH_RELATIONSHIP.RELATIONSHIP_ID.eq(relationshipId)))
             .then(Mono.empty());
     }
 
     @Override
     public Mono<List<GraphRelationshipPojo>> findGraphsByRelationIds(final List<Long> relationshipIds) {
-        final SelectConditionStep<Record> query = DSL.select()
-            .from(GRAPH_RELATIONSHIP)
-            .where(GRAPH_RELATIONSHIP.RELATIONSHIP_ID.in(relationshipIds));
+        return jooqReactiveOperations.executeInPartitionReturning(relationshipIds, partitionedOddrns -> {
+            final SelectConditionStep<Record> query =
+                DSL.select().from(GRAPH_RELATIONSHIP).where(GRAPH_RELATIONSHIP.RELATIONSHIP_ID.in(relationshipIds));
 
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(GraphRelationshipPojo.class))
-            .collectList();
+            return jooqReactiveOperations.flux(query);
+        }).map(r -> r.into(GraphRelationshipPojo.class)).collectList();
     }
 }

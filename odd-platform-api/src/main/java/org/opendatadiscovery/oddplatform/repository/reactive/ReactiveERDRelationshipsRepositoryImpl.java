@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipDetailsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.ErdRelationshipDetailsRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
@@ -33,12 +32,11 @@ public class ReactiveERDRelationshipsRepositoryImpl
 
     @Override
     public Mono<List<ErdRelationshipDetailsPojo>> findERDSByRelationIds(final List<Long> relationshipId) {
-        final SelectConditionStep<Record> query = DSL.select()
-            .from(ERD_RELATIONSHIP_DETAILS)
-            .where(ERD_RELATIONSHIP_DETAILS.RELATIONSHIP_ID.in(relationshipId));
+        return jooqReactiveOperations.executeInPartitionReturning(relationshipId, partitionedOddrns -> {
+            final SelectConditionStep<Record> query = DSL.select().from(ERD_RELATIONSHIP_DETAILS)
+                .where(ERD_RELATIONSHIP_DETAILS.RELATIONSHIP_ID.in(partitionedOddrns));
 
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(ErdRelationshipDetailsPojo.class))
-            .collectList();
+            return jooqReactiveOperations.flux(query);
+        }).map(r -> r.into(ErdRelationshipDetailsPojo.class)).collectList();
     }
 }
