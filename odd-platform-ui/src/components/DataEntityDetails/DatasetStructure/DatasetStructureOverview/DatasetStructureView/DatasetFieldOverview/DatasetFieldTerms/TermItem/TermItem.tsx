@@ -1,5 +1,5 @@
 import React, { type FC, useCallback } from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Permission, type TermRef } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import {
@@ -11,6 +11,7 @@ import {
 import { DeleteIcon, LinkedTermIcon } from 'components/shared/icons';
 import { useDeleteDatasetFieldTerm } from 'lib/hooks';
 import { termDetailsPath } from 'routes';
+import { Link } from 'react-router-dom';
 
 interface TermItemProps {
   name: TermRef['name'];
@@ -45,15 +46,18 @@ const TermItem: FC<TermItemProps> = ({
 
   return (
     <InfoItem
-      labelWidth={4}
+      sx={{ width: '100%' }}
       label={
-        <Box p={0.75} display='flex' flexWrap='nowrap' alignItems='center'>
-          <Button to={termDetailsLink} buttonType='link-m' text={name} sx={{ mr: 0.5 }} />
+        <Box p={0.75} display='flex' flexWrap='nowrap' alignItems='center' gap={0.5}>
+          <Link to={termDetailsLink}>
+            <Typography color='button.link.normal.color'>{name}</Typography>
+          </Link>
           {isDescriptionLink && <LinkedTermIcon />}
         </Box>
       }
       info={
         <CollapsibleInfoContainer
+          style={{ width: '100%' }}
           content={<Markdown value={definition} />}
           actions={
             !isDescriptionLink ? (
