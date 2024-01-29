@@ -20,6 +20,7 @@ import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
+import org.opendatadiscovery.oddplatform.dto.RelationshipTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
@@ -36,6 +37,9 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.ERDRelationship;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.GraphRelationship;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
@@ -49,6 +53,7 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTI
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_INPUT;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_QUALITY_TEST;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_QUALITY_TEST_RUN;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_RELATIONSHIP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_SET;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRANSFORMER;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRANSFORMER_RUN;
@@ -71,6 +76,8 @@ import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestio
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataEntityGroupDto;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataInputIngestionDto;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataQualityTestIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataRelationshipDetailsDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataRelationshipDto;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataSetIngestionDto;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataTransformerIngestionDto;
 
@@ -79,6 +86,8 @@ import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestio
 @Slf4j
 public class IngestionMapperImpl implements IngestionMapper {
     private final DatasetFieldIngestionMapper datasetFieldIngestionMapper;
+    private final DatasetERDRelationIngestionMapper erdRelationIngestionMapper;
+    private final DatasetGraphRelationIngestionMapper graphRelationIngestionMapper;
     private final DatasetVersionHashCalculator datasetVersionHashCalculator;
 
     private static final List<Pair<Predicate<DataEntity>, DataEntityClassDto>> ENTITY_CLASS_DISCRIMINATOR = List.of(
@@ -89,7 +98,8 @@ public class IngestionMapperImpl implements IngestionMapper {
         Pair.of(de -> de.getDataQualityTest() != null, DATA_QUALITY_TEST),
         Pair.of(de -> de.getDataQualityTestRun() != null, DATA_QUALITY_TEST_RUN),
         Pair.of(de -> de.getDataEntityGroup() != null, DATA_ENTITY_GROUP),
-        Pair.of(de -> de.getDataInput() != null, DATA_INPUT)
+        Pair.of(de -> de.getDataInput() != null, DATA_INPUT),
+        Pair.of(de -> de.getDataEntityRelationship() != null, DATA_RELATIONSHIP)
     );
 
     @Override
@@ -139,6 +149,10 @@ public class IngestionMapperImpl implements IngestionMapper {
 
         if (entityClasses.contains(DATA_INPUT)) {
             builder = builder.dataInput(createDataInput(dataEntity.getDataInput()));
+        }
+
+        if (entityClasses.contains(DATA_RELATIONSHIP)) {
+            builder = builder.dataRelationshipDto(createDataRelationship(dataEntity.getDataEntityRelationship()));
         }
 
         return builder.build();
@@ -293,6 +307,24 @@ public class IngestionMapperImpl implements IngestionMapper {
     private DataInputIngestionDto createDataInput(final DataInput dataInput) {
         return new DataInputIngestionDto(
             ListUtils.emptyIfNull(dataInput.getOutputs())
+        );
+    }
+
+    private DataRelationshipDto createDataRelationship(final Relationship relationship) {
+        final DataRelationshipDetailsDto dataRelationshipDetailsDto =
+            Relationship.RelationshipTypeEnum.ERD == relationship.getRelationshipType()
+                ? new DataRelationshipDetailsDto(
+                    erdRelationIngestionMapper.mapERDRelation((ERDRelationship) relationship.getDetails()),
+                    null)
+                : new DataRelationshipDetailsDto(
+                null,
+                graphRelationIngestionMapper.mapGraphRelation((GraphRelationship) relationship.getDetails()));
+
+        return new DataRelationshipDto(
+            relationship.getSourceDatasetOddrn(),
+            relationship.getTargetDatasetOddrn(),
+            RelationshipTypeDto.valueOf(relationship.getRelationshipType().name()),
+            dataRelationshipDetailsDto
         );
     }
 

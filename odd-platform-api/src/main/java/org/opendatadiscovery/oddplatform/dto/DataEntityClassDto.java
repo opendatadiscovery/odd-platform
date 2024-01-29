@@ -32,6 +32,7 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_EXPERIM
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL_ARTIFACT;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL_INSTANCE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL_TRAINING;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.RELATIONSHIP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.TABLE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.VECTOR_STORE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.VIEW;
@@ -45,7 +46,8 @@ public enum DataEntityClassDto {
     DATA_QUALITY_TEST_RUN(5, JOB_RUN),
     DATA_CONSUMER(6, Set.of(ML_MODEL_ARTIFACT, DASHBOARD)),
     DATA_INPUT(7, API_CALL),
-    DATA_ENTITY_GROUP(8, Set.of(ML_EXPERIMENT, DAG, DATABASE_SERVICE, API_SERVICE, KAFKA_SERVICE, DOMAIN));
+    DATA_ENTITY_GROUP(8, Set.of(ML_EXPERIMENT, DAG, DATABASE_SERVICE, API_SERVICE, KAFKA_SERVICE, DOMAIN)),
+    DATA_RELATIONSHIP(9, RELATIONSHIP);
 
     private static final Map<Integer, DataEntityClassDto> MAP = Arrays.stream(DataEntityClassDto.values())
         .collect(Collectors.toMap(DataEntityClassDto::getId, identity()));

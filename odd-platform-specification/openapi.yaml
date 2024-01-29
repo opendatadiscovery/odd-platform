@@ -3851,11 +3851,11 @@ paths:
       tags:
         - relationship
 
-  /api/relationships/{relationships_id}:
+  /api/relationships/erd/{relationship_id}:
     get:
-      summary: Get relationships by id
-      description: Get information about DataSet's relationships for dataset by  id
-      operationId: getRelationshipsById
+      summary: Get erd relationship by id
+      description: Get information about DataSet's erd relationship for dataset by id
+      operationId: getERDRelationshipById
       parameters:
         - $ref: './components.yaml/#/components/parameters/RelationshipIdParam'
       responses:
@@ -3864,6 +3864,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DatasetRelationship'
+                $ref: './components.yaml/#/components/schemas/DatasetERDRelationshipDetails'
+      tags:
+        - relationship
+
+  /api/relationships/graph/{relationship_id}:
+    get:
+      summary: Get graph relationship by id
+      description: Get information about DataSet's graph relationship for dataset by id
+      operationId: getGraphRelationshipById
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/RelationshipIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DatasetGraphRelationshipDetails'
       tags:
         - relationship

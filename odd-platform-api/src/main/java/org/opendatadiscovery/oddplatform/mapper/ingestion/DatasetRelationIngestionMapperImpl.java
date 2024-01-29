@@ -1,31 +1,34 @@
 package org.opendatadiscovery.oddplatform.mapper.ingestion;
 
 import lombok.RequiredArgsConstructor;
-import org.opendatadiscovery.oddplatform.dto.RelationshipStatusDto;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
+import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataRelationshipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipsPojo;
-import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class DatasetRelationIngestionMapperImpl implements DatasetRelationIngestionMapper {
     @Override
-    public RelationshipsPojo mapToPojo(final Relationship relationship, final Long dataSourceId) {
+    public RelationshipsPojo mapToPojo(final DataRelationshipDto relationship, final RelationshipsPojo oldPojo) {
         if (relationship == null) {
             return null;
         }
 
+        final RelationshipsPojo relationshipPojo = mapToPojo(relationship);
+
+        relationshipPojo.setId(oldPojo.getId());
+        relationshipPojo.setDataEntityId(oldPojo.getDataEntityId());
+
+        return relationshipPojo;
+    }
+
+    @Override
+    public RelationshipsPojo mapToPojo(final DataRelationshipDto relationship) {
         final RelationshipsPojo relationshipPojo = new RelationshipsPojo();
 
-        relationshipPojo.setName(relationship.getName());
-        relationshipPojo.setDataSourceId(dataSourceId);
-        relationshipPojo.setRelationshipOddrn(relationship.getOddrn());
-        relationshipPojo.setIsManualyCreated(false);
-        relationshipPojo.setSourceDatasetOddrn(relationship.getSourceDatasetOddrn());
-        relationshipPojo.setTargetDatasetOddrn(relationship.getTargetDatasetOddrn());
-        relationshipPojo.setLastIngestedAt(DateTimeUtil.generateNow());
-        relationshipPojo.setRelationshipStatus(RelationshipStatusDto.ACTIVE.getId());
+        relationshipPojo.setSourceDatasetOddrn(relationship.sourceOddrn());
+        relationshipPojo.setTargetDatasetOddrn(relationship.targetOddrn());
+        relationshipPojo.setRelationshipType(relationship.relationshipType().name());
 
         return relationshipPojo;
     }

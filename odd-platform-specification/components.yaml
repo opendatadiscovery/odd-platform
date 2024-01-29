@@ -716,6 +716,7 @@ components:
             - DATA_QUALITY_TEST
             - DATA_QUALITY_TEST_RUN
             - DATA_ENTITY_GROUP
+            - DATA_RELATIONSHIP
         types:
           type: array
           items:
@@ -756,6 +757,7 @@ components:
             - DOMAIN
             - VECTOR_STORE
             - LOOKUP_TABLE
+            - RELATIONSHIP
       required:
         - id
         - name
@@ -3969,16 +3971,32 @@ components:
           type: string
         type:
           $ref: '#/components/schemas/DatasetRelationshipType'
-        erd_relationship:
-          $ref: '#/components/schemas/ERDRelationshipDetails'
-        graph_relationship:
-          $ref: '#/components/schemas/GraphRelationshipDetails'
       required:
         - name
         - oddrn
         - source_dataset_oddrn
         - target_dataset_oddrn
         - type
+
+    DatasetERDRelationshipDetails:
+      allOf:
+        - $ref: '#/components/schemas/DatasetRelationship'
+        - type: object
+          properties:
+            erd_relationship:
+              $ref: '#/components/schemas/ERDRelationshipDetails'
+          required:
+            - erd_relationship
+
+    DatasetGraphRelationshipDetails:
+      allOf:
+        - $ref: '#/components/schemas/DatasetRelationship'
+        - type: object
+          properties:
+            graph_relationship:
+              $ref: '#/components/schemas/GraphRelationshipDetails'
+          required:
+            - graph_relationship
 
     DatasetRelationshipType:
       type: string

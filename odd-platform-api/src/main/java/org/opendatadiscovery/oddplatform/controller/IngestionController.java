@@ -13,10 +13,8 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetricSetList;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.RelationshipList;
 import org.opendatadiscovery.oddplatform.service.DataEntityGroupService;
 import org.opendatadiscovery.oddplatform.service.DataSourceIngestionService;
-import org.opendatadiscovery.oddplatform.service.RelationshipsIngestionService;
 import org.opendatadiscovery.oddplatform.service.ingestion.IngestionService;
 import org.opendatadiscovery.oddplatform.service.ingestion.metric.IngestionMetricsService;
 import org.springframework.http.HttpStatus;
@@ -34,7 +32,6 @@ public class IngestionController implements IngestionApi {
     private final IngestionService ingestionService;
     private final DataEntityGroupService dataEntityGroupService;
     private final DataSourceIngestionService dataSourceIngestionService;
-    private final RelationshipsIngestionService relationshipsIngestionService;
     private final IngestionMetricsService ingestionMetricsService;
 
     @Override
@@ -44,16 +41,6 @@ public class IngestionController implements IngestionApi {
             .filter(del -> CollectionUtils.isNotEmpty(del.getItems()))
             .switchIfEmpty(Mono.error(() -> new BadUserRequestException("Ingestion payload is empty")))
             .flatMap(ingestionService::ingest)
-            .thenReturn(ResponseEntity.ok().build());
-    }
-
-    @Override
-    public Mono<ResponseEntity<Void>> postRelationshipList(final Mono<RelationshipList> relationshipList,
-                                                           final ServerWebExchange exchange) {
-        return relationshipList
-            .filter(items -> CollectionUtils.isNotEmpty(items.getItems()))
-            .switchIfEmpty(Mono.error(() -> new BadUserRequestException("Ingestion payload is empty")))
-            .flatMap(relationshipsIngestionService::ingestRelationships)
             .thenReturn(ResponseEntity.ok().build());
     }
 

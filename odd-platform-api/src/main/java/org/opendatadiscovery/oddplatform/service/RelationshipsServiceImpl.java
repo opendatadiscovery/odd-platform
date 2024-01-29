@@ -1,7 +1,8 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import lombok.RequiredArgsConstructor;
-import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationship;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetERDRelationshipDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetGraphRelationshipDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetRelationshipList;
 import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -25,16 +26,23 @@ public class RelationshipsServiceImpl implements RelationshipsService {
     }
 
     @Override
-    public Mono<DatasetRelationship> getRelationshipById(final Long relationshipId) {
-        return relationshipsRepository.getRelationshipById(relationshipId)
-            .switchIfEmpty(Mono.error(() -> new NotFoundException("Relationship", relationshipId)))
-            .map(relationshipMapper::mapToDatasetRelationship);
-    }
-
-    @Override
     public Mono<DatasetRelationshipList> getRelationships(final Integer page, final Integer size,
                                                           final RelationshipsType type, final String query) {
         return relationshipsRepository.getRelationships(page, size, query, type)
             .map(relationshipMapper::mapListToRelationshipPage);
+    }
+
+    @Override
+    public Mono<DatasetERDRelationshipDetails> getERDRelationshipById(final Long relationshipId) {
+        return relationshipsRepository.getRelationshipByIdAndType(relationshipId, RelationshipsType.ERD)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("Relationship", relationshipId)))
+            .map(relationshipMapper::mapToDatasetERDRelationshipDetails);
+    }
+
+    @Override
+    public Mono<DatasetGraphRelationshipDetails> getGraphRelationshipById(final Long relationshipId) {
+        return relationshipsRepository.getRelationshipByIdAndType(relationshipId, RelationshipsType.GRAPH)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("Relationship", relationshipId)))
+            .map(relationshipMapper::mapToDatasetGraphRelationshipDetails);
     }
 }

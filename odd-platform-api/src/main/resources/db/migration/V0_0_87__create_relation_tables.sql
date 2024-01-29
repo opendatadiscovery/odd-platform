@@ -1,18 +1,12 @@
 CREATE TABLE IF NOT EXISTS relationships
 (
     id                         bigserial PRIMARY KEY,
-    name                       varchar(512),
-    data_source_id             bigint,
-    relationship_oddrn         varchar(512) UNIQUE,
+    data_entity_id             bigint,
     source_dataset_oddrn       varchar(512)       NOT NULL,
     target_dataset_oddrn       varchar(512)       NOT NULL,
-    is_manualy_created         boolean,
-    relationship_status        SMALLINT,
     relationship_type          varchar(256),
-    last_ingested_at           TIMESTAMP WITHOUT TIME ZONE,
-    deleted_at                 TIMESTAMP WITHOUT TIME ZONE,
 
-    CONSTRAINT relationship_fk_data_source FOREIGN KEY (data_source_id) REFERENCES data_source (id)
+    CONSTRAINT relationship_fk_data_entity FOREIGN KEY (data_entity_id) REFERENCES data_entity (id)
 );
 
 CREATE TABLE IF NOT EXISTS erd_relationship_details
