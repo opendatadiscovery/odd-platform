@@ -114,7 +114,7 @@ export const DataEntityClassTypeLabelMap: Map<
 ]);
 
 // content width constants
-export const toolbarHeight = 49;
+export const toolbarHeight = 48;
 export const maxSidebarWidth = 240;
 export const maxChannelsWidth = 200;
 export const activitySidebarWidth = 192;
