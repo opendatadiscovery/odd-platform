@@ -2,6 +2,7 @@ import type { AppTabItem } from 'components/shared/elements';
 import { AppTabs } from 'components/shared/elements';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { queryExamplesPath } from 'routes';
 
 const DataModellingTabs = () => {
   const { t } = useTranslation();
@@ -11,10 +12,7 @@ const DataModellingTabs = () => {
     () => [
       {
         name: t('Query Examples'),
-      },
-      {
-        name: t('Relationships'),
-        disabled: true,
+        link: queryExamplesPath(),
       },
     ],
     [t]
@@ -25,7 +23,8 @@ const DataModellingTabs = () => {
 
   return (
     <AppTabs
-      type='primary'
+      type='menu'
+      orientation='vertical'
       items={tabs}
       selectedTab={selectedTab}
       handleTabChange={handleTabChange}
