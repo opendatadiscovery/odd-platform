@@ -114,8 +114,10 @@ public class RelationshipIngestionRequestProcessor implements IngestionRequestPr
             return false;
         }
 
-        return RelationshipTypeDto.ERD == request.getAllEntities()
-            .get(0).getDataRelationshipDto()
-            .relationshipType();
+        return RelationshipTypeDto.ERD == request.getAllEntities().stream()
+            .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_RELATIONSHIP))
+            .findFirst()
+            .map(item -> item.getDataRelationshipDto().relationshipType())
+            .orElse(null);
     }
 }
