@@ -14,7 +14,7 @@ public class DatasetERDRelationIngestionMapperImpl implements DatasetERDRelation
         return new ErdRelationshipDetailsPojo()
             .setSourceDatasetFieldOddrn(erd.getSourceDatasetFieldOddrnsList().toArray(String[]::new))
             .setTargetDatasetFieldOddrn(erd.getTargetDatasetFieldOddrnsList().toArray(String[]::new))
-            .setCardinality(erd.getCardinality().getValue())
+            .setCardinality(erd.getCardinality() != null ? erd.getCardinality().getValue() : null)
             .setIsIdentifying(erd.getIsIdentifying());
     }
 }
