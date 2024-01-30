@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
-import org.opendatadiscovery.oddplatform.dto.RelationshipDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.RelationshipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipsPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -17,7 +16,4 @@ public interface ReactiveRelationshipsRepository extends ReactiveCRUDRepository<
 
     Mono<Page<RelationshipDto>> getRelationships(final Integer page, final Integer size,
                                                 final String inputQuery, final RelationshipsType type);
-
-    Mono<RelationshipDetailsDto> getRelationshipByIdAndType(final Long relationshipId,
-                                                            final RelationshipsType relationshipsType);
 }

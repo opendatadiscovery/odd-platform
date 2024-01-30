@@ -47,8 +47,7 @@ public class R2DBCConfiguration {
         return new ConnectionPool(builder.build());
     }
 
-    @Bean(destroyMethod = "dispose")
-    @Qualifier("customConnectionPool")
+    @Bean(name = "customConnectionPool", destroyMethod = "dispose")
     public ConnectionPool databaseClientForCustomSchema(
         @Value("${spring.custom-datasource.url}") final String url,
         @Value("${spring.custom-datasource.username}") final String username,
@@ -83,8 +82,7 @@ public class R2DBCConfiguration {
         return DatabaseClient.create(schema1ConnectionFactory);
     }
 
-    @Bean
-    @Qualifier("customDataClient")
+    @Bean(name = "customDataClient")
     public DatabaseClient databaseClientCustomTables(
         @Qualifier("customConnectionPool") final ConnectionFactory connectionFactory) {
         return DatabaseClient.create(connectionFactory);
@@ -96,8 +94,7 @@ public class R2DBCConfiguration {
         return new R2dbcTransactionManager(connectionFactory);
     }
 
-    @Bean
-    @Qualifier("customTransactionManager")
+    @Bean(name = "customTransactionManager")
     public ReactiveTransactionManager reactiveCustomTransactionManager(
         @Qualifier("customConnectionPool") final ConnectionFactory connectionFactory) {
         return new R2dbcTransactionManager(connectionFactory);

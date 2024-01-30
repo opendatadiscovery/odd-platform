@@ -1782,7 +1782,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DatasetRelationshipList'
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipList'
       tags:
         - dataSet
 
@@ -3847,7 +3847,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DatasetRelationshipList'
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipList'
       tags:
         - relationship
 
@@ -3864,7 +3864,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DatasetERDRelationshipDetails'
+                $ref: './components.yaml/#/components/schemas/DataEntityERDRelationshipDetails'
       tags:
         - relationship
 
@@ -3881,6 +3881,6 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DatasetGraphRelationshipDetails'
+                $ref: './components.yaml/#/components/schemas/DataEntityGraphRelationshipDetails'
       tags:
         - relationship

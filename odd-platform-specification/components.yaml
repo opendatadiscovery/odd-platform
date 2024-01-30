@@ -3936,20 +3936,20 @@ components:
         - field_id
         - value
 
-    DatasetRelationshipList:
+    DataEntityRelationshipList:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/DatasetRelationship'
+            $ref: '#/components/schemas/DataEntityRelationship'
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
         - items
         - page_info
 
-    DatasetRelationship:
+    DataEntityRelationship:
       type: object
       properties:
         id:
@@ -3970,7 +3970,7 @@ components:
         target_dataset_oddrn:
           type: string
         type:
-          $ref: '#/components/schemas/DatasetRelationshipType'
+          $ref: '#/components/schemas/DataEntityRelationshipType'
       required:
         - name
         - oddrn
@@ -3978,9 +3978,9 @@ components:
         - target_dataset_oddrn
         - type
 
-    DatasetERDRelationshipDetails:
+    DataEntityERDRelationshipDetails:
       allOf:
-        - $ref: '#/components/schemas/DatasetRelationship'
+        - $ref: '#/components/schemas/DataEntityRelationship'
         - type: object
           properties:
             erd_relationship:
@@ -3988,9 +3988,9 @@ components:
           required:
             - erd_relationship
 
-    DatasetGraphRelationshipDetails:
+    DataEntityGraphRelationshipDetails:
       allOf:
-        - $ref: '#/components/schemas/DatasetRelationship'
+        - $ref: '#/components/schemas/DataEntityRelationship'
         - type: object
           properties:
             graph_relationship:
@@ -3998,7 +3998,7 @@ components:
           required:
             - graph_relationship
 
-    DatasetRelationshipType:
+    DataEntityRelationshipType:
       type: string
       enum:
         - ERD
