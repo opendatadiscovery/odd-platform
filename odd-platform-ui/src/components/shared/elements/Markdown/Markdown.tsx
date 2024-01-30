@@ -13,13 +13,11 @@ interface MarkdownProps {
   value: string;
   editor?: boolean;
   disableCopy?: boolean;
-  onChange?:
-    | ((
-        value?: string | undefined,
-        event?: React.ChangeEvent<HTMLTextAreaElement> | undefined,
-        state?: ContextStore | undefined
-      ) => void)
-    | undefined;
+  onChange?: (
+    value?: string | undefined,
+    event?: React.ChangeEvent<HTMLTextAreaElement> | undefined,
+    state?: ContextStore | undefined
+  ) => void;
   height?: CSSProperties['height'];
   variant?: TypographyVariant;
 }
@@ -103,7 +101,11 @@ const Markdown: FC<MarkdownProps> = ({
       style={{ width: '100%', backgroundColor: 'inherit' }}
       wrapperElement={wrapperElement}
       disableCopy={disableCopy}
-      components={{ div: MarkdownCopyButton, a: TermLink, p: Preview(variant) }}
+      components={{
+        a: TermLink,
+        div: MarkdownCopyButton,
+        p: Preview(variant),
+      }}
     />
   );
 };
