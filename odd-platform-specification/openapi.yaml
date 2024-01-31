@@ -1768,6 +1768,24 @@ paths:
       tags:
         - dataSet
 
+  /api/datasets/{data_entity_id}/relationships:
+    get:
+      summary: Get list of relationships for dataset
+      description: Get information about DataSet's relationships for dataset by DataSet's id
+      operationId: getDataSetRelationships
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/RelationshipTypeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipList'
+      tags:
+        - dataSet
+
   /api/datasets/{data_entity_id}/structure/{version_id}:
     get:
       summary: Get DataSet structure information
@@ -3812,3 +3830,57 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - referenceData
+
+  /api/relationships:
+    get:
+      summary: Get list of relationships
+      description: Get information about DataSet's relationships
+      operationId: getRelationships
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - $ref: './components.yaml/#/components/parameters/RelationshipTypeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipList'
+      tags:
+        - relationship
+
+  /api/relationships/erd/{relationship_id}:
+    get:
+      summary: Get erd relationship by id
+      description: Get information about DataSet's erd relationship for dataset by id
+      operationId: getERDRelationshipById
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/RelationshipIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityERDRelationshipDetails'
+      tags:
+        - relationship
+
+  /api/relationships/graph/{relationship_id}:
+    get:
+      summary: Get graph relationship by id
+      description: Get information about DataSet's graph relationship for dataset by id
+      operationId: getGraphRelationshipById
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/RelationshipIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityGraphRelationshipDetails'
+      tags:
+        - relationship

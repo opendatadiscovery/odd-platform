@@ -2,7 +2,7 @@
 spring-webflux = '6.0.9'
 reactor-extra = '3.5.1'
 micrometer-registry-prometheus = '1.9.0'
-ingestion-contract-server = '0.1.32'
+ingestion-contract-server = '0.1.38'
 oddrn-generator-java = '0.1.21'
 odd-integration-manifests = '0.0.6'
 apache-collections = '4.4'

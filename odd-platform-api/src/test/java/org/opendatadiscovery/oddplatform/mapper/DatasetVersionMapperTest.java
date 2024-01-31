@@ -102,7 +102,8 @@ class DatasetVersionMapperTest {
         final DataEntityIngestionDto dataEntityIngestionDto = new DataEntityIngestionDto();
         dataEntityIngestionDto.setDataSet(
             new DataEntityIngestionDto.DataSetIngestionDto(
-                "parentOddrn", null, "structHash", 1L));
+                "parentOddrn", null, "structHash",
+                1L));
         final long expectedVersion = 1L;
         final EnrichedDataEntityIngestionDto dto =
             new EnrichedDataEntityIngestionDto(expectedVersion, null, dataEntityIngestionDto);

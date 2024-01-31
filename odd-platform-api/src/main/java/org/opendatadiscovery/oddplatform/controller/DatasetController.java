@@ -2,9 +2,12 @@ package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataSetApi;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRelationshipList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersionDiffList;
+import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
 import org.opendatadiscovery.oddplatform.service.DatasetVersionService;
+import org.opendatadiscovery.oddplatform.service.RelationshipsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -14,6 +17,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class DatasetController implements DataSetApi {
     private final DatasetVersionService datasetVersionService;
+    private final RelationshipsService relationshipsService;
 
     @Override
     public Mono<ResponseEntity<DataSetStructure>> getDataSetStructureByVersionId(
@@ -42,6 +46,14 @@ public class DatasetController implements DataSetApi {
                                                                                 final Long secondVersionId,
                                                                                 final ServerWebExchange exchange) {
         return datasetVersionService.getDatasetVersionDiff(dataEntityId, firstVersionId, secondVersionId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityRelationshipList>> getDataSetRelationships(final Long dataEntityId,
+                                                                                 final RelationshipsType type,
+                                                                                 final ServerWebExchange exchange) {
+        return relationshipsService.getRelationsByDatasetId(dataEntityId, type)
             .map(ResponseEntity::ok);
     }
 }

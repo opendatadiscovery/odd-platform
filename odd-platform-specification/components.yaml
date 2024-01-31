@@ -716,6 +716,7 @@ components:
             - DATA_QUALITY_TEST
             - DATA_QUALITY_TEST_RUN
             - DATA_ENTITY_GROUP
+            - DATA_RELATIONSHIP
         types:
           type: array
           items:
@@ -756,6 +757,7 @@ components:
             - DOMAIN
             - VECTOR_STORE
             - LOOKUP_TABLE
+            - RELATIONSHIP
       required:
         - id
         - name
@@ -3934,6 +3936,133 @@ components:
         - field_id
         - value
 
+    DataEntityRelationshipList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityRelationship'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    DataEntityRelationship:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        oddrn:
+          type: string
+        source_data_entity_id:
+          type: integer
+          format: int64
+        target_data_entity_id:
+          type: integer
+          format: int64
+        source_dataset_oddrn:
+          type: string
+        target_dataset_oddrn:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataEntityRelationshipType'
+      required:
+        - name
+        - oddrn
+        - source_dataset_oddrn
+        - target_dataset_oddrn
+        - type
+
+    DataEntityERDRelationshipDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityRelationship'
+        - type: object
+          properties:
+            erd_relationship:
+              $ref: '#/components/schemas/ERDRelationshipDetails'
+          required:
+            - erd_relationship
+
+    DataEntityGraphRelationshipDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityRelationship'
+        - type: object
+          properties:
+            graph_relationship:
+              $ref: '#/components/schemas/GraphRelationshipDetails'
+          required:
+            - graph_relationship
+
+    DataEntityRelationshipType:
+      type: string
+      enum:
+        - ERD
+        - GRAPH
+
+    ERDRelationshipDetails:
+      type: object
+      properties:
+        erd_relationship_id:
+          type: integer
+          format: int64
+        fields_pairs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ERDRelationshipPairs'
+        is_identifying:
+          type: boolean
+        cardinality:
+          type: string
+      required:
+        - fields_pairs
+
+    ERDRelationshipPairs:
+      type: object
+      properties:
+        source_dataset_field_oddrn:
+          type: string
+        target_dataset_field_oddrn:
+          type: string
+      required:
+        - source_dataset_field_oddrn
+        - target_dataset_field_oddrn
+
+    GraphRelationshipDetails:
+      type: object
+      properties:
+        graph_relationship_id:
+          type: integer
+          format: int64
+        is_directed:
+          type: boolean
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/GraphRelationshipAttributes'
+
+    GraphRelationshipAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - field
+        - value
+
+    RelationshipsType:
+      type: string
+      enum:
+        - ERD
+        - GRAPH
+        - ALL
+
   parameters:
     PageParam:
       name: page
@@ -4098,6 +4227,21 @@ components:
       schema:
         type: integer
         format: int64
+
+    RelationshipIdParam:
+      name: relationship_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    RelationshipTypeParam:
+      name: type
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/RelationshipsType'
 
   responses:
     Deleted:

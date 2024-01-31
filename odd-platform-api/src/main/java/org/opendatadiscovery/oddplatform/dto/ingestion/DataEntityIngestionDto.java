@@ -10,8 +10,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
+import org.opendatadiscovery.oddplatform.dto.RelationshipTypeDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldEnumValue;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipDetailsPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.GraphRelationshipPojo;
 
 @Data
 @Builder
@@ -36,6 +39,7 @@ public class DataEntityIngestionDto {
     protected DataQualityTestIngestionDto dataQualityTest;
     protected DataInputIngestionDto dataInput;
     protected DataEntityGroupDto dataEntityGroup;
+    protected DataRelationshipDto dataRelationshipDto;
 
     public record DataSetIngestionDto(String parentDatasetOddrn,
                                       List<DatasetFieldIngestionDto> fieldList,
@@ -62,5 +66,15 @@ public class DataEntityIngestionDto {
                                            List<String> tags,
                                            List<DataSetFieldEnumValue> enumValues,
                                            Map<String, Object> metadata) {
+    }
+
+    public record DataRelationshipDto(String sourceOddrn,
+                                      String targetOddrn,
+                                      RelationshipTypeDto relationshipType,
+                                      DataRelationshipDetailsDto details) {
+    }
+
+    public record DataRelationshipDetailsDto(ErdRelationshipDetailsPojo erdRelationshipDetailsPojo,
+                                             GraphRelationshipPojo graphRelationshipPojo) {
     }
 }

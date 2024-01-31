@@ -109,6 +109,7 @@ export const palette = createPalette({
     DATA_TRANSFORMER_RUN: colors.purple5,
     DATA_QUALITY_TEST_RUN: colors.orange5,
     DATA_ENTITY_GROUP: colors.lightGreen5,
+    DATA_RELATIONSHIP: colors.lightGreen5,
   },
   dataQualityDashboard: {
     monitored: colors.green60,
