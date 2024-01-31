@@ -5,6 +5,7 @@ import io.r2dbc.pool.ConnectionPoolConfiguration;
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -19,6 +20,7 @@ import org.springframework.transaction.ReactiveTransactionManager;
 
 @Configuration
 public class R2DBCConfiguration {
+    public static final String SCHEMA_PART_FOR_DB_URL = "?schema=lookup_tables_schema";
 
     @Bean(destroyMethod = "dispose")
     @Primary
@@ -49,15 +51,21 @@ public class R2DBCConfiguration {
 
     @Bean(name = "customConnectionPool", destroyMethod = "dispose")
     public ConnectionPool databaseClientForCustomSchema(
-        @Value("${spring.custom-datasource.url}") final String url,
-        @Value("${spring.custom-datasource.username}") final String username,
-        @Value("${spring.custom-datasource.password}") final String password,
+        @Value("${spring.custom-datasource.url:}") final String url,
+        @Value("${spring.custom-datasource.username:}") final String username,
+        @Value("${spring.custom-datasource.password:}") final String password,
+        final DataSourceProperties dataSourceProperties,
         final R2dbcProperties properties) {
-        final String r2dbcUrl = url.replace("jdbc", "r2dbc");
+        final String finalDBUrl =
+            (StringUtils.isBlank(url) ? dataSourceProperties.getUrl() : url) + SCHEMA_PART_FOR_DB_URL;
+        final String finalDBUsername = StringUtils.isBlank(username) ? dataSourceProperties.getUsername() : username;
+        final String finalDBPassword = StringUtils.isBlank(password) ? dataSourceProperties.getPassword() : password;
+
+        final String r2dbcUrl = finalDBUrl.replace("jdbc", "r2dbc");
         final ConnectionFactory factory = ConnectionFactories.get(ConnectionFactoryOptions.parse(r2dbcUrl).mutate()
             .option(ConnectionFactoryOptions.PROTOCOL, "postgresql")
-            .option(ConnectionFactoryOptions.USER, username)
-            .option(ConnectionFactoryOptions.PASSWORD, password)
+            .option(ConnectionFactoryOptions.USER, finalDBUsername)
+            .option(ConnectionFactoryOptions.PASSWORD, finalDBPassword)
             .build());
 
         final R2dbcProperties.Pool pool = properties.getPool();
