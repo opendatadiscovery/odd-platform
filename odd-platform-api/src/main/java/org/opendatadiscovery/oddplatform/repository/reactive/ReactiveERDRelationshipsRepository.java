@@ -5,5 +5,5 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipDetai
 import reactor.core.publisher.Mono;
 
 public interface ReactiveERDRelationshipsRepository extends ReactiveCRUDRepository<ErdRelationshipDetailsPojo> {
-    Mono<List<ErdRelationshipDetailsPojo>> findERDSByRelationIds(final List<Long> relationshipId);
+    Mono<List<ErdRelationshipDetailsPojo>> findERDSByRelationIds(final List<Long> relationshipIds);
 }

@@ -31,8 +31,8 @@ public class ReactiveERDRelationshipsRepositoryImpl
     }
 
     @Override
-    public Mono<List<ErdRelationshipDetailsPojo>> findERDSByRelationIds(final List<Long> relationshipId) {
-        return jooqReactiveOperations.executeInPartitionReturning(relationshipId, partitionedOddrns -> {
+    public Mono<List<ErdRelationshipDetailsPojo>> findERDSByRelationIds(final List<Long> relationshipIds) {
+        return jooqReactiveOperations.executeInPartitionReturning(relationshipIds, partitionedOddrns -> {
             final SelectConditionStep<Record> query = DSL.select().from(ERD_RELATIONSHIP_DETAILS)
                 .where(ERD_RELATIONSHIP_DETAILS.RELATIONSHIP_ID.in(partitionedOddrns));
 
