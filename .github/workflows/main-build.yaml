@@ -51,24 +51,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          repository: provectus/environment-state
+          repository: opendatadiscovery/saas-iac
+          ref: development
           token: ${{ secrets.ODD_GIT_TOKEN }}
       - run: |
-          sed -i "s/tag:.*/tag: ci-${GITHUB_SHA::6}/" main/odd-platform.yaml
+          sed -i "s/tag:.*/tag: ci-${GITHUB_SHA::6}/" states/main/eu-central-1/development/argocd/odd-platform/demo.yaml
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
           git commit --allow-empty -m "update tag"
           git push
-  argocd_sync:
-    needs: ['update_tag']
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install ArgoCD CLI
-        run: |
-          curl -sSL -o ./argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          chmod +x ./argocd
-      - name: Login into ArgoCD
-        run: ./argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_LOGIN }} --password '${{ secrets.ARGOCD_PASSWORD }}' --grpc-web
-      - name: Sync ODD Platform application
-        run: ./argocd app sync environments --force --resource argoproj.io:Application:odd-platform
