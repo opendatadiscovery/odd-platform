@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityRunsApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityResults;
@@ -15,9 +16,19 @@ public class DataQualityRunsController implements DataQualityRunsApi {
     private final DataQualityRunsService service;
 
     @Override
-    public Mono<ResponseEntity<DataQualityResults>> getDataQualityTestsRuns(
-            final ServerWebExchange exchange) {
-        return service.getDataQualityTestsRuns()
-                .map(ResponseEntity::ok);
+    public Mono<ResponseEntity<DataQualityResults>> getDataQualityTestsRuns(final List<Long> namespaceId,
+                                                                            final List<Long> datasourceId,
+                                                                            final List<Long> ownerId,
+                                                                            final List<Long> titleId,
+                                                                            final List<Long> tagId,
+                                                                            final List<Long> deNamespaceId,
+                                                                            final List<Long> deDatasourceId,
+                                                                            final List<Long> deOwnerId,
+                                                                            final List<Long> deTitleId,
+                                                                            final List<Long> deTagId,
+                                                                            final ServerWebExchange exchange) {
+        return service.getDataQualityTestsRuns(namespaceId, datasourceId, ownerId, titleId, tagId,
+                deNamespaceId, deDatasourceId, deOwnerId, deTitleId, deTagId)
+            .map(ResponseEntity::ok);
     }
 }
