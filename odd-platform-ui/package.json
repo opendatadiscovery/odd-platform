@@ -9,12 +9,12 @@
     "build": "pnpm generate && tsc --noEmit && vite build",
     "test": "vitest",
     "tsc": "tsc",
-    "generate": "docker run -v `pwd`/..:/mnt -w /mnt --rm openapitools/openapi-generator-cli:v5.1.1 generate -c odd-platform-ui/openapi-config.yaml",
+    "generate": "chmod u+x ./generate.sh && ./generate.sh",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "prepare": "chmod u+x .husky/prepare.sh && .husky/prepare.sh",
     "pre-commit": "pnpm tsc --noEmit && lint-staged",
-    "preinstall": "pnpm install husky && npx only-allow pnpm",
+    "preinstall": "pnpm install husky",
     "i18n:scan": "mkdir -p ./tmp && rm -rf ./tmp && npx tsc --jsx preserve --target esnext --module esnext --noEmit false --outDir ./tmp && npx i18next-scanner"
   },
   "lint-staged": {
