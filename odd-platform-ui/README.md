@@ -4,6 +4,8 @@
 - [pnpm](https://pnpm.io/installation) - package manager
 - [Docker](https://www.docker.com/) - to run openapi generator.
 
+**Note for Windows users:** You need to set a bash compatible shell, for example: `npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"`
+
 ## Initialize application
 
 In the project directory, you can run:
@@ -13,8 +15,6 @@ Installs project dependencies
 
 ### `pnpm run generate`
 Generates an openApi client in `src/generated-sources` from API specification `prospectlog-specification//openapi.yml`
-
-**Note for Windows users:** You need to set a bash compatible shell, for example: `npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"`
 
 ## Run application in dev mode
 
