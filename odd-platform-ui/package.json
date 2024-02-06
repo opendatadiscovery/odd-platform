@@ -9,7 +9,7 @@
     "build": "pnpm generate && tsc --noEmit && vite build",
     "test": "vitest",
     "tsc": "tsc",
-    "generate": "./generate.sh",
+    "generate": "chmod u+x ./generate.sh && ./generate.sh",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "prepare": "chmod u+x .husky/prepare.sh && .husky/prepare.sh",
