@@ -113,7 +113,7 @@ auth:
 #        user-name-attribute:
 #        admin-attribute:
 #        admin-principals:
-#        pkce :
+#        pkce:
 #      azure:
 #        provider: 'azure'
 #        client-id:
