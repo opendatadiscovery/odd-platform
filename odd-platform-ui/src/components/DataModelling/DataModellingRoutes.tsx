@@ -36,6 +36,7 @@ const DataModellingRoutes: React.FC = () => (
           />
         }
       />
+      <Route path='relationships' element={<div>Relationships</div>} />
     </Routes>
   </AppSuspenseWrapper>
 );

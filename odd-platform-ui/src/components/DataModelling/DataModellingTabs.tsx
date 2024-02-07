@@ -2,7 +2,7 @@ import type { AppTabItem } from 'components/shared/elements';
 import { AppTabs } from 'components/shared/elements';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { queryExamplesPath } from 'routes';
+import { queryExamplesPath, relationshipsPath } from 'routes';
 
 const DataModellingTabs = () => {
   const { t } = useTranslation();
@@ -13,6 +13,10 @@ const DataModellingTabs = () => {
       {
         name: t('Query Examples'),
         link: queryExamplesPath(),
+      },
+      {
+        name: t('Relationships'),
+        link: relationshipsPath(),
       },
     ],
     [t]
