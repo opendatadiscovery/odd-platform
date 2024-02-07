@@ -9,9 +9,9 @@ public record DataQualityTestFiltersDto(List<Long> namespaceIds,
                                         List<Long> ownerIds,
                                         List<Long> titleIds,
                                         List<Long> tagIds,
-                                        List<Long> deNamespaceId,
-                                        List<Long> deDatasourceId,
-                                        List<Long> deOwnerId,
-                                        List<Long> deTitleId,
-                                        List<Long> deTagId) {
+                                        List<Long> deNamespaceIds,
+                                        List<Long> deDatasourceIds,
+                                        List<Long> deOwnerIds,
+                                        List<Long> deTitleIds,
+                                        List<Long> deTagIds) {
 }

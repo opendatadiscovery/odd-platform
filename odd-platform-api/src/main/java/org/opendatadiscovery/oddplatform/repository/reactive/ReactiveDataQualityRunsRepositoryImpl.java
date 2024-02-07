@@ -260,8 +260,8 @@ public class ReactiveDataQualityRunsRepositoryImpl implements ReactiveDataQualit
         SelectJoinStep<Record2<Long, String>> table = DSL.select(DATA_ENTITY.ID, DATA_ENTITY.ODDRN)
                 .from(DATA_ENTITY);
 
-        table = getConditionsForFilters(table, filtersDto.deDatasourceId(), filtersDto.deNamespaceId(),
-                filtersDto.deOwnerId(), filtersDto.deTitleId(), filtersDto.deTagId());
+        table = getConditionsForFilters(table, filtersDto.deDatasourceIds(), filtersDto.deNamespaceIds(),
+                filtersDto.deOwnerIds(), filtersDto.deTitleIds(), filtersDto.deTagIds());
 
         table.where(DATA_ENTITY.TYPE_ID.notIn(DataEntityTypeDto.JOB.getId(), DataEntityTypeDto.JOB_RUN.getId()));
 
@@ -329,10 +329,10 @@ public class ReactiveDataQualityRunsRepositoryImpl implements ReactiveDataQualit
     }
 
     private boolean shouldAddFiltersForDataEntity(final DataQualityTestFiltersDto filtersDto) {
-        return CollectionUtils.isNotEmpty(filtersDto.deDatasourceId())
-                || CollectionUtils.isNotEmpty(filtersDto.deNamespaceId())
-                || CollectionUtils.isNotEmpty(filtersDto.deOwnerId())
-                || CollectionUtils.isNotEmpty(filtersDto.deTitleId())
-                || CollectionUtils.isNotEmpty(filtersDto.deTagId());
+        return CollectionUtils.isNotEmpty(filtersDto.deDatasourceIds())
+                || CollectionUtils.isNotEmpty(filtersDto.deNamespaceIds())
+                || CollectionUtils.isNotEmpty(filtersDto.deOwnerIds())
+                || CollectionUtils.isNotEmpty(filtersDto.deTitleIds())
+                || CollectionUtils.isNotEmpty(filtersDto.deTagIds());
     }
 }

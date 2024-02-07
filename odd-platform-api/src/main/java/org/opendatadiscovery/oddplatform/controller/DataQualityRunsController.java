@@ -16,19 +16,19 @@ public class DataQualityRunsController implements DataQualityRunsApi {
     private final DataQualityRunsService service;
 
     @Override
-    public Mono<ResponseEntity<DataQualityResults>> getDataQualityTestsRuns(final List<Long> namespaceId,
-                                                                            final List<Long> datasourceId,
-                                                                            final List<Long> ownerId,
-                                                                            final List<Long> titleId,
-                                                                            final List<Long> tagId,
-                                                                            final List<Long> deNamespaceId,
-                                                                            final List<Long> deDatasourceId,
-                                                                            final List<Long> deOwnerId,
-                                                                            final List<Long> deTitleId,
-                                                                            final List<Long> deTagId,
+    public Mono<ResponseEntity<DataQualityResults>> getDataQualityTestsRuns(final List<Long> namespaceIds,
+                                                                            final List<Long> datasourceIds,
+                                                                            final List<Long> ownerIds,
+                                                                            final List<Long> titleIds,
+                                                                            final List<Long> tagIds,
+                                                                            final List<Long> deNamespaceIds,
+                                                                            final List<Long> deDatasourceIds,
+                                                                            final List<Long> deOwnerIds,
+                                                                            final List<Long> deTitleIds,
+                                                                            final List<Long> deTagIds,
                                                                             final ServerWebExchange exchange) {
-        return service.getDataQualityTestsRuns(namespaceId, datasourceId, ownerId, titleId, tagId,
-                deNamespaceId, deDatasourceId, deOwnerId, deTitleId, deTagId)
+        return service.getDataQualityTestsRuns(namespaceIds, datasourceIds, ownerIds, titleIds, tagIds,
+                deNamespaceIds, deDatasourceIds, deOwnerIds, deTitleIds, deTagIds)
             .map(ResponseEntity::ok);
     }
 }

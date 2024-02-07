@@ -25,14 +25,14 @@ public class DataQualityRunsServiceImpl implements DataQualityRunsService {
                                                             final List<Long> ownerIds,
                                                             final List<Long> titleIds,
                                                             final List<Long> tagIds,
-                                                            final List<Long> deNamespaceId,
-                                                            final List<Long> deDatasourceId,
-                                                            final List<Long> deOwnerId,
-                                                            final List<Long> deTitleId,
-                                                            final List<Long> deTagId) {
+                                                            final List<Long> deNamespaceIds,
+                                                            final List<Long> deDatasourceIds,
+                                                            final List<Long> deOwnerIds,
+                                                            final List<Long> deTitleIds,
+                                                            final List<Long> deTagIds) {
         final DataQualityTestFiltersDto filtersDto
                 = dataQualityTestFiltersMapper.mapToDto(namespaceIds, datasourceIds, ownerIds, titleIds, tagIds,
-                                                        deNamespaceId, deDatasourceId, deOwnerId, deTitleId, deTagId);
+                deNamespaceIds, deDatasourceIds, deOwnerIds, deTitleIds, deTagIds);
         return dataQualityRunsRepository.getLatestDataQualityRunsResults(filtersDto)
                 .collectList()
                 .zipWith(dataQualityRunsRepository.getLatestTablesHealth(filtersDto).collectList()

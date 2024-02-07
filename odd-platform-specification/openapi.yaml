@@ -1937,7 +1937,7 @@ paths:
       description: Get Data Quality tests runs
       operationId: getDataQualityTestsRuns
       parameters:
-        - name: namespaceId
+        - name: namespaceIds
           in: query
           required: false
           schema:
@@ -1947,7 +1947,7 @@ paths:
               format: int64
           style: form
           explode: true
-        - name: datasourceId
+        - name: datasourceIds
           in: query
           required: false
           schema:
@@ -1957,7 +1957,7 @@ paths:
               format: int64
           style: form
           explode: true
-        - name: ownerId
+        - name: ownerIds
           in: query
           required: false
           schema:
@@ -1967,7 +1967,7 @@ paths:
               format: int64
           style: form
           explode: true
-        - name: titleId
+        - name: titleIds
           in: query
           required: false
           schema:
@@ -1977,7 +1977,7 @@ paths:
               format: int64
           style: form
           explode: true
-        - name: tagId
+        - name: tagIds
           in: query
           required: false
           schema:
@@ -1987,7 +1987,7 @@ paths:
               format: int64
           style: form
           explode: true
-        - name: deNamespaceId
+        - name: deNamespaceIds
           in: query
           required: false
           schema:
@@ -1997,7 +1997,7 @@ paths:
               format: int64
           style: form
           explode: true
-        - name: deDatasourceId
+        - name: deDatasourceIds
           in: query
           required: false
           schema:
@@ -2007,7 +2007,7 @@ paths:
               format: int64
           style: form
           explode: true
-        - name: deOwnerId
+        - name: deOwnerIds
           in: query
           required: false
           schema:
@@ -2017,7 +2017,7 @@ paths:
               format: int64
           style: form
           explode: true
-        - name: deTitleId
+        - name: deTitleIds
           in: query
           required: false
           schema:
@@ -2027,7 +2027,7 @@ paths:
               format: int64
           style: form
           explode: true
-        - name: deTagId
+        - name: deTagIds
           in: query
           required: false
           schema:
