@@ -9,7 +9,7 @@
 
 <div align="center">
     <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/license-Apache2-green.svg?style=for-the-badge" alt="Apache2"></a>
-    <img src="https://img.shields.io/maintenance/yes/2023?style=for-the-badge" alt="Maintenance">
+    <img src="https://img.shields.io/maintenance/yes/2024?style=for-the-badge" alt="Maintenance">
     <a href="https://github.com/opendatadiscovery/odd-platform/graphs/contributors"><img src="https://img.shields.io/github/contributors/opendatadiscovery/odd-platform?style=for-the-badge" alt="GitHub contributors"></a>
     <a href="https://github.com/opendatadiscovery/odd-platform/contribute"><img src="https://img.shields.io/github/issues/opendatadiscovery/odd-platform/good%20first%20issue?style=for-the-badge" alt="GitHub issues by-label"></a>        
 </div>
@@ -71,8 +71,15 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 ### Data Quality 
 
-* Simplify DQ processes by using ODD and Great Expectations compatibility 
+* Utilize advanced Data Quality Dashboard to gain insights into data quality metrics, trends, and issues across your datasets, enabling proactive data quality management
+* Simplify DQ processes by using ODD with Great Expectations and DBT tests compatibility 
 * Integrate ODD with any custom DQ framework
+
+### Reference Data Management (Lookup Tables) - a part of Master Data Management (MDM)
+
+* Manage and store reference data centrally, ensuring a single source of truth for key data elements like currency codes, country names, and product categories, etc.
+* Easily integrate Lookup Tables with data pipelines and transformations, enhancing data enrichment and validation processes
+* Support data governance and compliance efforts by maintaining accurate and consistent reference data across all data assets
 
 
 ## Getting Started 
