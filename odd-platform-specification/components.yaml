@@ -4063,6 +4063,18 @@ components:
         - GRAPH
         - ALL
 
+    GenAIRequest:
+      type: object
+      properties:
+        question:
+          type: string
+
+    GenAIQuestionResult:
+      type: object
+      properties:
+        question_response:
+          type: string
+
   parameters:
     PageParam:
       name: page
