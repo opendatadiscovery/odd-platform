@@ -1,4 +1,3 @@
-import type { ConfigurationParameters } from 'generated-sources';
 import {
   ActivityApi,
   AlertApi,
@@ -32,6 +31,8 @@ import {
   DataQualityRunsApi,
   QueryExampleApi,
   ReferenceDataApi,
+  RelationshipApi,
+  ConfigurationParameters,
 } from 'generated-sources';
 
 const HEADERS: ConfigurationParameters = {
@@ -78,3 +79,4 @@ export const directoryApi = new DirectoryApi(apiConf);
 export const dataQualityRunsApi = new DataQualityRunsApi(apiConf);
 export const queryExampleApi = new QueryExampleApi(apiConf);
 export const referenceDataApi = new ReferenceDataApi(apiConf);
+export const relationshipApi = new RelationshipApi(apiConf);

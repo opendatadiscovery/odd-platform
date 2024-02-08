@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Container, Section } from 'components/shared/styled-components';
 import { Box, Typography } from '@mui/material';
 import { NumberFormatted, SearchInput } from 'components/shared/elements';
+import { useSearchParams } from 'react-router-dom';
+import { useSearchRelationships } from '../../lib/hooks/api/dataModelling/relatioships';
 
 const Relationships = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const q = searchParams.get('q') ?? '';
+  const { data, isLoading } = useSearchRelationships({
+    query: q,
+    size: 30,
+    type: 'ALL',
+  });
+
+  const handleSearch = useCallback(
+    (v?: string) => setSearchParams({ ...searchParams, q: v }),
+    [searchParams, setSearchParams]
+  );
+
   return (
     <Container $flexDirection='column'>
       <Section $flexDirection='column'>
@@ -17,7 +32,9 @@ const Relationships = () => {
           <SearchInput
             id='relationships-search'
             placeholder='Search relationships'
-            onSearch={v => console.log('Relationships onSearch', v)}
+            onSearch={handleSearch}
+            isLoading={isLoading}
+            value={q}
           />
         </Box>
       </Section>
