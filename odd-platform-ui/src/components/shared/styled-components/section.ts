@@ -5,7 +5,6 @@ const Section = styled('section')<{
 }>(
   ({ theme, $flexDirection = 'row' }) => css`
     display: flex;
-    width: 100%;
     flex-direction: ${$flexDirection};
     gap: ${theme.spacing(1)};
   `
