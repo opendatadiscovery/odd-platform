@@ -5,8 +5,9 @@ import { dataQualityRunsApi } from 'lib/api';
 export function useGetDataQualityDashboard(
   params: DataQualityRunsApiGetDataQualityTestsRunsRequest
 ) {
+  console.log('useGetDataQualityDashboard');
   return useQuery({
-    queryKey: ['dataQualityDashboard'],
+    queryKey: ['dataQualityDashboard', params],
     queryFn: async () => dataQualityRunsApi.getDataQualityTestsRuns(params),
   });
 }
