@@ -50,9 +50,7 @@ const TestReportDetails: React.FC = () => {
     [dataEntityId, dataQATestId, t]
   );
 
-  const [selectedTab, setSelectedTab] = React.useState(-1);
-
-  useSetSelectedTab(tabs, setSelectedTab);
+  const selectedTab = useSetSelectedTab(tabs);
 
   return (
     <Grid container sx={{ p: 2 }}>
@@ -83,7 +81,6 @@ const TestReportDetails: React.FC = () => {
             type='secondary'
             items={tabs}
             selectedTab={selectedTab}
-            handleTabChange={() => {}}
             sx={{ width: '100%' }}
             tabSx={{ flexGrow: 1 }}
           />

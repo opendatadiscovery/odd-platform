@@ -121,18 +121,12 @@ const DataEntityDetailsTabs: React.FC = () => {
     ]
   );
 
-  const [selectedTab, setSelectedTab] = React.useState(-1);
-  useSetSelectedTab(tabs, setSelectedTab);
+  const selectedTab = useSetSelectedTab(tabs);
 
   return (
     <>
       {tabs.length && selectedTab >= 0 ? (
-        <AppTabs
-          type='primary'
-          items={tabs}
-          selectedTab={selectedTab}
-          handleTabChange={() => {}}
-        />
+        <AppTabs type='primary' items={tabs} selectedTab={selectedTab} />
       ) : null}
     </>
   );

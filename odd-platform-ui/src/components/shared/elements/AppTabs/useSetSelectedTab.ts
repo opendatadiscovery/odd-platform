@@ -1,13 +1,10 @@
-import type React from 'react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useResolvedPath } from 'react-router-dom';
 import type { AppTabItem } from './AppTabs';
 
-const useSetSelectedTab = (
-  tabs: AppTabItem[],
-  setSelectedTab: React.Dispatch<React.SetStateAction<number>>
-) => {
+const useSetSelectedTab = (tabs: AppTabItem[]) => {
   const { pathname } = useResolvedPath(useLocation());
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const findTabIndex = useCallback(
     () =>
@@ -19,6 +16,8 @@ const useSetSelectedTab = (
   );
 
   useEffect(() => setSelectedTab(findTabIndex()), [tabs, pathname]);
+
+  return selectedTab;
 };
 
 export default useSetSelectedTab;

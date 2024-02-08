@@ -1,12 +1,12 @@
 import type { AppTabItem } from 'components/shared/elements';
 import { AppTabs } from 'components/shared/elements';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { queryExamplesPath, relationshipsPath } from 'routes';
+import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 
 const DataModellingTabs = () => {
   const { t } = useTranslation();
-  const [selectedTab, setSelectedTab] = useState(0);
 
   const tabs = useMemo<AppTabItem[]>(
     () => [
@@ -21,18 +21,11 @@ const DataModellingTabs = () => {
     ],
     [t]
   );
-  const handleTabChange = useCallback(() => {
-    setSelectedTab(prev => (prev === 0 ? 1 : 0));
-  }, []);
+
+  const selectedTab = useSetSelectedTab(tabs);
 
   return (
-    <AppTabs
-      type='menu'
-      orientation='vertical'
-      items={tabs}
-      selectedTab={selectedTab}
-      handleTabChange={handleTabChange}
-    />
+    <AppTabs type='menu' orientation='vertical' items={tabs} selectedTab={selectedTab} />
   );
 };
 

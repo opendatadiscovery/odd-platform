@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
@@ -15,7 +15,6 @@ interface AlertsTabsProps {
 const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [selectedTab, setSelectedTab] = useState(-1);
 
   const tabs = useMemo<AppTabItem[]>(
     () => [
@@ -40,7 +39,7 @@ const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => 
     [totals, showMyAndDepends, t]
   );
 
-  useSetSelectedTab(tabs, setSelectedTab);
+  const selectedTab = useSetSelectedTab(tabs);
 
   const alertsFilterUpdateAction = useCallback(() => {
     dispatch(changeAlertsFilterAction());
