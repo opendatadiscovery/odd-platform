@@ -4066,13 +4066,13 @@ components:
     GenAIRequest:
       type: object
       properties:
-        question:
+        body:
           type: string
 
-    GenAIQuestionResult:
+    GenAIResponse:
       type: object
       properties:
-        question_response:
+        body:
           type: string
 
   parameters:

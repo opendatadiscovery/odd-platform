@@ -16,6 +16,7 @@ spring:
 
 genai:
   url: http://localhost:5000
+  request_timeout: 2
 
 springdoc:
   api-docs:

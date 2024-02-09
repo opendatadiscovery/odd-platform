@@ -3886,7 +3886,7 @@ paths:
       tags:
         - relationship
 
-  /api/genai/question:
+  /api/genai/ask:
     post:
       summary: Request to genai service
       description: create request to genai service with specific question
@@ -3903,6 +3903,6 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/GenAIQuestionResult'
+                $ref: './components.yaml/#/components/schemas/GenAIResponse'
       tags:
         - genai
