@@ -8,6 +8,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.RelationshipDetailsMapper;
 import org.opendatadiscovery.oddplatform.mapper.RelationshipMapper;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRelationshipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveRelationshipsDetailsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveRelationshipsRepository;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class RelationshipsServiceImpl implements RelationshipsService {
     private final ReactiveRelationshipsRepository relationshipsRepository;
+    private final ReactiveDataEntityRelationshipRepository dataEntityRelationshipRepository;
     private final ReactiveRelationshipsDetailsRepository relationshipsDetailsRepository;
     private final RelationshipMapper relationshipMapper;
     private final RelationshipDetailsMapper relationshipDetailsMapper;
@@ -32,7 +34,7 @@ public class RelationshipsServiceImpl implements RelationshipsService {
     @Override
     public Mono<DataEntityRelationshipList> getRelationships(final Integer page, final Integer size,
                                                              final RelationshipsType type, final String query) {
-        return relationshipsRepository.getRelationships(page, size, query, type)
+        return dataEntityRelationshipRepository.getRelationships(page, size, query, type)
             .map(relationshipMapper::mapListToRelationshipPage);
     }
 
