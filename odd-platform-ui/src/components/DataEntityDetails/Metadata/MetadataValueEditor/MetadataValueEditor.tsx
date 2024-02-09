@@ -34,6 +34,11 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   const defaultText =
     metadataType === MetadataFieldType.ARRAY ? 'item1,item2,...' : 'Value';
 
+  const inputTypes: MetadataFieldType[] = [
+    MetadataFieldType.INTEGER,
+    MetadataFieldType.FLOAT,
+  ];
+
   if (metadataType === MetadataFieldType.DATETIME) {
     return (
       <Controller
@@ -112,12 +117,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
           variant='main-m'
           label={labeled ? t('Value') : undefined}
           placeholder={labeled ? '' : defaultText}
-          type={
-            metadataType &&
-            [MetadataFieldType.INTEGER, MetadataFieldType.FLOAT].includes(metadataType)
-              ? 'number'
-              : 'text'
-          }
+          type={metadataType && inputTypes.includes(metadataType) ? 'number' : 'text'}
           step={metadataType === MetadataFieldType.FLOAT ? 'any' : '1'}
         />
       )}

@@ -1,8 +1,10 @@
 package org.opendatadiscovery.oddplatform.auth;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 
 public final class ODDOAuth2PropertiesConverter {
 
@@ -14,11 +16,19 @@ public final class ODDOAuth2PropertiesConverter {
         properties.getClient().forEach((key, provider) -> {
             final OAuth2ClientProperties.Registration registration = new OAuth2ClientProperties.Registration();
             registration.setClientId(provider.getClientId());
-            registration.setClientSecret(provider.getClientSecret());
+
+            if (BooleanUtils.isTrue(provider.getPkce()) && StringUtils.isBlank(provider.getClientSecret())) {
+                registration.setClientAuthenticationMethod(ClientAuthenticationMethod.NONE.getValue());
+            } else {
+                registration.setClientSecret(provider.getClientSecret());
+            }
+
             if (StringUtils.isNotEmpty(provider.getClientName())) {
                 registration.setClientName(provider.getClientName());
             }
+
             registration.setScope(provider.getScope());
+
             if (StringUtils.isNotEmpty(provider.getRedirectUri())) {
                 registration.setRedirectUri(provider.getRedirectUri());
             }

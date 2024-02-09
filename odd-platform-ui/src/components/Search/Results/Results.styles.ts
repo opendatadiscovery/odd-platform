@@ -30,12 +30,12 @@ type MainColNames = 'nm' | 'nd' | 'ow' | 'gr' | 'cr' | 'up' | 'st';
 type AddColNames = 'us' | 'rc' | 'sr' | 'tr' | 'en' | 'su' | 'ne';
 
 export type SearchTabsNames =
-  | DataEntityClassNameEnum.SET
-  | DataEntityClassNameEnum.CONSUMER
-  | DataEntityClassNameEnum.TRANSFORMER
-  | DataEntityClassNameEnum.INPUT
-  | DataEntityClassNameEnum.ENTITY_GROUP
-  | DataEntityClassNameEnum.QUALITY_TEST
+  | typeof DataEntityClassNameEnum.SET
+  | typeof DataEntityClassNameEnum.CONSUMER
+  | typeof DataEntityClassNameEnum.TRANSFORMER
+  | typeof DataEntityClassNameEnum.INPUT
+  | typeof DataEntityClassNameEnum.ENTITY_GROUP
+  | typeof DataEntityClassNameEnum.QUALITY_TEST
   | 'all'
   | 'my';
 export type ColGridSizes = Record<MainColNames, GridSize> &
