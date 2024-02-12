@@ -115,6 +115,7 @@ public class LDAPSecurityConfiguration {
         ctx.setUrl(properties.getUrl());
         ctx.setUserDn(properties.getUsername());
         ctx.setPassword(properties.getPassword());
+        ctx.setBase(properties.getBase());
         return ctx;
     }
 

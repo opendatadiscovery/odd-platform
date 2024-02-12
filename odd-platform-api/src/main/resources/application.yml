@@ -46,6 +46,7 @@ auth:
 #    username:
 #    password:
 #    dn-pattern:
+#    base:
 #    user-filter:
 #      search-base:
 #      filter:
