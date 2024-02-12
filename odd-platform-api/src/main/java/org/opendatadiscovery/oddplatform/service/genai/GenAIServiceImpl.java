@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.genai;
 
+import com.google.common.base.CharMatcher;
 import io.netty.handler.timeout.ReadTimeoutException;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -22,15 +23,18 @@ public class GenAIServiceImpl implements GenAIService {
     public static final String QUERY_DATA = "/query_data";
     public static final String QUESTION_FIELD = "question";
 
-    @Value("${genai.url:}")
-    private String genAIUrl;
-
-    @Value("${genai.request_timeout:2}")
-    private Integer getAiRequestTimeout;
+    private final String genAIUrl;
+    private final Integer getAiRequestTimeout;
+    private final WebClient webClient;
 
     @Autowired
-    @Qualifier("genAiWebClient")
-    private WebClient webClient;
+    public GenAIServiceImpl(@Value("${genai.url:}") final String genAIUrl,
+                            @Value("${genai.request_timeout:2}") final Integer getAiRequestTimeout,
+                            @Qualifier("genAiWebClient") final WebClient webClient) {
+        this.genAIUrl = genAIUrl;
+        this.getAiRequestTimeout = getAiRequestTimeout;
+        this.webClient = webClient;
+    }
 
     @Override
     public Mono<GenAIResponse> getResponseFromGenAI(final GenAIRequest request) {
@@ -44,7 +48,7 @@ public class GenAIServiceImpl implements GenAIService {
             .retrieve()
             .bodyToMono(String.class)
             .map(item -> new GenAIResponse()
-                .body(StringEscapeUtils.unescapeJava(item.replaceAll("^\"|\"$", ""))))
+                .body(StringEscapeUtils.unescapeJava(CharMatcher.is('\"').trimFrom(item))))
             .onErrorResume(e -> e.getCause() instanceof ReadTimeoutException
                 ? Mono.error(new GenAIException(
                     "Gen AI request take longer that %s min".formatted(getAiRequestTimeout)))

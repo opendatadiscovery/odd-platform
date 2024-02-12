@@ -14,9 +14,9 @@ spring:
   codec:
     max-in-memory-size: 20MB
 
-genai:
-  url: http://localhost:5000
-  request_timeout: 2
+#genai:
+#  url: http://localhost:5000
+#  request_timeout: 2
 
 springdoc:
   api-docs:
