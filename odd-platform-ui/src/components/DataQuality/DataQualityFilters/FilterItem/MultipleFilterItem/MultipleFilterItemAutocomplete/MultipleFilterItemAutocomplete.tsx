@@ -94,7 +94,12 @@ const MultipleFilterItemAutocomplete: FC<Props> = ({
     setOptionsLoading(true);
 
     if (hookResult.isSuccess) {
-      setOptions(hookResult.data.items);
+      setOptions(
+        hookResult.data.items.map(item => ({
+          name: item.name,
+          id: item.id,
+        }))
+      );
       setOptionsLoading(false);
     }
   }, [searchText, autocompleteOpen]);
