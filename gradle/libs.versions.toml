@@ -7,6 +7,7 @@ oddrn-generator-java = '0.1.21'
 odd-integration-manifests = '0.0.6'
 apache-collections = '4.4'
 apache-lang = '3.12.0'
+apache-text = '1.9'
 r2dbc-spi = '1.0.0.RELEASE'
 r2dbc-postgresql = '1.0.1.RELEASE'
 r2dbc-pool = '1.0.0.RELEASE'
@@ -67,6 +68,7 @@ oddrn-generator-java = { module = 'org.opendatadiscovery:oddrn-generator-java', 
 odd-integration-manifests = { module = 'org.opendatadiscovery:integration-manifests', version.ref = 'odd-integration-manifests' }
 apache-collections = { module = 'org.apache.commons:commons-collections4', version.ref = 'apache-collections' }
 apache-lang = { module = 'org.apache.commons:commons-lang3', version.ref = 'apache-lang' }
+apache-text = { module = 'org.apache.commons:commons-text', version.ref = 'apache-text' }
 r2dbc-spi = { module = 'io.r2dbc:r2dbc-spi', version.ref = 'r2dbc-spi' }
 r2dbc-postgresql = { module = 'org.postgresql:r2dbc-postgresql', version.ref = 'r2dbc-postgresql' }
 r2dbc-pool = { module = 'io.r2dbc:r2dbc-pool', version.ref = 'r2dbc-pool' }
@@ -142,7 +144,8 @@ internal = [
 ]
 apache-commons = [
     'apache-collections',
-    'apache-lang'
+    'apache-lang',
+    'apache-text'
 ]
 r2dbc = [
     'r2dbc-spi',
