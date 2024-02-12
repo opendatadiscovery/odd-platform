@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import { useAtom } from 'jotai';
 import { DataEntityRunStatus } from 'generated-sources';
 import { Typography } from '@mui/material';
 import { useGetDataQualityDashboard } from 'lib/hooks/api/dataQuality';
@@ -7,7 +8,7 @@ import { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import * as S from './DataQuality.styles';
 import TestCategoryResults from './TestResults/TestCategoryResults';
-import { useDataQualityContext } from './DataQualityContext/DataQualityContext';
+import { filtersAtom } from './DataQualityStore/DataQualityStore';
 
 function capitalizeFirstLetter(str: string) {
   return [...str][0].toUpperCase() + str.slice(1);
@@ -19,7 +20,7 @@ const DONUT_CHART_INNER_RADIUS = 66;
 const DONUT_CHART_OUTER_RADIUS = 90;
 
 export const DataQualityContent: React.FC = () => {
-  const { filterState } = useDataQualityContext();
+  const [filterState] = useAtom(filtersAtom);
   const { data, isSuccess } = useGetDataQualityDashboard(filterState);
   const { palette } = useTheme();
   const { t } = useTranslation();
@@ -47,7 +48,7 @@ export const DataQualityContent: React.FC = () => {
         palette.runStatus[status].color ?? palette.dataQualityDashboard.unknown;
       return { title: status, value: count, color };
     });
-  }, [data]);
+  }, [data, calcTestResultsBreakdown]);
 
   const tableHealthData = useMemo(() => {
     if (!data) return [];
@@ -77,7 +78,6 @@ export const DataQualityContent: React.FC = () => {
 
   return (
     <>
-      {JSON.stringify(filterState)}
       <S.Section>
         <S.DashboardLegend>
           {Object.values(DataEntityRunStatus).map(status => (

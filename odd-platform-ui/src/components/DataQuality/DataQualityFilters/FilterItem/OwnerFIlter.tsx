@@ -1,25 +1,46 @@
 import React from 'react';
-import type { FC } from 'react';
+import { useFilter } from 'components/DataQuality/DataQualityFilters/hooks';
 import { useTranslation } from 'react-i18next';
-import type { DataQualityRunsApiGetDataQualityTestsRunsRequest } from 'generated-sources/apis/DataQualityRunsApi';
 import { useGetOwnerList } from 'lib/hooks/api/owner';
+import type { DataQualityRunsApiGetDataQualityTestsRunsRequest } from 'generated-sources/apis/DataQualityRunsApi';
 import MultipleFilterItem from './MultipleFilterItem/MultipleFilterItem';
-// import { useQueryParams } from 'lib/hooks';
-// import { useGetNamespaceList } from 'lib/hooks/api/namespace';
-// import { useGetTitleList } from 'lib/hooks/api/title';
-// import { useGetTagList } from 'lib/hooks/api/tag';
+import MultipleFilterItemAutocomplete from './MultipleFilterItem/MultipleFilterItemAutocomplete/MultipleFilterItemAutocomplete';
+import SelectedFilterOption from './MultipleFilterItem/SelectedFilterOption/SelectedFilterOption';
 
 interface OwnerFilterProps {
   filterKey: keyof DataQualityRunsApiGetDataQualityTestsRunsRequest;
 }
 
-export const OwnerFilter: FC<OwnerFilterProps> = ({ filterKey }) => {
+export const OwnerFilter: React.FC<OwnerFilterProps> = ({ filterKey }) => {
   const { t } = useTranslation();
+  const {
+    searchText,
+    setSearchText,
+    selectedOptions,
+    onSelectOption,
+    onDeselectOption,
+    hookResult,
+  } = useFilter(useGetOwnerList, filterKey);
+
   return (
     <MultipleFilterItem
-      name={t('Owner')}
-      useHook={useGetOwnerList}
-      filterKey={filterKey}
+      autocomplete={
+        <MultipleFilterItemAutocomplete
+          name={t('Owner')}
+          hookResult={hookResult}
+          searchText={searchText}
+          setSearchText={setSearchText}
+          selectedOptions={selectedOptions}
+          onSelectOption={onSelectOption}
+        />
+      }
+      options={selectedOptions?.map(option => (
+        <SelectedFilterOption
+          key={option.id}
+          selectedOption={option}
+          onDeselectOption={onDeselectOption}
+        />
+      ))}
     />
   );
 };

@@ -7,6 +7,7 @@ export type FilterOption = {
 export type Response = {
   items: FilterOption[];
 };
+export type HookResult = UseQueryResult<Response>;
 export type Hook = ({
   page,
   size,

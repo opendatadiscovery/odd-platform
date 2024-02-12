@@ -1,35 +1,57 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { FC } from 'react';
+import { useAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
 import { Grid, Typography } from '@mui/material';
 import { Button } from 'components/shared/elements';
+import { useSearchParams } from 'react-router-dom';
 import * as S from './DataQualityFiltersStyles';
 import { NamespaceFilter } from './FilterItem/NamespaceFilter';
 import { DatasourceFilter } from './FilterItem/DatasourceFilter';
 import { OwnerFilter } from './FilterItem/OwnerFIlter';
 import { TitleFilter } from './FilterItem/TitleFilter';
 import { TagFilter } from './FilterItem/TagFilter';
-import { useDataQualityContext } from '../DataQualityContext/DataQualityContext';
+import {
+  clearTableFiltersAtom,
+  clearTestFiltersAtom,
+  formFiltersAtom,
+} from '../DataQualityStore/DataQualityStore';
 
 export const DataQualityFilters: FC = () => {
   const { t } = useTranslation();
-  const { updateFilter } = useDataQualityContext();
+  const [formFilters, setFormFilters] = useAtom(formFiltersAtom);
+  const [, clearTableFilters] = useAtom(clearTableFiltersAtom);
+  const [, clearTestFilters] = useAtom(clearTestFiltersAtom);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  function clearTablesFilters() {
-    updateFilter('deNamespaceIds', []);
-    updateFilter('deDatasourceIds', []);
-    updateFilter('deOwnerIds', []);
-    updateFilter('deTitleIds', []);
-    updateFilter('deTagIds', []);
-  }
+  // sync formFilters with searchParams on mount
+  useEffect(() => {
+    const newFilters = { ...formFilters };
+    let hasChanges = false;
+    for (const [key, value] of searchParams) {
+      if (key in newFilters) {
+        const currentValue = JSON.stringify(newFilters[key as keyof typeof newFilters]);
+        if (currentValue !== value) {
+          newFilters[key as keyof typeof newFilters] = JSON.parse(value);
+          hasChanges = true;
+        }
+      }
+    }
+    if (hasChanges) {
+      setFormFilters(newFilters);
+    }
+  }, [searchParams, setFormFilters]);
 
-  function clearTestsFilters() {
-    updateFilter('namespaceIds', []);
-    updateFilter('datasourceIds', []);
-    updateFilter('ownerIds', []);
-    updateFilter('titleIds', []);
-    updateFilter('tagIds', []);
-  }
+  // sync searchParams with formFilters on formFilters change
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(formFilters)) {
+      if (Array.isArray(value) && value.length > 0) {
+        newSearchParams.set(key, JSON.stringify(value));
+      }
+    }
+    setSearchParams(newSearchParams, { replace: true });
+  }, [formFilters, setSearchParams]);
 
   return (
     <S.Container>
@@ -42,7 +64,7 @@ export const DataQualityFilters: FC = () => {
           <Button
             text={t('Clear')}
             buttonType='tertiary-sm'
-            onClick={() => clearTablesFilters()}
+            onClick={() => clearTableFilters()}
           />
         </Grid>
         <NamespaceFilter filterKey='deNamespaceIds' />
@@ -57,7 +79,7 @@ export const DataQualityFilters: FC = () => {
           <Button
             text={t('Clear')}
             buttonType='tertiary-sm'
-            onClick={() => clearTestsFilters()}
+            onClick={() => clearTestFilters()}
           />
         </Grid>
         <NamespaceFilter filterKey='namespaceIds' />

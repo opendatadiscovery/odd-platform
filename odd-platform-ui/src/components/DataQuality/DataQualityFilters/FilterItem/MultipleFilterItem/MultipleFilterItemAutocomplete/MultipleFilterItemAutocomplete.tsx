@@ -16,20 +16,24 @@ import { useTranslation } from 'react-i18next';
 import { Input } from 'components/shared/elements';
 import { ClearIcon, DropdownIcon } from 'components/shared/icons';
 import * as S from './MultipleFilterItemAutocompleteStyles';
-import type { Hook, FilterOption } from '../../interfaces';
+import type { HookResult, FilterOption } from '../../../../interfaces';
 
 interface Props {
   name: string;
-  useHook: Hook;
+  hookResult: HookResult;
+  searchText: string;
+  setSearchText: (value: React.SetStateAction<string>) => void;
   selectedOptions: FilterOption[];
-  setSelectedOptions: (value: React.SetStateAction<FilterOption[]>) => void;
+  onSelectOption: (value: FilterOption) => void;
 }
 
 const MultipleFilterItemAutocomplete: FC<Props> = ({
   name,
-  useHook,
+  hookResult,
+  searchText,
+  setSearchText,
   selectedOptions,
-  setSelectedOptions,
+  onSelectOption,
 }) => {
   const { t } = useTranslation();
 
@@ -37,13 +41,8 @@ const MultipleFilterItemAutocomplete: FC<Props> = ({
 
   const [autocompleteOpen, setAutocompleteOpen] = useState(false);
   const [optionsLoading, setOptionsLoading] = useState(false);
-  const [searchText, setSearchText] = useState('');
   const [options, setOptions] = useState<Option[]>([]);
-  const { data, isSuccess } = useHook({
-    page: 1,
-    size: 30,
-    query: searchText,
-  });
+
   const filter = createFilterOptions<Option>();
 
   const handleAutocompleteSelect = (
@@ -52,10 +51,7 @@ const MultipleFilterItemAutocomplete: FC<Props> = ({
   ) => {
     if (!option) return;
     setSearchText(''); // Clear input on select
-    setSelectedOptions((prevOptions: FilterOption[]) => [
-      ...prevOptions,
-      option as FilterOption,
-    ]);
+    onSelectOption(option as FilterOption);
   };
 
   const searchInputChange = useCallback(
@@ -97,9 +93,9 @@ const MultipleFilterItemAutocomplete: FC<Props> = ({
     if (!autocompleteOpen) return;
     setOptionsLoading(true);
 
-    if (isSuccess) {
+    if (hookResult.isSuccess) {
+      setOptions(hookResult.data.items);
       setOptionsLoading(false);
-      setOptions(data.items);
     }
   }, [searchText, autocompleteOpen]);
 
