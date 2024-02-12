@@ -1,15 +1,22 @@
-import { Grid } from '@mui/material';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Container = styled('div')(({ theme }) => ({
-  padding: theme.spacing(2, 1, 1.5, 1),
-}));
+export const Container = styled('div')(
+  ({ theme }) => css`
+    padding: ${theme.spacing(2)} ${theme.spacing(1)} ${theme.spacing(1.5)}
+      ${theme.spacing(1)};
+  `
+);
 
-export const FacetsLoaderContainer = styled(Grid)(({ theme }) => ({
-  padding: theme.spacing(0, 3),
-  justifyContent: 'center',
-}));
+export const FacetsLoaderContainer = styled('div')(
+  ({ theme }) => css`
+    display: flex;
+    justify-content: center;
+    padding: ${theme.spacing(0)} ${theme.spacing(3)};
+  `
+);
 
-export const ListContainer = styled('div')(() => ({
-  margin: '16px 0',
-}));
+export const ListContainer = styled('div')(
+  ({ theme }) => css`
+    margin: ${theme.spacing(2)} ${theme.spacing(0)};
+  `
+);
