@@ -1,5 +1,8 @@
 [versions]
 spring-webflux = '6.0.9'
+spring-aws-param-store = '2.2.6.RELEASE'
+spring-starter-cloud = '3.1.0'
+spring-starter-bootstrap = '3.1.0'
 reactor-extra = '3.5.1'
 micrometer-registry-prometheus = '1.9.0'
 ingestion-contract-server = '0.1.38'
@@ -47,6 +50,9 @@ spring-freemarker = '3.1.5'
 
 [libraries]
 spring-starter-webflux = { module = 'org.springframework.boot:spring-boot-starter-webflux' }
+spring-starter-cloud = { module = 'org.springframework.cloud:spring-cloud-starter', version.ref = 'spring-starter-cloud' }
+spring-starter-bootstrap = { module = 'org.springframework.cloud:spring-cloud-starter-bootstrap', version.ref = 'spring-starter-bootstrap' }
+spring-aws-param-store = { module = 'org.springframework.cloud:spring-cloud-starter-aws-parameter-store-config', version.ref = 'spring-aws-param-store'}
 spring-webflux = { module = 'org.springframework:spring-webflux', version.ref = 'spring-webflux' }
 spring-jooq = { module = 'org.springframework.boot:spring-boot-starter-jooq' }
 spring-actuator = { module = 'org.springframework.boot:spring-boot-starter-actuator' }
@@ -120,6 +126,9 @@ okhttp = { module = 'com.squareup.okhttp3:okhttp', version.ref = 'okhttp' }
 [bundles]
 spring = [
     'spring-starter-webflux',
+    'spring-starter-cloud',
+    'spring-starter-bootstrap',
+    'spring-aws-param-store',
     'spring-jooq',
     'spring-actuator',
     'spring-security',
