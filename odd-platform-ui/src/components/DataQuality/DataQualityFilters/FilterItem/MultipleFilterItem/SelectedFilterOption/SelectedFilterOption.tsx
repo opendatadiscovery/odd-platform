@@ -14,7 +14,7 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({
   selectedOption,
   onDeselectOption,
 }) => (
-  <S.Container sx={{ mt: 0.5, mx: 0.25 }}>
+  <S.Container>
     <Typography noWrap>{selectedOption.name}</Typography>
     <Button
       sx={{ ml: 0.5 }}

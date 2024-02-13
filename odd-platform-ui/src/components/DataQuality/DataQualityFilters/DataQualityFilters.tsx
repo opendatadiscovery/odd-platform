@@ -45,11 +45,11 @@ export const DataQualityFilters: FC = () => {
   // sync searchParams with formFilters on formFilters change
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
-    for (const [key, value] of Object.entries(formFilters)) {
+    Object.entries(formFilters).forEach(([key, value]) => {
       if (Array.isArray(value) && value.length > 0) {
         newSearchParams.set(key, JSON.stringify(value));
       }
-    }
+    });
     setSearchParams(newSearchParams, { replace: true });
   }, [formFilters, setSearchParams]);
 

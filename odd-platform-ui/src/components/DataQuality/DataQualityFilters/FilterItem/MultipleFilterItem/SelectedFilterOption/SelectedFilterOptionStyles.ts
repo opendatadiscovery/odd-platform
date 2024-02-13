@@ -1,14 +1,19 @@
-import { Grid } from '@mui/material';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Container = styled(Grid)(({ theme }) => ({
-  display: 'flex',
-  backgroundColor: theme.palette.backgrounds.primary,
-  borderRadius: '2px',
-  padding: theme.spacing(0, 0.5, 0, 0.5),
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  '&:hover': {
-    backgroundColor: theme.palette.backgrounds.secondary,
-  },
-}));
+export const Container = styled('div')(
+  ({ theme }) => css`
+    display: flex;
+    background-color: ${theme.palette.backgrounds.primary};
+    border-radius: 2px;
+    padding: ${theme.spacing(0)} ${theme.spacing(0.5)} ${theme.spacing(0)}
+      ${theme.spacing(0.5)};
+    align-items: center;
+    justify-content: space-between;
+    &:hover {
+      background-color: ${theme.palette.backgrounds.secondary};
+    }
+    margin-top: ${theme.spacing(0.5)};
+    margin-right: ${theme.spacing(0.25)};
+    margin-left: ${theme.spacing(0.25)};
+  `
+);

@@ -6,6 +6,8 @@ type FormFiltersAtom = {
   [Property in keyof DataQualityRunsApiGetDataQualityTestsRunsRequest]-?: Array<FilterOption>;
 };
 
+type FormFiltersKeys = keyof FormFiltersAtom;
+
 export const formFiltersAtom = atom<FormFiltersAtom>({
   namespaceIds: [],
   datasourceIds: [],
@@ -19,9 +21,7 @@ export const formFiltersAtom = atom<FormFiltersAtom>({
   deTagIds: [],
 });
 
-export const getFieldFilterAtom = (
-  key: keyof DataQualityRunsApiGetDataQualityTestsRunsRequest
-) =>
+export const getFieldFilterAtom = (key: FormFiltersKeys) =>
   atom<FilterOption[], [value: FilterOption[]], void>(
     get => get(formFiltersAtom)[key],
     (get, set, value) => {
@@ -31,17 +31,10 @@ export const getFieldFilterAtom = (
 
 export const filtersAtom = atom(get => {
   const formFilters = get(formFiltersAtom);
-  const filters: DataQualityRunsApiGetDataQualityTestsRunsRequest = Object.keys(
-    formFilters
-  ).reduce((acc, key) => {
-    if (
-      formFilters[key as keyof DataQualityRunsApiGetDataQualityTestsRunsRequest]
-        .length === 0
-    )
-      return acc;
-    acc[key as keyof DataQualityRunsApiGetDataQualityTestsRunsRequest] = formFilters[
-      key as keyof DataQualityRunsApiGetDataQualityTestsRunsRequest
-    ].map(({ id }) => id);
+  const filters = Object.keys(formFilters).reduce((acc, key) => {
+    const tKey = key as FormFiltersKeys;
+    if (formFilters[tKey].length === 0) return acc;
+    acc[tKey] = formFilters[tKey].map(({ id }) => id);
     return acc;
   }, {} as DataQualityRunsApiGetDataQualityTestsRunsRequest);
 

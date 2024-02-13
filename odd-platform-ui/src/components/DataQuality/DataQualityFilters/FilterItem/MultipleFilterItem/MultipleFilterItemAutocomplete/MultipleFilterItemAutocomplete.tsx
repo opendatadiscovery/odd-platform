@@ -73,15 +73,14 @@ const MultipleFilterItemAutocomplete: FC<Props> = ({
   }, []);
 
   const getFilterOptions = useCallback(
-    (_: any, params: FilterOptionsState<Option>) => {
+    (_: unknown, params: FilterOptionsState<Option>) => {
       const optionsWithoutSelected = options.filter(
         option =>
           !selectedOptions.some(selectedOption => selectedOption.name === option.name)
       );
       const optionsFiltered = searchText
-        ? optionsWithoutSelected.filter(
-            option =>
-              option.name.toLocaleLowerCase().indexOf(searchText.toLocaleLowerCase()) >= 0
+        ? optionsWithoutSelected.filter(option =>
+            option.name.toLowerCase().includes(searchText.toLowerCase())
           )
         : optionsWithoutSelected;
       return filter(optionsFiltered, params);
