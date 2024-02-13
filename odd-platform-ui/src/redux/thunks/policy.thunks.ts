@@ -84,9 +84,8 @@ export const fetchPolicyDetails = handleResponseAsyncThunk<
 export const fetchPolicySchema = handleResponseAsyncThunk<Record<string, unknown>, void>(
   actions.fetchPolicySchemaActType,
   async () => {
-    const schema = await policyApi.getPolicySchema();
     try {
-      return JSON.parse(schema);
+      return (await policyApi.getPolicySchema()) as unknown as Record<string, unknown>;
     } catch (e) {
       throw new Error(e?.toString());
     }
