@@ -9,24 +9,33 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DATABASE=${POSTGRES_DATABASE}
     ports:
-      - 5432:5432
+      - "5432:5432"
 
   odd-platform:
-    image: opendatadiscovery/odd-platform:latest
+    image: ghcr.io/opendatadiscovery/odd-platform:latest
     restart: always
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/${POSTGRES_DATABASE}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - AUTH_TYPE=LDAP
-      - SPRING_LDAP_URLS=ldap://ldap:10389
-      - SPRING_LDAP_DN_PATTERN=cn={0},ou=people,dc=planetexpress,dc=com
+      - AUTH_LDAP_URL=ldap://ldap:389
+      - AUTH_LDAP_PASSWORD=admin
+      - AUTH_LDAP_USERNAME=cn=admin,dc=example,dc=org
+      - AUTH_LDAP_DN_PATTERN=cn={0},ou=People
+      - AUTH_LDAP_BASE=dc=example,dc=org
     depends_on:
       - database
       - ldap
     ports:
-      - 8080:8080
+      - "8080:8080"
+
 
   ldap:
-    image: rroemhild/test-openldap:latest
-    hostname: "ldap"
+    image: osixia/openldap:1.5.0
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ./ldap/sample.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/sample.ldif
+    command: --copy-service
