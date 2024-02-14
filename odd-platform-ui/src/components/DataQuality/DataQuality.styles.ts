@@ -5,7 +5,6 @@ export const Container = styled.section(
   ({ theme }) => css`
     display: grid;
     justify-content: center;
-    margin-top: ${theme.spacing(5)};
     margin-bottom: ${theme.spacing(5)};
     gap: ${theme.spacing(3)};
   `
@@ -31,6 +30,7 @@ export const SubSection = styled.div<FlexDirection>(
   ({ theme, $direction = 'row' }) => css`
     display: flex;
     flex-direction: ${$direction};
+    flex-wrap: wrap;
     gap: ${theme.spacing(3)};
   `
 );
