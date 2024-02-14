@@ -1,3 +1,4 @@
+import type { ConfigurationParameters } from 'generated-sources';
 import {
   ActivityApi,
   AlertApi,
@@ -32,7 +33,6 @@ import {
   QueryExampleApi,
   ReferenceDataApi,
   RelationshipApi,
-  ConfigurationParameters,
 } from 'generated-sources';
 
 const HEADERS: ConfigurationParameters = {

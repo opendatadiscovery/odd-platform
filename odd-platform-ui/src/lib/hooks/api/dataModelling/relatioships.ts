@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { relationshipApi } from 'lib/api';
-import { addNextPage } from '../utils';
 import type { RelationshipApiGetRelationshipsRequest } from 'generated-sources';
+import { addNextPage } from '../utils';
 
 export function useSearchRelationships({
   query,
@@ -9,7 +9,7 @@ export function useSearchRelationships({
   type,
 }: Omit<RelationshipApiGetRelationshipsRequest, 'page'>) {
   return useInfiniteQuery({
-    queryKey: ['searchRelationships', query, size],
+    queryKey: ['searchRelationships', query, size, type],
     queryFn: async ({ pageParam }) => {
       const response = await relationshipApi.getRelationships({
         query,
