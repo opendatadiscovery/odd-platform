@@ -2458,6 +2458,8 @@ components:
       properties:
         projectVersion:
           type: string
+        authType:
+          type: string
 
     LinkedTerm:
       type: object

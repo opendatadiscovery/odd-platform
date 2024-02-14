@@ -14,7 +14,7 @@ import * as S from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMen
 import Button from 'components/shared/elements/Button/Button';
 
 const AppInfoMenu: React.FC = () => {
-  const { data: version } = useAppInfo();
+  const { data: appInfo } = useAppInfo();
   const { data: links } = useAppLinks();
 
   const gitbookLink = 'https://docs.opendatadiscovery.org/';
@@ -35,7 +35,7 @@ const AppInfoMenu: React.FC = () => {
   };
 
   const projectVersion = React.useMemo(() => {
-    if (!version) return null;
+    if (!appInfo?.projectVersion) return null;
 
     return (
       <Link to={githubLink} target='_blank'>
@@ -44,13 +44,13 @@ const AppInfoMenu: React.FC = () => {
             <GitHubIcon />
           </S.Icon>
           <Grid container flexDirection='column'>
-            <Typography variant='h4'>{version}</Typography>
+            <Typography variant='h4'>{appInfo.projectVersion}</Typography>
             <Typography variant='subtitle1'>ODD Platform version</Typography>
           </Grid>
         </S.MenuItem>
       </Link>
     );
-  }, [version]);
+  }, [appInfo?.projectVersion]);
 
   const projectLinks = React.useMemo(() => {
     if (!links || links.length === 0) return null;
