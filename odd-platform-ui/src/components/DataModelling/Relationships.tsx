@@ -4,21 +4,23 @@ import { Box, Typography } from '@mui/material';
 import {
   EmptyContentPlaceholder,
   NumberFormatted,
-  QueryExamplesSkeleton,
   SearchInput,
 } from 'components/shared/elements';
 import { useSearchParams } from 'react-router-dom';
+import { RelationshipsType } from 'generated-sources';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSearchRelationships } from '../../lib/hooks/api/dataModelling/relatioships';
 import * as Table from '../shared/elements/StyledComponents/Table';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import RelationshipsSkeleton from './Relationships/RelationshipsSkeleton';
 
 const Relationships = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const q = searchParams.get('q') ?? '';
+  const query = searchParams.get('q') ?? undefined;
+  const type = (searchParams.get('type') ?? 'ALL') as RelationshipsType;
   const { data, isLoading, hasNextPage, fetchNextPage } = useSearchRelationships({
-    query: q,
+    query,
+    type,
     size: 30,
-    type: 'ALL',
   });
 
   const handleSearch = useCallback(
@@ -36,13 +38,15 @@ const Relationships = () => {
     [relationships.length, isLoading]
   );
 
+  const total = useMemo(() => data?.pages[0].pageInfo.total ?? 0, [data?.pages]);
+
   return (
     <S.Container $flexDirection='column'>
       <S.Section $flexDirection='column'>
         <Box display='flex' justifyContent='space-between' alignItems='center'>
           <Typography variant='h1'>Relationships</Typography>
           <Typography variant='subtitle1' color='texts.info'>
-            <NumberFormatted value={0} /> relationships overall
+            <NumberFormatted value={total} /> relationships overall
           </Typography>
         </Box>
         <SearchInput
@@ -50,7 +54,7 @@ const Relationships = () => {
           placeholder='Search relationships'
           onSearch={handleSearch}
           isLoading={isLoading}
-          value={q}
+          value={query}
         />
       </S.Section>
       <S.Section $flexDirection='column'>
@@ -76,10 +80,11 @@ const Relationships = () => {
             dataLength={relationships.length}
             next={fetchNextPage}
             hasMore={hasNextPage}
-            loader={<QueryExamplesSkeleton />}
+            loader={<RelationshipsSkeleton />}
             scrollThreshold='200px'
-            scrollableTarget='query-examples-list'
+            scrollableTarget='relationships-list'
           >
+            {isLoading && <RelationshipsSkeleton />}
             {isEmpty && <EmptyContentPlaceholder offsetTop={215} />}
           </InfiniteScroll>
         </S.ScrollableContainer>
