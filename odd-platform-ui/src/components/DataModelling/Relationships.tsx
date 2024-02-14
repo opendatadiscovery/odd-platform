@@ -1,32 +1,26 @@
 import React, { useCallback, useMemo } from 'react';
 import * as S from 'components/shared/styled-components';
-import { Box, Typography } from '@mui/material';
-import {
-  EmptyContentPlaceholder,
-  NumberFormatted,
-  SearchInput,
-} from 'components/shared/elements';
+import { Typography } from '@mui/material';
+import { EmptyContentPlaceholder } from 'components/shared/elements';
 import { useSearchParams } from 'react-router-dom';
 import { RelationshipsType } from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSearchRelationships } from '../../lib/hooks/api/dataModelling/relatioships';
 import * as Table from '../shared/elements/StyledComponents/Table';
 import RelationshipsSkeleton from './Relationships/RelationshipsSkeleton';
+import RelationshipsTabs from './Relationships/RelationshipsTabs';
+import RelationshipsSearchInput from './Relationships/RelationshipsSearchInput';
+import RelationshipsTitle from './Relationships/RelationshipsTitle';
 
 const Relationships = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get('q') ?? undefined;
-  const type = (searchParams.get('type') ?? 'ALL') as RelationshipsType;
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get('q') ?? '';
+  const type = (searchParams.get('type') ?? RelationshipsType.ALL) as RelationshipsType;
   const { data, isLoading, hasNextPage, fetchNextPage } = useSearchRelationships({
     query,
     type,
     size: 30,
   });
-
-  const handleSearch = useCallback(
-    (v?: string) => setSearchParams({ ...searchParams, q: v }),
-    [searchParams, setSearchParams]
-  );
 
   const relationships = useMemo(
     () => data?.pages.flatMap(page => page.items) ?? [],
@@ -43,20 +37,10 @@ const Relationships = () => {
   return (
     <S.Container $flexDirection='column'>
       <S.Section $flexDirection='column'>
-        <Box display='flex' justifyContent='space-between' alignItems='center'>
-          <Typography variant='h1'>Relationships</Typography>
-          <Typography variant='subtitle1' color='texts.info'>
-            <NumberFormatted value={total} /> relationships overall
-          </Typography>
-        </Box>
-        <SearchInput
-          id='relationships-search'
-          placeholder='Search relationships'
-          onSearch={handleSearch}
-          isLoading={isLoading}
-          value={query}
-        />
+        <RelationshipsTitle total={total} />
+        <RelationshipsSearchInput value={query} />
       </S.Section>
+      <RelationshipsTabs />
       <S.Section $flexDirection='column'>
         <Table.HeaderContainer>
           <Table.Cell $flex='1 0 33%'>
