@@ -13,6 +13,7 @@ public class ODDLDAPProperties {
     private String username;
     private String password;
     private String dnPattern;
+    private String base;
     private UserFilter userFilter;
     private Group groups;
     private ActiveDirectory activeDirectory;

@@ -14,6 +14,10 @@ spring:
   codec:
     max-in-memory-size: 20MB
 
+#genai:
+#  url: http://localhost:5000
+#  request_timeout: 2
+
 springdoc:
   api-docs:
     path: /api/v3/swagger-ui.html
@@ -42,6 +46,7 @@ auth:
 #    username:
 #    password:
 #    dn-pattern:
+#    base:
 #    user-filter:
 #      search-base:
 #      filter:

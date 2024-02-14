@@ -8,6 +8,7 @@ import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.ErrorCode;
 import org.opendatadiscovery.oddplatform.exception.ExceptionWithErrorCode;
+import org.opendatadiscovery.oddplatform.exception.GenAIException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.exception.UniqueConstraintException;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,12 @@ public class ControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleException(final WebExchangeBindException e) {
         log.error("Data binding/validation failed", e);
+        return buildResponse(e);
+    }
+
+    @ExceptionHandler(GenAIException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleGenAIException(final GenAIException e) {
         return buildResponse(e);
     }
 
