@@ -3972,6 +3972,10 @@ components:
           type: string
         target_dataset_oddrn:
           type: string
+        data_source:
+          $ref: '#/components/schemas/DataSourceSafe'
+        namespace:
+          $ref: '#/components/schemas/Namespace'
         type:
           $ref: '#/components/schemas/DataEntityRelationshipType'
       required:
@@ -3980,6 +3984,7 @@ components:
         - oddrn
         - source_dataset_oddrn
         - target_dataset_oddrn
+        - data_source
         - type
 
     DataEntityERDRelationshipDetails:

@@ -18,8 +18,12 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
 import org.opendatadiscovery.oddplatform.dto.RelationshipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
+import org.opendatadiscovery.oddplatform.model.tables.records.DataSourceRecord;
+import org.opendatadiscovery.oddplatform.model.tables.records.NamespaceRecord;
 import org.opendatadiscovery.oddplatform.model.tables.records.RelationshipsRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -30,6 +34,8 @@ import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_RELATIONSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
+import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.RELATIONSHIPS;
 
 @Slf4j
@@ -40,6 +46,9 @@ public class ReactiveDataEntityRelationshipRepositoryImpl
     private static final String RELATIONSHIPS_CTE = "relationships_cte";
     private static final String SOURCE_DATA_ENTITY = "source_data_entity";
     private static final String TARGET_DATA_ENTITY = "target_data_entity";
+    private static final String RELATIONSHIP_NAMESPACE = "relationship_namespace";
+    private static final String DATA_SOURCE_NAMESPACE = "data_source_namespace";
+    private static final String DATA_SOURCE_CTE = "data_source_cte";
 
     private final JooqReactiveOperations jooqReactiveOperations;
     private final JooqQueryHelper jooqQueryHelper;
@@ -50,6 +59,9 @@ public class ReactiveDataEntityRelationshipRepositoryImpl
         final Table<RelationshipsRecord> relationships = RELATIONSHIPS.asTable(RELATIONSHIPS_CTE);
         final Table<DataEntityRecord> srcDataEntity = DATA_ENTITY.asTable(SOURCE_DATA_ENTITY);
         final Table<DataEntityRecord> trgtDataEntity = DATA_ENTITY.asTable(TARGET_DATA_ENTITY);
+        final Table<DataSourceRecord> dataSource = DATA_SOURCE.asTable(DATA_SOURCE_CTE);
+        final Table<NamespaceRecord> relationshipNamespace = NAMESPACE.asTable(RELATIONSHIP_NAMESPACE);
+        final Table<NamespaceRecord> dataSourceNamespace = NAMESPACE.asTable(DATA_SOURCE_NAMESPACE);
 
         final List<Condition> conditionList = new ArrayList<>();
 
@@ -71,14 +83,16 @@ public class ReactiveDataEntityRelationshipRepositoryImpl
 
         final List<Field<?>> groupByFields =
             Stream.of(relationshipsDataEntityCTE.fields(), srcDataEntity.fields(),
-                    trgtDataEntity.fields(), relationships.fields())
+                    trgtDataEntity.fields(), relationships.fields(), dataSource.fields(),
+                    relationshipNamespace.fields(), dataSourceNamespace.fields())
                 .flatMap(Arrays::stream)
                 .toList();
 
         final ResultQuery<Record> resultQuery = DSL.with(relationshipsDataEntityCTE.getName())
             .as(relationshipSelect)
             .select(relationshipsDataEntityCTE.fields())
-            .select(relationships.asterisk(), srcDataEntity.asterisk(), trgtDataEntity.asterisk())
+            .select(relationships.asterisk(), srcDataEntity.asterisk(), trgtDataEntity.asterisk(),
+                dataSource.asterisk(), relationshipNamespace.asterisk(), dataSourceNamespace.asterisk())
             .from(relationshipsDataEntityCTE.getName())
             .join(relationships)
             .on(relationshipsDataEntityCTE.field(DATA_ENTITY.ID).eq(relationships.field(RELATIONSHIPS.DATA_ENTITY_ID))
@@ -89,6 +103,13 @@ public class ReactiveDataEntityRelationshipRepositoryImpl
             .on(relationships.field(RELATIONSHIPS.SOURCE_DATASET_ODDRN).eq(srcDataEntity.field(DATA_ENTITY.ODDRN)))
             .leftJoin(trgtDataEntity)
             .on(relationships.field(RELATIONSHIPS.TARGET_DATASET_ODDRN).eq(trgtDataEntity.field(DATA_ENTITY.ODDRN)))
+            .leftJoin(dataSource)
+            .on(relationshipsDataEntityCTE.field(DATA_ENTITY.DATA_SOURCE_ID).eq(dataSource.field(DATA_SOURCE.ID)))
+            .leftJoin(dataSourceNamespace)
+            .on(dataSource.field(DATA_SOURCE.NAMESPACE_ID).eq(dataSourceNamespace.field(NAMESPACE.ID)))
+            .leftJoin(relationshipNamespace)
+            .on(relationshipsDataEntityCTE.field(DATA_ENTITY.NAMESPACE_ID)
+                .eq(relationshipNamespace.field(NAMESPACE.ID)))
             .groupBy(groupByFields);
 
         return jooqReactiveOperations.flux(resultQuery)
@@ -100,6 +121,9 @@ public class ReactiveDataEntityRelationshipRepositoryImpl
                     .dataEntityRelationship(r.into(relationshipsDataEntityCTE).into(DataEntityPojo.class))
                     .sourceDataEntity(r.into(srcDataEntity).into(DataEntityPojo.class))
                     .targetDataEntity(r.into(trgtDataEntity).into(DataEntityPojo.class))
+                    .dataSourcePojo(r.into(dataSource).into(DataSourcePojo.class))
+                    .dataSourceNamespacePojo(r.into(dataSourceNamespace).into(NamespacePojo.class))
+                    .relationshipNamespacePojo(r.into(relationshipNamespace).into(NamespacePojo.class))
                     .build(),
                 jooqReactiveOperations
                     .mono(DSL.selectCount().from(DATA_ENTITY).where(conditionList))
