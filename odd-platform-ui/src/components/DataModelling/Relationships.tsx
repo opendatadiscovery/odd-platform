@@ -1,16 +1,17 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import * as S from 'components/shared/styled-components';
 import { Typography } from '@mui/material';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
 import { useSearchParams } from 'react-router-dom';
 import { RelationshipsType } from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import * as Table from 'components/shared/elements/StyledComponents/Table';
 import { useSearchRelationships } from '../../lib/hooks/api/dataModelling/relatioships';
-import * as Table from '../shared/elements/StyledComponents/Table';
 import RelationshipsSkeleton from './Relationships/RelationshipsSkeleton';
 import RelationshipsTabs from './Relationships/RelationshipsTabs';
 import RelationshipsSearchInput from './Relationships/RelationshipsSearchInput';
 import RelationshipsTitle from './Relationships/RelationshipsTitle';
+import RelationshipsListItem from './Relationships/RelationshipsListItem';
 
 const Relationships = () => {
   const [searchParams] = useSearchParams();
@@ -68,6 +69,9 @@ const Relationships = () => {
             scrollThreshold='200px'
             scrollableTarget='relationships-list'
           >
+            {relationships.map(item => (
+              <RelationshipsListItem item={item} key={item.id} />
+            ))}
             {isLoading && <RelationshipsSkeleton />}
             {isEmpty && <EmptyContentPlaceholder offsetTop={215} />}
           </InfiniteScroll>
