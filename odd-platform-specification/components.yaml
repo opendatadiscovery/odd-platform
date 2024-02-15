@@ -3975,6 +3975,7 @@ components:
         type:
           $ref: '#/components/schemas/DataEntityRelationshipType'
       required:
+        - id
         - name
         - oddrn
         - source_dataset_oddrn
