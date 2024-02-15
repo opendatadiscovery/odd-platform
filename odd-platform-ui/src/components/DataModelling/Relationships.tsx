@@ -42,7 +42,7 @@ const Relationships = () => {
         <RelationshipsSearchInput value={query} />
       </S.Section>
       <RelationshipsTabs />
-      <S.Section $flexDirection='column'>
+      <S.Section $flexDirection='column' $gap={0}>
         <Table.HeaderContainer>
           <Table.Cell $flex='1 0 33%'>
             <Typography variant='caption'>Name</Typography>
@@ -60,7 +60,7 @@ const Relationships = () => {
             <Typography variant='caption'>Target</Typography>
           </Table.Cell>
         </Table.HeaderContainer>
-        <S.ScrollableContainer id='relationships-list'>
+        <S.ScrollableContainer id='relationships-list' $offsetY={215}>
           <InfiniteScroll
             dataLength={relationships.length}
             next={fetchNextPage}
