@@ -139,7 +139,7 @@ dependencies:
     specifier: ^5.1.2
     version: 5.1.2(react@18.2.0)
   recharts:
-    specifier: ^2.10.2
+    specifier: ^2.12.0
     version: 2.12.0(react-dom@18.2.0)(react@18.2.0)
   styled-components:
     specifier: ^6.1.8
