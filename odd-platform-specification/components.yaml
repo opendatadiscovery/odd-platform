@@ -4065,16 +4065,10 @@ components:
         - GRAPH
         - ALL
 
-    GenAIRequest:
+    GenAIMessage:
       type: object
       properties:
-        body:
-          type: string
-
-    GenAIResponse:
-      type: object
-      properties:
-        body:
+        text:
           type: string
 
   parameters:

@@ -3990,20 +3990,20 @@ paths:
   /api/genai/ask:
     post:
       summary: Request to genai service
-      description: create request to genai service with specific question
-      operationId: genAiQuestion
+      description: request to genai service
+      operationId: genAiAsk
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/GenAIRequest'
+              $ref: './components.yaml/#/components/schemas/GenAIMessage'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/GenAIResponse'
+                $ref: './components.yaml/#/components/schemas/GenAIMessage'
       tags:
         - genai

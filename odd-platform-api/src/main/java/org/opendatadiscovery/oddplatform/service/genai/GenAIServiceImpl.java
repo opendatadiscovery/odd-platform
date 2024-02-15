@@ -6,8 +6,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.opendatadiscovery.oddplatform.api.contract.model.GenAIRequest;
-import org.opendatadiscovery.oddplatform.api.contract.model.GenAIResponse;
+import org.opendatadiscovery.oddplatform.api.contract.model.GenAIMessage;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.GenAIException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,18 +36,18 @@ public class GenAIServiceImpl implements GenAIService {
     }
 
     @Override
-    public Mono<GenAIResponse> getResponseFromGenAI(final GenAIRequest request) {
+    public Mono<GenAIMessage> getResponseFromGenAI(final GenAIMessage request) {
         if (StringUtils.isBlank(genAIUrl)) {
             return Mono.error(new BadUserRequestException("Gen AI is disabled"));
         }
 
         return webClient.post()
             .uri(QUERY_DATA)
-            .bodyValue(Map.of(QUESTION_FIELD, request.getBody()))
+            .bodyValue(Map.of(QUESTION_FIELD, request.getText()))
             .retrieve()
             .bodyToMono(String.class)
-            .map(item -> new GenAIResponse()
-                .body(StringEscapeUtils.unescapeJava(CharMatcher.is('\"').trimFrom(item))))
+            .map(item -> new GenAIMessage()
+                .text(StringEscapeUtils.unescapeJava(CharMatcher.is('\"').trimFrom(item))))
             .onErrorResume(e -> e.getCause() instanceof ReadTimeoutException
                 ? Mono.error(new GenAIException(
                     "Gen AI request take longer that %s min".formatted(getAiRequestTimeout)))
