@@ -15,8 +15,8 @@ interface DatasetCellProps {
   oddrn: DataEntity['oddrn'];
 }
 
-const DatasetCell = ({ dataEntityId, oddrn }: DatasetCellProps) => {
-  return dataEntityId ? (
+const DatasetCell = ({ dataEntityId, oddrn }: DatasetCellProps) =>
+  dataEntityId ? (
     <Link to={dataEntityDetailsPath(dataEntityId)}>
       <Typography variant='caption' color='button.link.normal.color' fontWeight={500}>
         {oddrn.split('/').pop()}
@@ -25,38 +25,35 @@ const DatasetCell = ({ dataEntityId, oddrn }: DatasetCellProps) => {
   ) : (
     <Typography variant='body1'>{oddrn}</Typography>
   );
-};
 
-const RelationshipsListItem = ({ item }: Props) => {
-  return (
-    <Table.RowContainer>
-      <Table.Cell $flex='1 0 33%'>
-        <Link to={dataEntityDetailsPath(item.id)}>
-          <Typography variant='caption' color='button.link.normal.color' fontWeight={500}>
-            {item.name}
-          </Typography>
-        </Link>
-      </Table.Cell>
-      <Table.Cell $flex='1 0 19%'>
-        <EntityTypeItem entityTypeName={item.type} />
-      </Table.Cell>
-      <Table.Cell $flex='1 0 16%'>
-        <Typography variant='body1'>Namespace</Typography>
-      </Table.Cell>
-      <Table.Cell $flex='1 0 16%'>
-        <DatasetCell
-          dataEntityId={item.sourceDataEntityId}
-          oddrn={item.sourceDatasetOddrn}
-        />
-      </Table.Cell>
-      <Table.Cell $flex='1 0 16%'>
-        <DatasetCell
-          dataEntityId={item.targetDataEntityId}
-          oddrn={item.targetDatasetOddrn}
-        />
-      </Table.Cell>
-    </Table.RowContainer>
-  );
-};
+const RelationshipsListItem = ({ item }: Props) => (
+  <Table.RowContainer>
+    <Table.Cell $flex='1 0 33%'>
+      <Link to={dataEntityDetailsPath(item.id)}>
+        <Typography variant='caption' color='button.link.normal.color' fontWeight={500}>
+          {item.name}
+        </Typography>
+      </Link>
+    </Table.Cell>
+    <Table.Cell $flex='1 0 19%'>
+      <EntityTypeItem entityTypeName={item.type} />
+    </Table.Cell>
+    <Table.Cell $flex='1 0 16%'>
+      <Typography variant='body1'>Namespace</Typography>
+    </Table.Cell>
+    <Table.Cell $flex='1 0 16%'>
+      <DatasetCell
+        dataEntityId={item.sourceDataEntityId}
+        oddrn={item.sourceDatasetOddrn}
+      />
+    </Table.Cell>
+    <Table.Cell $flex='1 0 16%'>
+      <DatasetCell
+        dataEntityId={item.targetDataEntityId}
+        oddrn={item.targetDatasetOddrn}
+      />
+    </Table.Cell>
+  </Table.RowContainer>
+);
 
 export default RelationshipsListItem;

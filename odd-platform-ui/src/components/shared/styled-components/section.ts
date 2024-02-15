@@ -4,7 +4,7 @@ const Section = styled('section')<{
   $flexDirection?: CSSObject['flexDirection'];
   $gap?: CSSObject['gap'];
 }>(
-  ({ theme, $flexDirection = 'row', $gap = '0.5rem' }) => css`
+  ({ $flexDirection = 'row', $gap = '0.5rem' }) => css`
     display: flex;
     width: 100%;
     flex-direction: ${$flexDirection};
