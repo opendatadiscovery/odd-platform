@@ -47,11 +47,11 @@ const Relationships = () => {
           <Table.Cell $flex='1 0 33%'>
             <Typography variant='caption'>Name</Typography>
           </Table.Cell>
-          <Table.Cell $flex='1 0 19%'>
+          <Table.Cell $flex='1 0 16%'>
             <Typography variant='caption'>Type</Typography>
           </Table.Cell>
-          <Table.Cell $flex='1 0 16%'>
-            <Typography variant='caption'>Namespace</Typography>
+          <Table.Cell $flex='1 0 19%'>
+            <Typography variant='caption'>Namespace, Datasource</Typography>
           </Table.Cell>
           <Table.Cell $flex='1 0 16%'>
             <Typography variant='caption'>Source</Typography>
