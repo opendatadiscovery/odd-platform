@@ -23,7 +23,7 @@ interface DatasetInfoProps {
 const DatasetInfo = ({ dataEntityId, oddrn }: DatasetInfoProps) =>
   dataEntityId ? (
     <Link to={dataEntityDetailsPath(dataEntityId)}>
-      <Typography variant='caption' color='button.link.normal.color' fontWeight={500}>
+      <Typography variant='body1' color='button.link.normal.color' fontWeight={500}>
         {oddrn.split('/').pop()}
       </Typography>
     </Link>
@@ -69,7 +69,7 @@ const RelationshipsListItem = ({ item }: Props) => (
   <Table.RowContainer>
     <Table.Cell $flex='1 0 33%'>
       <Link to={dataEntityDetailsPath(item.id)}>
-        <Typography variant='caption' color='button.link.normal.color' fontWeight={500}>
+        <Typography variant='body1' color='button.link.normal.color' fontWeight={500}>
           {item.name}
         </Typography>
       </Link>
