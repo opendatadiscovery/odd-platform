@@ -65,8 +65,14 @@ const QueryExamplesAutocomplete: React.FC<QueryExamplesAutocompleteProps> = ({
     ) => {
       if (reason === 'input') {
         setQuery(input);
+        if (!input) {
+          setAutocompleteOpen(false);
+        } else {
+          setAutocompleteOpen(true);
+        }
       } else {
         setQuery(''); // Clear input on select
+        setAutocompleteOpen(false);
       }
     },
     [setQuery]
@@ -106,7 +112,7 @@ const QueryExamplesAutocomplete: React.FC<QueryExamplesAutocompleteProps> = ({
       fullWidth
       id='query-examples-autocomplete'
       open={autocompleteOpen}
-      onOpen={() => setAutocompleteOpen(true)}
+      onOpen={() => query && setAutocompleteOpen(true)}
       onClose={() => setAutocompleteOpen(false)}
       onChange={handleAutocompleteSelect}
       options={options}
