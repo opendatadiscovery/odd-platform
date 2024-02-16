@@ -757,7 +757,8 @@ components:
             - DOMAIN
             - VECTOR_STORE
             - LOOKUP_TABLE
-            - RELATIONSHIP
+            - ENTITY_RELATIONSHIP
+            - GRAPH_RELATIONSHIP
       required:
         - id
         - name
