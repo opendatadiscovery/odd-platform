@@ -44,8 +44,8 @@ public class RelationshipMapper {
                 item.dataSourceNamespacePojo(), null)))
             .namespace(namespaceMapper.mapPojo(item.relationshipNamespacePojo()))
             .type(RelationshipTypeDto.ERD.name().equals(item.relationshipPojo().getRelationshipType())
-                ? DataEntityRelationshipType.ERD
-                : DataEntityRelationshipType.GRAPH);
+                ? DataEntityRelationshipType.ENTITY_RELATIONSHIP
+                : DataEntityRelationshipType.GRAPH_RELATIONSHIP);
     }
 
     public DataEntityRelationshipList mapListToRelationshipPage(final Page<RelationshipDto> relationshipDtoPage) {

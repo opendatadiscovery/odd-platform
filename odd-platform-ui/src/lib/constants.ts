@@ -116,11 +116,13 @@ export const DataEntityClassTypeLabelMap: Map<
   [TypeNameEnum.KAFKA_SERVICE, { normal: 'Kafka service', plural: 'Kafka services' }],
   [TypeNameEnum.DOMAIN, { normal: 'Domain', plural: 'Domains' }],
   [
-    TypeNameEnum.ERD,
-    { normal: 'Entity-Relationships Diagram', plural: 'Entity-Relationships Diagrams' },
+    TypeNameEnum.ENTITY_RELATIONSHIP,
+    { normal: 'Entity-Relationships', plural: 'Entity-Relationships' },
   ],
-  [TypeNameEnum.GRAPH, { normal: 'Graph', plural: 'Graphs' }],
-  [TypeNameEnum.RELATIONSHIP, { normal: 'Relationship', plural: 'Relationships' }],
+  [
+    TypeNameEnum.GRAPH_RELATIONSHIP,
+    { normal: 'Graph Relationship', plural: 'Graph Relationships' },
+  ],
 ]);
 
 // content width constants

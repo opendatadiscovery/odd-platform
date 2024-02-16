@@ -4010,8 +4010,8 @@ components:
     DataEntityRelationshipType:
       type: string
       enum:
-        - ERD
-        - GRAPH
+        - ENTITY_RELATIONSHIP
+        - GRAPH_RELATIONSHIP
 
     ERDRelationshipDetails:
       type: object

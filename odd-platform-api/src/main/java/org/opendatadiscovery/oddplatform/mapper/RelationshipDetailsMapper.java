@@ -29,8 +29,8 @@ public class RelationshipDetailsMapper {
                 relationshipDetailsDto.targetDataEntity() != null ? relationshipDetailsDto.targetDataEntity().getId() :
                     null)
             .type(RelationshipTypeDto.ERD.name().equals(relationshipDetailsDto.relationshipPojo().getRelationshipType())
-                ? DataEntityRelationshipType.ERD
-                : DataEntityRelationshipType.GRAPH)
+                ? DataEntityRelationshipType.ENTITY_RELATIONSHIP
+                : DataEntityRelationshipType.GRAPH_RELATIONSHIP)
             .erdRelationship(
                 erdRelationshipMapper.mapPojoToDetails(relationshipDetailsDto.erdRelationshipDetailsPojo()));
     }
@@ -50,8 +50,8 @@ public class RelationshipDetailsMapper {
                 relationshipDetailsDto.targetDataEntity() != null ? relationshipDetailsDto.targetDataEntity().getId() :
                     null)
             .type(RelationshipTypeDto.ERD.name().equals(relationshipDetailsDto.relationshipPojo().getRelationshipType())
-                ? DataEntityRelationshipType.ERD
-                : DataEntityRelationshipType.GRAPH)
+                ? DataEntityRelationshipType.ENTITY_RELATIONSHIP
+                : DataEntityRelationshipType.GRAPH_RELATIONSHIP)
             .graphRelationship(
                 graphRelationshipMapper.mapPojoToDetails(relationshipDetailsDto.graphRelationshipPojo()));
     }
