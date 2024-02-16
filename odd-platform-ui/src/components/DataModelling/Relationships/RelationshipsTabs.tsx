@@ -35,8 +35,9 @@ const RelationshipsTabs = () => {
     (newTab: number) => {
       const type = tabs[newTab].value;
       if (type) {
-        searchParams.set('type', type);
-        setSearchParams(searchParams);
+        const params = new URLSearchParams(searchParams);
+        params.set('type', type);
+        setSearchParams(params);
       }
     },
     [searchParams, tabs]

@@ -1,28 +1,22 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SearchInput } from 'components/shared/elements';
 
-interface Props {
-  value?: string;
-}
-
-const RelationshipsSearchInput = ({ value }: Props) => {
+const RelationshipsSearchInput = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const handleSearch = useCallback(
-    (v?: string) => {
-      searchParams.set('q', v ?? '');
-      setSearchParams(searchParams);
-    },
-    [searchParams]
-  );
+  const handleSearch = (v?: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('q', v ?? '');
+    setSearchParams(params);
+  };
 
   return (
     <SearchInput
       id='relationships-search'
       placeholder='Search relationships'
       onSearch={handleSearch}
-      value={value}
+      value={searchParams.get('q') ?? ''}
     />
   );
 };

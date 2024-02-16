@@ -39,7 +39,7 @@ const Relationships = () => {
     <S.Container $flexDirection='column'>
       <S.Section $flexDirection='column'>
         <RelationshipsTitle total={total} />
-        <RelationshipsSearchInput value={query} />
+        <RelationshipsSearchInput />
       </S.Section>
       <RelationshipsTabs />
       <S.Section $flexDirection='column' $gap={0}>
@@ -65,7 +65,7 @@ const Relationships = () => {
             dataLength={relationships.length}
             next={fetchNextPage}
             hasMore={hasNextPage}
-            loader={<RelationshipsSkeleton />}
+            loader={isLoading && <RelationshipsSkeleton />}
             scrollThreshold='200px'
             scrollableTarget='relationships-list'
           >
@@ -73,7 +73,7 @@ const Relationships = () => {
               <RelationshipsListItem item={item} key={item.id} />
             ))}
             {isLoading && <RelationshipsSkeleton />}
-            {isEmpty && <EmptyContentPlaceholder offsetTop={215} />}
+            {isEmpty && <EmptyContentPlaceholder offsetTop={265} />}
           </InfiniteScroll>
         </S.ScrollableContainer>
       </S.Section>
