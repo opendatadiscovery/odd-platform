@@ -16,7 +16,6 @@ import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
-import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.RelationshipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipsPojo;
@@ -29,6 +28,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_RELATIONSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.RELATIONSHIPS;
 
@@ -57,7 +57,7 @@ public class ReactiveDataEntityRelationshipRepositoryImpl
             conditionList.add(DATA_ENTITY.EXTERNAL_NAME.containsIgnoreCase(inputQuery));
         }
 
-        conditionList.add(DATA_ENTITY.TYPE_ID.eq(DataEntityTypeDto.RELATIONSHIP.getId()));
+        conditionList.add(DATA_ENTITY.ENTITY_CLASS_IDS.eq(new Integer[] {DATA_RELATIONSHIP.getId()}));
 
         final Select<DataEntityRecord> homogeneousQuery = DSL.selectFrom(DATA_ENTITY)
             .where(conditionList);
