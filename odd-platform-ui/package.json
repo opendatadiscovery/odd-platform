@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@hookform/error-message": "^2.0.1",
-    "@mui/lab": "5.0.0-alpha.139",
+    "@mui/lab": "5.0.0-alpha.160",
     "@mui/material": "^5.14.19",
     "@mui/system": "^5.14.19",
     "@mui/x-date-pickers": "^5.0.20",
