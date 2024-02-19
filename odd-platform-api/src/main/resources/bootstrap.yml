@@ -1,0 +1,8 @@
+aws:
+  paramstore:
+    prefix: /odd
+    enabled: false
+    profileSeparator: "_"
+    name: platform_config
+  secretsmanager:
+    enabled: false
