@@ -120,7 +120,7 @@ const DataEntityDetailsRoutes = () => {
                 Permission.QUERY_EXAMPLE_DATASET_CREATE,
                 Permission.QUERY_EXAMPLE_DATASET_DELETE,
               ]}
-              resourcePermissions={[]}
+              resourcePermissions={resourcePermissions}
               Component={DataEntityDetailsQueryExamples}
             />
           }
