@@ -64,8 +64,8 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 ### Data Security & Compliance
 
-* Manage Tags and Labels to prevent any abuse of the data
-* Refer to Tags and Labels to stay compliant with data security standards
+* Manage Tags to prevent any abuse of the data
+* Refer to Tags to stay compliant with data security standards
 * Have full transparency on how and by whom the data is used
 
 
