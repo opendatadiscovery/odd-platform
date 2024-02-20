@@ -7,6 +7,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRelationsh
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRelationshipList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRelationshipType;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
+import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.dto.RelationshipDto;
 import org.opendatadiscovery.oddplatform.dto.RelationshipTypeDto;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class RelationshipMapper {
+    private final DataSourceSafeMapper dataSourceSafeMapper;
+    private final NamespaceMapper namespaceMapper;
+
     public DataEntityRelationshipList mapListToRelationshipList(final List<RelationshipDto> relationshipDtos) {
         return new DataEntityRelationshipList()
             .items(mapToRelationshipList(relationshipDtos))
@@ -36,9 +40,12 @@ public class RelationshipMapper {
             .targetDatasetOddrn(item.relationshipPojo().getTargetDatasetOddrn())
             .sourceDataEntityId(item.sourceDataEntity() != null ? item.sourceDataEntity().getId() : null)
             .targetDataEntityId(item.targetDataEntity() != null ? item.targetDataEntity().getId() : null)
+            .dataSource(dataSourceSafeMapper.mapDto(new DataSourceDto(item.dataSourcePojo(),
+                item.dataSourceNamespacePojo(), null)))
+            .namespace(namespaceMapper.mapPojo(item.relationshipNamespacePojo()))
             .type(RelationshipTypeDto.ERD.name().equals(item.relationshipPojo().getRelationshipType())
-                ? DataEntityRelationshipType.ERD
-                : DataEntityRelationshipType.GRAPH);
+                ? DataEntityRelationshipType.ENTITY_RELATIONSHIP
+                : DataEntityRelationshipType.GRAPH_RELATIONSHIP);
     }
 
     public DataEntityRelationshipList mapListToRelationshipPage(final Page<RelationshipDto> relationshipDtoPage) {

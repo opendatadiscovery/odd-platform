@@ -1,18 +1,11 @@
 import { generatePath, useParams } from 'react-router-dom';
 import type { QueryExample } from 'generated-sources';
+import { BASE_PATH } from './dataModelling';
 
 export const URLSearchParams = {
   QUERY_SEARCH_ID: 'querySearchId',
 } as const;
 
-const BASE_PATH = '/data-modelling';
-const QUERY_EXAMPLES_PATH = 'query-examples';
-
-export function dataModellingPath() {
-  return BASE_PATH;
-}
-
-const QUERY_EXAMPLE_ID_PARAM = ':queryExampleId';
 const QUERY_EXAMPLE_ID = 'queryExampleId';
 
 interface QueryExamplesRouteParams {
@@ -34,9 +27,12 @@ export const useQueryExamplesRouteParams = (): AppQueryExamplesRouteParams => {
 };
 
 export function queryExamplesPath(queryExampleId?: QueryExample['id']) {
-  let originalPath = `${BASE_PATH}/${QUERY_EXAMPLES_PATH}`;
-  if (!queryExampleId) return generatePath(originalPath);
+  const path = `${BASE_PATH}/query-examples`;
+  if (queryExampleId) {
+    return generatePath(`${path}/:queryExampleId`, {
+      queryExampleId: queryExampleId.toString(),
+    });
+  }
 
-  originalPath = `${BASE_PATH}/${QUERY_EXAMPLES_PATH}/${QUERY_EXAMPLE_ID_PARAM}`;
-  return generatePath(originalPath, { queryExampleId });
+  return generatePath(path);
 }

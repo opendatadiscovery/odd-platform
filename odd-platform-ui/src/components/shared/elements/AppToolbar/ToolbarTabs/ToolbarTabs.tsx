@@ -50,8 +50,6 @@ const ToolbarTabs: FC = () => {
       {
         name: t('Data Modelling'),
         link: queryExamplesPath(),
-        hint: t('BETA'),
-        hintType: 'secondary',
         value: 'data-modelling',
       },
       {

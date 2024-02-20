@@ -33,9 +33,7 @@ const TermDetailsTabs: React.FC = () => {
     [termId, termDetails?.entitiesUsingCount, termDetails?.columnsUsingCount, t]
   );
 
-  const [selectedTab, setSelectedTab] = React.useState(-1);
-
-  useSetSelectedTab(tabs, setSelectedTab);
+  const selectedTab = useSetSelectedTab(tabs);
 
   return (
     <>

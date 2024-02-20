@@ -40,8 +40,7 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
     [t, newRequestsTabHint]
   );
 
-  const [selectedTab, setSelectedTab] = React.useState(-1);
-  useSetSelectedTab(tabs, setSelectedTab);
+  const selectedTab = useSetSelectedTab(tabs);
 
   const onTabChange = React.useCallback(() => {
     setQuery('');

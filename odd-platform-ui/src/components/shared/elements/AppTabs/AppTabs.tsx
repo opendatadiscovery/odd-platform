@@ -21,7 +21,7 @@ export type AppTabItem<ValueT = number | string | boolean> = {
 interface AppTabsProps
   extends Pick<TabsProps, 'value' | 'onChange' | 'orientation' | 'sx'> {
   items: AppTabItem[];
-  handleTabChange: (newTab: number) => void;
+  handleTabChange?: (newTab: number) => void;
   selectedTab?: number | boolean;
   type: TabType;
   isHintUpdating?: boolean;
@@ -31,7 +31,7 @@ interface AppTabsProps
 
 const AppTabs: FC<AppTabsProps> = ({
   items,
-  handleTabChange,
+  handleTabChange = () => {},
   selectedTab,
   type,
   orientation,
