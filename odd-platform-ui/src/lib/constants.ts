@@ -73,6 +73,10 @@ export const DataEntityClassLabelMap: Map<
     ClassNameEnum.TRANSFORMER_RUN,
     { short: 'TSR', normal: 'Transformer Run', plural: 'Transformer Runs' },
   ],
+  [
+    ClassNameEnum.RELATIONSHIP,
+    { short: 'REL', normal: 'Relationship', plural: 'Relationships' },
+  ],
 ]);
 
 export const DataEntityClassTypeLabelMap: Map<
@@ -111,6 +115,14 @@ export const DataEntityClassTypeLabelMap: Map<
   [TypeNameEnum.API_SERVICE, { normal: 'API service', plural: 'API services' }],
   [TypeNameEnum.KAFKA_SERVICE, { normal: 'Kafka service', plural: 'Kafka services' }],
   [TypeNameEnum.DOMAIN, { normal: 'Domain', plural: 'Domains' }],
+  [
+    TypeNameEnum.ENTITY_RELATIONSHIP,
+    { normal: 'Entity-Relationships', plural: 'Entity-Relationships' },
+  ],
+  [
+    TypeNameEnum.GRAPH_RELATIONSHIP,
+    { normal: 'Graph Relationship', plural: 'Graph Relationships' },
+  ],
 ]);
 
 // content width constants

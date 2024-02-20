@@ -8,6 +8,7 @@ const QueryExamples = lazy(() => import('./QueryExamples'));
 const QueryExampleDetails = lazy(
   () => import('./QueryExampleDetails/QueryExampleDetailsContainer')
 );
+const Relationships = lazy(() => import('./Relationships'));
 
 const DataModellingRoutes: React.FC = () => (
   <AppSuspenseWrapper>
@@ -36,6 +37,7 @@ const DataModellingRoutes: React.FC = () => (
           />
         }
       />
+      <Route path='relationships' element={<Relationships />} />
     </Routes>
   </AppSuspenseWrapper>
 );

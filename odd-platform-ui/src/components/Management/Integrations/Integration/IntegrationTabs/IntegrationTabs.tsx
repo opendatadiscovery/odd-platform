@@ -12,8 +12,6 @@ interface IntegrationTabsProps {
 }
 
 const IntegrationTabs: React.FC<IntegrationTabsProps> = ({ titles, integrationId }) => {
-  const [selectedTab, setSelectedTab] = React.useState(0);
-
   const tabs = React.useMemo<AppTabItem[]>(
     () =>
       titles.map(title => ({
@@ -23,16 +21,11 @@ const IntegrationTabs: React.FC<IntegrationTabsProps> = ({ titles, integrationId
     [titles]
   );
 
-  useSetSelectedTab(tabs, setSelectedTab);
+  const selectedTab = useSetSelectedTab(tabs);
 
   return (
     <Grid sx={{ mt: 1 }}>
-      <AppTabs
-        type='primary'
-        items={tabs}
-        selectedTab={selectedTab}
-        handleTabChange={() => {}}
-      />
+      <AppTabs type='primary' items={tabs} selectedTab={selectedTab} />
     </Grid>
   );
 };

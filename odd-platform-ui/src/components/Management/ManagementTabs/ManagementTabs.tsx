@@ -1,4 +1,4 @@
-import React, { type FC, useMemo, useState } from 'react';
+import React, { type FC, useMemo } from 'react';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
@@ -10,7 +10,6 @@ import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelected
 const ManagementTabs: FC = () => {
   const { t } = useTranslation();
   const { hasAccessTo } = usePermissions();
-  const [selectedTab, setSelectedTab] = useState(0);
 
   const hideAssociations = useMemo(
     () => !hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE),
@@ -51,7 +50,7 @@ const ManagementTabs: FC = () => {
     [hideAssociations, t]
   );
 
-  useSetSelectedTab(tabs, setSelectedTab);
+  const selectedTab = useSetSelectedTab(tabs);
 
   return (
     <Grid sx={{ p: 0.5 }}>
@@ -60,7 +59,6 @@ const ManagementTabs: FC = () => {
         type='menu'
         items={tabs}
         selectedTab={selectedTab}
-        handleTabChange={() => {}}
       />
     </Grid>
   );
