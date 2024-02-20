@@ -1,26 +1,26 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { useGetQueryExampleDetails } from 'lib/hooks/api/dataModelling/queryExamples';
 import { useAppDateTime } from 'lib/hooks';
 import { AppLoadingPage } from 'components/shared/elements';
-import { fetchResourcePermissions } from 'redux/thunks';
 import { TimeGapIcon } from 'components/shared/icons';
 import { useQueryExamplesRouteParams } from 'routes';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { getResourcePermissions } from 'redux/selectors';
+import { useResourcePermissions } from 'lib/hooks/api/permissions';
 import QueryExampleDetailsTabs from './QueryExampleDetailsTabs';
 import QueryExampleDetailsOverview from './QueryExampleDetailsOverview';
 import QueryExampleDetailsLinkedEntities from './QueryExampleDetailsLinkedEntities';
 import { QueryExampleDetailsContainerActions } from './QueryExampleDetailsContainerActions';
 
 const QueryExampleDetailsContainer: React.FC = () => {
-  const dispatch = useAppDispatch();
   const { queryExampleId: exampleId } = useQueryExamplesRouteParams();
-  const resourcePermissions = useAppSelector(
-    getResourcePermissions(PermissionResourceType.QUERY_EXAMPLE, exampleId)
-  );
+
+  const { data: resourcePermissions } = useResourcePermissions({
+    resourceId: exampleId,
+    permissionResourceType: PermissionResourceType.QUERY_EXAMPLE,
+  });
+
   const { data: queryExampleDetails, isLoading } = useGetQueryExampleDetails({
     exampleId,
   });
@@ -41,15 +41,6 @@ const QueryExampleDetailsContainer: React.FC = () => {
     [queryExampleDetails?.updatedAt, formatDistanceToNowStrict]
   );
 
-  useEffect(() => {
-    dispatch(
-      fetchResourcePermissions({
-        resourceId: exampleId,
-        permissionResourceType: PermissionResourceType.QUERY_EXAMPLE,
-      })
-    );
-  }, [exampleId]);
-
   return queryExampleDetails && !isLoading ? (
     <Grid container gap={2} flexDirection='column'>
       <Grid item display='flex' alignItems='center' justifyContent='space-between'>
@@ -64,7 +55,7 @@ const QueryExampleDetailsContainer: React.FC = () => {
               Permission.QUERY_EXAMPLE_UPDATE,
               Permission.QUERY_EXAMPLE_DELETE,
             ]}
-            resourcePermissions={resourcePermissions}
+            resourcePermissions={resourcePermissions ?? []}
             render={() => (
               <QueryExampleDetailsContainerActions
                 queryExampleDetails={queryExampleDetails}
