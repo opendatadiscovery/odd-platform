@@ -217,6 +217,46 @@ paths:
       tags:
         - owner
 
+  /api/owners/mapping:
+    post:
+      summary: Create user owner mapping
+      operationId: createUserOwnerMapping
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/UserOwnerMappingFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Owner'
+        '403':
+          $ref: './components.yaml/#/components/responses/Forbidden'
+      tags:
+        - owner
+
+  /api/owners/mapping/{owner_id}:
+    delete:
+      summary: Delete active user owner
+      description: Deletes active user  owner
+      operationId: deleteActiveUserOwnerMapping
+      parameters:
+        - name: owner_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - owner
+
   /api/namespaces:
     get:
       summary: List of namespaces

@@ -6,6 +6,7 @@ import org.opendatadiscovery.oddplatform.api.contract.api.OwnerApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerList;
+import org.opendatadiscovery.oddplatform.api.contract.model.UserOwnerMappingFormData;
 import org.opendatadiscovery.oddplatform.service.OwnerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,5 +52,21 @@ public class OwnerController implements OwnerApi {
         return ownerFormData
             .flatMap(form -> ownerService.update(ownerId, form))
             .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Owner>>
+        createUserOwnerMapping(final Mono<UserOwnerMappingFormData> userOwnerMappingFormData,
+                               final ServerWebExchange exchange) {
+        return userOwnerMappingFormData
+            .flatMap(ownerService::createUserOwnerMapping)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteActiveUserOwnerMapping(final Long ownerId,
+                                                                   final ServerWebExchange exchange) {
+        return ownerService.deleteActiveUserOwnerMapping(ownerId)
+            .thenReturn(ResponseEntity.noContent().build());
     }
 }

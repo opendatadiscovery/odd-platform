@@ -9,6 +9,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerList;
 import org.opendatadiscovery.oddplatform.api.contract.model.Role;
+import org.opendatadiscovery.oddplatform.api.contract.model.UserOwnerMappingFormData;
 import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.OwnerMapper;
@@ -20,13 +21,13 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntry
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMappingRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class OwnerServiceImpl implements OwnerService {
+    private final UserOwnerMappingService userOwnerMappingService;
     private final ReactiveOwnerRepository ownerRepository;
     private final ReactiveUserOwnerMappingRepository userOwnerMappingRepository;
     private final OwnerMapper ownerMapper;
@@ -98,6 +99,20 @@ public class OwnerServiceImpl implements OwnerService {
             .then(ownerToRoleRepository.deleteOwnerRelationsExcept(id, List.of()))
             .then(ownerRepository.delete(id))
             .then();
+    }
+
+    @Override
+    public Mono<Owner> createUserOwnerMapping(final UserOwnerMappingFormData form) {
+        return userOwnerMappingService.createRelation(form.getOidcUsername(), form.getProvider(), form.getOwnerId())
+            .then(ownerRepository.getDto(form.getOwnerId())
+                .map(ownerMapper::mapFromDto));
+    }
+
+    @Override
+    public Mono<Owner> deleteActiveUserOwnerMapping(final Long ownerId) {
+        return userOwnerMappingService.deleteActiveUserRelation(ownerId)
+            .then(ownerRepository.getDto(ownerId)
+                .map(ownerMapper::mapFromDto));
     }
 
     private Mono<OwnerPojo> updateSearchVectors(final OwnerPojo owner) {

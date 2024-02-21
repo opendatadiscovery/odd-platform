@@ -223,6 +223,7 @@ components:
         - OWNER_UPDATE
         - OWNER_DELETE
         - OWNER_ASSOCIATION_MANAGE
+        - OWNER_RELATION_MANAGE
         - DIRECT_OWNER_SYNC
         - POLICY_CREATE
         - POLICY_UPDATE
@@ -358,9 +359,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Role'
+        associated_user:
+          $ref: '#/components/schemas/AssociatedUser'
       required:
         - id
         - name
+
+    AssociatedUser:
+      type: object
+      properties:
+        oidc_username:
+          type: string
+        provider:
+          type: string
+
+    UserOwnerMappingFormData:
+      type: object
+      properties:
+        owner_id:
+          type: integer
+          format: int64
+        oidc_username:
+          type: string
+        provider:
+          type: string
 
     OwnerList:
       type: object
