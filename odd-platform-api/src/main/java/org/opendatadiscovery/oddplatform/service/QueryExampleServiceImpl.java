@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExample;
-import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDatasetFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleList;
@@ -55,10 +54,9 @@ public class QueryExampleServiceImpl implements QueryExampleService {
     @Override
     @ReactiveTransactional
     public Mono<QueryExample> createQueryExampleToDatasetRelationship(
-        final Long queryExampleId,
-        final QueryExampleDatasetFormData queryExampleDatasetFormData) {
+        final Long queryExampleId, final Long datasetId) {
         return dataEntityToQueryExampleRepository
-            .createRelationWithDataEntity(queryExampleDatasetFormData.getDatasetId(), queryExampleId)
+            .createRelationWithDataEntity(datasetId, queryExampleId)
             .switchIfEmpty(Mono.error(() -> new BadUserRequestException("Dataset assigned to Query Example")))
             .then(dataEntityToQueryExampleRepository.getQueryExampleDatasetRelations(queryExampleId))
             .map(dto -> queryExampleMapper.mapToQueryExample(

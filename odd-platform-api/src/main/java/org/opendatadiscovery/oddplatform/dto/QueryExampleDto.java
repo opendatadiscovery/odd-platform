@@ -4,5 +4,6 @@ import java.util.List;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 
-public record QueryExampleDto(QueryExamplePojo queryExamplePojo, List<DataEntityPojo> linkedEntities) {
+public record QueryExampleDto(QueryExamplePojo queryExamplePojo,
+                              List<DataEntityPojo> linkedEntities) {
 }

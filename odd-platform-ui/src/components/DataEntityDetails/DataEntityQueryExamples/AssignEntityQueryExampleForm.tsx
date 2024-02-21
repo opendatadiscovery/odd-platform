@@ -35,8 +35,8 @@ const AssignEntityQueryExampleForm: React.FC<AssignEntityQueryFormProps> = ({
 
   const onSubmit = ({ exampleId }: FormData) => {
     mutateAsync({
-      exampleId,
-      queryExampleDatasetFormData: { datasetId: dataEntityId },
+      dataEntityId,
+      dataEntityQueryExampleFormData: { queryExampleId: exampleId },
     }).then(_ => {
       reset();
     });

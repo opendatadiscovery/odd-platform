@@ -4,10 +4,10 @@ import type {
   QueryExampleApiGetQueryExampleByDatasetIdRequest,
   QueryExampleApiCreateQueryExamplesRequest,
   QueryExampleApiUpdateQueryExampleRequest,
-  QueryExampleApiCreateQueryExampleToDatasetRelationshipRequest,
-  QueryExampleApiDeleteQueryExampleToDatasetRelationshipRequest,
+  DataEntityApiCreateQueryExampleToDatasetRelationshipNewRequest,
+  DataEntityApiDeleteQueryExampleToDatasetRelationshipNewRequest,
 } from 'generated-sources';
-import { queryExampleApi } from 'lib/api';
+import { queryExampleApi, dataEntityApi } from 'lib/api';
 import { showSuccessToast } from 'lib/errorHandling';
 
 export function useGetQueryExampleDetails({
@@ -75,12 +75,12 @@ export function useAssignEntityQueryExample() {
   return useMutation({
     mutationKey: ['assignEntityQueryExample'],
     mutationFn: async ({
-      exampleId,
-      queryExampleDatasetFormData,
-    }: QueryExampleApiCreateQueryExampleToDatasetRelationshipRequest) =>
-      queryExampleApi.createQueryExampleToDatasetRelationship({
-        exampleId,
-        queryExampleDatasetFormData,
+      dataEntityId,
+      dataEntityQueryExampleFormData,
+    }: DataEntityApiCreateQueryExampleToDatasetRelationshipNewRequest) =>
+      dataEntityApi.createQueryExampleToDatasetRelationshipNew({
+        dataEntityId,
+        dataEntityQueryExampleFormData,
       }),
     onSuccess: async () => {
       showSuccessToast({ message: 'Query Example successfully assigned!' });
@@ -96,9 +96,14 @@ export function useUnassignEntityQueryExample() {
 
   return useMutation({
     mutationKey: ['unassignEntityQueryExample'],
-    mutationFn: async (
-      params: QueryExampleApiDeleteQueryExampleToDatasetRelationshipRequest
-    ) => queryExampleApi.deleteQueryExampleToDatasetRelationship(params),
+    mutationFn: async ({
+      dataEntityId,
+      exampleId,
+    }: DataEntityApiDeleteQueryExampleToDatasetRelationshipNewRequest) =>
+      dataEntityApi.deleteQueryExampleToDatasetRelationshipNew({
+        dataEntityId,
+        exampleId,
+      }),
     onSuccess: async () => {
       showSuccessToast({ message: 'Query Example successfully unassigned!' });
       await queryClient.invalidateQueries({

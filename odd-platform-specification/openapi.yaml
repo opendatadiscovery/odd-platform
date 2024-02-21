@@ -992,6 +992,29 @@ paths:
       tags:
         - dataEntity
 
+  /api/dataentities/{data_entity_id}/queryexample:
+    post:
+      summary: add Dataset to QueryExample
+      description: Creates a new relation between QueryExample and Dataset
+      operationId: createQueryExampleToDatasetRelationshipNew
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityQueryExampleFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExample'
+      tags:
+        - dataEntity
+
   /api/dataentities/{data_entity_id}/statuses:
     put:
       summary: Update status to data entity
@@ -1023,6 +1046,20 @@ paths:
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
         - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntity
+
+  /api/dataentities/{data_entity_id}/queryexample/{example_id}:
+    delete:
+      summary: Delete Dataset from QueryExample
+      description: Deletes relationship between QueryExample and Dataset
+      operationId: deleteQueryExampleToDatasetRelationshipNew
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'
@@ -2242,43 +2279,6 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/QueryExampleList'
-      tags:
-        - queryExample
-
-  /api/queryexample/{example_id}/dataset:
-    post:
-      summary: add Dataset to QueryExample
-      description: Creates a new relation between QueryExample and Dataset
-      operationId: createQueryExampleToDatasetRelationship
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/QueryExampleDatasetFormData'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/QueryExample'
-      tags:
-        - queryExample
-
-  /api/queryexample/{example_id}/dataset/{data_entity_id}:
-    delete:
-      summary: Delete Dataset from QueryExample
-      description: Deletes relationship between QueryExample and Dataset
-      operationId: deleteQueryExampleToDatasetRelationship
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
-        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
-      responses:
-        '204':
-          $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - queryExample
 

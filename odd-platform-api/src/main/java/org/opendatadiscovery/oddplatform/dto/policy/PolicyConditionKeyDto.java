@@ -23,7 +23,8 @@ public enum PolicyConditionKeyDto {
     TERM_NAMESPACE_NAME("term:namespace:name"),
     TERM_TAG_NAME("term:tag:name"),
     TERM_OWNER("term:owner"),
-    TERM_OWNER_TITLE("term:owner:title");
+    TERM_OWNER_TITLE("term:owner:title"),
+    QUERY_EXAMPLE_NAME("queryexample:name");
 
     private final String value;
 
