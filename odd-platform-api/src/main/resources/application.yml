@@ -14,7 +14,8 @@ spring:
   codec:
     max-in-memory-size: 20MB
 
-#genai:
+genai:
+  enabled: false
 #  url: http://localhost:5000
 #  request_timeout: 2
 
@@ -37,7 +38,7 @@ auth:
 
   # Server-To-Server token. Header 'X-API-Key: token'
   s2s:
-    enabled: flase
+    enabled: false
     token:
 
   # For dev purposes only -- successful auth redirect URI
