@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class S2sTokenProvider {
-    @Value("${auth.s2s.token:}")
+    @Value("${auth.s2s.token:#{null}}")
     private String s2sToken;
     @Value("${auth.s2s.enabled:false}")
     private boolean s2sEnabled;

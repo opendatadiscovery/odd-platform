@@ -39,7 +39,7 @@ auth:
   # Server-To-Server token. Header 'X-API-Key: token'
   s2s:
     enabled: false
-    token:
+#    token:
 
   # For dev purposes only -- successful auth redirect URI
   login-form-redirect:
