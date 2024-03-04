@@ -1,7 +1,9 @@
 package org.opendatadiscovery.oddplatform.config;
 
 import java.time.Duration;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.config.properties.GenAIProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ClientHttpConnector;
@@ -10,20 +12,20 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
+@EnableConfigurationProperties(GenAIProperties.class)
+@RequiredArgsConstructor
 public class WebClientConfiguration {
-    @Value("${genai.url:}")
-    private String genAIUrl;
-    @Value("${genai.request_timeout:2}")
-    private Integer getAiRequestTimeout;
+    private final GenAIProperties genAIProperties;
 
     @Bean("genAiWebClient")
     public WebClient webClient() {
-        final HttpClient httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(getAiRequestTimeout));
+        final HttpClient httpClient = HttpClient.create()
+            .responseTimeout(Duration.ofMinutes(genAIProperties.getRequestTimeout()));
         final ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
 
         return WebClient.builder()
             .clientConnector(connector)
-            .baseUrl(genAIUrl)
+            .baseUrl(genAIProperties.getUrl())
             .build();
     }
 }
