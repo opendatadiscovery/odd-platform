@@ -14,6 +14,8 @@ public interface ReactiveUserOwnerMappingRepository {
     Mono<UserOwnerMappingPojo> deleteRelation(final String oidcUsername,
                                               final String provider);
 
+    Mono<UserOwnerMappingPojo> deleteActiveRelationByOwner(final Long ownerId);
+
     Mono<OwnerPojo> getAssociatedOwner(final String oidcUsername,
                                        final String provider);
 

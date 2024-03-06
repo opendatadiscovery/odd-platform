@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
@@ -14,11 +15,13 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.UserOwnerMappingPojo
 import org.opendatadiscovery.oddplatform.repository.mapper.RoleRecordMapper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
+import static org.jooq.impl.SQLDataType.DATE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER_TO_ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.POLICY;
@@ -39,23 +42,33 @@ public class ReactiveUserOwnerMappingRepositoryImpl implements ReactiveUserOwner
                                                      final String provider,
                                                      final Long ownerId) {
         final var query = DSL.insertInto(USER_OWNER_MAPPING)
-            .values(ownerId, oidcUsername, provider)
-            .onConflict(USER_OWNER_MAPPING.OWNER_ID).doUpdate()
-            .set(USER_OWNER_MAPPING.OWNER_ID, ownerId)
-            .set(USER_OWNER_MAPPING.OIDC_USERNAME, oidcUsername)
-            .set(USER_OWNER_MAPPING.PROVIDER, provider)
+            .values(ownerId, oidcUsername, provider, DSL.val(null, DATE))
             .returning();
 
-        return jooqReactiveOperations.mono(query)
-            .map(r -> r.into(UserOwnerMappingPojo.class));
+        return deleteActiveRelationByOwner(ownerId)
+            .then(jooqReactiveOperations.mono(query)
+                .map(r -> r.into(UserOwnerMappingPojo.class)));
     }
 
     @Override
     public Mono<UserOwnerMappingPojo> deleteRelation(final String oidcUsername,
                                                      final String provider) {
-        final var query = DSL.deleteFrom(USER_OWNER_MAPPING)
+        final var query = DSL.update(USER_OWNER_MAPPING)
+            .set(Map.of(USER_OWNER_MAPPING.DELETED_AT, DateTimeUtil.generateNow()))
             .where(getConditions(oidcUsername, provider))
             .returning();
+        return jooqReactiveOperations.mono(query)
+            .map(r -> r.into(UserOwnerMappingPojo.class));
+    }
+
+    @Override
+    public Mono<UserOwnerMappingPojo> deleteActiveRelationByOwner(final Long ownerId) {
+        final var query = DSL.update(USER_OWNER_MAPPING)
+            .set(Map.of(USER_OWNER_MAPPING.DELETED_AT, DateTimeUtil.generateNow()))
+            .where(USER_OWNER_MAPPING.OWNER_ID.eq(ownerId))
+            .and(USER_OWNER_MAPPING.DELETED_AT.isNull())
+            .returning();
+
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(UserOwnerMappingPojo.class));
     }
@@ -77,6 +90,7 @@ public class ReactiveUserOwnerMappingRepositoryImpl implements ReactiveUserOwner
             DSL.select()
                 .from(USER_OWNER_MAPPING)
                 .where(USER_OWNER_MAPPING.OWNER_ID.eq(ownerId))
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull())
         );
         return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
@@ -89,7 +103,9 @@ public class ReactiveUserOwnerMappingRepositoryImpl implements ReactiveUserOwner
             .leftJoin(ROLE_TO_POLICY).on(ROLE.ID.eq(ROLE_TO_POLICY.ROLE_ID))
             .leftJoin(POLICY).on(ROLE_TO_POLICY.POLICY_ID.eq(POLICY.ID))
             .join(OWNER_TO_ROLE).on(ROLE.ID.eq(OWNER_TO_ROLE.ROLE_ID))
-            .join(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER_TO_ROLE.OWNER_ID))
+            .join(USER_OWNER_MAPPING)
+            .on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER_TO_ROLE.OWNER_ID)
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull()))
             .where(getConditions(username, provider))
             .groupBy(ROLE.fields());
         return jooqReactiveOperations.flux(query)
@@ -101,6 +117,7 @@ public class ReactiveUserOwnerMappingRepositoryImpl implements ReactiveUserOwner
                                           final String provider) {
         final List<Condition> conditions = new ArrayList<>();
         conditions.add(USER_OWNER_MAPPING.OIDC_USERNAME.eq(oidcUsername));
+        conditions.add(USER_OWNER_MAPPING.DELETED_AT.isNull());
         if (StringUtils.isNotEmpty(provider)) {
             conditions.add(USER_OWNER_MAPPING.PROVIDER.eq(provider));
         } else {

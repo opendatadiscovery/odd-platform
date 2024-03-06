@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -59,7 +58,8 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
             .from(OWNER_ASSOCIATION_REQUEST)
             .join(requestOwner).on(OWNER_ASSOCIATION_REQUEST.OWNER_ID.eq(requestOwner.ID))
             .leftJoin(USER_OWNER_MAPPING)
-            .on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_BY))
+            .on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_BY)
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull()))
             .leftJoin(statusUpdatedOwner)
             .on(USER_OWNER_MAPPING.OWNER_ID.eq(statusUpdatedOwner.ID))
             .where(OWNER_ASSOCIATION_REQUEST.ID.eq(id));
@@ -95,7 +95,8 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
             .from(cte.getName())
             .join(requestOwner).on(cte.field(OWNER_ASSOCIATION_REQUEST.OWNER_ID).eq(requestOwner.ID))
             .leftJoin(USER_OWNER_MAPPING)
-            .on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(cte.field(OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_BY)))
+            .on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(cte.field(OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_BY))
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull()))
             .leftJoin(statusUpdatedOwner)
             .on(USER_OWNER_MAPPING.OWNER_ID.eq(statusUpdatedOwner.ID));
 

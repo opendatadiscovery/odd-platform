@@ -14,9 +14,7 @@ import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.OwnerAssociationRequestMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerAssociationRequestPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.UserOwnerMappingPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerAssociationRequestRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMappingRepository;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.service.permission.PermissionService;
 import org.springframework.stereotype.Service;
@@ -32,7 +30,7 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
     private final ReactiveOwnerAssociationRequestRepository ownerAssociationRequestRepository;
     private final OwnerAssociationRequestMapper mapper;
     private final AuthIdentityProvider authIdentityProvider;
-    private final ReactiveUserOwnerMappingRepository userOwnerMappingRepository;
+    private final UserOwnerMappingService userOwnerMappingService;
     private final PermissionService permissionService;
 
     @Override
@@ -46,7 +44,7 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
         return Mono.zip(currentUserMono, ownerMono, permissionsMono)
             .flatMap(function((user, ownerPojo, permissions) -> {
                 if (permissions.contains(Permission.DIRECT_OWNER_SYNC)) {
-                    return createRelation(user.username(), user.provider(), ownerPojo.getId())
+                    return userOwnerMappingService.createRelation(user.username(), user.provider(), ownerPojo.getId())
                         .thenReturn(mapper.mapToApprovedRequest(user.username(), ownerPojo.getName()));
                 } else {
                     return Mono.just(mapper.mapToPojo(user.username(), user.provider(), ownerPojo.getId()))
@@ -87,13 +85,7 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
         if (!pojo.getStatus().equals(OwnerAssociationRequestStatus.APPROVED.getValue())) {
             return Mono.just(pojo);
         }
-        return createRelation(pojo.getUsername(), pojo.getProvider(), pojo.getOwnerId()).thenReturn(pojo);
-    }
-
-    private Mono<UserOwnerMappingPojo> createRelation(final String username,
-                                                      final String provider,
-                                                      final Long ownerId) {
-        return userOwnerMappingRepository.deleteRelation(username, provider)
-            .then(userOwnerMappingRepository.createRelation(username, provider, ownerId));
+        return userOwnerMappingService.createRelation(pojo.getUsername(), pojo.getProvider(), pojo.getOwnerId())
+            .thenReturn(pojo);
     }
 }

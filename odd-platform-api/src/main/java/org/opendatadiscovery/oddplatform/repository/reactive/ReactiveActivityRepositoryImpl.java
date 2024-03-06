@@ -153,7 +153,9 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         final var countQuery = DSL.selectCount()
             .from(ACTIVITY)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID))
-            .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY));
+            .leftJoin(USER_OWNER_MAPPING)
+            .on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY)
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull()));
         addJoins(countQuery, datasourceId, namespaceId, tagIds, ownerIds);
         final List<Condition> conditions =
             getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, userIds, eventType);
@@ -172,7 +174,9 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         final var countQuery = DSL.selectCount()
             .from(ACTIVITY)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID))
-            .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY));
+            .leftJoin(USER_OWNER_MAPPING)
+            .on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY)
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull()));
         addJoins(countQuery, datasourceId, namespaceId, tagIds, List.of(currentOwnerId));
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
             List.of(currentOwnerId), userIds, eventType);
@@ -191,7 +195,9 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         final var countQuery = DSL.selectCount()
             .from(ACTIVITY)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID))
-            .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY));
+            .leftJoin(USER_OWNER_MAPPING)
+            .on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY)
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull()));
         addJoins(countQuery, datasourceId, namespaceId, tagIds, List.of());
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
             List.of(), userIds, eventType);
@@ -211,7 +217,9 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         final var query = DSL.select(selectFields)
             .from(ACTIVITY)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID))
-            .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY))
+            .leftJoin(USER_OWNER_MAPPING)
+            .on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY)
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull()))
             .leftJoin(OWNER).on(OWNER.ID.eq(USER_OWNER_MAPPING.OWNER_ID));
         return addJoins(query, datasourceId, namespaceId, tagIds, ownerIds);
     }
@@ -263,6 +271,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         }
         if (CollectionUtils.isNotEmpty(userIds)) {
             conditions.add(USER_OWNER_MAPPING.OWNER_ID.in(userIds));
+            conditions.add(USER_OWNER_MAPPING.DELETED_AT.isNull());
         }
         return conditions;
     }
