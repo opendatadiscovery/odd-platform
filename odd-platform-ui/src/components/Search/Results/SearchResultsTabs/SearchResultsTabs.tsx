@@ -55,6 +55,11 @@ const SearchResultsTabs: React.FC<SearchResultsTabsProps> = ({
         hint: totals[DataEntityClassNameEnum.ENTITY_GROUP]?.count || 0,
         value: totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id,
       },
+      {
+        name: 'Relationships',
+        hint: totals[DataEntityClassNameEnum.RELATIONSHIP]?.count || 0,
+        value: totals[DataEntityClassNameEnum.RELATIONSHIP]?.id,
+      },
     ]);
   }, [totals]);
 

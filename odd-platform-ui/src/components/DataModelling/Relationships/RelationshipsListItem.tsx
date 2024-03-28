@@ -1,8 +1,4 @@
-import type {
-  DataEntity,
-  DataEntityRelationship,
-  DataSourceSafe,
-} from 'generated-sources';
+import type { DataEntityRelationship, DataSourceSafe } from 'generated-sources';
 import * as Table from 'components/shared/elements/StyledComponents/Table';
 import { Typography } from '@mui/material';
 import React from 'react';
@@ -10,26 +6,11 @@ import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'routes/dataEntitiesRoutes';
 import { DatasourceLogo, EntityTypeItem } from 'components/shared/elements';
 import * as S from 'components/shared/styled-components';
+import { RelationshipDatasetInfo } from 'components/shared/elements/Relationships/RelationshipDatasetInfo';
 
 interface Props {
   item: DataEntityRelationship;
 }
-
-interface DatasetInfoProps {
-  dataEntityId?: DataEntity['id'];
-  oddrn: DataEntity['oddrn'];
-}
-
-const DatasetInfo = ({ dataEntityId, oddrn }: DatasetInfoProps) =>
-  dataEntityId ? (
-    <Link to={dataEntityDetailsPath(dataEntityId)}>
-      <Typography variant='body1' color='button.link.normal.color' fontWeight={500}>
-        {oddrn.split('/').pop()}
-      </Typography>
-    </Link>
-  ) : (
-    <Typography variant='body1'>{oddrn}</Typography>
-  );
 
 interface DataSourceInfoProps {
   dataSource: DataSourceSafe;
@@ -81,13 +62,13 @@ const RelationshipsListItem = ({ item }: Props) => (
       <DataSourceInfo dataSource={item.dataSource} />
     </Table.Cell>
     <Table.Cell $flex='1 0 16%'>
-      <DatasetInfo
+      <RelationshipDatasetInfo
         dataEntityId={item.sourceDataEntityId}
         oddrn={item.sourceDatasetOddrn}
       />
     </Table.Cell>
     <Table.Cell $flex='1 0 16%'>
-      <DatasetInfo
+      <RelationshipDatasetInfo
         dataEntityId={item.targetDataEntityId}
         oddrn={item.targetDatasetOddrn}
       />
