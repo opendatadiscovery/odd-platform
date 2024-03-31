@@ -59,11 +59,11 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
             alignContent='flex-start'
           >
             <Typography variant='h4' sx={{ mb: 2 }}>
-              Source:
+              Parent:
             </Typography>
             <RelationshipDatasetInfo
-              dataEntityId={relationshipDetails.sourceDataEntityId}
-              oddrn={relationshipDetails.sourceDatasetOddrn}
+              dataEntityId={relationshipDetails.targetDataEntityId}
+              oddrn={relationshipDetails.targetDatasetOddrn}
             />
           </Grid>
           <Grid item container xs={4} alignItems='center' justifyContent='center'>
@@ -78,11 +78,11 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
             alignContent='flex-start'
           >
             <Typography variant='h4' sx={{ mb: 2 }}>
-              Target:
+              Child:
             </Typography>
             <RelationshipDatasetInfo
-              dataEntityId={relationshipDetails.targetDataEntityId}
-              oddrn={relationshipDetails.targetDatasetOddrn}
+              dataEntityId={relationshipDetails.sourceDataEntityId}
+              oddrn={relationshipDetails.sourceDatasetOddrn}
             />
           </Grid>
           <Grid item container xs={2} alignItems='flex-start' alignContent='flex-start'>
@@ -127,7 +127,7 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
             <Typography variant='h2' sx={{ mr: 0.5 }}>
               {sources?.length || 0}
             </Typography>
-            <Typography variant='h4'>{t('sources')}</Typography>
+            <Typography variant='h4'>Referenced Key</Typography>
           </Grid>
           <Grid
             item
@@ -156,7 +156,7 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
             <Typography variant='h2' sx={{ mr: 0.5 }}>
               {targets?.length || 0}
             </Typography>
-            <Typography variant='h4'>{t('targets')}</Typography>
+            <Typography variant='h4'>Foreign Key</Typography>
           </Grid>
           <Grid
             item
