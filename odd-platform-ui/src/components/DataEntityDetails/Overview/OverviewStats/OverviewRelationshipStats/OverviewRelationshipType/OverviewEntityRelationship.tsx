@@ -137,7 +137,7 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
             alignItems='flex-start'
             sx={{ mt: 1 }}
           >
-            {sources?.slice(0, displayedEntitiesNumber).map(target => (
+            {targets?.slice(0, displayedEntitiesNumber).map(target => (
               <AppTooltip
                 key={target.oddrn}
                 title={<S.Tooltip>{target.oddrn}</S.Tooltip>}
@@ -166,7 +166,7 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
             alignItems='flex-start'
             sx={{ mt: 1 }}
           >
-            {targets?.slice(0, displayedEntitiesNumber).map(target => (
+            {sources?.slice(0, displayedEntitiesNumber).map(target => (
               <AppTooltip
                 key={target.oddrn}
                 title={<S.Tooltip>{target.oddrn}</S.Tooltip>}
