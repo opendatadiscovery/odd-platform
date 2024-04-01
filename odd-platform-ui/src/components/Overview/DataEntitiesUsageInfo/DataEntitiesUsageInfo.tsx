@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDataEntitiesUsage } from 'lib/hooks/api';
 import { useCreateSearch } from 'lib/hooks';
+import type { SearchFormData } from 'generated-sources';
 import DataEntitiesUsageInfoView from './DataEntityUsageInfoView/DataEntitiesUsageInfoView';
 
 export interface HandleEntityClassClickParams {
@@ -21,7 +22,8 @@ const DataEntitiesUsageInfo: React.FC = () => {
 
   const handleEntityClassClick = React.useCallback(
     ({ entityId, entityName }: HandleEntityClassClickParams) => {
-      const searchFormData = {
+      const searchFormData: SearchFormData = {
+        query: '',
         filters: { entityClasses: [{ entityId, entityName, selected: true }] },
       };
       createSearch(searchFormData);
@@ -43,7 +45,9 @@ const DataEntitiesUsageInfo: React.FC = () => {
       const types = [
         { entityId: entityClassTypeId, entityName: entityClassTypeName, selected },
       ];
-      const searchFormData = { filters: { entityClasses, types } };
+      const searchFormData: SearchFormData = {
+        filters: { entityClasses, types },
+      };
       createSearch(searchFormData);
     },
     []

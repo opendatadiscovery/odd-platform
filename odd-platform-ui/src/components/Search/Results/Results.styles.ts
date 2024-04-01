@@ -26,7 +26,21 @@ export const SearchCol = styled(Grid)(() => ({
   paddingLeft: '8px',
 }));
 
+// nm - Name
+// nd - Namespace, Datasource
+// ow - Owner
+// gr - Group
+// cr - Created
+// up - Updated
+// st - Status
 type MainColNames = 'nm' | 'nd' | 'ow' | 'gr' | 'cr' | 'up' | 'st';
+// us - Use
+// rc - Rows / Columns
+// sr - Sources
+// tr - Targets
+// en - Entities
+// su - Suite URL
+// ne - Number of entities
 type AddColNames = 'us' | 'rc' | 'sr' | 'tr' | 'en' | 'su' | 'ne';
 
 export type SearchTabsNames =
@@ -36,6 +50,7 @@ export type SearchTabsNames =
   | typeof DataEntityClassNameEnum.INPUT
   | typeof DataEntityClassNameEnum.ENTITY_GROUP
   | typeof DataEntityClassNameEnum.QUALITY_TEST
+  | typeof DataEntityClassNameEnum.RELATIONSHIP
   | 'all'
   | 'my';
 export type ColGridSizes = Record<MainColNames, GridSize> &
@@ -135,5 +150,9 @@ export const gridSizes: GridSizes = {
   DATA_ENTITY_GROUP: {
     lg: { nm: 2.68, ne: 1.09, nd: 1.91, ow: 1.81, gr: 1.91, st: 1, cr: 0.8, up: 0.8 },
     md: { nm: 2.68, ne: 1.09, nd: 1.91, ow: 1.81, gr: 1.91, st: 1, cr: 0.8, up: 0.8 },
+  },
+  DATA_RELATIONSHIP: {
+    lg: { nm: 2.68, nd: 2.28, ow: 2.08, gr: 2.28, st: 1, cr: 0.8, up: 0.8 },
+    md: { nm: 2.68, nd: 2.28, ow: 2.08, gr: 2.28, st: 1, cr: 0.8, up: 0.8 },
   },
 };
