@@ -3953,6 +3953,19 @@ components:
         - items
         - page_info
 
+    DataEntityRelationshipDetailsList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityRelationshipDetails'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
     DataEntityRelationship:
       type: object
       properties:
@@ -3963,20 +3976,12 @@ components:
           type: string
         oddrn:
           type: string
-        source_data_entity_id:
-          type: integer
-          format: int64
-        target_data_entity_id:
-          type: integer
-          format: int64
-        source_dataset_oddrn:
-          type: string
-        target_dataset_oddrn:
-          type: string
+        source_data_entity:
+          $ref: '#/components/schemas/DataEntityRef'
+        target_data_entity:
+          $ref: '#/components/schemas/DataEntityRef'
         data_source:
           $ref: '#/components/schemas/DataSourceSafe'
-        namespace:
-          $ref: '#/components/schemas/Namespace'
         type:
           $ref: '#/components/schemas/DataEntityRelationshipType'
       required:
@@ -3988,25 +3993,15 @@ components:
         - data_source
         - type
 
-    DataEntityERDRelationshipDetails:
+    DataEntityRelationshipDetails:
       allOf:
         - $ref: '#/components/schemas/DataEntityRelationship'
         - type: object
           properties:
             erd_relationship:
               $ref: '#/components/schemas/ERDRelationshipDetails'
-          required:
-            - erd_relationship
-
-    DataEntityGraphRelationshipDetails:
-      allOf:
-        - $ref: '#/components/schemas/DataEntityRelationship'
-        - type: object
-          properties:
             graph_relationship:
               $ref: '#/components/schemas/GraphRelationshipDetails'
-          required:
-            - graph_relationship
 
     DataEntityRelationshipType:
       type: string
@@ -4034,8 +4029,14 @@ components:
     ERDRelationshipPairs:
       type: object
       properties:
+        source_dataset_field_id:
+          type: integer
+          format: int64
         source_dataset_field_oddrn:
           type: string
+        target_dataset_field_id:
+          type: integer
+          format: int64
         target_dataset_field_oddrn:
           type: string
       required:
