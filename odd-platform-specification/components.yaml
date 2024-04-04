@@ -3630,7 +3630,7 @@ components:
           items:
             $ref: '#/components/schemas/DataQualityCategoryResults'
         tables_dashboard:
-            $ref: '#/components/schemas/TablesDashboard'
+          $ref: '#/components/schemas/TablesDashboard'
       required:
         - test_results
         - tables_dashboard
@@ -3988,8 +3988,8 @@ components:
         - id
         - name
         - oddrn
-        - source_dataset_oddrn
-        - target_dataset_oddrn
+        - source_data_entity
+        - target_data_entity
         - data_source
         - type
 
