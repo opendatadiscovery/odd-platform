@@ -2,8 +2,7 @@ package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.RelationshipApi;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityERDRelationshipDetails;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGraphRelationshipDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRelationshipDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRelationshipList;
 import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
 import org.opendatadiscovery.oddplatform.service.RelationshipsService;
@@ -28,7 +27,7 @@ public class RelationshipController implements RelationshipApi {
     }
 
     @Override
-    public Mono<ResponseEntity<DataEntityERDRelationshipDetails>>
+    public Mono<ResponseEntity<DataEntityRelationshipDetails>>
         getERDRelationshipById(final Long relationshipId,
                                final ServerWebExchange exchange) {
         return relationshipsService.getERDRelationshipById(relationshipId)
@@ -36,7 +35,7 @@ public class RelationshipController implements RelationshipApi {
     }
 
     @Override
-    public Mono<ResponseEntity<DataEntityGraphRelationshipDetails>>
+    public Mono<ResponseEntity<DataEntityRelationshipDetails>>
         getGraphRelationshipById(final Long relationshipId,
                                  final ServerWebExchange exchange) {
         return relationshipsService.getGraphRelationshipById(relationshipId)

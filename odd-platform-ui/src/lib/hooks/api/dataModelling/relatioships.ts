@@ -1,7 +1,21 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { relationshipApi } from 'lib/api';
 import type { RelationshipApiGetRelationshipsRequest } from 'generated-sources';
 import { addNextPage } from '../utils';
+
+export function useGetEDRRelationshipById(relationshipId: number) {
+  return useQuery({
+    queryKey: ['getERDRelationshipById', relationshipId],
+    queryFn: async () => relationshipApi.getERDRelationshipById({ relationshipId }),
+  });
+}
+
+export function useGetGraphRelationshipById(relationshipId: number) {
+  return useQuery({
+    queryKey: ['getGraphRelationshipById', relationshipId],
+    queryFn: async () => relationshipApi.getGraphRelationshipById({ relationshipId }),
+  });
+}
 
 export function useSearchRelationships({
   query,

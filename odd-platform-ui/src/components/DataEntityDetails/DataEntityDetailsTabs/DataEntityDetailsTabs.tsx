@@ -102,6 +102,11 @@ const DataEntityDetailsTabs: React.FC = () => {
         link: dataEntityDetailsPath(dataEntityId, 'data'),
         hidden: !dataEntityDetails.lookupTableId,
       },
+      {
+        name: 'Relationships',
+        link: dataEntityDetailsPath(dataEntityId, 'relationships'),
+        hidden: !isDataset,
+      },
     ],
     [
       dataEntityId,

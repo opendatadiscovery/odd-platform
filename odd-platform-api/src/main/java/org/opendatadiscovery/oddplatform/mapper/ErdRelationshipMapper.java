@@ -1,31 +1,42 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import org.apache.commons.lang3.tuple.Pair;
 import org.opendatadiscovery.oddplatform.api.contract.model.ERDRelationshipDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.ERDRelationshipPairs;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipDetailsPojo;
+import org.opendatadiscovery.oddplatform.dto.ErdRelationshipDetailsDto;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.util.ArrayUtils;
 
 @Component
 public class ErdRelationshipMapper {
-    public ERDRelationshipDetails mapPojoToDetails(final ErdRelationshipDetailsPojo erd) {
-        return new ERDRelationshipDetails()
-            .erdRelationshipId(erd.getId())
-            .fieldsPairs(mapPairs(erd.getSourceDatasetFieldOddrn(), erd.getTargetDatasetFieldOddrn()))
-            .isIdentifying(erd.getIsIdentifying())
-            .cardinality(erd.getCardinality());
-    }
-
-    private List<ERDRelationshipPairs> mapPairs(final String[] source, final String[] target) {
-        if (ArrayUtils.isEmpty(source)) {
+    public ERDRelationshipDetails mapPojoToDetails(final ErdRelationshipDetailsDto erd) {
+        if (erd == null) {
             return null;
         }
 
-        return IntStream.range(0, source.length).mapToObj(i -> new ERDRelationshipPairs()
-                .sourceDatasetFieldOddrn(source[i])
-                .targetDatasetFieldOddrn(target[i])).collect(Collectors.toList());
+        return new ERDRelationshipDetails()
+            .erdRelationshipId(erd.pojo().getId())
+            .fieldsPairs(mapPairs(erd.fieldPairList()))
+            .isIdentifying(erd.pojo().getIsIdentifying())
+            .cardinality(erd.pojo().getCardinality());
+    }
+
+    private List<ERDRelationshipPairs> mapPairs(final List<Pair<Pair<String, DatasetFieldPojo>,
+        Pair<String, DatasetFieldPojo>>> fieldPairsList) {
+        if (fieldPairsList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return fieldPairsList.stream().map(fieldPairs -> new ERDRelationshipPairs()
+                .sourceDatasetFieldOddrn(fieldPairs.getLeft().getKey())
+                .sourceDatasetFieldId(
+                    fieldPairs.getLeft().getValue() != null ? fieldPairs.getLeft().getValue().getId() : null)
+                .targetDatasetFieldOddrn(fieldPairs.getRight().getKey())
+                .targetDatasetFieldId(
+                    fieldPairs.getRight().getValue() != null ? fieldPairs.getRight().getValue().getId() : null))
+            .collect(Collectors.toList());
     }
 }
