@@ -2,7 +2,7 @@ package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataSetApi;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRelationshipList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRelationshipDetailsList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersionDiffList;
 import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
@@ -50,9 +50,10 @@ public class DatasetController implements DataSetApi {
     }
 
     @Override
-    public Mono<ResponseEntity<DataEntityRelationshipList>> getDataSetRelationships(final Long dataEntityId,
-                                                                                 final RelationshipsType type,
-                                                                                 final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<DataEntityRelationshipDetailsList>>
+        getDataSetRelationships(final Long dataEntityId,
+                                final RelationshipsType type,
+                                final ServerWebExchange exchange) {
         return relationshipsService.getRelationsByDatasetId(dataEntityId, type)
             .map(ResponseEntity::ok);
     }
