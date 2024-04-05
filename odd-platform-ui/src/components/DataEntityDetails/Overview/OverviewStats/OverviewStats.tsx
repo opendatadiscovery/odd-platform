@@ -9,6 +9,7 @@ import OverviewDataInputStats from './OverviewDataInputStats/OverviewDataInputSt
 import OverviewDatasetStats from './OverviewDatasetStats/OverviewDatasetStats';
 import OverviewTransformerStats from './OverviewTransformerStats/OverviewTransformerStats';
 import OverviewQualityTestStats from './OverviewQualityTestStats/OverviewQualityTestStats';
+import OverviewRelationshipStats from './OverviewRelationshipStats/OverviewRelationshipStats';
 
 const OverviewStats: React.FC = () => {
   const { dataEntityId } = useDataEntityRouteParams();
@@ -66,6 +67,13 @@ const OverviewStats: React.FC = () => {
                 dataEntityName={dataEntityName}
                 outputs={dataEntityDetails.outputList}
                 unknownOutputsCount={dataEntityDetails.unknownOutputsCount}
+              />
+            );
+          case DataEntityClassNameEnum.RELATIONSHIP:
+            return (
+              <OverviewRelationshipStats
+                key={entityClass.id}
+                dataEntityDetails={dataEntityDetails}
               />
             );
           case DataEntityClassNameEnum.ENTITY_GROUP:

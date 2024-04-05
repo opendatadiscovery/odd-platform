@@ -45,6 +45,7 @@ tags:
   - name: queryExample
   - name: referenceData
   - name: genai
+  - name: relationship
 
 paths:
   /api/integrations:
@@ -1860,7 +1861,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipList'
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipDetailsList'
       tags:
         - dataSet
 
@@ -4006,7 +4007,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataEntityERDRelationshipDetails'
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipDetails'
       tags:
         - relationship
 
@@ -4023,7 +4024,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataEntityGraphRelationshipDetails'
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipDetails'
       tags:
         - relationship
 

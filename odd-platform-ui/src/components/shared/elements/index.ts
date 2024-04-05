@@ -84,3 +84,8 @@ export { default as QueryExamplesListItem } from './QueryExamples/QueryExamplesL
 export { default as QueryExamplesSkeleton } from './QueryExamples/QueryExamplesSkeleton';
 export { default as QueryExamplesUnlinkButton } from './QueryExamples/QueryExamplesUnlinkButton';
 export { default as SearchInput } from './SearchInput/SearchInput';
+export { default as RelationshipListItem } from './Relationships/RelationshipListItem';
+export { default as RelationshipListHeader } from './Relationships/RelationshipListHeader';
+export { RelationshipSkeleton } from './Relationships/RelationshipSkeleton';
+export { EntityRelationship } from './Relationships/RelationshipTypes/EntityRelationship';
+export { GraphRelationship } from './Relationships/RelationshipTypes/GraphRelationship';

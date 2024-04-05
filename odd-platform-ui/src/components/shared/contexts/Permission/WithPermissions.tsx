@@ -14,10 +14,10 @@ const WithPermissions: React.FC<WithPermissionsProps> = ({
   extraCheck,
   children,
 }) => {
-  const { isAllowedTo, hasAccessTo } = usePermissions();
+  const { hasAccessTo } = usePermissions();
 
   if (renderContent) {
-    return <>{renderContent({ isAllowedTo })}</>;
+    return <>{renderContent({ isAllowedTo: hasAccessTo(permissionTo) })}</>;
   }
 
   if (children && extraCheck !== undefined) {

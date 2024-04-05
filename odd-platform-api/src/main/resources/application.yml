@@ -14,7 +14,8 @@ spring:
   codec:
     max-in-memory-size: 20MB
 
-#genai:
+genai:
+  enabled: false
 #  url: http://localhost:5000
 #  request_timeout: 2
 
@@ -34,6 +35,11 @@ auth:
 
   # For dev/demo purposes only -- username1:password1,username2:password2,etc
   login-form-credentials: admin:admin,root:root
+
+  # Server-To-Server token. Header 'X-API-Key: token'
+  s2s:
+    enabled: false
+#    token:
 
   # For dev purposes only -- successful auth redirect URI
   login-form-redirect:

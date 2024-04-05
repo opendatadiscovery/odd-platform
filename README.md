@@ -64,8 +64,8 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 ### Data Security & Compliance
 
-* Manage Tags and Labels to prevent any abuse of the data
-* Refer to Tags and Labels to stay compliant with data security standards
+* Manage Tags to prevent any abuse of the data
+* Refer to Tags to stay compliant with data security standards
 * Have full transparency on how and by whom the data is used
 
 
@@ -148,89 +148,90 @@ OpenDataDiscovery Platform offers comprehensive data source support to meet your
         <tr>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#odd-adapter">Proxy Adapter</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-airflow-adapter">Airflow</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#druid">Apache Druid</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-airflow-2">Airflow 2+</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#druid">Apache Druid</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#cassandra">Cassandra</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#clickhouse">Clickhouse</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#elasticsearch">Elasticsearch </a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#elasticsearch">Elasticsearch </a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#hive">Hive</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#kafka">Kafka</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#feast">Feast </a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#feast">Feast </a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#mssql">MSSQL</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#mysql">MySQL</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#odbc">Microsoft ODBC</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#odbc">Microsoft ODBC</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#mongodb">MongoDB </a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#neo4j">Neo4j </a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#mariadb">MariaDB</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#mariadb">MariaDB</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#oracle">Oracle</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#postgresql">PostgreSQL</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#redshift">Redshift</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#redshift">Redshift</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#snowflake">Snowflake</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#vertica">Vertica</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#tarantool">Tarantool</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#tarantool">Tarantool</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Athena</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#dynamodb">DynamoDB</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#glue">Glue</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#glue">Glue</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#kinesis">Kinesis</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#quicksight">Quicksight </a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#s3">S3</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#s3">S3</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sagemaker">SageMaker</a> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sagemaker-featurestore">SageMaker Featurestore</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sqs">SQS</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sqs">SQS</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#s3_delta">Delta lake S3</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#tableau">Tableau </a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#cubejs">Cube</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#cubejs">Cube</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#superset">SuperSet</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-azure#powerbi">PowerBi</a>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#trino">Trino</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#trino">Trino</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#presto">Presto</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#dbt">DBT</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#redash">Redash</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#redash">Redash</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-spark-adapter">Spark</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#mlflow">MLflow</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#kubeflow">Kubeflow</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#kubeflow">Kubeflow</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#databricks">Databricks Unity Catalog</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-great-expectations">Great Expectations</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#sqlite">SQLite</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#sqlite">SQLite</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#couchbase">Couchbase</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#cockroachdb">Cockroachdb</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#fivetran">Fivetran</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#fivetran">Fivetran</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#airbyte">Airbyte</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#metabase">Metabase</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#mode">Mode</a></td>
         </tr>
         <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#mode">Mode</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-gcp#biquery">BigQuery</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#singlestore">Singlestore</a></td>
         </tr>

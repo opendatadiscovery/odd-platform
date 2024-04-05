@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GraphRelationshipMapper {
     public GraphRelationshipDetails mapPojoToDetails(final GraphRelationshipPojo pojo) {
-        if (pojo == null) {
+        if (pojo == null || pojo.getId() == null) {
             return null;
         }
 
