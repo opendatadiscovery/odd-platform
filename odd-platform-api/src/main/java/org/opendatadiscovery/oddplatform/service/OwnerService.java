@@ -4,7 +4,6 @@ import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerList;
-import org.opendatadiscovery.oddplatform.api.contract.model.UserOwnerMappingFormData;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import reactor.core.publisher.Mono;
 
@@ -23,7 +22,5 @@ public interface OwnerService {
 
     Mono<Void> delete(final long id);
 
-    Mono<Owner> createUserOwnerMapping(final UserOwnerMappingFormData form);
-
-    Mono<Owner> deleteActiveUserOwnerMapping(final Long ownerId);
+    Mono<Owner> getOwnerDtoById(final long ownerId);
 }

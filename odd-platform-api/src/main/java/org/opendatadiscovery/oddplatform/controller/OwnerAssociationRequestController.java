@@ -2,10 +2,14 @@ package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.OwnerAssociationRequestApi;
+import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequest;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestList;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatusFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatusParam;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.ProviderList;
+import org.opendatadiscovery.oddplatform.api.contract.model.UserOwnerMappingFormData;
 import org.opendatadiscovery.oddplatform.service.OwnerAssociationRequestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,12 +31,13 @@ public class OwnerAssociationRequestController implements OwnerAssociationReques
     }
 
     @Override
-    public Mono<ResponseEntity<OwnerAssociationRequestList>> getOwnerAssociationRequestList(final Integer page,
-                                                                                            final Integer size,
-                                                                                            final Boolean active,
-                                                                                            final String query,
-                                                                                            final ServerWebExchange e) {
-        return ownerAssociationRequestService.getOwnerAssociationRequestList(page, size, query, active)
+    public Mono<ResponseEntity<OwnerAssociationRequestList>>
+        getOwnerAssociationRequestList(final Integer page,
+                                       final Integer size,
+                                       final OwnerAssociationRequestStatusParam status,
+                                       final String query,
+                                       final ServerWebExchange e) {
+        return ownerAssociationRequestService.getOwnerAssociationRequestList(page, size, query, status)
             .map(ResponseEntity::ok);
     }
 
@@ -43,6 +48,28 @@ public class OwnerAssociationRequestController implements OwnerAssociationReques
         final ServerWebExchange exchange) {
         return formData
             .flatMap(fd -> ownerAssociationRequestService.updateOwnerAssociationRequest(id, fd.getStatus()))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Owner>>
+        createUserOwnerMapping(final Mono<UserOwnerMappingFormData> userOwnerMappingFormData,
+                           final ServerWebExchange exchange) {
+        return userOwnerMappingFormData
+            .flatMap(ownerAssociationRequestService::createUserOwnerMapping)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteActiveUserOwnerMapping(final Long ownerId,
+                                                                   final ServerWebExchange exchange) {
+        return ownerAssociationRequestService.deleteActiveUserOwnerMapping(ownerId)
+            .thenReturn(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<ProviderList>> getAuthProviders(final ServerWebExchange exchange) {
+        return ownerAssociationRequestService.getAuthProviders()
             .map(ResponseEntity::ok);
     }
 }

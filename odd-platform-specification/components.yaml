@@ -384,6 +384,18 @@ components:
         provider:
           type: string
 
+    ProviderList:
+      type: object
+      properties:
+        default_providers:
+          type: array
+          items:
+            type: string
+        active_providers:
+          type: array
+          items:
+            type: string
+
     OwnerList:
       type: object
       properties:
@@ -3176,6 +3188,14 @@ components:
         - PENDING
         - APPROVED
         - DECLINED
+
+    OwnerAssociationRequestStatusParam:
+      type: string
+      enum:
+        - PENDING
+        - APPROVED
+        - DECLINED
+        - RESOLVED
 
     OwnerAssociationRequestStatusFormData:
       type: object

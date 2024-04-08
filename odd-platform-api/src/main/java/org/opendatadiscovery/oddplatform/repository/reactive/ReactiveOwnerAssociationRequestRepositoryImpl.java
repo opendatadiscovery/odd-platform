@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -12,6 +13,7 @@ import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatusParam;
 import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestDto;
 import org.opendatadiscovery.oddplatform.model.tables.Owner;
@@ -22,6 +24,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
@@ -71,8 +74,8 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
     public Mono<Page<OwnerAssociationRequestDto>> getDtoList(final int page,
                                                              final int size,
                                                              final String query,
-                                                             final Boolean active) {
-        final List<Condition> conditions = getConditions(query, active);
+                                                             final OwnerAssociationRequestStatusParam status) {
+        final List<Condition> conditions = getConditions(query, status);
 
         final Select<Record> homogeneousQuery = DSL.select(OWNER_ASSOCIATION_REQUEST.fields())
             .from(OWNER_ASSOCIATION_REQUEST)
@@ -105,7 +108,7 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
             .flatMap(records -> jooqQueryHelper.pageifyResult(
                 records,
                 r -> mapRecordToDto(r, cte.getName()),
-                fetchCount(query, active)
+                fetchCount(query, status)
             ));
     }
 
@@ -123,9 +126,33 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
             .map(r -> mapRecordToDto(r, OWNER_ASSOCIATION_REQUEST.getName()));
     }
 
+    @Override
+    public Mono<OwnerAssociationRequestPojo> cancelAssociationByOwnerId(final long id, final String updateBy) {
+        final var query = DSL.update(OWNER_ASSOCIATION_REQUEST)
+            .set(Map.of(OWNER_ASSOCIATION_REQUEST.STATUS, OwnerAssociationRequestStatus.DECLINED.getValue(),
+                OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_AT, DateTimeUtil.generateNow(),
+                OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_BY, updateBy))
+            .where(OWNER_ASSOCIATION_REQUEST.OWNER_ID.eq(id))
+            .returning();
+        return jooqReactiveOperations.mono(query)
+            .map(r -> r.into(OwnerAssociationRequestPojo.class));
+    }
+
+    @Override
+    public Mono<OwnerAssociationRequestPojo> cancelAssociationByUsername(final String username, final String updateBy) {
+        final var query = DSL.update(OWNER_ASSOCIATION_REQUEST)
+            .set(Map.of(OWNER_ASSOCIATION_REQUEST.STATUS, OwnerAssociationRequestStatus.DECLINED.getValue(),
+                OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_AT, DateTimeUtil.generateNow(),
+                OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_BY, username))
+            .where(OWNER_ASSOCIATION_REQUEST.USERNAME.eq(username))
+            .returning();
+        return jooqReactiveOperations.mono(query)
+            .map(r -> r.into(OwnerAssociationRequestPojo.class));
+    }
+
     private Mono<Long> fetchCount(final String query,
-                                  final Boolean active) {
-        final List<Condition> conditions = getConditions(query, active);
+                                  final OwnerAssociationRequestStatusParam status) {
+        final List<Condition> conditions = getConditions(query, status);
         return jooqReactiveOperations
             .mono(DSL.selectCount().from(OWNER_ASSOCIATION_REQUEST)
                 .join(OWNER).on(OWNER_ASSOCIATION_REQUEST.OWNER_ID.eq(OWNER.ID))
@@ -134,17 +161,22 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
     }
 
     private List<Condition> getConditions(final String query,
-                                          final Boolean active) {
+                                          final OwnerAssociationRequestStatusParam status) {
         final List<Condition> conditions = new ArrayList<>();
         if (StringUtils.isNotEmpty(query)) {
             conditions.add(OWNER_ASSOCIATION_REQUEST.USERNAME.containsIgnoreCase(query)
                 .or(OWNER.NAME.containsIgnoreCase(query)));
         }
-        if (active != null) {
-            if (active) {
-                conditions.add(OWNER_ASSOCIATION_REQUEST.STATUS.eq(OwnerAssociationRequestStatus.PENDING.getValue()));
-            } else {
-                conditions.add(OWNER_ASSOCIATION_REQUEST.STATUS.ne(OwnerAssociationRequestStatus.PENDING.getValue()));
+        if (status != null) {
+            switch (status) {
+                case PENDING -> conditions.add(
+                    OWNER_ASSOCIATION_REQUEST.STATUS.eq(OwnerAssociationRequestStatus.PENDING.getValue()));
+                case APPROVED -> conditions.add(
+                    OWNER_ASSOCIATION_REQUEST.STATUS.eq(OwnerAssociationRequestStatus.APPROVED.getValue()));
+                case DECLINED -> conditions.add(
+                    OWNER_ASSOCIATION_REQUEST.STATUS.eq(OwnerAssociationRequestStatus.DECLINED.getValue()));
+                default -> conditions.add(
+                    OWNER_ASSOCIATION_REQUEST.STATUS.ne(OwnerAssociationRequestStatus.PENDING.getValue()));
             }
         }
         return conditions;

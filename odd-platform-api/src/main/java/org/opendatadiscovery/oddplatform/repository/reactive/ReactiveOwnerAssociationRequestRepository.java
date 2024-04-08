@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatusParam;
 import org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerAssociationRequestPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -12,7 +13,11 @@ public interface ReactiveOwnerAssociationRequestRepository extends ReactiveCRUDR
     Mono<Page<OwnerAssociationRequestDto>> getDtoList(final int page,
                                                       final int size,
                                                       final String query,
-                                                      final Boolean active);
+                                                      final OwnerAssociationRequestStatusParam status);
 
     Mono<OwnerAssociationRequestDto> getLastRequestForUsername(final String username);
+
+    Mono<OwnerAssociationRequestPojo> cancelAssociationByOwnerId(final long id, final String updateBy);
+
+    Mono<OwnerAssociationRequestPojo> cancelAssociationByUsername(final String username, final String updateBy);
 }
