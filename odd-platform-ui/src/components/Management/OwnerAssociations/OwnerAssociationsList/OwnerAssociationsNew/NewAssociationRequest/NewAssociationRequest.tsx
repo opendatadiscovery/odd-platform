@@ -14,18 +14,21 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { usePermissions } from 'lib/hooks';
 import * as S from '../../OwnerAssociationsSharedStyles';
 
-interface Props {
+interface NewAssociationRequestProps {
   id: OwnerAssociationRequest['id'];
   ownerName: OwnerAssociationRequest['ownerName'];
   username: OwnerAssociationRequest['username'];
   provider?: OwnerAssociationRequest['provider'];
+  // TODO: fix type
+  role?: string;
 }
 
-const ActiveAssociationRequest: React.FC<Props> = ({
+const NewAssociationRequest: React.FC<NewAssociationRequestProps> = ({
   id,
   ownerName,
   username,
   provider,
+  role,
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -59,7 +62,7 @@ const ActiveAssociationRequest: React.FC<Props> = ({
 
   return (
     <S.AssociationsItemContainer container>
-      <Grid item lg={4}>
+      <Grid item lg={2.5}>
         <Typography variant='body1' noWrap title={username}>
           {username}
         </Typography>
@@ -70,6 +73,9 @@ const ActiveAssociationRequest: React.FC<Props> = ({
         </Typography>
       </Grid>
       <Grid item lg={2.5}>
+        {role}
+      </Grid>
+      <Grid item lg={1.5}>
         {provider}
       </Grid>
       <S.AssociationsItemActionsContainer container item lg={3}>
@@ -113,4 +119,4 @@ const ActiveAssociationRequest: React.FC<Props> = ({
   );
 };
 
-export default ActiveAssociationRequest;
+export default NewAssociationRequest;

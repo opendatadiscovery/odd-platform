@@ -1,26 +1,26 @@
 import React, { useMemo } from 'react';
-import { Grid, Typography } from '@mui/material';
 import { useAtom } from 'jotai';
+import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
 import {
-  EmptyContentPlaceholder,
   AppErrorPage,
+  EmptyContentPlaceholder,
   ScrollableContainer,
 } from 'components/shared/elements';
+import { useGetOwnerAssociationRequestList } from 'lib/hooks/api/ownerAssociationRequest';
 import { OwnerAssociationRequestStatusParam } from 'generated-sources';
-import { useGetOwnerAssociationRequestList } from 'lib/hooks';
 import { useDebounce } from 'use-debounce';
-import NewAssociationRequest from './NewAssociationRequest/NewAssociationRequest';
-import { queryAtom } from '../../OwnerAssociationsStore/OwnerAssociationsAtoms';
 import ManagementSkeletonItem from '../../../ManagementSkeletonItem/ManagementSkeletonItem';
+import ActiveAssociationRequest from './ActiveAssociationRequest/ActiveAssociationRequest';
+import { queryAtom } from '../../OwnerAssociationsStore/OwnerAssociationsAtoms';
 import * as S from '../OwnerAssociationsSharedStyles';
 
-interface OwnerAssociationsNewProps {
+interface OwnerAssociationsActiveProps {
   size: number;
 }
 
-const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size }) => {
+const OwnerAssociationsActive: React.FC<OwnerAssociationsActiveProps> = ({ size }) => {
   const { t } = useTranslation();
   const [query] = useAtom(queryAtom);
   const [debouncedQuery] = useDebounce(query, 500);
@@ -29,16 +29,16 @@ const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size }) => 
     useGetOwnerAssociationRequestList({
       query: debouncedQuery || '',
       size,
-      status: OwnerAssociationRequestStatusParam.PENDING,
+      status: OwnerAssociationRequestStatusParam.APPROVED,
     });
 
-  const newAssociations = useMemo(
+  const activeAssociations = useMemo(
     () => data?.pages.flatMap(page => page.items) ?? [],
     [data?.pages]
   );
   const isEmpty = useMemo(
-    () => newAssociations.length === 0 && !isLoading,
-    [newAssociations.length, isLoading]
+    () => activeAssociations.length === 0 && !isLoading,
+    [activeAssociations.length, isLoading]
   );
 
   const tableCellText = (text: string) => (
@@ -56,46 +56,48 @@ const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size }) => 
         <Grid item lg={2.5}>
           {tableCellText(t('Owner name'))}
         </Grid>
-        <Grid item lg={2.5}>
+        <Grid item lg={1}>
           {tableCellText('Role')}
         </Grid>
-        <Grid item lg={1.5}>
+        <Grid item lg={2}>
           {tableCellText(t('Provider'))}
         </Grid>
-        <Grid item lg={3} />
+        <Grid item lg={2}>
+          {tableCellText(t('Resolved by'))}
+        </Grid>
+        <Grid item lg={2}>
+          {tableCellText(t('Resolved at'))}
+        </Grid>
       </S.TableHeader>
-      {newAssociations.length > 0 && (
-        <ScrollableContainer container id='new-associations-list'>
+      {activeAssociations.length > 0 && (
+        <ScrollableContainer container id='active-associations-list'>
           <InfiniteScroll
-            scrollableTarget='new-associations-list'
+            scrollableTarget='active-associations-list'
             next={fetchNextPage}
             hasMore={hasNextPage}
-            dataLength={newAssociations.length}
+            dataLength={activeAssociations.length}
             scrollThreshold='200px'
             loader={<ManagementSkeletonItem />}
           >
-            {newAssociations.map(association => (
-              <NewAssociationRequest
+            {activeAssociations?.map(association => (
+              <ActiveAssociationRequest
                 key={association.id}
-                id={association.id}
-                // TODO: Add role to NewAssociationRequest
-                // role={association.status}
                 ownerName={association.ownerName}
                 provider={association.provider}
                 username={association.username}
+                // TODO: Add role to ActiveAssociationRequest
+                // role={association.status}
+                statusUpdatedAt={association.statusUpdatedAt}
+                statusUpdatedBy={association.statusUpdatedBy}
               />
             ))}
           </InfiniteScroll>
         </ScrollableContainer>
       )}
-      <EmptyContentPlaceholder
-        isContentEmpty={isEmpty}
-        isContentLoaded={!isLoading}
-        offsetTop={235}
-      />
+      <EmptyContentPlaceholder isContentEmpty={isEmpty} isContentLoaded={!isLoading} />
       <AppErrorPage showError={isError} offsetTop={182} />
     </Grid>
   );
 };
 
-export default OwnerAssociationsNew;
+export default OwnerAssociationsActive;

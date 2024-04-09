@@ -3,6 +3,7 @@ import type {
   OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest,
   OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest,
   OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest,
+  OwnerAssociationRequestStatusParam,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import type { CurrentPageInfo } from 'redux/interfaces';
@@ -27,7 +28,11 @@ export const createOwnerAssociationRequest = handleResponseAsyncThunk<
 );
 
 export const fetchOwnerAssociationRequestList = handleResponseAsyncThunk<
-  { items: Array<OwnerAssociationRequest>; pageInfo: CurrentPageInfo; active: boolean },
+  {
+    items: Array<OwnerAssociationRequest>;
+    pageInfo: CurrentPageInfo;
+    status: OwnerAssociationRequestStatusParam;
+  },
   OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest
 >(
   actions.fetchOwnerAssociationRequestsListActionType,
@@ -38,7 +43,7 @@ export const fetchOwnerAssociationRequestList = handleResponseAsyncThunk<
     return {
       items,
       pageInfo: { ...pageInfo, page: params.page },
-      active: params.active,
+      status: params.status,
     };
   },
   {}

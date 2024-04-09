@@ -26,6 +26,7 @@ export { default as EmptyContentPlaceholder } from './EmptyContentPlaceholder/Em
 export { default as NamespaceAutocomplete } from './Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 export { default as SearchSuggestionsAutocomplete } from './Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 export { default as OwnerAutocomplete } from './Autocomplete/OwnerAutocomplete/OwnerAutocomplete';
+export { default as OwnerIdAutocomplete } from './Autocomplete/OwnerIdAutocomplete/OwnerIdAutocomplete';
 export { default as OwnerTitleAutocomplete } from './Autocomplete/OwnerTitleAutocomplete/OwnerTitleAutocomplete';
 export { default as DataEntityChannelsAutocomplete } from './Autocomplete/DataEntityChannelsAutocomplete/DataEntityChannelsAutocomplete';
 export { default as SlackChannelsAutocomplete } from './Autocomplete/SlackChannelsAutocomplete/SlackChannelsAutocomplete';

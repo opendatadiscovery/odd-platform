@@ -2,27 +2,25 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { OwnerAssociationRequest } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
-import RequestStatus from './RequestStatus/RequestStatus';
 import * as S from '../../OwnerAssociationsSharedStyles';
 
-interface Props {
+interface ActiveAssociationRequestProps {
   ownerName: OwnerAssociationRequest['ownerName'];
   username: OwnerAssociationRequest['username'];
   provider?: OwnerAssociationRequest['provider'];
-  status: OwnerAssociationRequest['status'];
+  // TODO: fix type
   role?: string;
   statusUpdatedBy: OwnerAssociationRequest['statusUpdatedBy'];
   statusUpdatedAt: OwnerAssociationRequest['statusUpdatedAt'];
 }
 
-const ResolvedAssociationRequest: React.FC<Props> = ({
+const ActiveAssociationRequest: React.FC<ActiveAssociationRequestProps> = ({
   provider,
   username,
-  status,
+  role,
   statusUpdatedBy,
   statusUpdatedAt,
   ownerName,
-  role,
 }) => {
   const { associationRequestFormattedDateTime } = useAppDateTime();
 
@@ -33,7 +31,7 @@ const ResolvedAssociationRequest: React.FC<Props> = ({
           {username}
         </Typography>
       </Grid>
-      <Grid item lg={2}>
+      <Grid item lg={2.5}>
         <Typography variant='body1' noWrap title={ownerName}>
           {ownerName}
         </Typography>
@@ -41,12 +39,12 @@ const ResolvedAssociationRequest: React.FC<Props> = ({
       <Grid item lg={1}>
         {role}
       </Grid>
-      <Grid item lg={1.5}>
+      <Grid item lg={2}>
         <Typography variant='body1' noWrap title={provider}>
           {provider}
         </Typography>
       </Grid>
-      <Grid item lg={1.5}>
+      <Grid item lg={2}>
         <Typography
           variant='body1'
           noWrap
@@ -54,9 +52,6 @@ const ResolvedAssociationRequest: React.FC<Props> = ({
         >
           {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity.username}
         </Typography>
-      </Grid>
-      <Grid item lg={1.5}>
-        <RequestStatus status={status} />
       </Grid>
       <Grid item lg={2}>
         <Typography variant='body1' noWrap>
@@ -68,4 +63,4 @@ const ResolvedAssociationRequest: React.FC<Props> = ({
   );
 };
 
-export default ResolvedAssociationRequest;
+export default ActiveAssociationRequest;

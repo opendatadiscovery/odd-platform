@@ -9,3 +9,5 @@ export * from './directory';
 export * from './terms';
 export * from './masterData/lookupTables';
 export * from './masterData/lookupTableDefinitions';
+export * from './ownerAssociationRequest';
+export * from './owner';

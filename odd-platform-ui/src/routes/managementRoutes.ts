@@ -21,7 +21,8 @@ export function managementPath(path?: ManagementRoutesType[keyof ManagementRoute
 
 const AssociationsRoutes = {
   NEW: 'new',
-  RESOLVED: 'resolved',
+  HISTORY: 'history',
+  ACTIVE: 'active',
 } as const;
 
 type AssociationsRoutesType = typeof AssociationsRoutes;
