@@ -3170,6 +3170,10 @@ components:
           type: string
         owner_name:
           type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
         status:
           $ref: '#/components/schemas/OwnerAssociationRequestStatus'
         status_updated_by:

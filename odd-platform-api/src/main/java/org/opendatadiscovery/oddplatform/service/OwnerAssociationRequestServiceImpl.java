@@ -15,12 +15,13 @@ import org.opendatadiscovery.oddplatform.api.contract.model.UserOwnerMappingForm
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.auth.Provider;
 import org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestDto;
+import org.opendatadiscovery.oddplatform.dto.OwnerDto;
 import org.opendatadiscovery.oddplatform.dto.security.UserDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.OwnerAssociationRequestMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerAssociationRequestPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerAssociationRequestRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerRepository;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.service.permission.PermissionService;
 import org.opendatadiscovery.oddplatform.utils.ProviderUtils;
@@ -34,6 +35,7 @@ import static reactor.function.TupleUtils.function;
 @RequiredArgsConstructor
 public class OwnerAssociationRequestServiceImpl implements OwnerAssociationRequestService {
     private final OwnerService ownerService;
+    private final ReactiveOwnerRepository ownerRepository;
     private final ReactiveOwnerAssociationRequestRepository ownerAssociationRequestRepository;
     private final AuthIdentityProvider authIdentityProvider;
     private final UserOwnerMappingService userOwnerMappingService;
@@ -46,19 +48,22 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
     public Mono<OwnerAssociationRequest> createOwnerAssociationRequest(final String ownerName) {
         final Mono<UserDto> currentUserMono = authIdentityProvider.getCurrentUser()
             .switchIfEmpty(Mono.error(() -> new RuntimeException("There is no current authorization")));
-        final Mono<OwnerPojo> ownerMono = ownerService.getOrCreate(ownerName);
+        final Mono<OwnerDto> ownerMono = ownerService.getOrCreate(ownerName)
+            .flatMap(item -> ownerRepository.getDto(item.getId()));
+
         final Mono<List<Permission>> permissionsMono = permissionService
             .getNonContextualPermissionsForCurrentUser(MANAGEMENT).collectList();
         return Mono.zip(currentUserMono, ownerMono, permissionsMono)
-            .flatMap(function((user, ownerPojo, permissions) -> {
+            .flatMap(function((user, owner, permissions) -> {
                 if (permissions.contains(Permission.DIRECT_OWNER_SYNC)) {
-                    return userOwnerMappingService.createRelation(user.username(), user.provider(), ownerPojo.getId())
-                        .thenReturn(mapper.mapToApprovedRequest(user.username(), ownerPojo.getName()));
+                    return userOwnerMappingService.createRelation(user.username(), user.provider(),
+                            owner.ownerPojo().getId())
+                        .thenReturn(mapper.mapToApprovedRequest(user.username(), owner.ownerPojo().getName()));
                 } else {
-                    return Mono.just(mapper.mapToPojo(user.username(), user.provider(), ownerPojo.getId()))
+                    return Mono.just(mapper.mapToPojo(user.username(), user.provider(), owner.ownerPojo().getId()))
                         .flatMap(ownerAssociationRequestRepository::create)
                         .map(pojo -> mapper.mapToOwnerAssociationRequest(
-                            new OwnerAssociationRequestDto(pojo, ownerName, null)));
+                            new OwnerAssociationRequestDto(pojo, ownerName, owner.roles(), null)));
                 }
             }));
     }
@@ -86,6 +91,7 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
                 (dto, user) -> mapper.applyToPojo(dto.pojo(), status, user.username(), DateTimeUtil.generateNow())))
             .flatMap(ownerAssociationRequestRepository::update)
             .flatMap(this::createMappingForApprovedRequest)
+            .flatMap(this::cancelCollisionAssociationByIdForApprovedRequest)
             .flatMap(pojo -> ownerAssociationRequestRepository.getDto(pojo.getId()))
             .map(mapper::mapToOwnerAssociationRequest);
     }
@@ -125,6 +131,8 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
 
             association.setStatus(OwnerAssociationRequestStatus.APPROVED.getValue());
             association.setStatusUpdatedBy(user.username());
+            association.setStatusUpdatedAt(DateTimeUtil.generateNow());
+
             return ownerAssociationRequestRepository.cancelAssociationByOwnerId(ownerId, user.username())
                 .then(ownerAssociationRequestRepository.cancelAssociationByUsername(oidcUsername, user.username()))
                 .then(ownerAssociationRequestRepository.create(association));
@@ -144,6 +152,16 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
             return Mono.just(pojo);
         }
         return userOwnerMappingService.createRelation(pojo.getUsername(), pojo.getProvider(), pojo.getOwnerId())
+            .thenReturn(pojo);
+    }
+
+    private Mono<OwnerAssociationRequestPojo> cancelCollisionAssociationByIdForApprovedRequest(
+        final OwnerAssociationRequestPojo pojo) {
+        if (!pojo.getStatus().equals(OwnerAssociationRequestStatus.APPROVED.getValue())) {
+            return Mono.just(pojo);
+        }
+
+        return ownerAssociationRequestRepository.cancelCollisionAssociationById(pojo)
             .thenReturn(pojo);
     }
 }

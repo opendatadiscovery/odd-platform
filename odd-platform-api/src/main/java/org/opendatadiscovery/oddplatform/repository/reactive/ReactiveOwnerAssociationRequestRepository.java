@@ -20,4 +20,6 @@ public interface ReactiveOwnerAssociationRequestRepository extends ReactiveCRUDR
     Mono<OwnerAssociationRequestPojo> cancelAssociationByOwnerId(final long id, final String updateBy);
 
     Mono<OwnerAssociationRequestPojo> cancelAssociationByUsername(final String username, final String updateBy);
+
+    Mono<OwnerAssociationRequestPojo> cancelCollisionAssociationById(final OwnerAssociationRequestPojo pojo);
 }
