@@ -52,19 +52,19 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.TableHeader container>
-        <Grid item lg={2.5}>
+        <Grid item lg={1.5}>
           {tableCellText(t('User name'))}
         </Grid>
-        <Grid item lg={2}>
+        <Grid item lg={1.5}>
           {tableCellText(t('Owner name'))}
         </Grid>
-        <Grid item lg={1}>
+        <Grid item lg={2}>
           {tableCellText('Role')}
         </Grid>
         <Grid item lg={1.5}>
           {tableCellText(t('Provider'))}
         </Grid>
-        <Grid item lg={1.5}>
+        <Grid item lg={2}>
           {tableCellText(t('Resolved by'))}
         </Grid>
         <Grid item lg={1.5}>
@@ -90,8 +90,7 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
                 ownerName={association.ownerName}
                 provider={association.provider}
                 username={association.username}
-                // TODO: Add role to ResolvedAssociationRequest
-                // role={association.status}
+                roles={association.roles}
                 status={association.status}
                 statusUpdatedAt={association.statusUpdatedAt}
                 statusUpdatedBy={association.statusUpdatedBy}

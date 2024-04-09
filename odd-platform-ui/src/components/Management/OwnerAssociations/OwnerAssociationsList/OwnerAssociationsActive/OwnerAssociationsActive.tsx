@@ -50,24 +50,25 @@ const OwnerAssociationsActive: React.FC<OwnerAssociationsActiveProps> = ({ size 
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.TableHeader container>
-        <Grid item lg={2.5}>
+        <Grid item lg={2}>
           {tableCellText(t('User name'))}
         </Grid>
-        <Grid item lg={2.5}>
+        <Grid item lg={2}>
           {tableCellText(t('Owner name'))}
         </Grid>
-        <Grid item lg={1}>
+        <Grid item lg={2}>
           {tableCellText('Role')}
         </Grid>
-        <Grid item lg={2}>
+        <Grid item lg={1.5}>
           {tableCellText(t('Provider'))}
         </Grid>
-        <Grid item lg={2}>
+        <Grid item lg={1.5}>
           {tableCellText(t('Resolved by'))}
         </Grid>
-        <Grid item lg={2}>
+        <Grid item lg={1.5}>
           {tableCellText(t('Resolved at'))}
         </Grid>
+        <Grid item lg={1.5} />
       </S.TableHeader>
       {activeAssociations.length > 0 && (
         <ScrollableContainer container id='active-associations-list'>
@@ -83,10 +84,10 @@ const OwnerAssociationsActive: React.FC<OwnerAssociationsActiveProps> = ({ size 
               <ActiveAssociationRequest
                 key={association.id}
                 ownerName={association.ownerName}
+                // ownerId={association.ownerId}
                 provider={association.provider}
                 username={association.username}
-                // TODO: Add role to ActiveAssociationRequest
-                // role={association.status}
+                roles={association.roles}
                 statusUpdatedAt={association.statusUpdatedAt}
                 statusUpdatedBy={association.statusUpdatedBy}
               />

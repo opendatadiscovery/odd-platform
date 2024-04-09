@@ -8,30 +8,25 @@ import {
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { useTranslation } from 'react-i18next';
-import type { Owner, UserOwnerMappingFormData } from 'generated-sources';
+import type { UserOwnerMappingFormData } from 'generated-sources';
 import { ClearIcon } from 'components/shared/icons';
 import Input from 'components/shared/elements/Input/Input';
-import { useGetOwnerList } from 'lib/hooks';
+import { useGetProviderList } from 'lib/hooks';
 
-interface OwnerIdAutocompleteProps {
-  field: ControllerRenderProps<UserOwnerMappingFormData, 'ownerId'>;
+interface ProviderAutocompleteProps {
+  field: ControllerRenderProps<UserOwnerMappingFormData, 'provider'>;
 }
 
-const OwnerIdAutocomplete: React.FC<OwnerIdAutocompleteProps> = ({ field }) => {
+const ProviderAutocomplete: React.FC<ProviderAutocompleteProps> = ({ field }) => {
   const { t } = useTranslation();
 
-  type OwnerFilterOption = Omit<Owner, 'id' | 'name'> & Partial<Owner>;
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
   const [query, setQuery] = React.useState('');
-  const { data: ownerOptionsRaw, isLoading: ownersLoading } = useGetOwnerList({
-    page: 1,
-    size: 30,
-    query,
-  });
-  const ownerOptions: OwnerFilterOption[] = ownerOptionsRaw?.items || [];
-  const ownersFilter = createFilterOptions<OwnerFilterOption>();
+  const { data: providerOptionsRaw, isLoading: providersLoading } = useGetProviderList();
+  const providerOptions: string[] = providerOptionsRaw?.activeProviders || [];
+  const providersFilter = createFilterOptions<string>();
 
-  const onOwnersSearchInputChange = React.useCallback(
+  const onProvidersSearchInputChange = React.useCallback(
     (
       _: React.ChangeEvent<unknown>,
       inputQuery: string,
@@ -43,73 +38,64 @@ const OwnerIdAutocomplete: React.FC<OwnerIdAutocompleteProps> = ({ field }) => {
     [setQuery]
   );
 
-  const getOwnerFilterOptions = (
-    filterOptions: OwnerFilterOption[],
-    params: FilterOptionsState<OwnerFilterOption>
+  const getProviderFilterOptions = (
+    filterOptions: string[],
+    params: FilterOptionsState<string>
   ) => {
-    const filtered = ownersFilter(filterOptions, params);
+    const filtered = providersFilter(filterOptions, params);
     if (
       query !== '' &&
-      !ownersLoading &&
-      !filterOptions.some(option => option.name === query)
+      !providersLoading &&
+      !filterOptions.some(option => option === query)
     ) {
       return [...filtered];
     }
     return filtered;
   };
 
-  const getOptionLabel = React.useCallback((option: OwnerFilterOption | string) => {
+  const getOptionLabel = React.useCallback((option: string) => {
     if (typeof option === 'string') return option;
-    if (option.name) return option.name;
     return '';
   }, []);
 
-  const onAutocompleteChange = (
-    _: React.SyntheticEvent,
-    value: null | string | OwnerFilterOption
-  ): void => {
+  const onAutocompleteChange = (_: React.SyntheticEvent, value: null | string): void => {
     if (!value || typeof value === 'string') field.onChange(value);
-    else field.onChange(value.id);
+    else field.onChange(value);
   };
 
   const handleOpen = () => setAutocompleteOpen(true);
   const handleClose = () => setAutocompleteOpen(false);
-
-  const isOptionEqualToValue = (option: OwnerFilterOption, value: OwnerFilterOption) =>
-    option.id === value.id;
 
   const renderInput = (params: AutocompleteRenderInputParams) => (
     <Input
       variant='main-m'
       inputContainerRef={params.InputProps.ref}
       inputProps={params.inputProps}
-      label={t('Owner name')}
+      label='Provider name'
       placeholder={t('Search name')}
-      isLoading={ownersLoading}
+      isLoading={providersLoading}
     />
   );
 
-  const renderOption = (
-    props: HTMLAttributes<HTMLLIElement>,
-    option: OwnerFilterOption
-  ) => (
+  const renderOption = (props: HTMLAttributes<HTMLLIElement>, option: string) => (
     <li {...props}>
-      <Typography variant='body2'>{option.name}</Typography>
+      <Typography variant='body2'>{option}</Typography>
     </li>
   );
+
   return (
     <Autocomplete
+      {...field}
       fullWidth
       open={autocompleteOpen}
       onOpen={handleOpen}
       onClose={handleClose}
       onChange={onAutocompleteChange}
-      onInputChange={onOwnersSearchInputChange}
+      onInputChange={onProvidersSearchInputChange}
       getOptionLabel={getOptionLabel}
-      options={ownerOptions}
-      filterOptions={getOwnerFilterOptions}
-      loading={ownersLoading}
-      isOptionEqualToValue={isOptionEqualToValue}
+      options={providerOptions}
+      filterOptions={getProviderFilterOptions}
+      loading={providersLoading}
       handleHomeEndKeys
       selectOnFocus
       blurOnSelect
@@ -117,9 +103,9 @@ const OwnerIdAutocomplete: React.FC<OwnerIdAutocompleteProps> = ({ field }) => {
       clearIcon={<ClearIcon />}
       renderInput={renderInput}
       renderOption={renderOption}
-      noOptionsText='No results'
+      noOptionsText='No active providers'
     />
   );
 };
 
-export default OwnerIdAutocomplete;
+export default ProviderAutocomplete;

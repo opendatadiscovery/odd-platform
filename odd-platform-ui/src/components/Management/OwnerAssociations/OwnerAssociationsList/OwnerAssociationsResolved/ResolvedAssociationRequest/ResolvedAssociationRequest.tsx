@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { OwnerAssociationRequest } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
+import { OwnerRoleCell } from 'components/shared/elements';
 import RequestStatus from './RequestStatus/RequestStatus';
 import * as S from '../../OwnerAssociationsSharedStyles';
 
@@ -10,7 +11,7 @@ interface Props {
   username: OwnerAssociationRequest['username'];
   provider?: OwnerAssociationRequest['provider'];
   status: OwnerAssociationRequest['status'];
-  role?: string;
+  roles?: OwnerAssociationRequest['roles'];
   statusUpdatedBy: OwnerAssociationRequest['statusUpdatedBy'];
   statusUpdatedAt: OwnerAssociationRequest['statusUpdatedAt'];
 }
@@ -22,31 +23,31 @@ const ResolvedAssociationRequest: React.FC<Props> = ({
   statusUpdatedBy,
   statusUpdatedAt,
   ownerName,
-  role,
+  roles,
 }) => {
   const { associationRequestFormattedDateTime } = useAppDateTime();
 
   return (
     <S.AssociationsItemContainer container>
-      <Grid item lg={2.5}>
+      <Grid item lg={1.5}>
         <Typography variant='body1' noWrap title={username}>
           {username}
         </Typography>
       </Grid>
-      <Grid item lg={2}>
+      <Grid item lg={1.5}>
         <Typography variant='body1' noWrap title={ownerName}>
           {ownerName}
         </Typography>
       </Grid>
-      <Grid item lg={1}>
-        {role}
+      <Grid item lg={2}>
+        <OwnerRoleCell roles={roles} />
       </Grid>
       <Grid item lg={1.5}>
         <Typography variant='body1' noWrap title={provider}>
           {provider}
         </Typography>
       </Grid>
-      <Grid item lg={1.5}>
+      <Grid item lg={2}>
         <Typography
           variant='body1'
           noWrap

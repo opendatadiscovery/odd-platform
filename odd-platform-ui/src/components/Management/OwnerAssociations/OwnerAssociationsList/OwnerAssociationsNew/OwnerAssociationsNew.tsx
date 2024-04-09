@@ -78,8 +78,7 @@ const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size }) => 
               <NewAssociationRequest
                 key={association.id}
                 id={association.id}
-                // TODO: Add role to NewAssociationRequest
-                // role={association.status}
+                roles={association.roles}
                 ownerName={association.ownerName}
                 provider={association.provider}
                 username={association.username}
