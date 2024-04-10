@@ -3168,6 +3168,9 @@ components:
           type: string
         provider:
           type: string
+        owner_id:
+          type: integer
+          format: int64
         owner_name:
           type: string
         roles:

@@ -246,6 +246,7 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
 
         final AssociatedOwnerDto associatedOwnerDto = pojo.getStatusUpdatedBy() != null
             ? new AssociatedOwnerDto(pojo.getStatusUpdatedBy(), statusOwner, null) : null;
-        return new OwnerAssociationRequestDto(pojo, requestOwner.getName(), rolePojos, associatedOwnerDto);
+        return new OwnerAssociationRequestDto(pojo, requestOwner.getName(), requestOwner.getId(), rolePojos,
+            associatedOwnerDto);
     }
 }

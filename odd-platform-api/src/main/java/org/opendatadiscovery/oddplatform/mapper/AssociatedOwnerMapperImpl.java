@@ -51,6 +51,7 @@ public class AssociatedOwnerMapperImpl implements AssociatedOwnerMapper {
         return new OwnerAssociationRequest()
             .username(dto.pojo().getUsername())
             .ownerName(dto.ownerName())
+            .ownerId(dto.ownerId())
             .roles(rolePojoCollectionToRoleList(dto.roles()))
             .status(OwnerAssociationRequestStatus.valueOf(dto.pojo().getStatus()));
     }

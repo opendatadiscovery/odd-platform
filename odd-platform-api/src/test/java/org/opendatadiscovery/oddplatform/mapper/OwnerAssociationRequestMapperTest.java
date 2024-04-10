@@ -73,7 +73,7 @@ public class OwnerAssociationRequestMapperTest {
         final OwnerAssociationRequestPojo pojo = createPendingPojo();
         final String ownerName = UUID.randomUUID().toString();
         final OwnerAssociationRequestDto dto =
-            new OwnerAssociationRequestDto(pojo, ownerName, CollectionUtils.emptyCollection(), null);
+            new OwnerAssociationRequestDto(pojo, ownerName, 1L, CollectionUtils.emptyCollection(), null);
 
         when(associatedOwnerMapper.mapAssociatedOwner(null)).thenReturn(null);
         when(dateTimeMapper.mapUTCDateTime(null)).thenReturn(null);
@@ -95,7 +95,7 @@ public class OwnerAssociationRequestMapperTest {
         final AssociatedOwnerDto ownerDto = new AssociatedOwnerDto(pojo.getUsername(),
             new OwnerPojo().setName(updatedUserOwnerName), null);
         final OwnerAssociationRequestDto dto =
-            new OwnerAssociationRequestDto(pojo, ownerName, CollectionUtils.emptyCollection(), ownerDto);
+            new OwnerAssociationRequestDto(pojo, ownerName, 1L, CollectionUtils.emptyCollection(), ownerDto);
 
         final AssociatedOwner identity = new AssociatedOwner()
             .identity(new Identity().username(pojo.getUsername()))

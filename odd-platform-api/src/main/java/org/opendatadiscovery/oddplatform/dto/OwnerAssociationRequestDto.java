@@ -6,6 +6,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 
 public record OwnerAssociationRequestDto(OwnerAssociationRequestPojo pojo,
                                          String ownerName,
+                                         Long ownerId,
                                          Collection<RolePojo> roles,
                                          AssociatedOwnerDto statusUpdatedUser) {
 }
