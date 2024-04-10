@@ -5,6 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import type {
+  OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest,
   OwnerAssociationRequestApiCreateUserOwnerMappingRequest,
   OwnerAssociationRequestApiDeleteActiveUserOwnerMappingRequest,
   OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest,
@@ -78,6 +79,23 @@ export function useUpdateAssociationRequest() {
     ) => ownerAssociationRequestApi.updateOwnerAssociationRequest(params),
     onSuccess: async () => {
       showSuccessToast({ message: 'Association request updated successfully' });
+      await queryClient.invalidateQueries({
+        queryKey: ['ownerAssociationRequestList'],
+      });
+    },
+  });
+}
+
+export function useCreateOwnerAssociationRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ['createOwnerAssociationRequest'],
+    mutationFn: async (
+      params: OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest
+    ) => ownerAssociationRequestApi.createOwnerAssociationRequest(params),
+    onSuccess: async () => {
+      showSuccessToast({ message: 'Association request created successfully' });
       await queryClient.invalidateQueries({
         queryKey: ['ownerAssociationRequestList'],
       });

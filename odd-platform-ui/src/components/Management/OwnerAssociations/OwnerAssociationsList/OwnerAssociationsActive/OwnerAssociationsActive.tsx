@@ -84,7 +84,7 @@ const OwnerAssociationsActive: React.FC<OwnerAssociationsActiveProps> = ({ size 
               <ActiveAssociationRequest
                 key={association.id}
                 ownerName={association.ownerName}
-                // ownerId={association.ownerId}
+                ownerId={association.ownerId}
                 provider={association.provider}
                 username={association.username}
                 roles={association.roles}

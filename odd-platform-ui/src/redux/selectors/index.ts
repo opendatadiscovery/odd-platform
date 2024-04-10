@@ -19,7 +19,6 @@ export * from './terms.selectors';
 export * from './termLinkedList.selectors';
 export * from './termSearch.selectors';
 export * from './activities.selectors';
-export * from './ownerAssociation.selectors';
 export * from './dataEntityRun.selector';
 export * from './dataCollaboration.selectors';
 export * from './roles.selectors';

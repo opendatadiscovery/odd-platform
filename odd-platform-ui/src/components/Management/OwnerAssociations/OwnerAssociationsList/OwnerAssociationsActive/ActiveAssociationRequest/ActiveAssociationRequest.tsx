@@ -9,8 +9,7 @@ import * as S from '../../OwnerAssociationsSharedStyles';
 
 interface ActiveAssociationRequestProps {
   ownerName: OwnerAssociationRequest['ownerName'];
-  // FIXME
-  // ownerId: OwnerAssociationRequest['ownerId'];
+  ownerId: OwnerAssociationRequest['ownerId'];
   username: OwnerAssociationRequest['username'];
   provider?: OwnerAssociationRequest['provider'];
   roles?: OwnerAssociationRequest['roles'];
@@ -25,8 +24,7 @@ const ActiveAssociationRequest: React.FC<ActiveAssociationRequestProps> = ({
   statusUpdatedBy,
   statusUpdatedAt,
   ownerName,
-  // FIXME
-  // ownerId,
+  ownerId,
 }) => {
   const { associationRequestFormattedDateTime } = useAppDateTime();
   const { t } = useTranslation();
@@ -34,9 +32,9 @@ const ActiveAssociationRequest: React.FC<ActiveAssociationRequestProps> = ({
   const { mutateAsync: deleteAssociation } = useRemoveUserOwnerMapping();
 
   const handleDelete = async () => {
+    if (!ownerId) return;
     await deleteAssociation({
-      // FIXME: ownerId is missing
-      ownerId: 1,
+      ownerId,
     });
   };
 
