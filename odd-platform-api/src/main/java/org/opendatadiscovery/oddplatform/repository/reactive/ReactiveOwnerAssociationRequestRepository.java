@@ -4,6 +4,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequ
 import org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerAssociationRequestPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveOwnerAssociationRequestRepository extends ReactiveCRUDRepository<OwnerAssociationRequestPojo> {
@@ -17,9 +18,9 @@ public interface ReactiveOwnerAssociationRequestRepository extends ReactiveCRUDR
 
     Mono<OwnerAssociationRequestDto> getLastRequestForUsername(final String username);
 
-    Mono<OwnerAssociationRequestPojo> cancelAssociationByOwnerId(final long id, final String updateBy);
+    Flux<OwnerAssociationRequestPojo> cancelAssociationByOwnerId(final long id, final String updateBy);
 
-    Mono<OwnerAssociationRequestPojo> cancelAssociationByUsername(final String username, final String updateBy);
+    Flux<OwnerAssociationRequestPojo> cancelAssociationByUsername(final String username, final String updateBy);
 
-    Mono<OwnerAssociationRequestPojo> cancelCollisionAssociationById(final OwnerAssociationRequestPojo pojo);
+    Flux<OwnerAssociationRequestPojo> cancelCollisionAssociationById(final OwnerAssociationRequestPojo pojo);
 }

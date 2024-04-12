@@ -3158,6 +3158,19 @@ components:
         - items
         - page_info
 
+    OwnerAssociationRequestActivityList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnerAssociationRequestActivity'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
     OwnerAssociationRequest:
       type: object
       properties:
@@ -3195,6 +3208,17 @@ components:
         - PENDING
         - APPROVED
         - DECLINED
+
+    OwnerAssociationRequestActivity:
+      allOf:
+        - $ref: '#/components/schemas/OwnerAssociationRequest'
+        - type: object
+          properties:
+            activity_id:
+              type: integer
+              format: int64
+            event_type:
+              type: string
 
     OwnerAssociationRequestStatusParam:
       type: string

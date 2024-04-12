@@ -31,6 +31,7 @@ import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.jooq.impl.DSL.field;
@@ -160,7 +161,7 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
     }
 
     @Override
-    public Mono<OwnerAssociationRequestPojo> cancelAssociationByOwnerId(final long id, final String updateBy) {
+    public Flux<OwnerAssociationRequestPojo> cancelAssociationByOwnerId(final long id, final String updateBy) {
         final var query = DSL.update(OWNER_ASSOCIATION_REQUEST)
             .set(Map.of(OWNER_ASSOCIATION_REQUEST.STATUS, OwnerAssociationRequestStatus.DECLINED.getValue(),
                 OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_AT, DateTimeUtil.generateNow(),
@@ -168,25 +169,25 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
             .where(OWNER_ASSOCIATION_REQUEST.OWNER_ID.eq(id))
             .and(OWNER_ASSOCIATION_REQUEST.STATUS.eq(OwnerAssociationRequestStatus.APPROVED.getValue()))
             .returning();
-        return jooqReactiveOperations.mono(query)
+        return jooqReactiveOperations.flux(query)
             .map(r -> r.into(OwnerAssociationRequestPojo.class));
     }
 
     @Override
-    public Mono<OwnerAssociationRequestPojo> cancelAssociationByUsername(final String username, final String updateBy) {
+    public Flux<OwnerAssociationRequestPojo> cancelAssociationByUsername(final String username, final String updateBy) {
         final var query = DSL.update(OWNER_ASSOCIATION_REQUEST)
             .set(Map.of(OWNER_ASSOCIATION_REQUEST.STATUS, OwnerAssociationRequestStatus.DECLINED.getValue(),
                 OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_AT, DateTimeUtil.generateNow(),
-                OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_BY, username))
+                OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_BY, updateBy))
             .where(OWNER_ASSOCIATION_REQUEST.USERNAME.eq(username))
             .and(OWNER_ASSOCIATION_REQUEST.STATUS.eq(OwnerAssociationRequestStatus.APPROVED.getValue()))
             .returning();
-        return jooqReactiveOperations.mono(query)
+        return jooqReactiveOperations.flux(query)
             .map(r -> r.into(OwnerAssociationRequestPojo.class));
     }
 
     @Override
-    public Mono<OwnerAssociationRequestPojo> cancelCollisionAssociationById(final OwnerAssociationRequestPojo pojo) {
+    public Flux<OwnerAssociationRequestPojo> cancelCollisionAssociationById(final OwnerAssociationRequestPojo pojo) {
         final var query = DSL.update(OWNER_ASSOCIATION_REQUEST)
             .set(Map.of(OWNER_ASSOCIATION_REQUEST.STATUS, OwnerAssociationRequestStatus.DECLINED.getValue(),
                 OWNER_ASSOCIATION_REQUEST.STATUS_UPDATED_AT, DateTimeUtil.generateNow(),
@@ -196,7 +197,7 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
             .and(OWNER_ASSOCIATION_REQUEST.STATUS.eq(OwnerAssociationRequestStatus.APPROVED.getValue()))
             .and(OWNER_ASSOCIATION_REQUEST.ID.ne(pojo.getId()))
             .returning();
-        return jooqReactiveOperations.mono(query)
+        return jooqReactiveOperations.flux(query)
             .map(r -> r.into(OwnerAssociationRequestPojo.class));
     }
 

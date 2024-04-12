@@ -3265,6 +3265,30 @@ paths:
       tags:
         - ownerAssociationRequest
 
+  /api/owner_association_request/activity:
+    get:
+      summary: List of owner association requests activity
+      description: Gets the list of activity for owner association requests
+      operationId: getOwnerAssociationRequestActivityList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: status
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/OwnerAssociationRequestStatusParam'
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/OwnerAssociationRequestActivityList'
+      tags:
+        - ownerAssociationRequest
+
   /api/owners/mapping:
     post:
       summary: Create user owner mapping

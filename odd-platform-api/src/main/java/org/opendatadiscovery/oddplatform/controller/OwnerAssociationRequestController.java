@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.OwnerAssociationRequestApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequest;
+import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestActivityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestList;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatusFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatusParam;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.ProviderList;
 import org.opendatadiscovery.oddplatform.api.contract.model.UserOwnerMappingFormData;
+import org.opendatadiscovery.oddplatform.service.OwnerAssociationRequestActivityService;
 import org.opendatadiscovery.oddplatform.service.OwnerAssociationRequestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class OwnerAssociationRequestController implements OwnerAssociationRequestApi {
     private final OwnerAssociationRequestService ownerAssociationRequestService;
+    private final OwnerAssociationRequestActivityService activityService;
 
     @Override
     public Mono<ResponseEntity<OwnerAssociationRequest>> createOwnerAssociationRequest(
@@ -38,6 +41,14 @@ public class OwnerAssociationRequestController implements OwnerAssociationReques
                                        final String query,
                                        final ServerWebExchange e) {
         return ownerAssociationRequestService.getOwnerAssociationRequestList(page, size, query, status)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<OwnerAssociationRequestActivityList>> getOwnerAssociationRequestActivityList(
+        final Integer page, final Integer size, final OwnerAssociationRequestStatusParam status, final String query,
+        final ServerWebExchange exchange) {
+        return activityService.getOwnerAssociationRequestList(page, size, query, status)
             .map(ResponseEntity::ok);
     }
 

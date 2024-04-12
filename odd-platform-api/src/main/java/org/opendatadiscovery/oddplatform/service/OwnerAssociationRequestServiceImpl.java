@@ -29,6 +29,11 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.api.contract.model.PermissionResourceType.MANAGEMENT;
+import static org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestActivityType.REQUEST_APPROVED;
+import static org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestActivityType.REQUEST_CREATED;
+import static org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestActivityType.REQUEST_DECLINED;
+import static org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestActivityType.REQUEST_MANUALLY_APPROVED;
+import static org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestActivityType.REQUEST_MANUALLY_DECLINED;
 import static reactor.function.TupleUtils.function;
 
 @Service
@@ -39,6 +44,7 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
     private final ReactiveOwnerAssociationRequestRepository ownerAssociationRequestRepository;
     private final AuthIdentityProvider authIdentityProvider;
     private final UserOwnerMappingService userOwnerMappingService;
+    private final OwnerAssociationRequestActivityService activityService;
     private final PermissionService permissionService;
     private final OwnerAssociationRequestMapper mapper;
     private final ProviderUtils providerUtils;
@@ -61,7 +67,7 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
                         .thenReturn(mapper.mapToApprovedRequest(user.username(), owner.ownerPojo().getName()));
                 } else {
                     return Mono.just(mapper.mapToPojo(user.username(), user.provider(), owner.ownerPojo().getId()))
-                        .flatMap(ownerAssociationRequestRepository::create)
+                        .flatMap(item -> createOwnerAssociationRequestWithActivity(item, false, user.username()))
                         .map(pojo -> mapper.mapToOwnerAssociationRequest(
                             new OwnerAssociationRequestDto(pojo, ownerName, owner.ownerPojo().getId(), owner.roles(),
                                 null)));
@@ -92,6 +98,7 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
                 (dto, user) -> mapper.applyToPojo(dto.pojo(), status, user.username(), DateTimeUtil.generateNow())))
             .flatMap(ownerAssociationRequestRepository::update)
             .flatMap(this::createMappingForApprovedRequest)
+            .flatMap(item -> createActivity(item, false, item.getStatusUpdatedBy()))
             .flatMap(this::cancelCollisionAssociationByIdForApprovedRequest)
             .flatMap(pojo -> ownerAssociationRequestRepository.getDto(pojo.getId()))
             .map(mapper::mapToOwnerAssociationRequest);
@@ -134,18 +141,44 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
             association.setStatusUpdatedBy(user.username());
             association.setStatusUpdatedAt(DateTimeUtil.generateNow());
 
-            return ownerAssociationRequestRepository.cancelAssociationByOwnerId(ownerId, user.username())
-                .then(ownerAssociationRequestRepository.cancelAssociationByUsername(oidcUsername, user.username()))
-                .then(ownerAssociationRequestRepository.create(association));
+            return cancelAssociationByOwnerId(ownerId, user.username())
+                .then(cancelAssociationByUsername(oidcUsername, user.username()))
+                .then(createOwnerAssociationRequestWithActivity(association, true, user.username()));
         });
     }
 
-    private Mono<OwnerAssociationRequestPojo> cancelAssociationByOwnerId(final Long ownerId) {
+    private Mono<OwnerAssociationRequestPojo> createOwnerAssociationRequestWithActivity(
+        final OwnerAssociationRequestPojo pojoToCreate, final boolean isManual, final String createdBy) {
+        return ownerAssociationRequestRepository.create(pojoToCreate)
+            .flatMap(item -> createActivity(item, isManual, createdBy)
+                .thenReturn(item));
+    }
+
+    private Mono<List<OwnerAssociationRequestPojo>> cancelAssociationByOwnerId(final Long ownerId) {
         final Mono<UserDto> currentUserMono = authIdentityProvider.getCurrentUser()
             .switchIfEmpty(Mono.error(() -> new RuntimeException("There is no current authorization")));
 
-        return currentUserMono.flatMap(
-            user -> ownerAssociationRequestRepository.cancelAssociationByOwnerId(ownerId, user.username()));
+        return currentUserMono.flatMap(user -> cancelAssociationByOwnerId(ownerId, user.username()));
+    }
+
+    private Mono<List<OwnerAssociationRequestPojo>> cancelAssociationByOwnerId(final long ownerId,
+                                                                               final String updateBy) {
+        return ownerAssociationRequestRepository.cancelAssociationByOwnerId(ownerId, updateBy)
+            .flatMap(item ->
+                activityService.createOwnerAssociationRequestActivity(item, item.getStatusUpdatedBy(),
+                        REQUEST_MANUALLY_DECLINED)
+                    .thenReturn(item))
+            .collectList();
+    }
+
+    private Mono<List<OwnerAssociationRequestPojo>> cancelAssociationByUsername(final String oidcUsername,
+                                                                                final String updateBy) {
+        return ownerAssociationRequestRepository.cancelAssociationByUsername(oidcUsername, updateBy)
+            .flatMap(item ->
+                activityService.createOwnerAssociationRequestActivity(item, item.getStatusUpdatedBy(),
+                        REQUEST_MANUALLY_DECLINED)
+                    .thenReturn(item))
+            .collectList();
     }
 
     private Mono<OwnerAssociationRequestPojo> createMappingForApprovedRequest(final OwnerAssociationRequestPojo pojo) {
@@ -163,6 +196,27 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
         }
 
         return ownerAssociationRequestRepository.cancelCollisionAssociationById(pojo)
+            .flatMap(item -> activityService.createOwnerAssociationRequestActivity(item, item.getStatusUpdatedBy(),
+                REQUEST_MANUALLY_DECLINED))
+            .collectList()
             .thenReturn(pojo);
+    }
+
+    private Mono<OwnerAssociationRequestPojo> createActivity(final OwnerAssociationRequestPojo pojo,
+                                                             final boolean isManual,
+                                                             final String createdBy) {
+        if (pojo.getStatus().equals(OwnerAssociationRequestStatus.APPROVED.getValue())) {
+            return activityService.createOwnerAssociationRequestActivity(pojo, createdBy,
+                    isManual ? REQUEST_MANUALLY_APPROVED : REQUEST_APPROVED)
+                .thenReturn(pojo);
+        } else if (pojo.getStatus().equals(OwnerAssociationRequestStatus.DECLINED.getValue()))  {
+            return activityService.createOwnerAssociationRequestActivity(pojo, createdBy,
+                    isManual ? REQUEST_MANUALLY_DECLINED : REQUEST_DECLINED)
+                .thenReturn(pojo);
+        } else {
+            return activityService.createOwnerAssociationRequestActivity(pojo, createdBy,
+                    REQUEST_CREATED)
+                .thenReturn(pojo);
+        }
     }
 }
