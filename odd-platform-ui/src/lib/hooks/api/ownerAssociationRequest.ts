@@ -8,6 +8,7 @@ import type {
   OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest,
   OwnerAssociationRequestApiCreateUserOwnerMappingRequest,
   OwnerAssociationRequestApiDeleteActiveUserOwnerMappingRequest,
+  OwnerAssociationRequestApiGetOwnerAssociationRequestActivityListRequest,
   OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest,
   OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest,
 } from 'generated-sources/apis';
@@ -37,6 +38,32 @@ export function useGetOwnerAssociationRequestList({
   });
 }
 
+export function useGetOwnerAssociationActivityList({
+  query,
+  size,
+  status,
+}: Omit<
+  OwnerAssociationRequestApiGetOwnerAssociationRequestActivityListRequest,
+  'page'
+>) {
+  return useInfiniteQuery({
+    queryKey: ['ownerAssociationActivityList', query, size, status],
+    queryFn: async ({ pageParam }) => {
+      const response =
+        await ownerAssociationRequestApi.getOwnerAssociationRequestActivityList({
+          query,
+          size,
+          status,
+          page: pageParam,
+        });
+
+      return addNextPage(response, pageParam, size);
+    },
+    initialPageParam: 1,
+    getNextPageParam: lastPage => lastPage.pageInfo.nextPage,
+  });
+}
+
 export function useCreateUserOwnerMapping() {
   const queryClient = useQueryClient();
 
@@ -48,6 +75,9 @@ export function useCreateUserOwnerMapping() {
       showSuccessToast({ message: 'Owner association created successfully' });
       await queryClient.invalidateQueries({
         queryKey: ['ownerAssociationRequestList'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['ownerAssociationActivityList'],
       });
     },
   });

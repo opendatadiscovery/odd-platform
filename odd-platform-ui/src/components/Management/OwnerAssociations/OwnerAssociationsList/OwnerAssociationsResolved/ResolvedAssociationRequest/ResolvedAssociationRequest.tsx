@@ -1,19 +1,19 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import type { OwnerAssociationRequest } from 'generated-sources';
+import type { OwnerAssociationRequestActivity } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
 import { OwnerRoleCell } from 'components/shared/elements';
 import RequestStatus from './RequestStatus/RequestStatus';
 import * as S from '../../OwnerAssociationsSharedStyles';
 
 interface Props {
-  ownerName: OwnerAssociationRequest['ownerName'];
-  username: OwnerAssociationRequest['username'];
-  provider?: OwnerAssociationRequest['provider'];
-  status: OwnerAssociationRequest['status'];
-  roles?: OwnerAssociationRequest['roles'];
-  statusUpdatedBy: OwnerAssociationRequest['statusUpdatedBy'];
-  statusUpdatedAt: OwnerAssociationRequest['statusUpdatedAt'];
+  ownerName: OwnerAssociationRequestActivity['ownerName'];
+  username: OwnerAssociationRequestActivity['username'];
+  provider?: OwnerAssociationRequestActivity['provider'];
+  status: OwnerAssociationRequestActivity['status'];
+  roles?: OwnerAssociationRequestActivity['roles'];
+  statusUpdatedBy: OwnerAssociationRequestActivity['statusUpdatedBy'];
+  statusUpdatedAt: OwnerAssociationRequestActivity['statusUpdatedAt'];
 }
 
 const ResolvedAssociationRequest: React.FC<Props> = ({

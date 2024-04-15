@@ -8,7 +8,7 @@ import {
   EmptyContentPlaceholder,
   ScrollableContainer,
 } from 'components/shared/elements';
-import { useGetOwnerAssociationRequestList } from 'lib/hooks/api/ownerAssociationRequest';
+import { useGetOwnerAssociationActivityList } from 'lib/hooks/api/ownerAssociationRequest';
 import { OwnerAssociationRequestStatusParam } from 'generated-sources';
 import { useDebounce } from 'use-debounce';
 import ManagementSkeletonItem from '../../../ManagementSkeletonItem/ManagementSkeletonItem';
@@ -28,19 +28,19 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
   const [debouncedQuery] = useDebounce(query, 500);
 
   const { data, isLoading, isError, hasNextPage, fetchNextPage } =
-    useGetOwnerAssociationRequestList({
+    useGetOwnerAssociationActivityList({
       query: debouncedQuery || '',
       size,
       status: OwnerAssociationRequestStatusParam.RESOLVED,
     });
 
-  const resolvedAssociations = useMemo(
+  const associationActivity = useMemo(
     () => data?.pages.flatMap(page => page.items) ?? [],
     [data?.pages]
   );
   const isEmpty = useMemo(
-    () => resolvedAssociations.length === 0 && !isLoading,
-    [resolvedAssociations.length, isLoading]
+    () => associationActivity.length === 0 && !isLoading,
+    [associationActivity.length, isLoading]
   );
 
   const tableCellText = (text: string) => (
@@ -74,26 +74,26 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
           {tableCellText(t('Resolved at'))}
         </Grid>
       </S.TableHeader>
-      {resolvedAssociations.length > 0 && (
+      {associationActivity.length > 0 && (
         <ScrollableContainer container id='resolved-associations-list'>
           <InfiniteScroll
             scrollableTarget='resolved-associations-list'
             next={fetchNextPage}
             hasMore={hasNextPage}
-            dataLength={resolvedAssociations.length}
+            dataLength={associationActivity.length}
             scrollThreshold='200px'
             loader={<ManagementSkeletonItem />}
           >
-            {resolvedAssociations?.map(association => (
+            {associationActivity?.map(activity => (
               <ResolvedAssociationRequest
-                key={association.id}
-                ownerName={association.ownerName}
-                provider={association.provider}
-                username={association.username}
-                roles={association.roles}
-                status={association.status}
-                statusUpdatedAt={association.statusUpdatedAt}
-                statusUpdatedBy={association.statusUpdatedBy}
+                key={activity.activityId}
+                ownerName={activity.ownerName}
+                provider={activity.provider}
+                username={activity.username}
+                roles={activity.roles}
+                status={activity.status}
+                statusUpdatedAt={activity.statusUpdatedAt}
+                statusUpdatedBy={activity.statusUpdatedBy}
               />
             ))}
           </InfiniteScroll>

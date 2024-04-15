@@ -26,7 +26,7 @@ const OwnerAssociationsHeader: React.FC = () => {
     <>
       <S.Caption container sx={{ mb: 1 }}>
         <Typography variant='h1'>{t('Owner associations')}</Typography>
-        <WithPermissions permissionTo={Permission.OWNER_ASSOCIATION_MANAGE}>
+        <WithPermissions permissionTo={Permission.OWNER_RELATION_MANAGE}>
           <OwnerAssociationForm
             btnCreateEl={
               <Button

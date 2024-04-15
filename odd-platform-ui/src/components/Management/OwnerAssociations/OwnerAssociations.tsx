@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import { Grid } from '@mui/material';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useGetOwnerAssociationRequestList } from 'lib/hooks/api/ownerAssociationRequest';
-import { OwnerAssociationRequestStatusParam } from 'generated-sources';
+import { OwnerAssociationRequestStatusParam, Permission } from 'generated-sources';
+import { WithPermissionsProvider } from 'components/shared/contexts';
 import OwnerAssociationsTabs from './OwnerAssociationsTabs/OwnerAssociationsTabs';
 import OwnerAssociationsHeader from './OwnerAssociationsHeader/OwnerAssociationsHeader';
 import OwnerAssociationsAtomProvider from './OwnerAssociationsStore/OwnerAssociationsProvider';
@@ -44,7 +45,11 @@ const OwnerAssociations: React.FC = () => {
   return (
     <OwnerAssociationsAtomProvider>
       <Grid container flexDirection='column' alignItems='center'>
-        <OwnerAssociationsHeader />
+        <WithPermissionsProvider
+          allowedPermissions={[Permission.OWNER_RELATION_MANAGE]}
+          resourcePermissions={[]}
+          Component={OwnerAssociationsHeader}
+        />
         <Grid sx={{ width: '100%' }}>
           <OwnerAssociationsTabs
             size={size}
