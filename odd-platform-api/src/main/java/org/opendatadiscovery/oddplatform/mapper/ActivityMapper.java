@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.JSONB;
 import org.mapstruct.Mapper;
@@ -12,6 +13,8 @@ import org.mapstruct.Named;
 import org.mapstruct.NullValueCheckStrategy;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityUser;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityUserList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertHaltConfigActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertReceivedActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatusUpdatedActivityState;
@@ -31,6 +34,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTermsAct
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldValuesActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DescriptionActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermActivityState;
 import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
@@ -53,10 +57,12 @@ import org.opendatadiscovery.oddplatform.dto.activity.DescriptionActivityStateDt
 import org.opendatadiscovery.oddplatform.dto.activity.OwnershipActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.TagActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.TermActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.UsernameDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
+import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(config = MapperConfig.class, uses = {DateTimeMapper.class})
@@ -309,4 +315,17 @@ public abstract class ActivityMapper {
         return associatedOwnerMapper.mapAssociatedOwner(
             new AssociatedOwnerDto(activityDto.activity().getCreatedBy(), activityDto.user(), null));
     }
+
+    public ActivityUserList mapToActivityUserList(final Page<UsernameDto> usernameDtos) {
+        return new ActivityUserList()
+            .items(mapActivityUsers(usernameDtos.getData()))
+            .pageInfo(new PageInfo().total(usernameDtos.getTotal()));
+    }
+
+    private List<ActivityUser> mapActivityUsers(final List<UsernameDto> dtos) {
+        return dtos.stream().map(this::mapToActivityUser).collect(Collectors.toList());
+    }
+
+    @Mapping(source = "ownerPojo.id", target = "ownerId")
+    abstract ActivityUser mapToActivityUser(final UsernameDto dto);
 }

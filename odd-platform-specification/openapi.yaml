@@ -1403,13 +1403,12 @@ paths:
           schema:
             type: string
             format: date-time
-        - name: user_ids
+        - name: usernames
           in: query
           schema:
             type: array
             items:
-              type: integer
-              format: int64
+              type: string
         - name: event_type
           in: query
           schema:
@@ -3121,13 +3120,12 @@ paths:
             items:
               type: integer
               format: int64
-        - name: user_ids
+        - name: usernames
           in: query
           schema:
             type: array
             items:
-              type: integer
-              format: int64
+              type: string
         - name: type
           in: query
           schema:
@@ -3156,6 +3154,27 @@ paths:
                 type: array
                 items:
                   $ref: './components.yaml/#/components/schemas/Activity'
+      tags:
+        - activity
+
+  /api/activity/users:
+    get:
+      summary: List of users
+      description: Gets the list of existing users
+      operationId: getUsersList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ActivityUserList'
+        '500':
+          $ref: './components.yaml/#/components/responses/InternalError'
       tags:
         - activity
 
@@ -3201,13 +3220,12 @@ paths:
             items:
               type: integer
               format: int64
-        - name: user_ids
+        - name: usernames
           in: query
           schema:
             type: array
             items:
-              type: integer
-              format: int64
+              type: string
         - name: event_type
           in: query
           schema:

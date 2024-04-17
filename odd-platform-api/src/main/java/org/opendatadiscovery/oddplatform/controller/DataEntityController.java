@@ -353,13 +353,13 @@ public class DataEntityController implements DataEntityApi {
                                                                       final OffsetDateTime beginDate,
                                                                       final OffsetDateTime endDate,
                                                                       final Integer size,
-                                                                      final List<Long> userIds,
+                                                                      final List<String> usernames,
                                                                       final ActivityEventType eventType,
                                                                       final Long lastEventId,
                                                                       final OffsetDateTime lastEventDateTime,
                                                                       final ServerWebExchange exchange) {
         return Mono.just(
-            activityService.getDataEntityActivityList(beginDate, endDate, size, dataEntityId, userIds, eventType,
+            activityService.getDataEntityActivityList(beginDate, endDate, size, dataEntityId, usernames, eventType,
                 lastEventId, lastEventDateTime)
         ).map(ResponseEntity::ok);
     }
