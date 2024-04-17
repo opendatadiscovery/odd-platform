@@ -20,7 +20,6 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntry
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMappingRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -29,12 +28,12 @@ import reactor.core.publisher.Mono;
 public class OwnerServiceImpl implements OwnerService {
     private final ReactiveOwnerRepository ownerRepository;
     private final ReactiveUserOwnerMappingRepository userOwnerMappingRepository;
-    private final OwnerMapper ownerMapper;
     private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
     private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
     private final ReactiveTermOwnershipRepository termOwnershipRepository;
     private final ReactiveOwnershipRepository ownershipRepository;
     private final ReactiveOwnerToRoleRepository ownerToRoleRepository;
+    private final OwnerMapper ownerMapper;
 
     @Override
     public Mono<OwnerPojo> getOrCreate(final String name) {
@@ -98,6 +97,13 @@ public class OwnerServiceImpl implements OwnerService {
             .then(ownerToRoleRepository.deleteOwnerRelationsExcept(id, List.of()))
             .then(ownerRepository.delete(id))
             .then();
+    }
+
+    @Override
+    public Mono<Owner> getOwnerDtoById(final long ownerId) {
+        return ownerRepository.getDto(ownerId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Owner", ownerId)))
+            .map(ownerMapper::mapFromDto);
     }
 
     private Mono<OwnerPojo> updateSearchVectors(final OwnerPojo owner) {

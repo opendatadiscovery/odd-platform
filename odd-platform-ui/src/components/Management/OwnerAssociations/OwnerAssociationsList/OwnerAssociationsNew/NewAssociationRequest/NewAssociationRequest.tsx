@@ -3,63 +3,54 @@ import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
   type OwnerAssociationRequest,
-  type OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest,
   OwnerAssociationRequestStatus,
   Permission,
 } from 'generated-sources';
-import { Button, ConfirmationDialog } from 'components/shared/elements';
+import { Button, ConfirmationDialog, OwnerRoleCell } from 'components/shared/elements';
 import { AcceptIcon, RejectIcon } from 'components/shared/icons';
-import { updateOwnerAssociationRequest } from 'redux/thunks';
-import { useAppDispatch } from 'redux/lib/hooks';
-import { usePermissions } from 'lib/hooks';
+import { usePermissions, useUpdateAssociationRequest } from 'lib/hooks';
 import * as S from '../../OwnerAssociationsSharedStyles';
 
-interface Props {
+interface NewAssociationRequestProps {
   id: OwnerAssociationRequest['id'];
   ownerName: OwnerAssociationRequest['ownerName'];
   username: OwnerAssociationRequest['username'];
   provider?: OwnerAssociationRequest['provider'];
+  roles?: OwnerAssociationRequest['roles'];
 }
 
-const ActiveAssociationRequest: React.FC<Props> = ({
+const NewAssociationRequest: React.FC<NewAssociationRequestProps> = ({
   id,
   ownerName,
   username,
   provider,
+  roles,
 }) => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
   const { hasAccessTo } = usePermissions();
+  const { mutateAsync: updateOwnerAssociationRequest } = useUpdateAssociationRequest();
 
-  const dispatchedRequest = (
-    params: OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest
-  ) => dispatch(updateOwnerAssociationRequest(params));
+  const handleAccept = React.useCallback(async () => {
+    await updateOwnerAssociationRequest({
+      ownerAssociationRequestId: id,
+      ownerAssociationRequestStatusFormData: {
+        status: OwnerAssociationRequestStatus.APPROVED,
+      },
+    });
+  }, [id]);
 
-  const handleAccept = React.useCallback(
-    () =>
-      dispatchedRequest({
-        ownerAssociationRequestId: id,
-        ownerAssociationRequestStatusFormData: {
-          status: OwnerAssociationRequestStatus.APPROVED,
-        },
-      }),
-    [id]
-  );
-
-  const handleReject = React.useCallback(
-    () =>
-      dispatchedRequest({
-        ownerAssociationRequestId: id,
-        ownerAssociationRequestStatusFormData: {
-          status: OwnerAssociationRequestStatus.DECLINED,
-        },
-      }),
-    [id]
-  );
+  const handleReject = React.useCallback(async () => {
+    await updateOwnerAssociationRequest({
+      ownerAssociationRequestId: id,
+      ownerAssociationRequestStatusFormData: {
+        status: OwnerAssociationRequestStatus.DECLINED,
+      },
+    });
+  }, [id]);
 
   return (
     <S.AssociationsItemContainer container>
-      <Grid item lg={4}>
+      <Grid item lg={2.5}>
         <Typography variant='body1' noWrap title={username}>
           {username}
         </Typography>
@@ -70,6 +61,9 @@ const ActiveAssociationRequest: React.FC<Props> = ({
         </Typography>
       </Grid>
       <Grid item lg={2.5}>
+        <OwnerRoleCell roles={roles} />
+      </Grid>
+      <Grid item lg={1.5}>
         {provider}
       </Grid>
       <S.AssociationsItemActionsContainer container item lg={3}>
@@ -113,4 +107,4 @@ const ActiveAssociationRequest: React.FC<Props> = ({
   );
 };
 
-export default ActiveAssociationRequest;
+export default NewAssociationRequest;

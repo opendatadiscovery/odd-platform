@@ -616,6 +616,7 @@
         "OWNER_UPDATE",
         "OWNER_DELETE",
         "OWNER_ASSOCIATION_MANAGE",
+        "OWNER_RELATION_MANAGE",
         "DIRECT_OWNER_SYNC",
         "POLICY_CREATE",
         "POLICY_UPDATE",

@@ -3231,10 +3231,10 @@ paths:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
         - $ref: './components.yaml/#/components/parameters/SearchParam'
-        - name: active
+        - name: status
           in: query
           schema:
-            type: boolean
+            $ref: './components.yaml/#/components/schemas/OwnerAssociationRequestStatusParam'
           required: true
       responses:
         '200':
@@ -3262,6 +3262,85 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/OwnerAssociationRequest'
+      tags:
+        - ownerAssociationRequest
+
+  /api/owner_association_request/activity:
+    get:
+      summary: List of owner association requests activity
+      description: Gets the list of activity for owner association requests
+      operationId: getOwnerAssociationRequestActivityList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: status
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/OwnerAssociationRequestStatusParam'
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/OwnerAssociationRequestActivityList'
+      tags:
+        - ownerAssociationRequest
+
+  /api/owners/mapping:
+    post:
+      summary: Create user owner mapping
+      operationId: createUserOwnerMapping
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/UserOwnerMappingFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Owner'
+        '403':
+          $ref: './components.yaml/#/components/responses/Forbidden'
+      tags:
+        - ownerAssociationRequest
+
+  /api/owners/mapping/{owner_id}:
+    delete:
+      summary: Delete active user owner
+      description: Deletes active user  owner
+      operationId: deleteActiveUserOwnerMapping
+      parameters:
+        - name: owner_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - ownerAssociationRequest
+
+  /api/owners/providers:
+    get:
+      summary: Get list of auth providers
+      description: Returns Get list of auth providers
+      operationId: getAuthProviders
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ProviderList'
       tags:
         - ownerAssociationRequest
 

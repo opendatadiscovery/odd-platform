@@ -1,16 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Grid } from '@mui/material';
-import { Navigate, Route, Routes, useLocation, useMatch } from 'react-router-dom';
-import { useAtom } from 'jotai';
-import { fetchOwnerAssociationRequestList } from 'redux/thunks';
-import {
-  getNewOwnerAssociationRequestsPageInfo,
-  getResolvedOwnerAssociationRequestsPageInfo,
-} from 'redux/selectors';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { useGetOwnerAssociationRequestList } from 'lib/hooks/api/ownerAssociationRequest';
+import { OwnerAssociationRequestStatusParam, Permission } from 'generated-sources';
+import { WithPermissionsProvider } from 'components/shared/contexts';
 import OwnerAssociationsTabs from './OwnerAssociationsTabs/OwnerAssociationsTabs';
 import OwnerAssociationsHeader from './OwnerAssociationsHeader/OwnerAssociationsHeader';
-import { queryAtom } from './OwnerAssociationsStore/OwnerAssociationsAtoms';
 import OwnerAssociationsAtomProvider from './OwnerAssociationsStore/OwnerAssociationsProvider';
 
 const OwnerAssociationsNew = React.lazy(
@@ -20,53 +15,53 @@ const OwnerAssociationsResolved = React.lazy(
   () =>
     import('./OwnerAssociationsList/OwnerAssociationsResolved/OwnerAssociationsResolved')
 );
+const OwnerAssociationsActive = React.lazy(
+  () => import('./OwnerAssociationsList/OwnerAssociationsActive/OwnerAssociationsActive')
+);
 
 const OwnerAssociations: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const match = useMatch(useLocation().pathname);
-
-  const [query] = useAtom(queryAtom);
-
   const size = 30;
 
-  const active = React.useMemo(() => {
-    if (match) {
-      return match.pathname.includes('new');
-    }
-    return false;
-  }, [match?.pathname]);
+  const { data: activeRequests } = useGetOwnerAssociationRequestList({
+    query: '',
+    status: OwnerAssociationRequestStatusParam.APPROVED,
+    size,
+  });
+  const { data: newRequests } = useGetOwnerAssociationRequestList({
+    query: '',
+    status: OwnerAssociationRequestStatusParam.PENDING,
+    size,
+  });
 
-  const newRequestsPageInfo = useAppSelector(getNewOwnerAssociationRequestsPageInfo);
-  const resolvedRequestsPageInfo = useAppSelector(
-    getResolvedOwnerAssociationRequestsPageInfo
+  const totalActive = useMemo(
+    () => activeRequests?.pages[0].pageInfo.total,
+    [activeRequests?.pages]
   );
-
-  const total = React.useMemo(
-    () => newRequestsPageInfo.total + resolvedRequestsPageInfo.total,
-    [newRequestsPageInfo.total + resolvedRequestsPageInfo.total]
+  const totalNew = useMemo(
+    () => newRequests?.pages[0].pageInfo.total,
+    [newRequests?.pages]
   );
-
-  React.useEffect(() => {
-    if (!query) {
-      dispatch(fetchOwnerAssociationRequestList({ page: 1, size, active: true }));
-      dispatch(fetchOwnerAssociationRequestList({ page: 1, size, active: false }));
-    }
-  }, []);
 
   return (
     <OwnerAssociationsAtomProvider>
       <Grid container flexDirection='column' alignItems='center'>
-        <OwnerAssociationsHeader total={total} size={size} active={active} />
+        <WithPermissionsProvider
+          allowedPermissions={[Permission.OWNER_RELATION_MANAGE]}
+          resourcePermissions={[]}
+          Component={OwnerAssociationsHeader}
+        />
         <Grid sx={{ width: '100%' }}>
           <OwnerAssociationsTabs
             size={size}
-            newRequestsTabHint={newRequestsPageInfo.total}
+            newRequestsTabHint={totalNew}
+            activeAssociationsTabHint={totalActive}
           />
         </Grid>
         <Routes>
           <Route path='' element={<Navigate to='new' />} />
+          <Route path='active' element={<OwnerAssociationsActive size={size} />} />
           <Route path='new' element={<OwnerAssociationsNew size={size} />} />
-          <Route path='resolved' element={<OwnerAssociationsResolved size={size} />} />
+          <Route path='history' element={<OwnerAssociationsResolved size={size} />} />
         </Routes>
       </Grid>
     </OwnerAssociationsAtomProvider>

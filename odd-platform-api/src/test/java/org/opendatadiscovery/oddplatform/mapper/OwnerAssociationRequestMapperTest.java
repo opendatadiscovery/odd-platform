@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,7 +72,8 @@ public class OwnerAssociationRequestMapperTest {
     public void mapToPendingOwnerAssociationRequest() {
         final OwnerAssociationRequestPojo pojo = createPendingPojo();
         final String ownerName = UUID.randomUUID().toString();
-        final OwnerAssociationRequestDto dto = new OwnerAssociationRequestDto(pojo, ownerName, null);
+        final OwnerAssociationRequestDto dto =
+            new OwnerAssociationRequestDto(pojo, ownerName, 1L, CollectionUtils.emptyCollection(), null);
 
         when(associatedOwnerMapper.mapAssociatedOwner(null)).thenReturn(null);
         when(dateTimeMapper.mapUTCDateTime(null)).thenReturn(null);
@@ -92,7 +94,8 @@ public class OwnerAssociationRequestMapperTest {
         final OffsetDateTime offsetDateTime = pojo.getStatusUpdatedAt().atOffset(ZoneOffset.UTC);
         final AssociatedOwnerDto ownerDto = new AssociatedOwnerDto(pojo.getUsername(),
             new OwnerPojo().setName(updatedUserOwnerName), null);
-        final OwnerAssociationRequestDto dto = new OwnerAssociationRequestDto(pojo, ownerName, ownerDto);
+        final OwnerAssociationRequestDto dto =
+            new OwnerAssociationRequestDto(pojo, ownerName, 1L, CollectionUtils.emptyCollection(), ownerDto);
 
         final AssociatedOwner identity = new AssociatedOwner()
             .identity(new Identity().username(pojo.getUsername()))

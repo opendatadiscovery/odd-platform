@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { OwnerApiGetOwnerListRequest } from 'generated-sources/apis/OwnerApi';
+import type { OwnerApiGetOwnerListRequest } from 'generated-sources';
 import { ownerApi } from 'lib/api';
 
 export function useGetOwnerList(params: OwnerApiGetOwnerListRequest) {

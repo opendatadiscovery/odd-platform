@@ -1,10 +1,13 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
@@ -15,6 +18,7 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.OwnerDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.UserOwnerMappingPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.OwnerRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -33,6 +37,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER_ASSOCIATION_REQUEST;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER_TO_ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
+import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 
 @Repository
 public class ReactiveOwnerRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRepository<OwnerRecord, OwnerPojo>
@@ -59,13 +64,20 @@ public class ReactiveOwnerRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDR
 
     @Override
     public Mono<OwnerDto> getDto(final Long id) {
+        final List<Field<?>> groupByFields = Stream.of(OWNER.fields(), USER_OWNER_MAPPING.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+
         final var dtoQuery = DSL.select(OWNER.fields())
             .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
+            .select(USER_OWNER_MAPPING.asterisk())
             .from(OWNER)
             .leftJoin(OWNER_TO_ROLE).on(OWNER.ID.eq(OWNER_TO_ROLE.OWNER_ID))
             .leftJoin(ROLE).on(OWNER_TO_ROLE.ROLE_ID.eq(ROLE.ID))
+            .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID)
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull()))
             .where(OWNER.ID.eq(id))
-            .groupBy(OWNER.fields());
+            .groupBy(groupByFields);
         return jooqReactiveOperations.mono(dtoQuery)
             .map(this::mapRecordToDto);
     }
@@ -83,14 +95,21 @@ public class ReactiveOwnerRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDR
             List.of(new OrderByField(idField, SortOrder.ASC)), (page - 1) * size, size);
         final Table<? extends Record> ownerCTE = ownerSelect.asTable("owner_cte");
 
+        final List<Field<?>> groupByFields = Stream.of(ownerCTE.fields(), USER_OWNER_MAPPING.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+
         final var query = DSL.with(ownerCTE.getName())
             .as(ownerSelect)
             .select(ownerCTE.fields())
             .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
+            .select(USER_OWNER_MAPPING.asterisk())
             .from(ownerCTE)
             .leftJoin(OWNER_TO_ROLE).on(OWNER_TO_ROLE.OWNER_ID.eq(ownerCTE.field(idField)))
             .leftJoin(ROLE).on(ROLE.ID.eq(OWNER_TO_ROLE.ROLE_ID))
-            .groupBy(ownerCTE.fields());
+            .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OWNER_ID.eq(ownerCTE.field(idField))
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull()))
+            .groupBy(groupByFields);
 
         return jooqReactiveOperations.flux(query)
             .collectList()
@@ -145,12 +164,14 @@ public class ReactiveOwnerRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDR
     private OwnerDto mapRecordToDto(final Record r) {
         final OwnerPojo pojo = r.into(OWNER).into(OwnerPojo.class);
         final Set<RolePojo> roles = jooqRecordHelper.extractAggRelation(r, AGG_ROLE_FIELD, RolePojo.class);
-        return new OwnerDto(pojo, roles);
+        final UserOwnerMappingPojo associatedUsers = r.into(USER_OWNER_MAPPING).into(UserOwnerMappingPojo.class);
+        return new OwnerDto(pojo, roles, associatedUsers);
     }
 
     private OwnerDto mapRecordToDto(final Record r, final String cteName) {
         final OwnerPojo ownerPojo = jooqRecordHelper.remapCte(r, cteName, OWNER).into(OwnerPojo.class);
         final Set<RolePojo> roles = jooqRecordHelper.extractAggRelation(r, AGG_ROLE_FIELD, RolePojo.class);
-        return new OwnerDto(ownerPojo, roles);
+        final UserOwnerMappingPojo associatedUsers = r.into(USER_OWNER_MAPPING).into(UserOwnerMappingPojo.class);
+        return new OwnerDto(ownerPojo, roles, associatedUsers);
     }
 }

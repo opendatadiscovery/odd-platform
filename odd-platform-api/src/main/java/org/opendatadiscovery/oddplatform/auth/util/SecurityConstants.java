@@ -59,6 +59,7 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.N
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_ASSOCIATION_MANAGE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_RELATION_MANAGE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.POLICY_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.POLICY_DELETE;
@@ -149,6 +150,14 @@ public final class SecurityConstants {
             NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher(
             "/api/owner_association_request/{owner_association_request_id}", PUT),
             OWNER_ASSOCIATION_MANAGE),
+        new SecurityRule(
+            NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher(
+            "/api/owners/mapping", POST),
+            OWNER_RELATION_MANAGE),
+        new SecurityRule(
+            NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher(
+            "/api/owners/mapping/{owner_id}", DELETE),
+            OWNER_RELATION_MANAGE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/policies", POST),
             POLICY_CREATE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/policies/{policy_id}", PUT),
