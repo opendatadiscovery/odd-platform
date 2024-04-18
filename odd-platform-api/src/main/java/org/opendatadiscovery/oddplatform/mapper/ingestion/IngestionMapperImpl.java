@@ -32,6 +32,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityGrou
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataInput;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTest;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTestRun;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataRelationship;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldType;
@@ -39,7 +40,6 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransforme
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.ERDRelationship;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.GraphRelationship;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
@@ -99,7 +99,7 @@ public class IngestionMapperImpl implements IngestionMapper {
         Pair.of(de -> de.getDataQualityTestRun() != null, DATA_QUALITY_TEST_RUN),
         Pair.of(de -> de.getDataEntityGroup() != null, DATA_ENTITY_GROUP),
         Pair.of(de -> de.getDataInput() != null, DATA_INPUT),
-        Pair.of(de -> de.getDataEntityRelationship() != null, DATA_RELATIONSHIP)
+        Pair.of(de -> de.getDataRelationship() != null, DATA_RELATIONSHIP)
     );
 
     @Override
@@ -152,7 +152,7 @@ public class IngestionMapperImpl implements IngestionMapper {
         }
 
         if (entityClasses.contains(DATA_RELATIONSHIP)) {
-            builder = builder.dataRelationshipDto(createDataRelationship(dataEntity.getDataEntityRelationship()));
+            builder = builder.dataRelationshipDto(createDataRelationship(dataEntity.getDataRelationship()));
         }
 
         return builder.build();
@@ -310,9 +310,9 @@ public class IngestionMapperImpl implements IngestionMapper {
         );
     }
 
-    private DataRelationshipDto createDataRelationship(final Relationship relationship) {
+    private DataRelationshipDto createDataRelationship(final DataRelationship relationship) {
         final DataRelationshipDetailsDto dataRelationshipDetailsDto =
-            Relationship.RelationshipTypeEnum.ERD == relationship.getRelationshipType()
+            DataRelationship.RelationshipTypeEnum.ERD == relationship.getRelationshipType()
                 ? new DataRelationshipDetailsDto(
                     erdRelationIngestionMapper.mapERDRelation((ERDRelationship) relationship.getDetails()),
                     null)
