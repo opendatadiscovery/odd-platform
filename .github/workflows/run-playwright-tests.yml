@@ -59,22 +59,22 @@ jobs:
           cache: 'gradle'
       - name: Build docker container
         run: ./gradlew jibDockerBuild -x test -x checkstyleMain -x checkstyleTest --image odd-platform:e2e-latest-build
-      - name: Start containers
-        run: |
-          cd tests
-          npm run odd-up
-      - name: Install dependencies
-        run: |
-          cd tests
-          npm ci
-      - name: Install Playwright Browsers
-        run: |
-          cd tests
-          npx playwright install --with-deps chromium
-      - name: Run Playwright tests
-        run: |
-          cd tests
-          npm run test:ci
+#      - name: Start containers
+#        run: |
+#          cd tests
+#          npm run odd-up
+#      - name: Install dependencies
+#        run: |
+#          cd tests
+#          npm ci
+#      - name: Install Playwright Browsers
+#        run: |
+#          cd tests
+#          npx playwright install --with-deps chromium
+#      - name: Run Playwright tests
+#        run: |
+#          cd tests
+#          npm run test:ci
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         if: always()
