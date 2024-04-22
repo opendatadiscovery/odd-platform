@@ -9,16 +9,16 @@ import {
 } from 'components/shared/elements';
 import { LinkIcon } from 'components/shared/icons';
 import { useTranslation } from 'react-i18next';
-import { useGetQueryExamplesByDatasetId } from 'lib/hooks/api/dataModelling/queryExamples';
+import { useGetQueryExamplesByTermId } from 'lib/hooks/api/dataModelling/queryExamples';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import { useDataEntityRouteParams } from 'routes';
-import AssignEntityQueryExampleForm from './AssignEntityQueryExampleForm';
+import { useTermsRouteParams } from 'routes';
+import AssignEntityQueryExampleForm from './AssignTermQueryExampleForm';
 
-const DataEntityDetailsQueryExamples: React.FC = () => {
+const TermQueryExamples: React.FC = () => {
   const { t } = useTranslation();
-  const { dataEntityId } = useDataEntityRouteParams();
-  const { data, isLoading } = useGetQueryExamplesByDatasetId({ dataEntityId });
+  const { termId } = useTermsRouteParams();
+  const { data, isLoading } = useGetQueryExamplesByTermId({ termId });
 
   const queryExamples = useMemo(() => data?.items ?? [], [data?.items]);
 
@@ -30,9 +30,9 @@ const DataEntityDetailsQueryExamples: React.FC = () => {
   return (
     <Grid container gap={2} mt={2}>
       <Grid item display='flex' justifyContent='end' alignItems='center' xs={12}>
-        <WithPermissions permissionTo={Permission.QUERY_EXAMPLE_DATASET_CREATE}>
+        <WithPermissions permissionTo={Permission.QUERY_EXAMPLE_TERM_CREATE}>
           <AssignEntityQueryExampleForm
-            dataEntityId={dataEntityId}
+            termId={termId}
             openBtnEl={
               <Button
                 buttonType='secondary-lg'
@@ -49,7 +49,8 @@ const DataEntityDetailsQueryExamples: React.FC = () => {
           <QueryExamplesListItem
             queryExample={qe}
             key={qe.definition}
-            entityId={dataEntityId}
+            isTerm
+            entityId={termId}
           />
         ))}
         {isLoading && <QueryExamplesSkeleton />}
@@ -59,4 +60,4 @@ const DataEntityDetailsQueryExamples: React.FC = () => {
   );
 };
 
-export default DataEntityDetailsQueryExamples;
+export default TermQueryExamples;

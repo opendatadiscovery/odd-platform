@@ -56,6 +56,13 @@ public class QueryExampleController implements QueryExampleApi {
     }
 
     @Override
+    public Mono<ResponseEntity<QueryExampleList>> getQueryExampleByTermId(final Long termId,
+                                                                          final ServerWebExchange exchange) {
+        return queryExampleService.getQueryExampleByTermId(termId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
     public Mono<ResponseEntity<QueryExampleDetails>> getQueryExampleDetails(final Long exampleId,
                                                                             final ServerWebExchange exchange) {
         return queryExampleService.getQueryExampleDetails(exampleId)

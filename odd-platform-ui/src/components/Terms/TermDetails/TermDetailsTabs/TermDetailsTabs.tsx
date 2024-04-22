@@ -29,6 +29,10 @@ const TermDetailsTabs: React.FC = () => {
         hint: termDetails?.columnsUsingCount,
         hidden: !termDetails?.columnsUsingCount,
       },
+      {
+        name: 'Query examples',
+        link: termDetailsPath(termId, 'query-examples'),
+      },
     ],
     [termId, termDetails?.entitiesUsingCount, termDetails?.columnsUsingCount, t]
   );

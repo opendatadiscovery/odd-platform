@@ -68,6 +68,8 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.Q
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_DATASET_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_DATASET_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_TERM_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_TERM_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.ROLE_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.ROLE_DELETE;
@@ -182,6 +184,13 @@ public final class SecurityConstants {
             TERM_OWNERSHIP_DELETE),
         new SecurityRule(TERM, new PathPatternParserServerWebExchangeMatcher("/api/terms/{term_id}/tags", PUT),
             TERM_TAGS_UPDATE),
+        new SecurityRule(TERM,
+            new PathPatternParserServerWebExchangeMatcher("/api/terms/{term_id}/queryexample", POST),
+            QUERY_EXAMPLE_TERM_CREATE),
+        new SecurityRule(TERM,
+            new PathPatternParserServerWebExchangeMatcher("/api/terms/{term_id}/queryexample/{example_id}",
+                DELETE),
+            QUERY_EXAMPLE_TERM_DELETE),
         new SecurityRule(
             DATA_ENTITY,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/description", PUT),

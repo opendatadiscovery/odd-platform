@@ -26,6 +26,7 @@ const TermDetailsRoutes = {
   OVERVIEW: 'overview',
   LINKED_ENTITIES: 'linked-entities',
   LINKED_COLUMNS: 'linked-columns',
+  QUERY_EXAMPLES: 'query-examples',
 } as const;
 
 type TermDetailsRoutesType = (typeof TermDetailsRoutes)[keyof typeof TermDetailsRoutes];

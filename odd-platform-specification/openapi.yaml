@@ -2283,6 +2283,23 @@ paths:
       tags:
         - queryExample
 
+  /api/queryexample/term/{term_id}:
+    get:
+      summary: Get QueryExample
+      description: Gets QueryExamples by Term's id
+      operationId: getQueryExampleByTermId
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleList'
+      tags:
+        - queryExample
+
   /api/queryexample/search/suggestions:
     get:
       summary: Get QueryExample search suggestions by query
@@ -2835,6 +2852,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
       tags:
         - term
+
   /api/terms/{term_id}/linked_columns:
     get:
       summary: Get term linked columns
@@ -2852,6 +2870,43 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/DatasetFieldList'
+      tags:
+        - term
+
+  /api/terms/{term_id}/queryexample:
+    post:
+      summary: add Term to QueryExample
+      description: Creates a new relation between QueryExample and Term
+      operationId: createQueryExampleToTermRelationship
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/QueryExampleTermFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExample'
+      tags:
+        - term
+
+  /api/terms/{term_id}/queryexample/{example_id}:
+    delete:
+      summary: Delete Term from QueryExample
+      description: Deletes relationship between QueryExample and Term
+      operationId: deleteQueryExampleToTermRelationship
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - term
 

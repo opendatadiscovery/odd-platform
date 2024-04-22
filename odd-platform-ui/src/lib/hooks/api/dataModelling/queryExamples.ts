@@ -6,6 +6,7 @@ import type {
   QueryExampleApiUpdateQueryExampleRequest,
   DataEntityApiCreateQueryExampleToDatasetRelationshipNewRequest,
   DataEntityApiDeleteQueryExampleToDatasetRelationshipNewRequest,
+  QueryExampleApiGetQueryExampleByTermIdRequest,
 } from 'generated-sources';
 import { queryExampleApi, dataEntityApi } from 'lib/api';
 import { showSuccessToast } from 'lib/errorHandling';
@@ -112,3 +113,13 @@ export function useUnassignEntityQueryExample() {
     },
   });
 }
+
+export function useGetQueryExamplesByTermId({
+  termId,
+}: QueryExampleApiGetQueryExampleByTermIdRequest) {
+  return useQuery({
+    queryKey: ['getQueryExamplesByTermId', termId],
+    queryFn: async () => queryExampleApi.getQueryExampleByTermId({ termId }),
+  });
+}
+

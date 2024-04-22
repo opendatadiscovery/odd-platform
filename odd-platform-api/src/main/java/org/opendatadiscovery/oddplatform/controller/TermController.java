@@ -10,6 +10,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MultipleFacetType;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.QueryExample;
+import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
@@ -21,6 +23,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFacetsData
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.DatasetFieldService;
+import org.opendatadiscovery.oddplatform.service.QueryExampleService;
 import org.opendatadiscovery.oddplatform.service.term.TermOwnershipService;
 import org.opendatadiscovery.oddplatform.service.term.TermSearchService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
@@ -39,6 +42,7 @@ public class TermController implements TermApi {
     private final DatasetFieldService datasetFieldService;
     private final TermSearchService termSearchService;
     private final TermOwnershipService termOwnershipService;
+    private final QueryExampleService queryExampleService;
 
     @Override
     public Mono<ResponseEntity<TermRefList>> getTermsList(final Integer page, final Integer size,
@@ -194,5 +198,23 @@ public class TermController implements TermApi {
         return termSearchFormData
             .flatMap(fd -> termSearchService.updateFacets(searchId, fd))
             .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<QueryExample>>
+        createQueryExampleToTermRelationship(final Long termId,
+                                         final Mono<QueryExampleTermFormData> queryExampleTermFormData,
+                                         final ServerWebExchange exchange) {
+        return queryExampleTermFormData
+            .flatMap(item -> queryExampleService.linkTermWithQueryExample(termId, item))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteQueryExampleToTermRelationship(final Long termId,
+                                                                           final Long exampleId,
+                                                                           final ServerWebExchange exchange) {
+        return queryExampleService.removeTermFromQueryExample(termId, exampleId)
+            .thenReturn(ResponseEntity.noContent().build());
     }
 }
