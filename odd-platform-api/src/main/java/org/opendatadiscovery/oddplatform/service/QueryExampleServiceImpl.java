@@ -86,6 +86,7 @@ public class QueryExampleServiceImpl implements QueryExampleService {
         return queryExampleRepository.get(exampleId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("QueryExample", exampleId)))
             .thenMany(dataEntityToQueryExampleRepository.removeRelationWithDataEntityByQueryId(exampleId))
+            .thenMany(termQueryExampleRelationRepository.removeRelationWithTermByQueryId(exampleId))
             .then(queryExampleRepository.delete(exampleId).map(QueryExamplePojo::getId))
             .then();
     }

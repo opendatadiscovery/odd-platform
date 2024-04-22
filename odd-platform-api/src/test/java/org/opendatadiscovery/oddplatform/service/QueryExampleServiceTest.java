@@ -87,6 +87,7 @@ public class QueryExampleServiceTest {
         );
 
         queryExampleMapper.setDateTimeMapper(new DateTimeMapperImpl());
+        queryExampleMapper.setTermMapper(termMapper);
         queryExampleMapper.setDataEntityMapper(
             new DataEntityMapperImpl(
                 new DataSourceMapperImpl(
