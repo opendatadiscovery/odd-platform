@@ -13,7 +13,7 @@ interface Props {
 
 const QueryExamplesTermUnlinkButton = ({ termId, queryExampleId }: Props) => {
   const { t } = useTranslation();
-  const { mutateAsync: unlink } = useUnassignTermQueryExample(termId);
+  const { mutateAsync: unlink } = useUnassignTermQueryExample();
   return (
     <ConfirmationDialog
       actionTitle={t('Are you sure you want to unlink this query example?')}

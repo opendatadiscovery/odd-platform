@@ -57,13 +57,13 @@ export function useAssignTermQueryExample(termId: number) {
   });
 }
 
-export function useUnassignTermQueryExample(termId: number) {
+export function useUnassignTermQueryExample() {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationKey: ['unassignTermQueryExample'],
     mutationFn: async ({
       exampleId,
+      termId
     }: TermApiDeleteQueryExampleToTermRelationshipRequest) =>
       termApi.deleteQueryExampleToTermRelationship({
         termId,

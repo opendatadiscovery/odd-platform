@@ -29,10 +29,6 @@ const AssignTermQueryExampleForm: React.FC<AssignTermQueryFormProps> = ({
     reValidateMode: 'onChange',
   });
 
-  const clear = () => {
-    reset();
-  };
-
   const onSubmit = ({ exampleId }: FormData) => {
     mutateAsync({
       queryExampleTermFormData: {
@@ -83,7 +79,7 @@ const AssignTermQueryExampleForm: React.FC<AssignTermQueryFormProps> = ({
       renderContent={formContent}
       renderActions={actionButton}
       handleCloseSubmittedForm={isSuccess}
-      clearState={clear}
+      clearState={reset}
     />
   );
 };
