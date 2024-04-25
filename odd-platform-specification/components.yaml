@@ -189,6 +189,8 @@ components:
         - QUERY_EXAMPLE_DELETE
         - QUERY_EXAMPLE_DATASET_CREATE
         - QUERY_EXAMPLE_DATASET_DELETE
+        - QUERY_EXAMPLE_TERM_CREATE
+        - QUERY_EXAMPLE_TERM_DELETE
         - LOOKUP_TABLE_CREATE
         - LOOKUP_TABLE_UPDATE
         - LOOKUP_TABLE_DELETE
@@ -2496,6 +2498,14 @@ components:
         authType:
           type: string
 
+    LinkedTermList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedTerm'
+
     LinkedTerm:
       type: object
       properties:
@@ -2562,6 +2572,8 @@ components:
               type: integer
             columns_using_count:
               type: integer
+            query_example_using_count:
+              type: integer
             created_at:
               type: string
               format: date-time
@@ -2611,6 +2623,15 @@ components:
           format: int64
       required:
         - term_id
+
+    QueryExampleTermFormData:
+      type: object
+      properties:
+        query_example_id:
+          type: integer
+          format: int64
+      required:
+        - query_example_id
 
     TermSearchFormData:
       type: object
@@ -2722,11 +2743,14 @@ components:
           type: string
         linked_entities:
           $ref: '#/components/schemas/DataEntityRefList'
+        linked_terms:
+          $ref: '#/components/schemas/LinkedTermList'
       required:
         - id
         - definition
         - query
         - linked_entities
+        - linked_terms
 
     QueryExampleDetails:
       allOf:
@@ -2735,6 +2759,8 @@ components:
           properties:
             linked_entities:
               $ref: '#/components/schemas/DataEntityList'
+            linked_terms:
+              $ref: '#/components/schemas/LinkedTermList'
             created_at:
               type: string
               format: date-time
@@ -2743,6 +2769,7 @@ components:
               format: date-time
           required:
             - linked_entities
+            - linked_terms
             - created_at
             - updated_at
 

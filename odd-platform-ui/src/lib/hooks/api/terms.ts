@@ -1,10 +1,16 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { termApi } from 'lib/api';
 import type {
   TermApiGetTermByNamespaceAndNameRequest,
   TermApiGetTermLinkedColumnsRequest,
+  TermApiCreateQueryExampleToTermRelationshipRequest,
+  TermApiDeleteQueryExampleToTermRelationshipRequest,
 } from 'generated-sources';
-import type { AppError } from 'lib/errorHandling';
+import { showSuccessToast, type AppError } from 'lib/errorHandling';
 
 export function useGetTermByNamespaceAndName() {
   const queryClient = useQueryClient();
@@ -27,5 +33,47 @@ export function useGetTermLinkedColumns(params: TermApiGetTermLinkedColumnsReque
     queryFn: () => termApi.getTermLinkedColumns(params),
     enabled: false,
     initialData: { pageInfo: { total: 0, hasNext: false }, items: [] },
+  });
+}
+
+export function useAssignTermQueryExample(termId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ['assignTermQueryExample', termId],
+    mutationFn: async ({
+      queryExampleTermFormData,
+    }: TermApiCreateQueryExampleToTermRelationshipRequest) =>
+      termApi.createQueryExampleToTermRelationship({
+        queryExampleTermFormData,
+        termId,
+      }),
+    onSuccess: async () => {
+      showSuccessToast({ message: 'Query Example successfully assigned!' });
+      await queryClient.invalidateQueries({
+        queryKey: ['getQueryExamplesByTermId'],
+      });
+    },
+  });
+}
+
+export function useUnassignTermQueryExample() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ['unassignTermQueryExample'],
+    mutationFn: async ({
+      exampleId,
+      termId
+    }: TermApiDeleteQueryExampleToTermRelationshipRequest) =>
+      termApi.deleteQueryExampleToTermRelationship({
+        termId,
+        exampleId,
+      }),
+    onSuccess: async () => {
+      showSuccessToast({ message: 'Query Example successfully unassigned!' });
+      await queryClient.invalidateQueries({
+        queryKey: ['getQueryExamplesByTermId'],
+      });
+    },
   });
 }

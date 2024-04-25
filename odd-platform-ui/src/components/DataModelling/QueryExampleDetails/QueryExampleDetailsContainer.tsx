@@ -8,9 +8,11 @@ import { useQueryExamplesRouteParams } from 'routes';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { useResourcePermissions } from 'lib/hooks/api/permissions';
+import { useSearchParams } from 'react-router-dom';
 import QueryExampleDetailsTabs from './QueryExampleDetailsTabs';
 import QueryExampleDetailsOverview from './QueryExampleDetailsOverview';
 import QueryExampleDetailsLinkedEntities from './QueryExampleDetailsLinkedEntities';
+import QueryExampleDetailsLinkedTerms from './QueryExampleDetailsLinkedTerms';
 import { QueryExampleDetailsContainerActions } from './QueryExampleDetailsContainerActions';
 
 const QueryExampleDetailsContainer: React.FC = () => {
@@ -25,10 +27,8 @@ const QueryExampleDetailsContainer: React.FC = () => {
     exampleId,
   });
 
-  const [selectedTab, setSelectedTab] = useState(0);
-  const handleTabChange = useCallback(() => {
-    setSelectedTab(prev => (prev === 0 ? 1 : 0));
-  }, []);
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get('tab') ?? 'overview';
 
   const { formatDistanceToNowStrict } = useAppDateTime();
 
@@ -66,21 +66,31 @@ const QueryExampleDetailsContainer: React.FC = () => {
       </Grid>
       <Grid item alignItems='center'>
         <QueryExampleDetailsTabs
-          selectedTab={selectedTab}
-          onHandleTabChange={handleTabChange}
           linkedEntitiesHint={queryExampleDetails?.linkedEntities.pageInfo.total}
+          linkedTermsHint={
+            queryExampleDetails?.linkedTerms?.items ? queryExampleDetails?.linkedTerms?.items.length : 0
+          }
         />
       </Grid>
       <Grid item container gap={2} flexDirection='column' alignItems='start'>
-        {selectedTab === 0 && (
+        {tab === 'overview' && (
           <QueryExampleDetailsOverview
             definition={queryExampleDetails.definition}
             query={queryExampleDetails.query}
           />
         )}
-        {selectedTab === 1 && (
+        {tab === 'linked-entities' && (
           <QueryExampleDetailsLinkedEntities
             entities={queryExampleDetails.linkedEntities.items}
+          />
+        )}
+        {tab === 'linked-terms' && (
+          <QueryExampleDetailsLinkedTerms
+            terms={
+              queryExampleDetails.linkedTerms.items
+                ? queryExampleDetails.linkedTerms.items.map(term => term.term)
+                : []
+            }
           />
         )}
       </Grid>

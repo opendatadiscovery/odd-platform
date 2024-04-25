@@ -15,12 +15,11 @@ import org.opendatadiscovery.oddplatform.dto.QueryExampleDto;
 import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToQueryExamplePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExampleToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
-import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityToQueryExampleRecord;
+import org.opendatadiscovery.oddplatform.model.tables.records.QueryExampleToTermRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
@@ -39,9 +38,10 @@ import static org.opendatadiscovery.oddplatform.model.Tables.QUERY_EXAMPLE_TO_TE
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 
 @Repository
-public class ReactiveDataEntityQueryExampleRelationRepositoryImpl
-    extends ReactiveAbstractSoftDeleteCRUDRepository<DataEntityToQueryExampleRecord, DataEntityToQueryExamplePojo>
-    implements ReactiveDataEntityQueryExampleRelationRepository {
+public class ReactiveTermQueryExampleRelationRepositoryImpl
+    extends ReactiveAbstractSoftDeleteCRUDRepository<QueryExampleToTermRecord, QueryExampleToTermPojo>
+    implements ReactiveTermQueryExampleRelationRepository {
+
     private static final String AGG_DATA_ENTITIES_FIELD = "dataEntities";
     private static final String QUERY_EXAMPLES_CTE = "query_examples_cte";
     public static final String TERMS = "terms";
@@ -50,79 +50,52 @@ public class ReactiveDataEntityQueryExampleRelationRepositoryImpl
 
     private final JooqRecordHelper jooqRecordHelper;
 
-    public ReactiveDataEntityQueryExampleRelationRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
-                                                                final JooqQueryHelper jooqQueryHelper,
-                                                                final JooqRecordHelper jooqRecordHelper) {
-        super(jooqReactiveOperations, jooqQueryHelper, DATA_ENTITY_TO_QUERY_EXAMPLE,
-            DataEntityToQueryExamplePojo.class);
+    public ReactiveTermQueryExampleRelationRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
+                                                          final JooqQueryHelper jooqQueryHelper,
+                                                          final JooqRecordHelper jooqRecordHelper) {
+        super(jooqReactiveOperations, jooqQueryHelper, QUERY_EXAMPLE_TO_TERM,
+            QueryExampleToTermPojo.class);
 
         this.jooqRecordHelper = jooqRecordHelper;
     }
 
     @Override
-    public Mono<DataEntityToQueryExamplePojo> createRelationWithDataEntity(final long dataEntityId,
-                                                                           final long queryExample) {
-        final var query = DSL.insertInto(DATA_ENTITY_TO_QUERY_EXAMPLE)
-            .set(DATA_ENTITY_TO_QUERY_EXAMPLE.DATA_ENTITY_ID, dataEntityId)
-            .set(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID, queryExample)
+    public Mono<QueryExampleToTermPojo> createRelationWithQueryExample(final Long queryExampleId, final Long termId) {
+        final var query = DSL.insertInto(QUERY_EXAMPLE_TO_TERM)
+            .set(QUERY_EXAMPLE_TO_TERM.QUERY_EXAMPLE_ID, queryExampleId)
+            .set(QUERY_EXAMPLE_TO_TERM.TERM_ID, termId)
             .onDuplicateKeyIgnore()
             .returning();
         return jooqReactiveOperations.mono(query)
-            .map(r -> r.into(DataEntityToQueryExamplePojo.class));
+            .map(r -> r.into(QueryExampleToTermPojo.class));
     }
 
     @Override
-    public Mono<QueryExampleDto> getQueryExampleDatasetRelations(final long queryExample) {
-        final SelectHavingStep<Record> query = DSL.select(QUERY_EXAMPLE.asterisk())
-            .select(jsonArrayAgg(field(DATA_ENTITY.asterisk().toString())).as(AGG_DATA_ENTITIES_FIELD))
-            .select(jsonArrayAgg(field(TERM.asterisk().toString())).as(TERMS))
-            .select(jsonArrayAgg(field(NAMESPACE.asterisk().toString())).as(TERM_NAMESPACES))
-            .select(jsonArrayAgg(field(QUERY_EXAMPLE_TO_TERM.asterisk().toString())).as(TERM_RELATIONS))
-            .from(QUERY_EXAMPLE)
-            .leftJoin(DATA_ENTITY_TO_QUERY_EXAMPLE)
-            .on(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID.eq(QUERY_EXAMPLE.ID))
-            .leftJoin(DATA_ENTITY)
-            .on(DATA_ENTITY.ID.eq(DATA_ENTITY_TO_QUERY_EXAMPLE.DATA_ENTITY_ID))
-            .leftJoin(QUERY_EXAMPLE_TO_TERM)
-            .on(QUERY_EXAMPLE.ID.eq(QUERY_EXAMPLE_TO_TERM.QUERY_EXAMPLE_ID))
-            .leftJoin(TERM)
-            .on(QUERY_EXAMPLE_TO_TERM.TERM_ID.eq(TERM.ID)).and(TERM.DELETED_AT.isNull())
-            .leftJoin(NAMESPACE).on(TERM.NAMESPACE_ID.eq(NAMESPACE.ID))
-            .where(QUERY_EXAMPLE.ID.eq(queryExample))
-            .groupBy(QUERY_EXAMPLE.ID);
-
-        return jooqReactiveOperations.mono(query)
-            .map(r -> new QueryExampleDto(r.into(QUERY_EXAMPLE).into(QueryExamplePojo.class),
-                extractDataEntityPojos(r),
-                extractTerms(r)));
-    }
-
-    @Override
-    public Mono<DataEntityToQueryExamplePojo> removeRelationWithDataEntityByQueryId(final Long exampleId,
-                                                                                    final Long dataEntityId) {
-        final var query = DSL.deleteFrom(DATA_ENTITY_TO_QUERY_EXAMPLE)
-            .where(DATA_ENTITY_TO_QUERY_EXAMPLE.DATA_ENTITY_ID.eq(dataEntityId)
-                .and(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID.eq(exampleId)))
+    public Mono<QueryExampleToTermPojo> deleteRelationWithQueryExample(final Long queryExampleId, final Long termId) {
+        final var query = DSL.deleteFrom(QUERY_EXAMPLE_TO_TERM)
+            .where(QUERY_EXAMPLE_TO_TERM.QUERY_EXAMPLE_ID.eq(queryExampleId)
+                .and(QUERY_EXAMPLE_TO_TERM.TERM_ID.eq(termId))
+                .and(QUERY_EXAMPLE_TO_TERM.IS_DESCRIPTION_LINK.isFalse()))
             .returning();
         return jooqReactiveOperations.mono(query)
-            .map(r -> r.into(DataEntityToQueryExamplePojo.class));
+            .map(r -> r.into(QueryExampleToTermPojo.class));
     }
 
     @Override
-    public Flux<DataEntityToQueryExamplePojo> removeRelationWithDataEntityByQueryId(final Long exampleId) {
-        final var query = DSL.deleteFrom(DATA_ENTITY_TO_QUERY_EXAMPLE)
-            .where(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID.eq(exampleId))
+    public Flux<QueryExampleToTermPojo> removeRelationWithTermByQueryId(final Long exampleId) {
+        final var query = DSL.deleteFrom(QUERY_EXAMPLE_TO_TERM)
+            .where(QUERY_EXAMPLE_TO_TERM.QUERY_EXAMPLE_ID.eq(exampleId))
             .returning();
         return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(DataEntityToQueryExamplePojo.class));
+            .map(r -> r.into(QueryExampleToTermPojo.class));
     }
 
     @Override
-    public Flux<QueryExampleDto> getQueryExampleDatasetRelationsByDataEntity(final Long dataEntityId) {
+    public Flux<QueryExampleDto> getQueryExampleDatasetRelationsByTerm(final Long termId) {
         final SelectConditionStep<Record1<Long>> queryExampleSelect =
-            DSL.select(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID)
-                .from(DATA_ENTITY_TO_QUERY_EXAMPLE)
-                .where(DATA_ENTITY_TO_QUERY_EXAMPLE.DATA_ENTITY_ID.eq(dataEntityId));
+            DSL.select(QUERY_EXAMPLE_TO_TERM.QUERY_EXAMPLE_ID)
+                .from(QUERY_EXAMPLE_TO_TERM)
+                .where(QUERY_EXAMPLE_TO_TERM.TERM_ID.eq(termId));
 
         final Table<Record1<Long>> exampleCTE = queryExampleSelect.asTable(QUERY_EXAMPLES_CTE);
 
@@ -187,3 +160,4 @@ public class ReactiveDataEntityQueryExampleRelationRepositoryImpl
             .toList();
     }
 }
+

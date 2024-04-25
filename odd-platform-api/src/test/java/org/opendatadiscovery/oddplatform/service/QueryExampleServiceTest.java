@@ -48,6 +48,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityQueryExampleRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermQueryExampleRelationRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -69,6 +70,8 @@ public class QueryExampleServiceTest {
     @Mock
     private ReactiveDataEntityQueryExampleRelationRepository dataEntityToQueryExampleRepository;
     @Mock
+    private ReactiveTermQueryExampleRelationRepository termQueryExampleRelationRepository;
+    @Mock
     private DataEntityService dataEntityService;
     private final QueryExampleMapper queryExampleMapper = new QueryExampleMapperImpl();
 
@@ -84,6 +87,7 @@ public class QueryExampleServiceTest {
         );
 
         queryExampleMapper.setDateTimeMapper(new DateTimeMapperImpl());
+        queryExampleMapper.setTermMapper(termMapper);
         queryExampleMapper.setDataEntityMapper(
             new DataEntityMapperImpl(
                 new DataSourceMapperImpl(
@@ -122,6 +126,7 @@ public class QueryExampleServiceTest {
         queryExampleService = new QueryExampleServiceImpl(queryExampleRepository,
             queryExampleSearchEntrypointRepository,
             dataEntityToQueryExampleRepository,
+            termQueryExampleRelationRepository,
             dataEntityService,
             queryExampleMapper);
     }
@@ -207,6 +212,8 @@ public class QueryExampleServiceTest {
             .thenReturn(Mono.just(pojo));
         when(queryExampleRepository.delete(anyLong())).thenReturn(Mono.empty());
         when(dataEntityToQueryExampleRepository.removeRelationWithDataEntityByQueryId(anyLong()))
+            .thenReturn(Flux.empty());
+        when(termQueryExampleRelationRepository.removeRelationWithTermByQueryId(anyLong()))
             .thenReturn(Flux.empty());
 
         queryExampleService
@@ -301,7 +308,8 @@ public class QueryExampleServiceTest {
                         .setId(1L)
                         .setQuery("select 1 from dual")
                         .setDefinition("def"),
-                    List.of(new DataEntityPojo().setId(1L).setStatus((short) 3))
+                    List.of(new DataEntityPojo().setId(1L).setStatus((short) 3)),
+                    List.of()
                 ),
                 new QueryExample()
                     .query("select 1 from dual")
@@ -323,7 +331,8 @@ public class QueryExampleServiceTest {
                 pojo,
                 new QueryExampleDto(
                     pojo,
-                    List.of(new DataEntityPojo().setId(1L).setStatus((short) 3))
+                    List.of(new DataEntityPojo().setId(1L).setStatus((short) 3)),
+                    List.of()
                 ),
                 DataEntityDimensionsDto
                     .dimensionsBuilder()

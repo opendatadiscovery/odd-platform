@@ -14,6 +14,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleRefList;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.QueryExampleDto;
+import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class QueryExampleMapper {
     protected DataEntityMapper dataEntityMapper;
     protected DateTimeMapper dateTimeMapper;
+    protected TermMapper termMapper;
 
     @Autowired
     public void setDateTimeMapper(final DateTimeMapper dateTimeMapper) {
@@ -36,6 +38,11 @@ public abstract class QueryExampleMapper {
     @Autowired
     public void setDataEntityMapper(final DataEntityMapper dataEntityMapper) {
         this.dataEntityMapper = dataEntityMapper;
+    }
+
+    @Autowired
+    public void setTermMapper(final TermMapper termMapper) {
+        this.termMapper = termMapper;
     }
 
     public abstract QueryExamplePojo mapToPojo(final QueryExampleFormData dto);
@@ -72,17 +79,18 @@ public abstract class QueryExampleMapper {
         return queryExampleDtos
             .stream()
             .map(item -> mapToQueryExample(item.queryExamplePojo(),
-                item.linkedEntities()))
+                item.linkedEntities(), item.linkedTerms()))
             .collect(Collectors.toList());
     }
 
     public QueryExample mapToQueryExample(
-        final QueryExamplePojo pojo, final List<DataEntityPojo> dataEntities) {
+        final QueryExamplePojo pojo, final List<DataEntityPojo> dataEntities, final List<LinkedTermDto> linkedTerms) {
         return new QueryExample()
             .id(pojo.getId())
             .definition(pojo.getDefinition())
             .query(pojo.getQuery())
-            .linkedEntities(mapDataEntityRefList(dataEntities));
+            .linkedEntities(mapDataEntityRefList(dataEntities))
+            .linkedTerms(termMapper.mapToLinkedTermList(linkedTerms));
     }
 
     public List<DataEntityRef> mapDataEntityRefList(final List<DataEntityPojo> dataEntities) {
@@ -92,13 +100,15 @@ public abstract class QueryExampleMapper {
     }
 
     public QueryExampleDetails mapToQueryExampleDetails(
-        final QueryExamplePojo pojo, final List<DataEntityDimensionsDto> dataEntities) {
+        final QueryExamplePojo pojo, final List<DataEntityDimensionsDto> dataEntities,
+        final List<LinkedTermDto> terms) {
         return new QueryExampleDetails()
             .id(pojo.getId())
             .definition(pojo.getDefinition())
             .query(pojo.getQuery())
             .createdAt(dateTimeMapper.mapUTCDateTime(pojo.getCreatedAt()))
             .updatedAt(dateTimeMapper.mapUTCDateTime(pojo.getUpdatedAt()))
-            .linkedEntities(dataEntityMapper.mapPojos(dataEntities));
+            .linkedEntities(dataEntityMapper.mapPojos(dataEntities))
+            .linkedTerms(termMapper.mapToLinkedTermList(terms));
     }
 }
