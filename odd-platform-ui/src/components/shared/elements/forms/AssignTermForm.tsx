@@ -8,7 +8,7 @@ import type { TermRef } from 'generated-sources';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import Markdown from 'components/shared/elements/Markdown/Markdown';
 
-export interface AssignTermFormData {
+interface AssignTermFormData {
   termId: number;
 }
 

@@ -13,6 +13,5 @@ export const Tooltip = styled('div')(({ theme }) => ({
 export const Definition = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between',
   marginBottom: theme.spacing(1),
 }));

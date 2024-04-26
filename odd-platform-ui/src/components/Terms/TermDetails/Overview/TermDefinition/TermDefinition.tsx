@@ -38,14 +38,14 @@ const TermDefinition: FC<TermDefinitionProps> = ({ definition, termId, terms }) 
   return (
     <>
       <S.Definition>
-        <Typography variant='h2' mb={1}>
+        <Typography variant='h2' mr={1}>
           Definition
         </Typography>
         <AppTooltip title={tooltipInfoContent} checkForOverflow={false}>
           <InformationIcon width={14} height={14} />
         </AppTooltip>
       </S.Definition>
-      <Markdown value={transformDescriptionToMarkdown(definition)} variant='subtitle1' />
+      <Markdown value={transformDescriptionToMarkdown(definition)} />
     </>
   );
 };

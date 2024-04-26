@@ -122,3 +122,4 @@ export function useGetQueryExamplesByTermId({
     queryFn: async () => queryExampleApi.getQueryExampleByTermId({ termId }),
   });
 }
+
