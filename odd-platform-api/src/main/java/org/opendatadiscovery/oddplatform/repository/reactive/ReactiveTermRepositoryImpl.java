@@ -32,8 +32,11 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermOwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TermToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TitlePojo;
+import org.opendatadiscovery.oddplatform.model.tables.records.NamespaceRecord;
 import org.opendatadiscovery.oddplatform.model.tables.records.TermRecord;
+import org.opendatadiscovery.oddplatform.model.tables.records.TermToTermRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -63,6 +66,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM_OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM_SEARCH_ENTRYPOINT;
+import static org.opendatadiscovery.oddplatform.model.Tables.TERM_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.TERM_CONDITIONS;
@@ -76,8 +80,12 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     private static final String AGG_OWNERSHIPS_FIELD = "ownerships";
     private static final String AGG_TITLES_FIELD = "titles";
     private static final String AGG_TAGS_FIELD = "tags";
+    private static final String AGG_ASSIGNED_TERMS = "assigned_terms";
+    public static final String ASSIGNED_TERM_NAMESPACES = "assigned_term_namespaces";
+    public static final String ASSIGNED_TERM_RELATIONS = "assigned_term_relation";
     private static final String ENTITIES_COUNT = "entities_count";
     private static final String COLUMNS_COUNT = "columns_count";
+    private static final String LINKED_TERMS_COUNT = "linked_terms_count";
     private static final String QUERY_EXAMPLE_COUNT = "query_example_count";
     private static final String IS_DESCRIPTION_LINK = "is_description_link";
 
@@ -177,6 +185,11 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
     @Override
     public Mono<TermDetailsDto> getTermDetailsDto(final Long id) {
+        final Table<TermRecord> assignedTerms = TERM.asTable("assigned_terms");
+        final Table<NamespaceRecord> assignedTermsNamespace = NAMESPACE.asTable("assigned_terms_namespace");
+        final Table<TermToTermRecord> assignedTermRelations = TERM_TO_TERM.asTable("assigned_term_relations");
+        final Table<TermToTermRecord> linkedTerms = TERM_TO_TERM.asTable("linked_terms");
+
         final List<Field<?>> groupByFields = Stream.of(TERM.fields(), NAMESPACE.fields())
             .flatMap(Arrays::stream)
             .toList();
@@ -187,9 +200,13 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNERS_FIELD))
             .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLES_FIELD))
             .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
+            .select(jsonArrayAgg(field(assignedTerms.asterisk().toString())).as(AGG_ASSIGNED_TERMS))
+            .select(jsonArrayAgg(field(NAMESPACE.asterisk().toString())).as(ASSIGNED_TERM_NAMESPACES))
+            .select(jsonArrayAgg(field(assignedTermRelations.asterisk().toString())).as(ASSIGNED_TERM_RELATIONS))
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
             .select(DSL.countDistinct(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID).as(COLUMNS_COUNT))
             .select(DSL.countDistinct(QUERY_EXAMPLE_TO_TERM.QUERY_EXAMPLE_ID).as(QUERY_EXAMPLE_COUNT))
+            .select(DSL.countDistinct(linkedTerms.field(TERM_TO_TERM.TARGET_TERM_ID)).as(LINKED_TERMS_COUNT))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID))
@@ -200,6 +217,13 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(QUERY_EXAMPLE_TO_TERM).on(QUERY_EXAMPLE_TO_TERM.TERM_ID.eq(TERM.ID))
+            .leftJoin(linkedTerms).on(linkedTerms.field(TERM_TO_TERM.ASSIGNED_TERM_ID).eq(TERM.ID))
+            .leftJoin(assignedTermRelations)
+            .on(assignedTermRelations.field(TERM_TO_TERM.TARGET_TERM_ID).eq(TERM.ID))
+            .leftJoin(assignedTerms)
+            .on(assignedTerms.field(TERM.ID).eq(assignedTermRelations.field(TERM_TO_TERM.ASSIGNED_TERM_ID)))
+            .leftJoin(assignedTermsNamespace)
+            .on(assignedTerms.field(TERM.NAMESPACE_ID).eq(assignedTermsNamespace.field(NAMESPACE.ID)))
             .where(TERM.ID.eq(id).and(TERM.DELETED_AT.isNull()))
             .groupBy(groupByFields);
         return jooqReactiveOperations.mono(query)
@@ -290,6 +314,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .flatMap(Arrays::stream)
             .toList();
 
+        final Table<TermToTermRecord> linkedTerms = TERM_TO_TERM.asTable("linked_terms");
+
         final var query = DSL.with(termCTE.getName())
             .as(termSelect)
             .select(termCTE.fields())
@@ -300,6 +326,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
             .select(DSL.countDistinct(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID).as(COLUMNS_COUNT))
             .select(DSL.countDistinct(QUERY_EXAMPLE_TO_TERM.QUERY_EXAMPLE_ID).as(QUERY_EXAMPLE_COUNT))
+            .select(DSL.countDistinct(linkedTerms.field(TERM_TO_TERM.TARGET_TERM_ID)).as(LINKED_TERMS_COUNT))
             .from(termCTE.getName())
             .join(NAMESPACE).on(NAMESPACE.ID.eq(termCTE.field(TERM.NAMESPACE_ID)))
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(termCTE.field(TERM.ID)))
@@ -308,6 +335,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
             .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
             .leftJoin(QUERY_EXAMPLE_TO_TERM).on(QUERY_EXAMPLE_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
+            .leftJoin(linkedTerms).on(linkedTerms.field(TERM_TO_TERM.ASSIGNED_TERM_ID).eq(termCTE.field(TERM.ID)))
             .groupBy(groupByFields);
 
         return jooqReactiveOperations.flux(query)
@@ -389,8 +417,106 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
                 .and(DATASET_FIELD_TO_TERM.IS_DESCRIPTION_LINK.isTrue())
                 .and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()))
             ));
-        final var query = DSL.select(dataEntityDescriptionRelations.or(datasetFieldDescriptionRelations));
+        final Condition termDescriptionRelations = exists(DSL.selectOne()
+            .from(TERM_TO_TERM)
+            .join(TERM).on(TERM_TO_TERM.TARGET_TERM_ID.eq(TERM.ID))
+            .where(TERM_TO_TERM.ASSIGNED_TERM_ID.eq(termId)
+                .and(TERM_TO_TERM.IS_DESCRIPTION_LINK.isTrue())
+                .and(TERM.DELETED_AT.isNull())
+            ));
+        final var query = DSL.select(dataEntityDescriptionRelations
+            .or(datasetFieldDescriptionRelations)
+            .or(termDescriptionRelations));
         return jooqReactiveOperations.mono(query).map(Record1::component1);
+    }
+
+    @Override
+    public Flux<LinkedTermDto> getLinkedTermsByTargetTermId(final long targetTermId) {
+        final var query = DSL
+            .select(TERM.fields())
+            .select(NAMESPACE.fields())
+            .select(TERM_TO_TERM.IS_DESCRIPTION_LINK.as(IS_DESCRIPTION_LINK))
+            .from(TERM)
+            .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
+            .join(TERM_TO_TERM)
+            .on(TERM_TO_TERM.ASSIGNED_TERM_ID.eq(TERM.ID)
+                .and(TERM_TO_TERM.TARGET_TERM_ID.eq(targetTermId)))
+            .where(TERM.DELETED_AT.isNull());
+        return jooqReactiveOperations.flux(query)
+            .map(this::mapRecordToLinkedTermDto);
+    }
+
+    @Override
+    public Flux<LinkedTermDto> listByTerm(final Long termId, final String query,
+                                          final Integer page, final Integer size) {
+        final List<Condition> conditions = new ArrayList<>();
+
+        conditions.add(TERM.DELETED_AT.isNull());
+
+        if (StringUtils.isNotBlank(query)) {
+            conditions.add(TERM.NAME.containsIgnoreCase(query));
+        }
+
+        final var baseQuery = DSL.select(TERM.fields())
+            .from(TERM)
+            .where(conditions)
+            .orderBy(TERM.ID.desc());
+
+        final Table<Record> termCTE = baseQuery.asTable("term_cte");
+        final Table<TermToTermRecord> assignedTermRelations = TERM_TO_TERM.asTable("assigned_term_relations");
+
+        final List<Field<?>> groupByFields = Stream.of(termCTE.fields(), NAMESPACE.fields(),
+                assignedTermRelations.fields(TERM_TO_TERM.IS_DESCRIPTION_LINK))
+            .flatMap(Arrays::stream)
+            .toList();
+
+        final var finalQuery = DSL.with(termCTE.getName())
+            .as(baseQuery)
+            .select(termCTE.fields())
+            .select(NAMESPACE.fields())
+            .select(assignedTermRelations.field(TERM_TO_TERM.IS_DESCRIPTION_LINK).as(IS_DESCRIPTION_LINK))
+            .from(termCTE)
+            .join(NAMESPACE).on(NAMESPACE.ID.eq(termCTE.field(TERM.NAMESPACE_ID)))
+            .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
+            .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
+            .leftJoin(assignedTermRelations)
+            .on(assignedTermRelations.field(TERM_TO_TERM.TARGET_TERM_ID).eq(termCTE.field(TERM.ID)))
+            .where(assignedTermRelations.field(TERM_TO_TERM.ASSIGNED_TERM_ID).eq(termId))
+            .groupBy(groupByFields)
+            .orderBy(List.of(jooqQueryHelper.getField(termCTE, TERM.ID).desc()))
+            .limit(size)
+            .offset((page - 1) * size);
+
+        return jooqReactiveOperations.flux(finalQuery)
+            .map(this::mapRecordToLinkedTermDto);
+    }
+
+    @Override
+    public Mono<LinkedTermDto> getTermByIdAndLinkedTermId(final Long assignedTermId, final Long targetTermId) {
+        final var baseQuery = DSL.select(TERM.fields())
+            .from(TERM)
+            .where(TERM.DELETED_AT.isNull())
+            .and(TERM.ID.eq(targetTermId))
+            .orderBy(TERM.ID.desc());
+
+        final Table<Record> termCTE = baseQuery.asTable("term_cte");
+        final Table<TermToTermRecord> assignedTermRelations = TERM_TO_TERM.asTable("assigned_term_relations");
+
+        final var finalQuery = DSL.with(termCTE.getName())
+            .as(baseQuery)
+            .select(termCTE.fields())
+            .select(NAMESPACE.fields())
+            .select(assignedTermRelations.field(TERM_TO_TERM.IS_DESCRIPTION_LINK).as(IS_DESCRIPTION_LINK))
+            .from(termCTE)
+            .join(NAMESPACE).on(NAMESPACE.ID.eq(termCTE.field(TERM.NAMESPACE_ID)))
+            .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
+            .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
+            .leftJoin(assignedTermRelations)
+            .on(assignedTermRelations.field(TERM_TO_TERM.TARGET_TERM_ID).eq(termCTE.field(TERM.ID)))
+            .where(assignedTermRelations.field(TERM_TO_TERM.ASSIGNED_TERM_ID).eq(assignedTermId));
+
+        return jooqReactiveOperations.mono(finalQuery)
+            .map(this::mapRecordToLinkedTermDto);
     }
 
     private LinkedTermDto mapRecordToLinkedTermDto(final Record record) {
@@ -418,6 +544,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .termRefDto(refDto)
             .entitiesUsingCount(record.get(ENTITIES_COUNT, Integer.class))
             .columnsUsingCount(record.get(COLUMNS_COUNT, Integer.class))
+            .linkedTermsUsingCount(record.get(LINKED_TERMS_COUNT, Integer.class))
             .queryExampleUsingCount(record.get(QUERY_EXAMPLE_COUNT, Integer.class))
             .ownerships(extractOwnershipRelation(record))
             .build();
@@ -429,6 +556,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .termRefDto(refDto)
             .entitiesUsingCount(record.get(ENTITIES_COUNT, Integer.class))
             .columnsUsingCount(record.get(COLUMNS_COUNT, Integer.class))
+            .linkedTermsUsingCount(record.get(LINKED_TERMS_COUNT, Integer.class))
             .queryExampleUsingCount(record.get(QUERY_EXAMPLE_COUNT, Integer.class))
             .ownerships(extractOwnershipRelation(record))
             .build();
@@ -439,6 +567,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         return TermDetailsDto.builder()
             .termDto(termDto)
             .tags(jooqRecordHelper.extractAggRelation(record, AGG_TAGS_FIELD, TagPojo.class))
+            .terms(extractTerms(record))
             .build();
     }
 
@@ -469,5 +598,33 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
                 return new TermOwnershipDto(os, owner, title);
             })
             .collect(Collectors.toSet());
+    }
+
+    private List<LinkedTermDto> extractTerms(final Record record) {
+        final Set<TermPojo> terms =
+            jooqRecordHelper.extractAggRelation(record, AGG_ASSIGNED_TERMS, TermPojo.class);
+
+        final Map<Long, NamespacePojo> namespaces = jooqRecordHelper
+            .extractAggRelation(record, ASSIGNED_TERM_NAMESPACES, NamespacePojo.class)
+            .stream()
+            .collect(Collectors.toMap(NamespacePojo::getId, identity()));
+
+        final Map<Long, List<TermToTermPojo>> relations = jooqRecordHelper
+            .extractAggRelation(record, ASSIGNED_TERM_RELATIONS, TermToTermPojo.class)
+            .stream()
+            .collect(Collectors.groupingBy(TermToTermPojo::getAssignedTermId));
+
+        return terms.stream()
+            .map(pojo -> {
+                final TermRefDto termRefDto = TermRefDto.builder()
+                    .term(pojo)
+                    .namespace(namespaces.get(pojo.getNamespaceId()))
+                    .build();
+                final boolean isDescriptionLink = relations.getOrDefault(pojo.getId(), List.of()).stream()
+                    .anyMatch(r -> Boolean.TRUE.equals(r.getIsDescriptionLink()));
+
+                return new LinkedTermDto(termRefDto, isDescriptionLink);
+            })
+            .toList();
     }
 }

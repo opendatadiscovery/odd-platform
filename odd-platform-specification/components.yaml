@@ -2505,6 +2505,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LinkedTerm'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
 
     LinkedTerm:
       type: object
@@ -2572,6 +2577,8 @@ components:
               type: integer
             columns_using_count:
               type: integer
+            linked_terms_using_count:
+              type: integer
             query_example_using_count:
               type: integer
             created_at:
@@ -2591,6 +2598,10 @@ components:
           properties:
             tags:
               $ref: '#/components/schemas/TagList'
+            terms:
+              type: array
+              items:
+                $ref: '#/components/schemas/LinkedTerm'
 
     TermFormData:
       type: object
@@ -2632,6 +2643,15 @@ components:
           format: int64
       required:
         - query_example_id
+
+    LinkedTermFormData:
+      type: object
+      properties:
+        linked_term_id:
+          type: integer
+          format: int64
+      required:
+        - linked_term_id
 
     TermSearchFormData:
       type: object
@@ -4290,6 +4310,14 @@ components:
 
     TermIdParam:
       name: term_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    LinkedTermIdParam:
+      name: linked_term_id
       in: path
       required: true
       schema:

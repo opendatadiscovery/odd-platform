@@ -6,6 +6,9 @@ import org.opendatadiscovery.oddplatform.api.contract.api.TermApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldList;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTermFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTermList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MultipleFacetType;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
@@ -107,6 +110,15 @@ public class TermController implements TermApi {
                                                                        final String query,
                                                                        final ServerWebExchange exchange) {
         return datasetFieldService
+            .listByTerm(termId, query, page, size)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<LinkedTermList>> getTermLinkedTerms(final Long termId, final Integer page,
+                                                                   final Integer size, final String query,
+                                                                   final ServerWebExchange exchange) {
+        return termService
             .listByTerm(termId, query, page, size)
             .map(ResponseEntity::ok);
     }
@@ -215,6 +227,22 @@ public class TermController implements TermApi {
                                                                            final Long exampleId,
                                                                            final ServerWebExchange exchange) {
         return queryExampleService.removeTermFromQueryExample(termId, exampleId)
+            .thenReturn(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<LinkedTerm>> addLinkedTermToTerm(final Long termId,
+                                                                final Mono<LinkedTermFormData> linkedTermFormData,
+                                                                final ServerWebExchange exchange) {
+        return linkedTermFormData
+            .flatMap(fd -> termService.linkTermWithTerm(fd.getLinkedTermId(), termId))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteLinkedTermFromTerm(final Long termId, final Long linkedTermId,
+                                                               final ServerWebExchange exchange) {
+        return termService.removeTermToLinkedTermRelation(termId, linkedTermId)
             .thenReturn(ResponseEntity.noContent().build());
     }
 }

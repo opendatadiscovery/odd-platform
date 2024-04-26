@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { useGetQueryExampleDetails } from 'lib/hooks/api/dataModelling/queryExamples';
 import { useAppDateTime } from 'lib/hooks';
@@ -68,7 +68,9 @@ const QueryExampleDetailsContainer: React.FC = () => {
         <QueryExampleDetailsTabs
           linkedEntitiesHint={queryExampleDetails?.linkedEntities.pageInfo.total}
           linkedTermsHint={
-            queryExampleDetails?.linkedTerms?.items ? queryExampleDetails?.linkedTerms?.items.length : 0
+            queryExampleDetails?.linkedTerms?.items
+              ? queryExampleDetails?.linkedTerms?.items.length
+              : 0
           }
         />
       </Grid>

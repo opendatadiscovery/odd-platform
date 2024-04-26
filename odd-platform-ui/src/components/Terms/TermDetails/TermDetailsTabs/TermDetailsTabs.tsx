@@ -30,6 +30,12 @@ const TermDetailsTabs: React.FC = () => {
         hidden: !termDetails?.columnsUsingCount,
       },
       {
+        name: 'Linked terms',
+        link: termDetailsPath(termId, 'linked-terms'),
+        hint: termDetails?.linkedTermsUsingCount,
+        hidden: !termDetails?.linkedTermsUsingCount,
+      },
+      {
         name: 'Query examples',
         link: termDetailsPath(termId, 'query-examples'),
       },
