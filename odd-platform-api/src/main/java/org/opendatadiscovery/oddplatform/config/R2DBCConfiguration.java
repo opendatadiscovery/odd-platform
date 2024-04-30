@@ -5,7 +5,9 @@ import io.r2dbc.pool.ConnectionPoolConfiguration;
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
+import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -20,7 +22,8 @@ import org.springframework.transaction.ReactiveTransactionManager;
 
 @Configuration
 public class R2DBCConfiguration {
-    public static final String SCHEMA_PART_FOR_DB_URL = "?schema=lookup_tables_schema";
+    public static final String SCHEMA_PART_FOR_CUSTOM_DB_URL = "schema";
+    public static final String VALUE_PART_FOR_CUSTOM_DB_URL = "lookup_tables_schema";
 
     @Bean(destroyMethod = "dispose")
     @Primary
@@ -56,13 +59,12 @@ public class R2DBCConfiguration {
         @Value("${spring.custom-datasource.password:}") final String password,
         final DataSourceProperties dataSourceProperties,
         final R2dbcProperties properties) {
-        final String finalDBUrl =
-            (StringUtils.isBlank(url) ? dataSourceProperties.getUrl() : url) + SCHEMA_PART_FOR_DB_URL;
         final String finalDBUsername = StringUtils.isBlank(username) ? dataSourceProperties.getUsername() : username;
         final String finalDBPassword = StringUtils.isBlank(password) ? dataSourceProperties.getPassword() : password;
 
-        final String r2dbcUrl = finalDBUrl.replace("jdbc", "r2dbc");
-        final ConnectionFactory factory = ConnectionFactories.get(ConnectionFactoryOptions.parse(r2dbcUrl).mutate()
+        final ConnectionFactory factory =
+            ConnectionFactories.get(
+                ConnectionFactoryOptions.parse(getCustomSchemaDBUrl(url, dataSourceProperties.getUrl())).mutate()
             .option(ConnectionFactoryOptions.PROTOCOL, "postgresql")
             .option(ConnectionFactoryOptions.USER, finalDBUsername)
             .option(ConnectionFactoryOptions.PASSWORD, finalDBPassword)
@@ -106,5 +108,14 @@ public class R2DBCConfiguration {
     public ReactiveTransactionManager reactiveCustomTransactionManager(
         @Qualifier("customConnectionPool") final ConnectionFactory connectionFactory) {
         return new R2dbcTransactionManager(connectionFactory);
+    }
+
+    private String getCustomSchemaDBUrl(final String customUrl, final String dataSourceUrl) {
+        final String dbUrl = (StringUtils.isNotBlank(customUrl) ? customUrl : dataSourceUrl);
+        final URIBuilder uri = new URIBuilder(URI.create(dbUrl.substring("jdbc:".length())));
+
+        uri.addParameter(SCHEMA_PART_FOR_CUSTOM_DB_URL, VALUE_PART_FOR_CUSTOM_DB_URL);
+
+        return "r2dbc:" + uri;
     }
 }
