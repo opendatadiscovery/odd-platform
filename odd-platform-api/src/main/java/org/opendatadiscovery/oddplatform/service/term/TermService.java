@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.service.term;
 
 import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTermList;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
@@ -44,4 +45,10 @@ public interface TermService {
     Mono<List<LinkedTermDto>> getDataEntityTerms(final long dataEntityId);
 
     Mono<List<LinkedTermDto>> getDatasetFieldTerms(final long datasetFieldId);
+
+    Mono<LinkedTermList> listByTerm(final Long termId, final String query, final Integer page, final Integer size);
+
+    Mono<LinkedTerm> linkTermWithTerm(final Long linkedTermId, final Long termId);
+
+    Mono<Void> removeTermToLinkedTermRelation(final Long termId, final Long linkedTermId);
 }

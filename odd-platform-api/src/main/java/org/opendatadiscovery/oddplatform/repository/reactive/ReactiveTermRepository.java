@@ -37,4 +37,10 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
     Flux<LinkedTermDto> getDatasetFieldTerms(final long datasetFieldId);
 
     Mono<Boolean> hasDescriptionRelations(final long termId);
+
+    Flux<LinkedTermDto> getLinkedTermsByTargetTermId(long targetTermId);
+
+    Flux<LinkedTermDto> listByTerm(final Long termId, final String query, final Integer page, final Integer size);
+
+    Mono<LinkedTermDto> getTermByIdAndLinkedTermId(final Long assignedTermId, final Long targetTermId);
 }

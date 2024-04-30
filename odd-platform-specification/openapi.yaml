@@ -2873,6 +2873,26 @@ paths:
       tags:
         - term
 
+  /api/terms/{term_id}/linked_terms:
+    get:
+      summary: Get term linked terms
+      description: Get data columns, which are using this term
+      operationId: getTermLinkedTerms
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LinkedTermList'
+      tags:
+        - term
+
   /api/terms/{term_id}/queryexample:
     post:
       summary: add Term to QueryExample
@@ -2904,6 +2924,43 @@ paths:
       parameters:
         - $ref: './components.yaml/#/components/parameters/TermIdParam'
         - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - term
+
+  /api/terms/{term_id}/term:
+    post:
+      summary: Add term to term
+      description: Link existing term with term
+      operationId: addLinkedTermToTerm
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LinkedTermFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LinkedTerm'
+      tags:
+        - term
+
+  /api/terms/{term_id}/term/{linked_term_id}:
+    delete:
+      summary: Delete term from term
+      description: Delete term from current linked terms list
+      operationId: deleteLinkedTermFromTerm
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/LinkedTermIdParam'
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'

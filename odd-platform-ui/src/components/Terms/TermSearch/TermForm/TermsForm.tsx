@@ -19,6 +19,7 @@ import {
   getTermUpdatingStatuses,
 } from 'redux/selectors';
 import { termDetailsPath, useTermsRouteParams } from 'routes';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -26,6 +27,7 @@ interface TermsFormDialogProps {
 
 const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { termId } = useTermsRouteParams();
@@ -68,7 +70,10 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
       : dispatch(createTerm({ termFormData: parsedData }))
     )
       .unwrap()
-      .then((response: TermDetails) => {
+      .then(async (response: TermDetails) => {
+        await queryClient.invalidateQueries({
+          queryKey: ['term', termId],
+        });
         clearState();
         navigate(termDetailsPath(response.id));
       });

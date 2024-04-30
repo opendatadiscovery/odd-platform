@@ -10,6 +10,7 @@ const Overview = lazy(() => import('../Overview/Overview'));
 const LinkedEntitiesList = lazy(
   () => import('../TermLinkedEntitiesList/LinkedEntitiesList')
 );
+const LinkedTermsList = lazy(() => import('../TermLinkedTermsList/LinkedTermsList'));
 const LinkedColumnsList = lazy(
   () => import('../TermLinkedColumnsList/LinkedColumnsList')
 );
@@ -28,6 +29,7 @@ const TermDetailsRoutes: React.FC = () => {
         <Route path='overview' element={<Overview />} />
         <Route path='linked-entities' element={<LinkedEntitiesList />} />
         <Route path='linked-columns' element={<LinkedColumnsList />} />
+        <Route path='linked-terms' element={<LinkedTermsList />} />
         <Route
           path='query-examples'
           element={
