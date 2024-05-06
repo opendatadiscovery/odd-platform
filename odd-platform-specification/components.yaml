@@ -1422,6 +1422,7 @@ components:
         - types
         - groups
         - statuses
+        - last_run_statuses
 
     SearchFilter:
       type: object
@@ -1480,6 +1481,10 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
         statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        last_run_statuses:
           type: array
           items:
             $ref: '#/components/schemas/SearchFilter'
@@ -2280,6 +2285,10 @@ components:
               items:
                 $ref: '#/components/schemas/SearchFilterState'
             statuses:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            last_run_statuses:
               type: array
               items:
                 $ref: '#/components/schemas/SearchFilterState'
@@ -4393,6 +4402,13 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/RelationshipsType'
+
+    DataQualityLastRunStatusParam:
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/DataEntityRunStatus'
 
   responses:
     Deleted:

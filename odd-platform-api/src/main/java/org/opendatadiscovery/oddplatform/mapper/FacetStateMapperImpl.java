@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.mapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
@@ -23,6 +25,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormDataFilter
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFacetState;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormDataFilters;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
@@ -45,7 +48,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             SearchFormDataFilters::getOwners, FacetType.OWNERS,
             SearchFormDataFilters::getTags, FacetType.TAGS,
             SearchFormDataFilters::getGroups, FacetType.GROUPS,
-            SearchFormDataFilters::getStatuses, FacetType.STATUSES
+            SearchFormDataFilters::getStatuses, FacetType.STATUSES,
+            SearchFormDataFilters::getLastRunStatuses, FacetType.LAST_RUN_STATUSES
         );
 
     private static final Map<Function<TermSearchFormDataFilters, List<SearchFilterState>>, FacetType>
@@ -170,7 +174,52 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             .owners(getSearchFiltersForFacetType(state, FacetType.OWNERS))
             .namespaces(getSearchFiltersForFacetType(state, FacetType.NAMESPACES))
             .tags(getSearchFiltersForFacetType(state, FacetType.TAGS))
-            .groups(getSearchFiltersForFacetType(state, FacetType.GROUPS));
+            .groups(getSearchFiltersForFacetType(state, FacetType.GROUPS))
+            .statuses(getSearchFiltersForFacetType(state, FacetType.STATUSES))
+            .lastRunStatuses(getSearchFiltersForFacetType(state, FacetType.LAST_RUN_STATUSES));
+    }
+
+    @Override
+    public SearchFormData mapToFormData(final List<Long> namespaceIds,
+                                        final List<Long> datasourceIds,
+                                        final List<Long> ownerIds,
+                                        final List<Long> tagIds,
+                                        final List<Integer> entityClasses) {
+        final SearchFormDataFilters filters = new SearchFormDataFilters()
+            .namespaces(getFilterStateList(namespaceIds, FacetType.NAMESPACES))
+            .datasources(getFilterStateList(datasourceIds, FacetType.DATA_SOURCES))
+            .owners(getFilterStateList(ownerIds, FacetType.OWNERS))
+            .tags(getFilterStateList(tagIds, FacetType.TAGS))
+            .entityClasses(getFilterStateListForEntityClasses(entityClasses));
+
+        return new SearchFormData().filters(filters).query("");
+    }
+
+    private List<SearchFilterState> getFilterStateList(final List<Long> filterIds, final FacetType filterType) {
+        if (CollectionUtils.isEmpty(filterIds)) {
+            return Collections.emptyList();
+        }
+
+        return filterIds.stream()
+            .map(id -> new SearchFilterState()
+                .entityId(id)
+                .entityName(filterType.name())
+                .selected(true))
+            .collect(Collectors.toList());
+    }
+
+    private List<SearchFilterState> getFilterStateListForEntityClasses(final List<Integer> filterIds) {
+        if (CollectionUtils.isEmpty(filterIds)) {
+            return Collections.emptyList();
+        }
+
+        return filterIds.stream()
+            .map(id -> new SearchFilterState()
+                .entityId(Long.valueOf(id))
+                .entityName(DataEntityClassDto.findById(id).orElseThrow(() -> new IllegalArgumentException(
+                    "Unknown data entity type id: %d".formatted(id))).name())
+                .selected(true))
+            .collect(Collectors.toList());
     }
 
     private SearchFilterDto mapFilter(final SearchFilterState f, final FacetType type) {

@@ -9,6 +9,7 @@ public enum FacetType {
     TAGS,
     GROUPS,
     STATUSES,
+    LAST_RUN_STATUSES,
     DATA_ENTITY;
 
     public static FacetType lookup(final String facetType) {

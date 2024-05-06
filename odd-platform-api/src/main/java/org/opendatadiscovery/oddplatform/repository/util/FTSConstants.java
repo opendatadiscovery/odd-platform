@@ -16,6 +16,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TASK_LAST_RUN;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES;
@@ -78,8 +79,8 @@ public class FTSConstants {
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> DATA_ENTITY_CONDITIONS =
         Map.of(
-            FacetType.ENTITY_CLASSES, filters -> DATA_ENTITY.ENTITY_CLASS_IDS
-                .contains(extractFilterId(filters).stream().map(Long::intValue).toArray(Integer[]::new)),
+            FacetType.ENTITY_CLASSES, filters -> DSL.arrayOverlap(DATA_ENTITY.ENTITY_CLASS_IDS,
+                    extractFilterId(filters).stream().map(Long::intValue).toArray(Integer[]::new)),
             FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
             FacetType.NAMESPACES, filters -> NAMESPACE.ID.in(extractFilterId(filters)),
             FacetType.TYPES, filters -> DATA_ENTITY.TYPE_ID.in(extractFilterId(filters)),
@@ -114,7 +115,15 @@ public class FTSConstants {
                     .where(DATA_ENTITY.ID.in(extractFilterId(filters)));
                 return GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns);
             },
-            FacetType.STATUSES, filters -> DATA_ENTITY.STATUS.in(extractFilterId(filters))
+            FacetType.STATUSES, filters -> DATA_ENTITY.STATUS.in(extractFilterId(filters)),
+            FacetType.LAST_RUN_STATUSES, filters -> {
+                final var dataEntities = select(DATA_ENTITY.ID)
+                    .from(DATA_ENTITY_TASK_LAST_RUN, DATA_ENTITY)
+                    .where(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN.eq(DATA_ENTITY.ODDRN))
+                    .and(DATA_ENTITY_TASK_LAST_RUN.STATUS.in(extractFilterValue(filters)));
+
+                return DATA_ENTITY.ID.in(dataEntities);
+            }
         );
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> TERM_CONDITIONS = Map.of(
@@ -129,6 +138,12 @@ public class FTSConstants {
     private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
         return filters.stream()
             .map(SearchFilterDto::getEntityId)
+            .collect(Collectors.toList());
+    }
+
+    private static List<String> extractFilterValue(final List<SearchFilterDto> filters) {
+        return filters.stream()
+            .map(SearchFilterDto::getEntityName)
             .collect(Collectors.toList());
     }
 }

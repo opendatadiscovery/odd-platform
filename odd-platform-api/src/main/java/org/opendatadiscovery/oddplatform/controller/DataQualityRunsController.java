@@ -3,7 +3,9 @@ package org.opendatadiscovery.oddplatform.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityRunsApi;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRunStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityResults;
+import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
 import org.opendatadiscovery.oddplatform.service.DataQualityRunsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +31,17 @@ public class DataQualityRunsController implements DataQualityRunsApi {
                                                                             final ServerWebExchange exchange) {
         return service.getDataQualityTestsRuns(namespaceIds, datasourceIds, ownerIds, titleIds, tagIds,
                 deNamespaceIds, deDatasourceIds, deOwnerIds, deTitleIds, deTagIds)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<SearchFacetsData>> createDataQualityLatestRunsSearch(final List<Long> namespaceIds,
+                                                                                    final List<Long> datasourceIds,
+                                                                                    final List<Long> ownerIds,
+                                                                                    final List<Long> tagIds,
+                                                                                    final DataEntityRunStatus status,
+                                                                                    final ServerWebExchange exchange) {
+        return service.createDataQualityLatestRunsSearch(namespaceIds, datasourceIds, ownerIds, tagIds, status)
             .map(ResponseEntity::ok);
     }
 }
