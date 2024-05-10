@@ -2091,48 +2091,54 @@ paths:
       summary: Get Data Quality latest runs search uuid
       description: Get Data Quality latest runs search uuid
       operationId: createDataQualityLatestRunsSearch
-      parameters:
-        - name: namespaceIds
-          in: query
-          required: false
-          schema:
-            type: array
-            items:
-              type: integer
-              format: int64
-          style: form
-          explode: true
-        - name: datasourceIds
-          in: query
-          required: false
-          schema:
-            type: array
-            items:
-              type: integer
-              format: int64
-          style: form
-          explode: true
-        - name: ownerIds
-          in: query
-          required: false
-          schema:
-            type: array
-            items:
-              type: integer
-              format: int64
-          style: form
-          explode: true
-        - name: tagIds
-          in: query
-          required: false
-          schema:
-            type: array
-            items:
-              type: integer
-              format: int64
-          style: form
-          explode: true
-        - $ref: './components.yaml/#/components/parameters/DataQualityLastRunStatusParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataQualityLatestRunSearchForm'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SearchFacetsData'
+      tags:
+        - dataQualityRuns
+
+  /api/dataqatests/tablehelath/search:
+    post:
+      summary: Get Data Quality table health search uuid
+      description: Get Data Quality table health search uuid
+      operationId: createDataQualityTableHealthSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataQualityTableHealthSearchForm'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SearchFacetsData'
+      tags:
+        - dataQualityRuns
+
+  /api/dataqatests/monitoredtables/search:
+    post:
+      summary: Get Data Quality monitored tables search uuid
+      description: Get Data Quality monitored tables search uuid
+      operationId: createDataQualityMonitoredTablesSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataQualityBaseSearchForm'
       responses:
         '200':
           description: OK

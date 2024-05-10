@@ -4,19 +4,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Record1;
+import org.jooq.SelectConditionStep;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRunStatus;
+import org.opendatadiscovery.oddplatform.dto.DataEntityQualityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
+import org.opendatadiscovery.oddplatform.model.tables.records.DataQualityTestRelationsRecord;
 
+import static org.jooq.impl.DSL.array;
+import static org.jooq.impl.DSL.arrayAgg;
+import static org.jooq.impl.DSL.arrayOverlap;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.not;
 import static org.jooq.impl.DSL.select;
+import static org.jooq.impl.DSL.selectDistinct;
+import static org.jooq.impl.DSL.selectOne;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TASK_LAST_RUN;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_QUALITY_TEST_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES;
@@ -123,6 +138,42 @@ public class FTSConstants {
                     .and(DATA_ENTITY_TASK_LAST_RUN.STATUS.in(extractFilterValue(filters)));
 
                 return DATA_ENTITY.ID.in(dataEntities);
+            },
+            FacetType.DATA_QUALITY_RELATION, filters -> {
+                final List<DataEntityQualityStatusDto> statusDtos = extractFilterValue(filters).stream()
+                    .map(tableStatus -> DataEntityQualityStatusDto.findByStatus(tableStatus)
+                        .orElseThrow(() -> new IllegalArgumentException(
+                            String.format("Status %s was not founded in the system", tableStatus))))
+                    .toList();
+
+                final String[] runStatuses = statusDtos.stream()
+                    .flatMap(dto -> dto.getAllowedRunStatuses().stream().map(DataEntityRunStatus::getValue))
+                    .toArray(String[]::new);
+                final String[] noAllowedStatuses = statusDtos.stream()
+                    .flatMap(dto -> dto.getNotAllowedRunStatuses().stream().map(DataEntityRunStatus::getValue))
+                    .filter(status -> !ArrayUtils.contains(runStatuses, status))
+                    .toArray(String[]::new);
+                final Table<DataQualityTestRelationsRecord> dataQualityRelationsInnerCTE =
+                    DATA_QUALITY_TEST_RELATIONS.asTable("DATA_QUALITY_RELATIONS_INNER_TABLE");
+
+                final SelectConditionStep<Record1<String>> dataEntities =
+                    selectDistinct(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN)
+                        .from(DATA_QUALITY_TEST_RELATIONS)
+                        .whereExists(selectOne()
+                            .from(select(dataQualityRelationsInnerCTE.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN),
+                                arrayAgg(DATA_ENTITY_TASK_LAST_RUN.STATUS).as("statuses"))
+                                .from(dataQualityRelationsInnerCTE)
+                                .join(DATA_ENTITY_TASK_LAST_RUN)
+                                .on(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN.eq(
+                                    dataQualityRelationsInnerCTE.field(
+                                        DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN)))
+                                .where(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN
+                                    .eq(dataQualityRelationsInnerCTE.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN)))
+                                .groupBy(dataQualityRelationsInnerCTE.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN)))
+                            .where(arrayOverlap(array(field(name("statuses"))), runStatuses))
+                            .and(not(arrayOverlap(array(field(name("statuses"))), noAllowedStatuses))));
+
+                return DATA_ENTITY.ODDRN.in(dataEntities);
             }
         );
 

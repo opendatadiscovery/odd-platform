@@ -26,6 +26,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermFacetState;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormDataFilters;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
@@ -49,7 +50,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             SearchFormDataFilters::getTags, FacetType.TAGS,
             SearchFormDataFilters::getGroups, FacetType.GROUPS,
             SearchFormDataFilters::getStatuses, FacetType.STATUSES,
-            SearchFormDataFilters::getLastRunStatuses, FacetType.LAST_RUN_STATUSES
+            SearchFormDataFilters::getLastRunStatuses, FacetType.LAST_RUN_STATUSES,
+            SearchFormDataFilters::getDataQualityRelations, FacetType.DATA_QUALITY_RELATION
         );
 
     private static final Map<Function<TermSearchFormDataFilters, List<SearchFilterState>>, FacetType>
@@ -176,7 +178,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             .tags(getSearchFiltersForFacetType(state, FacetType.TAGS))
             .groups(getSearchFiltersForFacetType(state, FacetType.GROUPS))
             .statuses(getSearchFiltersForFacetType(state, FacetType.STATUSES))
-            .lastRunStatuses(getSearchFiltersForFacetType(state, FacetType.LAST_RUN_STATUSES));
+            .lastRunStatuses(getSearchFiltersForFacetType(state, FacetType.LAST_RUN_STATUSES))
+            .dataQualityRelations(getSearchFiltersForFacetType(state, FacetType.DATA_QUALITY_RELATION));
     }
 
     @Override
@@ -184,13 +187,15 @@ public class FacetStateMapperImpl implements FacetStateMapper {
                                         final List<Long> datasourceIds,
                                         final List<Long> ownerIds,
                                         final List<Long> tagIds,
-                                        final List<Integer> entityClasses) {
+                                        final List<Integer> entityClasses,
+                                        final List<Integer> types) {
         final SearchFormDataFilters filters = new SearchFormDataFilters()
             .namespaces(getFilterStateList(namespaceIds, FacetType.NAMESPACES))
             .datasources(getFilterStateList(datasourceIds, FacetType.DATA_SOURCES))
             .owners(getFilterStateList(ownerIds, FacetType.OWNERS))
             .tags(getFilterStateList(tagIds, FacetType.TAGS))
-            .entityClasses(getFilterStateListForEntityClasses(entityClasses));
+            .entityClasses(getFilterStateListForEntityClasses(entityClasses))
+            .types(getFilterStateListForType(types));
 
         return new SearchFormData().filters(filters).query("");
     }
@@ -217,6 +222,20 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             .map(id -> new SearchFilterState()
                 .entityId(Long.valueOf(id))
                 .entityName(DataEntityClassDto.findById(id).orElseThrow(() -> new IllegalArgumentException(
+                    "Unknown data entity class id: %d".formatted(id))).name())
+                .selected(true))
+            .collect(Collectors.toList());
+    }
+
+    private List<SearchFilterState> getFilterStateListForType(final List<Integer> filterIds) {
+        if (CollectionUtils.isEmpty(filterIds)) {
+            return Collections.emptyList();
+        }
+
+        return filterIds.stream()
+            .map(id -> new SearchFilterState()
+                .entityId(Long.valueOf(id))
+                .entityName(DataEntityTypeDto.findById(id).orElseThrow(() -> new IllegalArgumentException(
                     "Unknown data entity type id: %d".formatted(id))).name())
                 .selected(true))
             .collect(Collectors.toList());

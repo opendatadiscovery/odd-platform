@@ -994,6 +994,46 @@ components:
       required:
         - severity
 
+    DataQualityBaseSearchForm:
+      type: object
+      properties:
+        namespace_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        datasource_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        owner_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        tag_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+
+    DataQualityLatestRunSearchForm:
+      allOf:
+        - $ref: '#/components/schemas/DataQualityBaseSearchForm'
+        - type: object
+          properties:
+            status:
+              $ref: '#/components/schemas/DataEntityRunStatus'
+
+    DataQualityTableHealthSearchForm:
+      allOf:
+        - $ref: '#/components/schemas/DataQualityBaseSearchForm'
+        - type: object
+          properties:
+            status:
+              $ref: '#/components/schemas/DataEntityTableHealthStatus'
+
     DataQualityTestSeverity:
       type: string
       enum:
@@ -1414,6 +1454,14 @@ components:
         - ABORTED
         - UNKNOWN
 
+    DataEntityTableHealthStatus:
+      type: string
+      enum:
+        - HEALTHY
+        - ERROR
+        - WARNING
+        - ALL
+
     MultipleFacetType:
       type: string
       enum:
@@ -1485,6 +1533,10 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
         last_run_statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        data_quality_relations:
           type: array
           items:
             $ref: '#/components/schemas/SearchFilter'
@@ -2254,46 +2306,53 @@ components:
         my_objects:
           type: boolean
         filters:
-          type: object
-          properties:
-            types:
-              type: array
-              items:
-                $ref: '#/components/schemas/SearchFilterState'
-            entity_classes:
-              type: array
-              items:
-                $ref: '#/components/schemas/SearchFilterState'
-            tags:
-              type: array
-              items:
-                $ref: '#/components/schemas/SearchFilterState'
-            namespaces:
-              type: array
-              items:
-                $ref: '#/components/schemas/SearchFilterState'
-            owners:
-              type: array
-              items:
-                $ref: '#/components/schemas/SearchFilterState'
-            datasources:
-              type: array
-              items:
-                $ref: '#/components/schemas/SearchFilterState'
-            groups:
-              type: array
-              items:
-                $ref: '#/components/schemas/SearchFilterState'
-            statuses:
-              type: array
-              items:
-                $ref: '#/components/schemas/SearchFilterState'
-            last_run_statuses:
-              type: array
-              items:
-                $ref: '#/components/schemas/SearchFilterState'
+          $ref: '#/components/schemas/SearchFormDataFilters'
       required:
         - filters
+
+    SearchFormDataFilters:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilterState'
+        entity_classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilterState'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilterState'
+        namespaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilterState'
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilterState'
+        datasources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilterState'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilterState'
+        statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilterState'
+        last_run_statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilterState'
+        data_quality_relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilterState'
 
     AlertChunk:
       type: object
@@ -4402,13 +4461,6 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/RelationshipsType'
-
-    DataQualityLastRunStatusParam:
-      name: status
-      in: query
-      required: false
-      schema:
-        $ref: '#/components/schemas/DataEntityRunStatus'
 
   responses:
     Deleted:

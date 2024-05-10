@@ -2,12 +2,16 @@ package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRunStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityBaseSearchForm;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityLatestRunSearchForm;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityResults;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTableHealthSearchForm;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilterState;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
+import org.opendatadiscovery.oddplatform.dto.DataEntityQualityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTaskRunStatusDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataQualityTestFiltersDto;
 import org.opendatadiscovery.oddplatform.mapper.DataQualityCategoryMapper;
 import org.opendatadiscovery.oddplatform.mapper.DataQualityTestFiltersMapper;
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_QUALITY_TEST;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_SET;
 
 @Service
 @RequiredArgsConstructor
@@ -54,26 +59,52 @@ public class DataQualityRunsServiceImpl implements DataQualityRunsService {
     }
 
     @Override
-    public Mono<SearchFacetsData> createDataQualityLatestRunsSearch(final List<Long> namespaceIds,
-                                                                    final List<Long> datasourceIds,
-                                                                    final List<Long> ownerIds,
-                                                                    final List<Long> tagIds,
-                                                                    final DataEntityRunStatus status) {
+    public Mono<SearchFacetsData> createDataQualityLatestRunsSearch(final DataQualityLatestRunSearchForm form) {
         final SearchFormData searchFormData =
-            facetStateMapper.mapToFormData(namespaceIds, datasourceIds, ownerIds, tagIds,
-                List.of(DATA_QUALITY_TEST.getId()));
+            facetStateMapper.mapToFormData(form.getNamespaceIds(), form.getDatasourceIds(), form.getOwnerIds(),
+                form.getTagIds(),
+                List.of(DATA_QUALITY_TEST.getId()), List.of());
 
-        if (status != null) {
+        if (form.getStatus() != null) {
             final DataEntityTaskRunStatusDto statusDto =
-                DataEntityTaskRunStatusDto.findByStatus(status.getValue())
+                DataEntityTaskRunStatusDto.findByStatus(form.getStatus().getValue())
                     .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("Status %s was not founded in the system", status.getValue())));
+                        String.format("Status %s was not founded in the system", form.getStatus().getValue())));
 
             searchFormData.getFilters().addLastRunStatusesItem(new SearchFilterState()
-                    .entityId((long) statusDto.getId())
-                    .entityName(statusDto.getStatus())
-                    .selected(true));
+                .entityId((long) statusDto.getId())
+                .entityName(statusDto.getStatus())
+                .selected(true));
         }
+
+        return searchService.search(searchFormData);
+    }
+
+    @Override
+    public Mono<SearchFacetsData> createDataQualityTableHealthSearch(final DataQualityTableHealthSearchForm form) {
+        final SearchFormData searchFormData =
+            facetStateMapper.mapToFormData(form.getNamespaceIds(), form.getDatasourceIds(), form.getOwnerIds(),
+                form.getTagIds(), List.of(), List.of());
+
+        final DataEntityQualityStatusDto statusDto =
+            DataEntityQualityStatusDto.findByStatus(form.getStatus().getValue())
+                .orElseThrow(() -> new IllegalArgumentException(
+                    String.format("Status %s was not founded in the system", form.getStatus().getValue())));
+
+        searchFormData.getFilters().addDataQualityRelationsItem(new SearchFilterState()
+            .entityId((long) statusDto.getId())
+            .entityName(statusDto.getStatus())
+            .selected(true));
+
+        return searchService.search(searchFormData);
+    }
+
+    @Override
+    public Mono<SearchFacetsData> createDataQualityMonitoredTablesSearch(final DataQualityBaseSearchForm form) {
+        final SearchFormData searchFormData =
+            facetStateMapper.mapToFormData(form.getNamespaceIds(), form.getDatasourceIds(), form.getOwnerIds(),
+                form.getTagIds(),
+                List.of(DATA_SET.getId()), List.of(DataEntityTypeDto.TABLE.getId()));
 
         return searchService.search(searchFormData);
     }

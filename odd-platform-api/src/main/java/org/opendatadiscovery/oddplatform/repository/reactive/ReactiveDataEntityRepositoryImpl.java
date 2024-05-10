@@ -439,6 +439,7 @@ public class ReactiveDataEntityRepositoryImpl
 
     @Override
     public Mono<Long> countByState(final FacetStateDto state, final OwnerPojo owner) {
+//      count can be different from findByState result, because ENTITY_CLASSES are ignored during countByState
         final List<Condition> conditions = new ArrayList<>(jooqFTSHelper
             .facetStateConditions(state, DATA_ENTITY_CONDITIONS, List.of(FacetType.ENTITY_CLASSES)));
         if (!deletedEntitiesAreRequested(state.getState())) {

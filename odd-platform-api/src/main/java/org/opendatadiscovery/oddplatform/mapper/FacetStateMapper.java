@@ -35,5 +35,6 @@ public interface FacetStateMapper {
                                  final List<Long> datasourceIds,
                                  final List<Long> ownerIds,
                                  final List<Long> tagIds,
-                                 final List<Integer> entityClasses);
+                                 final List<Integer> entityClasses,
+                                 final List<Integer> types);
 }

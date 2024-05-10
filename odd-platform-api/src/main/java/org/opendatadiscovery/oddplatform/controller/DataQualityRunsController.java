@@ -3,8 +3,10 @@ package org.opendatadiscovery.oddplatform.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityRunsApi;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRunStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityBaseSearchForm;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityLatestRunSearchForm;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityResults;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTableHealthSearchForm;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
 import org.opendatadiscovery.oddplatform.service.DataQualityRunsService;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +37,25 @@ public class DataQualityRunsController implements DataQualityRunsApi {
     }
 
     @Override
-    public Mono<ResponseEntity<SearchFacetsData>> createDataQualityLatestRunsSearch(final List<Long> namespaceIds,
-                                                                                    final List<Long> datasourceIds,
-                                                                                    final List<Long> ownerIds,
-                                                                                    final List<Long> tagIds,
-                                                                                    final DataEntityRunStatus status,
-                                                                                    final ServerWebExchange exchange) {
-        return service.createDataQualityLatestRunsSearch(namespaceIds, datasourceIds, ownerIds, tagIds, status)
+    public Mono<ResponseEntity<SearchFacetsData>> createDataQualityLatestRunsSearch(
+        final Mono<DataQualityLatestRunSearchForm> dataQualityLatestRunSearchForm,
+        final ServerWebExchange exchange) {
+        return dataQualityLatestRunSearchForm.flatMap(service::createDataQualityLatestRunsSearch)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<SearchFacetsData>> createDataQualityTableHealthSearch(
+        final Mono<DataQualityTableHealthSearchForm> dataQualityTableHealthSearchForm,
+        final ServerWebExchange exchange) {
+        return dataQualityTableHealthSearchForm.flatMap(service::createDataQualityTableHealthSearch)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<SearchFacetsData>> createDataQualityMonitoredTablesSearch(
+        final Mono<DataQualityBaseSearchForm> dataQualityBaseSearchForm, final ServerWebExchange exchange) {
+        return dataQualityBaseSearchForm.flatMap(service::createDataQualityMonitoredTablesSearch)
             .map(ResponseEntity::ok);
     }
 }
