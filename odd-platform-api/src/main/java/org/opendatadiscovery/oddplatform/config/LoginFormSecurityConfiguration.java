@@ -47,7 +47,7 @@ public class LoginFormSecurityConfiguration {
             : new RedirectServerAuthenticationSuccessHandler("/");
 
         final String[] permittedPaths = new String[] {
-            "/actuator/health", "/favicon.ico", "/ingestion/entities", "/api/slack/events"
+            "/actuator/health", "/favicon.ico", "/ingestion/entities", "/ingestion/datasources", "/api/slack/events"
         };
 
         final ServerHttpSecurity sec = http
