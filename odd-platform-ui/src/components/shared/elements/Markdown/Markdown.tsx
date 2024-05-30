@@ -1,4 +1,4 @@
-import React, { type FC, type ReactNode, type CSSProperties } from 'react';
+import React, { type FC, type ReactNode, type CSSProperties, useEffect } from 'react';
 import type { ContextStore } from '@uiw/react-md-editor';
 import MDEditor from '@uiw/react-md-editor';
 import type { Position } from 'unist';
@@ -87,8 +87,16 @@ const Markdown: FC<MarkdownProps> = ({
     'data-color-mode'?: 'light' | 'dark';
   };
 
+  useEffect(() => {
+    document
+      .getElementById('md-editor')
+      ?.querySelector('textarea')
+      ?.setAttribute('spellcheck', 'true');
+  }, []);
+
   return editor ? (
     <MDEditor
+      id='md-editor'
       height={height}
       value={value}
       preview='edit'

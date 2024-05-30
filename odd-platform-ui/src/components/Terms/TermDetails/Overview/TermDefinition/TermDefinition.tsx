@@ -1,12 +1,10 @@
 import React, { type FC } from 'react';
-import { Box, Grid, Typography } from '@mui/material';
-import { WithPermissions } from 'components/shared/contexts';
+import { Typography } from '@mui/material';
 import type { TermRef } from 'generated-sources';
-import { Permission } from 'generated-sources';
-import { AppTooltip, Button, Markdown } from 'components/shared/elements';
+import { AppTooltip, Markdown } from 'components/shared/elements';
 import { useTermWiki } from 'lib/hooks';
 import { updateDataSetFieldDescription } from 'redux/thunks';
-import { InformationIcon, StrokedInfoIcon } from 'components/shared/icons';
+import { InformationIcon } from 'components/shared/icons';
 import * as S from './TermDefinition.styles';
 
 interface TermDefinitionProps {
@@ -16,14 +14,13 @@ interface TermDefinitionProps {
 }
 
 const TermDefinition: FC<TermDefinitionProps> = ({ definition, termId, terms }) => {
-  const { error, internalDescription, transformDescriptionToMarkdown, editMode } =
-    useTermWiki({
-      terms,
-      description: definition,
-      entityId: termId,
-      updateDescription: updateDataSetFieldDescription,
-      isDatasetField: false,
-    });
+  const { transformDescriptionToMarkdown } = useTermWiki({
+    terms,
+    description: definition,
+    entityId: termId,
+    updateDescription: updateDataSetFieldDescription,
+    isDatasetField: false,
+  });
 
   const tooltipInfoContent = (
     <S.Tooltip>

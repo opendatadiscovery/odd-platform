@@ -119,7 +119,7 @@ export function useUnassignTermQueryExample() {
     mutationKey: ['unassignTermQueryExample'],
     mutationFn: async ({
       exampleId,
-      termId
+      termId,
     }: TermApiDeleteQueryExampleToTermRelationshipRequest) =>
       termApi.deleteQueryExampleToTermRelationship({
         termId,
