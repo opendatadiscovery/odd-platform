@@ -1,6 +1,6 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useMemo, type FC } from 'react';
-import { Markdown, SkeletonWrapper } from 'components/shared/elements';
+import { SkeletonWrapper } from 'components/shared/elements';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { useTermsRouteParams } from 'routes';
