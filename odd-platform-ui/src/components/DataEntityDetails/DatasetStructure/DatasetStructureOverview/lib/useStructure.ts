@@ -28,8 +28,10 @@ export default function useStructure() {
 
   const handleSearch = useCallback(
     (query: string) => {
-      const itemIdx = datasetStructureRoot?.findIndex(item =>
-        item.name.toLowerCase().includes(query.toLowerCase())
+      const itemIdx = datasetStructureRoot?.findIndex(
+        item =>
+          item.name.toLowerCase().includes(query.toLowerCase()) ||
+          item.internalName?.toLowerCase().includes(query.toLowerCase())
       );
 
       if (itemIdx !== undefined && itemIdx > -1) {
