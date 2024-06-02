@@ -623,7 +623,16 @@
         "POLICY_DELETE",
         "ROLE_CREATE",
         "ROLE_UPDATE",
-        "ROLE_DELETE"
+        "ROLE_DELETE",
+        "LOOKUP_TABLE_CREATE",
+        "LOOKUP_TABLE_UPDATE",
+        "LOOKUP_TABLE_DELETE",
+        "LOOKUP_TABLE_DEFINITION_CREATE",
+        "LOOKUP_TABLE_DEFINITION_UPDATE",
+        "LOOKUP_TABLE_DEFINITION_DELETE",
+        "LOOKUP_TABLE_DATA_CREATE",
+        "LOOKUP_TABLE_DATA_UPDATE",
+        "LOOKUP_TABLE_DATA_DELETE"
       ]
     },
     "all_permissions": {
