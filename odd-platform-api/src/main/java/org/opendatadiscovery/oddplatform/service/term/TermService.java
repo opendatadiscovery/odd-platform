@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 
 public interface TermService {
     Mono<TermRefList> getTerms(final Integer page, final Integer size, final String query,
-                               LocalDate updatedAtRangeStartDateTime, LocalDate updatedAtRangeEndDateTime);
+                               final LocalDate updatedAtRangeStartDateTime, final LocalDate updatedAtRangeEndDateTime);
 
     Mono<TermRef> getTermByNamespaceAndName(final String namespaceName, final String name);
 
