@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.TermApi;
@@ -50,8 +51,10 @@ public class TermController implements TermApi {
     @Override
     public Mono<ResponseEntity<TermRefList>> getTermsList(final Integer page, final Integer size,
                                                           final String query,
+                                                          final LocalDate updatedAtRangeStartDateTime,
+                                                          final LocalDate updatedAtRangeEndDateTime,
                                                           final ServerWebExchange exchange) {
-        return termService.getTerms(page, size, query)
+        return termService.getTerms(page, size, query, updatedAtRangeStartDateTime, updatedAtRangeEndDateTime)
             .map(ResponseEntity::ok);
     }
 

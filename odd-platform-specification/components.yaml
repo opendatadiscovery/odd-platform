@@ -2558,6 +2558,9 @@ components:
           type: string
         definition:
           type: string
+        updated_at:
+          type: string
+          format: date-time
         namespace:
           $ref: '#/components/schemas/Namespace'
       required:

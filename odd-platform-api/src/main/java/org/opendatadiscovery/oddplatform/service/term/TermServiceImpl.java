@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.term;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -80,8 +81,10 @@ public class TermServiceImpl implements TermService {
     private final TagMapper tagMapper;
 
     @Override
-    public Mono<TermRefList> getTerms(final Integer page, final Integer size, final String query) {
-        return termRepository.listTermRefDtos(page, size, query)
+    public Mono<TermRefList> getTerms(final Integer page, final Integer size, final String query,
+                                      final LocalDate updatedAtRangeStartDateTime,
+                                      final LocalDate updatedAtRangeEndDateTime) {
+        return termRepository.listTermRefDtos(page, size, query, updatedAtRangeStartDateTime, updatedAtRangeEndDateTime)
             .map(termMapper::mapToRefPage);
     }
 
