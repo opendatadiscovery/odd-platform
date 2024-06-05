@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +45,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -106,8 +107,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
     @Override
     public Mono<Page<TermRefDto>> listTermRefDtos(final int page, final int size, final String nameQuery,
-                                                  final LocalDate updatedAtRangeStartDateTime,
-                                                  final LocalDate updatedAtRangeEndDateTime) {
+                                                  final OffsetDateTime updatedAtRangeStartDateTime,
+                                                  final OffsetDateTime updatedAtRangeEndDateTime) {
         final Select<TermRecord> homogeneousQuery = DSL.selectFrom(TERM)
             .where(ListUtils.union(listCondition(nameQuery),
                 dateConditions(updatedAtRangeStartDateTime, updatedAtRangeEndDateTime)));
@@ -634,8 +635,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .toList();
     }
 
-    private List<Condition> dateConditions(final LocalDate updatedAtRangeStartDateTime,
-                                           final LocalDate updatedAtRangeEndDateTime) {
+    private List<Condition> dateConditions(final OffsetDateTime updatedAtRangeStartDateTime,
+                                           final OffsetDateTime updatedAtRangeEndDateTime) {
         if (updatedAtRangeStartDateTime == null && updatedAtRangeEndDateTime == null) {
             return Collections.emptyList();
         }
@@ -643,11 +644,11 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         final List<Condition> conditions = new ArrayList<>();
 
         if (updatedAtRangeStartDateTime != null) {
-            conditions.add(TERM.UPDATED_AT.greaterOrEqual(updatedAtRangeStartDateTime.atStartOfDay()));
+            conditions.add(TERM.UPDATED_AT.greaterOrEqual(DateTimeUtil.mapUTCDateTime(updatedAtRangeStartDateTime)));
         }
 
         if (updatedAtRangeEndDateTime != null) {
-            conditions.add(TERM.UPDATED_AT.lessThan(updatedAtRangeEndDateTime.atStartOfDay()));
+            conditions.add(TERM.UPDATED_AT.lessThan(DateTimeUtil.mapUTCDateTime(updatedAtRangeEndDateTime)));
         }
 
         return conditions;

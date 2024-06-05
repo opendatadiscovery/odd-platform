@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.term;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTermList;
@@ -16,7 +16,8 @@ import reactor.core.publisher.Mono;
 
 public interface TermService {
     Mono<TermRefList> getTerms(final Integer page, final Integer size, final String query,
-                               final LocalDate updatedAtRangeStartDateTime, final LocalDate updatedAtRangeEndDateTime);
+                               final OffsetDateTime updatedAtRangeStartDateTime,
+                               final OffsetDateTime updatedAtRangeEndDateTime);
 
     Mono<TermRef> getTermByNamespaceAndName(final String namespaceName, final String name);
 

@@ -2730,13 +2730,13 @@ paths:
           required: false
           schema:
             type: string
-            format: date
+            format: date-time
         - name: updated_at_range_end_date_time
           in: query
           required: false
           schema:
             type: string
-            format: date
+            format: date-time
       responses:
         '200':
           description: OK
