@@ -2725,6 +2725,18 @@ paths:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
         - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: updated_at_range_start_date_time
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: updated_at_range_end_date_time
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
           description: OK

@@ -1,13 +1,16 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -42,6 +45,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -102,9 +106,12 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     }
 
     @Override
-    public Mono<Page<TermRefDto>> listTermRefDtos(final int page, final int size, final String nameQuery) {
+    public Mono<Page<TermRefDto>> listTermRefDtos(final int page, final int size, final String nameQuery,
+                                                  final OffsetDateTime updatedAtRangeStartDateTime,
+                                                  final OffsetDateTime updatedAtRangeEndDateTime) {
         final Select<TermRecord> homogeneousQuery = DSL.selectFrom(TERM)
-            .where(listCondition(nameQuery));
+            .where(ListUtils.union(listCondition(nameQuery),
+                dateConditions(updatedAtRangeStartDateTime, updatedAtRangeEndDateTime)));
 
         final Select<? extends Record> termSelect =
             paginate(homogeneousQuery, List.of(new OrderByField(TERM.ID, SortOrder.ASC)), (page - 1) * size, size);
@@ -626,5 +633,24 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
                 return new LinkedTermDto(termRefDto, isDescriptionLink);
             })
             .toList();
+    }
+
+    private List<Condition> dateConditions(final OffsetDateTime updatedAtRangeStartDateTime,
+                                           final OffsetDateTime updatedAtRangeEndDateTime) {
+        if (updatedAtRangeStartDateTime == null && updatedAtRangeEndDateTime == null) {
+            return Collections.emptyList();
+        }
+
+        final List<Condition> conditions = new ArrayList<>();
+
+        if (updatedAtRangeStartDateTime != null) {
+            conditions.add(TERM.UPDATED_AT.greaterOrEqual(DateTimeUtil.mapUTCDateTime(updatedAtRangeStartDateTime)));
+        }
+
+        if (updatedAtRangeEndDateTime != null) {
+            conditions.add(TERM.UPDATED_AT.lessThan(DateTimeUtil.mapUTCDateTime(updatedAtRangeEndDateTime)));
+        }
+
+        return conditions;
     }
 }
