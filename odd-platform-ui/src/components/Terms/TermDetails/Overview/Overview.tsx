@@ -8,6 +8,7 @@ import { useGetTermByID } from 'lib/hooks';
 import { useResourcePermissions } from 'lib/hooks/api/permissions';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
+import OverviewTags from './OverviewTags/OverviewTags';
 import * as S from './OverviewStyles';
 import TermLinkedTerms from './TermLinkedTerms/TermLinkedTerms';
 import TermDefinition from './TermDefinition/TermDefinition';
@@ -53,6 +54,13 @@ const Overview: FC = () => {
                 resourcePermissions={termPermissions ?? []}
                 Component={OverviewGeneral}
               />
+            </S.Container>
+            <S.Container square elevation={0}>
+              <WithPermissionsProvider
+                  allowedPermissions={[Permission.TERM_TAGS_UPDATE]}
+                  resourcePermissions={termPermissions ?? []}
+                  render={() => <OverviewTags tags={termDetails.tags} />}
+               />
             </S.Container>
             <S.Container square elevation={0}>
               <WithPermissionsProvider
