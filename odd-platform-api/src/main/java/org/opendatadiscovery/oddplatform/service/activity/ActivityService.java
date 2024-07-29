@@ -7,6 +7,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityCountInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityType;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityUserList;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
@@ -36,7 +37,7 @@ public interface ActivityService {
                                    final Long namespaceId,
                                    final List<Long> tagIds,
                                    final List<Long> ownerIds,
-                                   final List<Long> userIds,
+                                   final List<String> usernames,
                                    final ActivityType type,
                                    final ActivityEventType eventType,
                                    final Long lastEventId,
@@ -46,7 +47,7 @@ public interface ActivityService {
                                              final OffsetDateTime endDate,
                                              final Integer size,
                                              final Long dataEntityId,
-                                             final List<Long> userIds,
+                                             final List<String> usernames,
                                              final ActivityEventType eventType,
                                              final Long lastEventId,
                                              final OffsetDateTime lastEventDateTime);
@@ -57,6 +58,8 @@ public interface ActivityService {
                                               final Long namespaceId,
                                               final List<Long> tagIds,
                                               final List<Long> ownerIds,
-                                              final List<Long> userIds,
+                                              final List<String> usernames,
                                               final ActivityEventType eventType);
+
+    Mono<ActivityUserList> getUsersList(final Integer page, final Integer size, final String query);
 }
