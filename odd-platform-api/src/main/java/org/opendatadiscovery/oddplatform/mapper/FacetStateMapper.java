@@ -30,4 +30,11 @@ public interface FacetStateMapper {
     TermFacetState mapDto(final FacetStateDto state);
 
     FacetState mapDto(final List<CountableSearchFilter> entityClasses, final FacetStateDto state);
+
+    SearchFormData mapToFormData(final List<Long> namespaceIds,
+                                 final List<Long> datasourceIds,
+                                 final List<Long> ownerIds,
+                                 final List<Long> tagIds,
+                                 final List<Integer> entityClasses,
+                                 final List<Integer> types);
 }
