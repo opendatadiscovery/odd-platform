@@ -185,8 +185,12 @@ notifications:
 #    email:
 #      sender:
 #      password:
-#      smtp:
+#      host:
 #      port:
+#      protocol:
+#      smtp:
+#        auth:
+#        starttls:
 #      notification:
 #        emails: "yourFirst@gmail.com,yourSecond@gmail.com"
 
