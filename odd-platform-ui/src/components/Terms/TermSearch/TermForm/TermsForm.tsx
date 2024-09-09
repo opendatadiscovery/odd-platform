@@ -80,18 +80,23 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   };
 
   const onSubmit = (data: TermFormData) => {
-    const duplicateTerm = existingTerms.find(
-      (existingTerm: TermDetails) =>
-        existingTerm.name === data.name &&
-        existingTerm.namespace.name === data.namespaceName
-    );
+    // Check if we're in create mode (no term.id present)
+    if (!term?.id) {
+      const duplicateTerm = existingTerms.find(
+        (existingTerm: TermDetails) =>
+          existingTerm.name === data.name &&
+          existingTerm.namespace.name === data.namespaceName
+      );
 
-    if (duplicateTerm) {
-      setError('A term with the same name already exists in this namespace.');
-      return;
+      if (duplicateTerm) {
+        setError('A term with the same name already exists in this namespace.');
+        return;
+      }
     }
 
     const parsedData = { ...data };
+
+    // Determine whether to create or update the term
     (term && term.id
       ? dispatch(updateTerm({ termId: term.id, termFormData: parsedData }))
       : dispatch(createTerm({ termFormData: parsedData }))
