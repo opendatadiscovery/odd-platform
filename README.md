@@ -233,8 +233,8 @@ OpenDataDiscovery Platform offers comprehensive data source support to meet your
         </tr>
         <tr>
             <td><a href="https://github.com/opendatadiscovery/odd-collectors#odd-collector">Mode</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collectors#odd-collector-azure">BigQuery</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collectors#singlestore">Singlestore</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collectors#odd-collector-gcp">BigQuery</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collectors#odd-collector">Singlestore</a></td>
         </tr>
         <tr>
             <td><a href="https://github.com/opendatadiscovery/odd-collectors#odd-collector-gcp">BigTable</a></td>
