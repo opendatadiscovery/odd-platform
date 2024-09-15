@@ -113,6 +113,26 @@ const Results: React.FC = () => {
     return S.gridSizes[key];
   }, [searchClass, searchTotals]);
 
+  // Define the desired status order[As described in the github ISSue]
+  const statusOrder = ['STABLE', 'DEPRECATED', 'DRAFT', 'UNASSIGNED', 'DELETED'];
+
+  // Sort search results by status
+  const sortedSearchResults = React.useMemo(() => {
+    return [...searchResults].sort((a, b) => {
+      const statusA = a.status?.status ?? 'UNASSIGNED'; // Default to 'UNASSIGNED' if undefined
+      const statusB = b.status?.status ?? 'UNASSIGNED';
+
+      const indexA = statusOrder.indexOf(statusA);
+      const indexB = statusOrder.indexOf(statusB);
+
+     
+      const orderA = indexA !== -1 ? indexA : statusOrder.length;
+      const orderB = indexB !== -1 ? indexB : statusOrder.length;
+
+      return orderA - orderB;
+    });
+  }, [searchResults]);
+
   return (
     <Grid sx={{ mt: 2 }}>
       <SearchResultsTabs
@@ -141,14 +161,14 @@ const Results: React.FC = () => {
       {!isSearchCreatingAndFetching && !isSearchResultsNotLoaded && (
         <S.ListContainer id='results-list'>
           <InfiniteScroll
-            dataLength={searchResults.length}
+            dataLength={sortedSearchResults.length}
             next={fetchNextPage}
             hasMore={hasNext}
             loader={isSearchFetching && <SearchResultsSkeleton grid={grid} />}
             scrollThreshold='200px'
             scrollableTarget='results-list'
           >
-            {searchResults.map(searchResult => (
+            {sortedSearchResults.map(searchResult => (
               <ResultItem
                 key={searchResult.id}
                 searchResult={searchResult}
@@ -160,7 +180,7 @@ const Results: React.FC = () => {
           </InfiniteScroll>
           <EmptyContentPlaceholder
             isContentLoaded={!isSearchFetching}
-            isContentEmpty={!searchResults.length}
+            isContentEmpty={!sortedSearchResults.length}
             text={t('No matches found')}
           />
         </S.ListContainer>
