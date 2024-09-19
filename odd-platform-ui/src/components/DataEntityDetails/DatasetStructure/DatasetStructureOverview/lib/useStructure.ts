@@ -21,25 +21,30 @@ export default function useStructure() {
   const [datasetFieldFieldsCount] = useAtom(datasetFieldFieldsCountAtom);
   const [datasetVersions] = useAtom(datasetVersionsAtom);
 
+  // Create a filtered dataset structure based on the search query
+  const filteredDatasetStructureRoot = useMemo(() => {
+    if (!searchQuery) return datasetStructureRoot;
+    return datasetStructureRoot.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.internalName?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, datasetStructureRoot]);
+
   const idxToScroll = useMemo(
-    () => datasetStructureRoot.findIndex(field => field.id === selectedFieldId),
-    [selectedFieldId, datasetStructureRoot]
+    () =>
+      filteredDatasetStructureRoot.findIndex(
+        field => field.id === selectedFieldId
+      ),
+    [selectedFieldId, filteredDatasetStructureRoot]
   );
 
+  // Update the search query state
   const handleSearch = useCallback(
     (query: string) => {
-      const itemIdx = datasetStructureRoot?.findIndex(
-        item =>
-          item.name.toLowerCase().includes(query.toLowerCase()) ||
-          item.internalName?.toLowerCase().includes(query.toLowerCase())
-      );
-
-      if (itemIdx !== undefined && itemIdx > -1) {
-        setSelectedFieldId(datasetStructureRoot?.[itemIdx].id);
-        setIsSearchUpdated(prev => !prev);
-      }
+      setSearchQuery(query);
+      setIsSearchUpdated(prev => !prev);
     },
-    [datasetStructureRoot]
+    [setSearchQuery, setIsSearchUpdated]
   );
 
   return useMemo(
@@ -51,7 +56,8 @@ export default function useStructure() {
       isSearchUpdated,
       setIsSearchUpdated,
       handleSearch,
-      datasetStructureRoot,
+      // filtered dataset structure
+      datasetStructureRoot: filteredDatasetStructureRoot,
       idxToScroll,
       datasetFieldRowsCount,
       datasetFieldTypesCount,
@@ -63,7 +69,7 @@ export default function useStructure() {
       selectedFieldId,
       isSearchUpdated,
       handleSearch,
-      datasetStructureRoot,
+      filteredDatasetStructureRoot,
       idxToScroll,
       datasetFieldRowsCount,
       datasetFieldTypesCount,
