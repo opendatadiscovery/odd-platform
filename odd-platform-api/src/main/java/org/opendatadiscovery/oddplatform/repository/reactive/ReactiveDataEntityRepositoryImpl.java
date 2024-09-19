@@ -699,6 +699,17 @@ public class ReactiveDataEntityRepositoryImpl
             .leftJoin(GROUP_ENTITY_RELATIONS)
             .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ODDRN)));
 
+        final List<OrderField<?>> orderFields = new ArrayList<>();
+
+        orderFields.add(DSL.case_(deCte.field(DATA_ENTITY.STATUS))
+            .when(DataEntityStatusDto.STABLE.getId(), 1)
+            .when(DataEntityStatusDto.DEPRECATED.getId(), 2)
+            .when(DataEntityStatusDto.DRAFT.getId(), 3)
+            .when(DataEntityStatusDto.UNASSIGNED.getId(), 4)
+            .when(DataEntityStatusDto.DELETED.getId(), 5));
+
+        orderFields.addAll(getOrderFields(cteConfig, deCte));
+
         final var query = DSL.with(deCteName)
             .asMaterialized(dataEntitySelect)
             .select(groupByFields)
@@ -706,7 +717,7 @@ public class ReactiveDataEntityRepositoryImpl
             .from(fromTable)
             .where(conditions)
             .groupBy(groupByFields)
-            .orderBy(getOrderFields(cteConfig, deCte))
+            .orderBy(orderFields)
             .limit(DSL.val(size))
             .offset(DSL.val((page - 1) * size));
 
