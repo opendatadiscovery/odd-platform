@@ -46,6 +46,7 @@ public class ReactiveDataQualityRunsRepositoryImpl implements ReactiveDataQualit
     public static final String DATA_QUALITY_TEST_TYPE =
         "specific_attributes->'DATA_QUALITY_TEST'->'expectation'->>'category'";
     public static final String ID = "id";
+    public static final String DATA_ENTITY_ID = "data_entity_id";
     public static final String ODDRN = "oddrn";
     public static final String CATEGORY = "category";
     public static final String CATEGORIES_CTE = "categories_cte";
@@ -63,30 +64,9 @@ public class ReactiveDataQualityRunsRepositoryImpl implements ReactiveDataQualit
 
     @Override
     public Flux<DataQualityRunsRecord> getLatestDataQualityRunsResults(final DataQualityTestFiltersDto filtersDto) {
-        final Table<Record2<Long, String>> testFilters = generateTestFiltersCte(filtersDto);
-        final Select<Record3<Long, String, String>> deCategoryCTE =
-                DSL.select(DATA_ENTITY.ID.as(ID), DATA_ENTITY.ODDRN.as(ODDRN),
-                                field(DATA_QUALITY_TEST_TYPE, String.class).as(CATEGORY))
-                        .from(DATA_ENTITY, testFilters)
-                        .where(DATA_ENTITY.TYPE_ID.eq(DataEntityTypeDto.JOB.getId())
-                                .and(field(DATA_QUALITY_TEST_TYPE, String.class).isNotNull()))
-                        .and(testFilters.field(DATA_ENTITY.ID).eq(DATA_ENTITY.ID));
-
-        final Table<Record3<Long, String, String>> categoriesSubTable = deCategoryCTE.asTable(CATEGORIES_CTE);
+        final Table<Record3<Long, String, String>> categoriesSubTable = getCTEForLastRuns(filtersDto);
         final List<TableLike<?>> fromList = new ArrayList<>(List.of(categoriesSubTable, DATA_ENTITY_TASK_LAST_RUN));
-        final List<Condition> conditionList
-                = new ArrayList<>(List.of(categoriesSubTable.field(ODDRN, String.class)
-                    .eq(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN)));
-
-        if (shouldAddFiltersForDataEntity(filtersDto)) {
-            final Table<Record2<Long, String>> deFilters = generateDataEntityFiltersCte(filtersDto);
-
-            fromList.addAll(List.of(deFilters, DATA_QUALITY_TEST_RELATIONS));
-
-            conditionList.add(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN
-                    .eq(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN));
-            conditionList.add(deFilters.field(DATA_ENTITY.ODDRN).eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN));
-        }
+        final List<Condition> conditionList = getConditionsForLastRuns(filtersDto, fromList, categoriesSubTable);
 
         final SelectSeekStep1<Record3<String, String, Integer>, String> query
                 = DSL.select(
@@ -193,6 +173,39 @@ public class ReactiveDataQualityRunsRepositoryImpl implements ReactiveDataQualit
                         DSL.inline(NOT_MONITORED_TABLES).as(TABLE_STATUS))
                     .from(notMonitoredTablesCTE)))
             .map(item -> item.into(MonitoredtablesRecord.class));
+    }
+
+    private Table<Record3<Long, String, String>> getCTEForLastRuns(final DataQualityTestFiltersDto filtersDto) {
+        final Table<Record2<Long, String>> testFilters = generateTestFiltersCte(filtersDto);
+        final Select<Record3<Long, String, String>> deCategoryCTE =
+            DSL.select(DATA_ENTITY.ID.as(ID), DATA_ENTITY.ODDRN.as(ODDRN),
+                    field(DATA_QUALITY_TEST_TYPE, String.class).as(CATEGORY))
+                .from(DATA_ENTITY, testFilters)
+                .where(DATA_ENTITY.TYPE_ID.eq(DataEntityTypeDto.JOB.getId())
+                    .and(field(DATA_QUALITY_TEST_TYPE, String.class).isNotNull()))
+                .and(testFilters.field(DATA_ENTITY.ID).eq(DATA_ENTITY.ID));
+
+        return deCategoryCTE.asTable(CATEGORIES_CTE);
+    }
+
+    private List<Condition> getConditionsForLastRuns(final DataQualityTestFiltersDto filtersDto,
+                                                     final List<TableLike<?>> fromList,
+                                                     final Table<Record3<Long, String, String>> categoriesSubTable) {
+        final List<Condition> conditionList
+            = new ArrayList<>(List.of(categoriesSubTable.field(ODDRN, String.class)
+            .eq(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN)));
+
+        if (shouldAddFiltersForDataEntity(filtersDto)) {
+            final Table<Record2<Long, String>> deFilters = generateDataEntityFiltersCte(filtersDto);
+
+            fromList.addAll(List.of(deFilters, DATA_QUALITY_TEST_RELATIONS));
+
+            conditionList.add(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN
+                .eq(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN));
+            conditionList.add(deFilters.field(DATA_ENTITY.ODDRN).eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN));
+        }
+
+        return conditionList;
     }
 
     private SelectConditionStep<Record> getDataQualityQuery(final Table<Record2<Long, String>> dataEntityCTE,
