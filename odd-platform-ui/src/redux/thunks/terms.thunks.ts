@@ -55,7 +55,7 @@ export const deleteTerm = handleResponseAsyncThunk<
 );
 
 export const fetchTermsList = handleResponseAsyncThunk<
-  { termList: Array<TermRef>; pageInfo: CurrentPageInfo },
+  { termList: TermRef[]; pageInfo: CurrentPageInfo },
   TermApiGetTermsListRequest
 >(
   actions.fetchTermListActType,
@@ -84,7 +84,7 @@ export const fetchTermDetails = handleResponseAsyncThunk<
 );
 
 export const updateTermDetailsTags = handleResponseAsyncThunk<
-  { termId: number; tags: Array<Tag> },
+  { termId: number; tags: Tag[] },
   TermApiCreateTermTagsRelationsRequest
 >(
   actions.updateTermDetailsTagsActType,

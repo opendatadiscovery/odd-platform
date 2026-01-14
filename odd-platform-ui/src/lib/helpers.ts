@@ -223,7 +223,7 @@ export function getMetadataValue(
 }
 
 export const mapKeysToValue = <K extends string, V>(keys: K[], value: V) =>
-  Object.fromEntries(keys.map(key => [key, value])) as { [key in K]: V };
+  Object.fromEntries(keys.map(key => [key, value])) as Record<K, V>;
 
 export const bytesToKb = (bytes: number) => Math.ceil(bytes / 1000);
 export const bytesToMb = (bytes: number) => Math.ceil(bytes / 1000000);
@@ -252,7 +252,6 @@ export async function asyncPool(
   const retries = [];
   const executing = new Set();
 
-  // eslint-disable-next-line no-restricted-syntax
   for await (const item of iterable) {
     const currentTask = Promise.resolve().then(() => iteratorFn(item, iterable));
 

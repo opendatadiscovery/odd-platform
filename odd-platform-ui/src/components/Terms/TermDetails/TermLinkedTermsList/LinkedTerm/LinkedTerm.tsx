@@ -9,7 +9,7 @@ interface LinkedTermProps {
   linkedTerm: LinkedTerm;
 }
 
-const LinkedTermView: React.FC<LinkedTermProps> = ({ linkedTerm }) => {
+const LinkedTerm: React.FC<LinkedTermProps> = ({ linkedTerm }) => {
   const detailsLink = termDetailsPath(linkedTerm.term.id);
 
   return (
@@ -40,4 +40,4 @@ const LinkedTermView: React.FC<LinkedTermProps> = ({ linkedTerm }) => {
   );
 };
 
-export default LinkedTermView;
+export default LinkedTerm;

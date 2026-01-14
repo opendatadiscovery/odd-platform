@@ -32,7 +32,7 @@ export const fetchOwnershipTitleList = handleResponseAsyncThunk<
 );
 
 export const fetchOwnersList = handleResponseAsyncThunk<
-  { items: Array<Owner>; pageInfo: CurrentPageInfo },
+  { items: Owner[]; pageInfo: CurrentPageInfo },
   OwnerApiGetOwnerListRequest
 >(
   actions.fetchOwnersAction,

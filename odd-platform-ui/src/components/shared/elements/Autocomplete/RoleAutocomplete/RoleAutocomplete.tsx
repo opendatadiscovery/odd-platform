@@ -11,7 +11,7 @@ import {
   createFilterOptions,
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { type UseFieldArrayAppend } from 'react-hook-form';
 import { type SxProps } from '@mui/system';
 import { type OwnerFormData, type Role } from 'generated-sources';
 import { ClearIcon } from 'components/shared/icons';

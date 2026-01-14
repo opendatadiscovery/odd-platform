@@ -11,7 +11,7 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { namespaceApi } from 'lib/api';
 
 export const fetchNamespaceList = handleResponseAsyncThunk<
-  { namespaceList: Array<Namespace>; pageInfo: CurrentPageInfo },
+  { namespaceList: Namespace[]; pageInfo: CurrentPageInfo },
   NamespaceApiGetNamespaceListRequest
 >(
   actions.fetchNamespacesActionType,

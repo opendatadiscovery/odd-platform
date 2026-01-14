@@ -18,9 +18,9 @@ export interface DataEntityLineageStreamById<
   NodeT = GroupedDataEntityLineageNode,
   EdgeT = DataEntityLineageEdge,
 > {
-  nodesById: { [nodeId: number]: NodeT };
+  nodesById: Record<number, NodeT>;
   // Id of parent entity in the tree. It is source_id of DataEntityLineageEdge for downstream, and target_id for upstream
-  edgesById: { [entityId: number]: EdgeT[] };
+  edgesById: Record<number, EdgeT[]>;
   crossEdges: EdgeT[];
 }
 
@@ -42,7 +42,7 @@ export interface GroupedDataEntityLineageNode extends DataEntityLineageNode {
 }
 
 export interface LocalLineageState {
-  allNodes: Array<DataEntityLineageNode | GroupedDataEntityLineageNode>;
+  allNodes: (DataEntityLineageNode | GroupedDataEntityLineageNode)[];
   nodeIds: Set<number>;
   allEdges: DataEntityLineageEdge[];
   allGroups: DataEntityLineageNode[];

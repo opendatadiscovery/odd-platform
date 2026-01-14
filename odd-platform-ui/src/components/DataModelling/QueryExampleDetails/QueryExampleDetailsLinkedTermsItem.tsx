@@ -4,13 +4,13 @@ import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { termDetailsPath } from 'routes';
 
-interface QuertExampleDetailsLinkedTermsItemProps {
+interface QueryExampleDetailsLinkedTermsItemProps {
   term: TermRef;
 }
 
-const QuertExampleDetailsLinkedTermsItem = ({
+const QueryExampleDetailsLinkedTermsItem = ({
   term,
-}: QuertExampleDetailsLinkedTermsItemProps) => {
+}: QueryExampleDetailsLinkedTermsItemProps) => {
   const navigate = useNavigate();
   const onClick = useCallback(() => {
     navigate(termDetailsPath(term.id));
@@ -46,4 +46,4 @@ const QuertExampleDetailsLinkedTermsItem = ({
   );
 };
 
-export default QuertExampleDetailsLinkedTermsItem;
+export default QueryExampleDetailsLinkedTermsItem;

@@ -3,7 +3,7 @@ import type { DataQualityRunsApiGetDataQualityTestsRunsRequest } from 'generated
 import type { FilterOption } from '../interfaces';
 
 type FormFiltersAtom = {
-  [Property in keyof DataQualityRunsApiGetDataQualityTestsRunsRequest]-?: Array<FilterOption>;
+  [Property in keyof DataQualityRunsApiGetDataQualityTestsRunsRequest]-?: FilterOption[];
 };
 
 type FormFiltersKeys = keyof FormFiltersAtom;

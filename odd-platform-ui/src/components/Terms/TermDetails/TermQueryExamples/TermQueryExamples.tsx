@@ -13,7 +13,7 @@ import { useGetQueryExamplesByTermId } from 'lib/hooks/api/dataModelling/queryEx
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { useTermsRouteParams } from 'routes';
-import AssignEntityQueryExampleForm from './AssignTermQueryExampleForm';
+import AssignTermQueryExampleForm from './AssignTermQueryExampleForm';
 
 const TermQueryExamples: React.FC = () => {
   const { t } = useTranslation();
@@ -31,7 +31,7 @@ const TermQueryExamples: React.FC = () => {
     <Grid container gap={2} mt={2}>
       <Grid item display='flex' justifyContent='end' alignItems='center' xs={12}>
         <WithPermissions permissionTo={Permission.QUERY_EXAMPLE_TERM_CREATE}>
-          <AssignEntityQueryExampleForm
+          <AssignTermQueryExampleForm
             termId={termId}
             openBtnEl={
               <Button

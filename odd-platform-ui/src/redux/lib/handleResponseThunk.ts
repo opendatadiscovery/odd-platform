@@ -9,8 +9,7 @@ import {
   showSuccessToast,
 } from 'lib/errorHandling';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface ThunkAPIConfig {}
+type ThunkAPIConfig = Record<string, never>;
 
 interface HandleResponseAsyncThunkOptions<ThunkArg> {
   setSuccessOptions?: (props: ThunkArg) => { id: string; message: string };

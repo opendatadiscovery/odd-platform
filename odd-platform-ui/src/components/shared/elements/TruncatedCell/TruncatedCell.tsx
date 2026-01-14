@@ -21,11 +21,11 @@ const isLinkedUrl = (
   val: LinkedUrl | DataEntityRef | SerializeDateToNumber<DataEntityRef>
 ): val is LinkedUrl => !('id' in val) && 'url' in val;
 
-export type Values = {
+export interface Values {
   key: string;
   linkTo: string;
   linkContent: string | undefined;
-};
+}
 
 type Item = DataEntityRef | LinkedUrl | string | SerializeDateToNumber<DataEntityRef>;
 

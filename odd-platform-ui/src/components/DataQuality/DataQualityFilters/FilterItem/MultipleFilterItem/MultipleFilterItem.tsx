@@ -1,10 +1,10 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 
-type Props = {
+interface Props {
   autocomplete: React.ReactNode;
   options: React.ReactNode;
-};
+}
 
 const MultipleFilterItem: React.FC<Props> = ({ autocomplete, options }) => (
   <Grid container>

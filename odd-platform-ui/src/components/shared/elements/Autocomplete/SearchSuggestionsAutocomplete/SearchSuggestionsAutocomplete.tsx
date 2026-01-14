@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce';
-import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { type UseFieldArrayAppend } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type {

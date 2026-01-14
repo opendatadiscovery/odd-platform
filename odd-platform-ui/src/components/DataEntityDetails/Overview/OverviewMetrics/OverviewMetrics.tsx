@@ -19,7 +19,11 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ showOverview }) => {
   const maxHeight = 450;
   const containerRef = React.useRef<HTMLDivElement | null>(null);
 
-  type ContainerState = { open: boolean; visibleHeight: string; showBtn: boolean };
+  interface ContainerState {
+    open: boolean;
+    visibleHeight: string;
+    showBtn: boolean;
+  }
   const [{ open, visibleHeight, showBtn }, setState] = React.useState<ContainerState>({
     open: false,
     visibleHeight: `fit-content`,

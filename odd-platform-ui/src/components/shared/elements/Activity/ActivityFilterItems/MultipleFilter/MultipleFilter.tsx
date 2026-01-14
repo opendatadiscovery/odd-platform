@@ -22,7 +22,7 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({ name, filterName, dataQ
   const dispatch = useAppDispatch();
   const { queryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
-  const [selectedOptions, setSelectedOptions] = React.useState<Array<Tag | Owner>>([]);
+  const [selectedOptions, setSelectedOptions] = React.useState<(Tag | Owner)[]>([]);
 
   React.useEffect(() => {
     const selectedOptionIds = queryParams[filterName] ?? [];

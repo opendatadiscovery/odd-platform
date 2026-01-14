@@ -6,12 +6,12 @@ interface AppDateRangePickerFooterProps {
   // eslint-disable-next-line react/no-unused-prop-types
   position: string;
   onClickDoneBtn: () => void;
-  ranges: Array<{ label: string; value: Date[] }>;
+  ranges: { label: string; value: Date[] }[];
   setRange: ([beginDate, endDate]: Date[]) => void;
   isRangeCorrect: boolean;
 }
 
-const DateRangePickerFooter: React.FC<AppDateRangePickerFooterProps> = ({
+const AppDateRangePickerFooter: React.FC<AppDateRangePickerFooterProps> = ({
   onClickDoneBtn,
   ranges,
   setRange,
@@ -45,4 +45,4 @@ const DateRangePickerFooter: React.FC<AppDateRangePickerFooterProps> = ({
   </Grid>
 );
 
-export default DateRangePickerFooter;
+export default AppDateRangePickerFooter;

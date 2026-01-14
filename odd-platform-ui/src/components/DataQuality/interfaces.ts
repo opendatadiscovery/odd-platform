@@ -1,12 +1,12 @@
 import type { UseQueryResult } from '@tanstack/react-query';
 
-export type FilterOption = {
+export interface FilterOption {
   id: number;
   name: string;
-};
-export type Response = {
+}
+export interface Response {
   items: FilterOption[];
-};
+}
 export type HookResult = UseQueryResult<Response>;
 export type Hook = ({
   page,

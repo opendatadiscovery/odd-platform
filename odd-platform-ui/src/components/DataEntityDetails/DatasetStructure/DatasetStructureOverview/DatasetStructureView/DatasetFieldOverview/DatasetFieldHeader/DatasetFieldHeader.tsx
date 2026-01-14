@@ -21,7 +21,9 @@ import { getDataEntityDetails } from 'redux/selectors';
 import ColumnForm from 'components/shared/elements/forms/ColumnForm';
 import DatasetFieldInternalNameForm from './DatasetFieldInternalNameForm/DatasetFieldInternalNameForm';
 
-type DatasetFieldHeaderProps = { field: DataSetField };
+interface DatasetFieldHeaderProps {
+  field: DataSetField;
+}
 
 const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
   const { t } = useTranslation();

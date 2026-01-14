@@ -10,8 +10,10 @@
     "test": "vitest",
     "tsc": "tsc",
     "generate": "chmod u+x ./generate.sh && ./generate.sh",
-    "lint": "eslint --ext .tsx,.ts src/",
-    "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css}\"",
     "prepare": "chmod u+x .husky/prepare.sh && .husky/prepare.sh",
     "pre-commit": "pnpm tsc --noEmit && lint-staged",
     "preinstall": "pnpm install husky",
@@ -19,12 +21,9 @@
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
-      "eslint -c .eslintrc.json --fix",
-      "git add"
+      "prettier --write",
+      "eslint --fix"
     ]
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -91,9 +90,10 @@
   "devDependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.4.3",
+    "@eslint/compat": "^2.0.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "@types/d3": "^7.4.3",
     "@types/d3-hierarchy": "^3.1.6",
     "@types/d3-selection": "^3.0.10",
@@ -103,7 +103,7 @@
     "@types/hast": "^2.3.8",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.202",
-    "@types/node": "^20.10.1",
+    "@types/node": "^25.0.8",
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.17",
     "@types/react-redux": "^7.1.31",
@@ -111,36 +111,34 @@
     "@types/testing-library__jest-dom": "^5.14.9",
     "@types/unist": "^3.0.2",
     "@types/uuid": "^9.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.19.1",
-    "@typescript-eslint/parser": "^6.19.1",
-    "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.52.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-typescript": "^17.1.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "@typescript-eslint/eslint-plugin": "^8.53.0",
+    "@typescript-eslint/parser": "^8.53.0",
+    "@vitejs/plugin-react": "^5.1.2",
+    "eslint": "^9.39.2",
+    "eslint-config-airbnb-extended": "^3.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-lodash": "^7.4.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "husky": "^8.0.3",
     "i18next-scanner": "4.4.0",
-    "jsdom": "^24.0.0",
-    "lint-staged": "^15.0.2",
-    "prettier": "^3.1.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.12",
-    "vite-plugin-checker": "^0.6.2",
+    "jsdom": "^27.4.0",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-checker": "^0.12.0",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^0.34.6"
+    "vitest": "^4.0.17"
   },
   "resolutions": {
     "minimist": "1.2.6"
   },
   "engines": {
-    "node": "v18.18.2",
-    "pnpm": "^8.10.2"
+    "node": ">=22.11",
+    "pnpm": ">=9.12.3 <10"
   },
   "pnpm": {
     "overrides": {

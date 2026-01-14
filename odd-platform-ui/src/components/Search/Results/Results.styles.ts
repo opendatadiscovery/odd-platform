@@ -55,7 +55,10 @@ export type SearchTabsNames =
   | 'my';
 export type ColGridSizes = Record<MainColNames, GridSize> &
   Partial<Record<AddColNames, GridSize>>;
-export type GridSizesByBreakpoints = { lg: ColGridSizes; md: ColGridSizes };
+export interface GridSizesByBreakpoints {
+  lg: ColGridSizes;
+  md: ColGridSizes;
+}
 export type GridSizes = Record<SearchTabsNames, GridSizesByBreakpoints>;
 
 export const gridSizes: GridSizes = {

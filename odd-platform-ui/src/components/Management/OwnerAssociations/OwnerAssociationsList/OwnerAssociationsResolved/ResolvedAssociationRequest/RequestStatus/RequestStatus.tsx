@@ -6,7 +6,7 @@ interface Props {
   status: OwnerAssociationRequestStatus | undefined;
 }
 
-const ResolvedAssociationRequest: React.FC<Props> = ({ status }) => {
+const RequestStatus: React.FC<Props> = ({ status }) => {
   const statusText = React.useMemo(() => {
     if (status === OwnerAssociationRequestStatus.APPROVED) return 'Approved';
     if (status === OwnerAssociationRequestStatus.DECLINED) return 'Declined';
@@ -21,4 +21,4 @@ const ResolvedAssociationRequest: React.FC<Props> = ({ status }) => {
   ) : null;
 };
 
-export default ResolvedAssociationRequest;
+export default RequestStatus;

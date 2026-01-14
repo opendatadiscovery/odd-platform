@@ -24,7 +24,7 @@ interface DataSetFieldEnumsFormProps {
 }
 
 interface DatasetFieldEnumsFormData {
-  enums: Array<EnumValueFormData & { modifiable?: boolean }>;
+  enums: (EnumValueFormData & { modifiable?: boolean })[];
 }
 
 const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({

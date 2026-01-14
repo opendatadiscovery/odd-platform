@@ -14,13 +14,13 @@ interface TagsEditProps {
   btnEditEl: JSX.Element;
 }
 
-type DataEntityTagsFormType = {
+interface DataEntityTagsFormType {
   tagNameList: {
     name: string;
     important?: boolean;
     external?: boolean;
   }[];
-};
+}
 
 const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const dispatch = useAppDispatch();

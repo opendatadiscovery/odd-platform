@@ -9,7 +9,7 @@ import LinkAttachment from '../AttachmentItem/LinkAttachment';
 import * as S from './AttachmentsList.styles';
 
 interface AttachmentsListProps {
-  data: Array<DataEntityFile | DataEntityLink>;
+  data: (DataEntityFile | DataEntityLink)[];
 }
 
 const AttachmentsList: FC<AttachmentsListProps> = ({ data }) => {

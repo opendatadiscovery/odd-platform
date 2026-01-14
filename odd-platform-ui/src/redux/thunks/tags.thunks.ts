@@ -11,7 +11,7 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { tagApi } from 'lib/api';
 
 export const fetchTagsList = handleResponseAsyncThunk<
-  { items: Array<Tag>; pageInfo: CurrentPageInfo },
+  { items: Tag[]; pageInfo: CurrentPageInfo },
   TagApiGetPopularTagListRequest
 >(
   actions.fetchTagsActType,

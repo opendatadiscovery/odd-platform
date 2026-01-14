@@ -3,7 +3,7 @@ import type { TermRef } from 'generated-sources';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
-import QueryExampleDetailsLinkedTermsItem from './QuertExampleDetailsLinkedTermsItem';
+import QueryExampleDetailsLinkedTermsItem from './QueryExampleDetailsLinkedTermsItem';
 
 interface QueryExampleDetailsLinkedTermsProps {
   terms: TermRef[];

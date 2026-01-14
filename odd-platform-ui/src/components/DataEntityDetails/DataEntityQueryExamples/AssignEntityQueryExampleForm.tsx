@@ -12,9 +12,9 @@ interface AssignEntityQueryFormProps {
   dataEntityId: number;
 }
 
-type FormData = {
+interface FormData {
   exampleId: number;
-};
+}
 
 const AssignEntityQueryExampleForm: React.FC<AssignEntityQueryFormProps> = ({
   openBtnEl,

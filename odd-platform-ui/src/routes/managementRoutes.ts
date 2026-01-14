@@ -19,7 +19,7 @@ export function managementPath(path?: ManagementRoutesType[keyof ManagementRoute
   return generatePath(`${BASE_PATH}/${path}`);
 }
 
-const AssociationsRoutes = {
+export const AssociationsRoutes = {
   NEW: 'new',
   HISTORY: 'history',
   ACTIVE: 'active',

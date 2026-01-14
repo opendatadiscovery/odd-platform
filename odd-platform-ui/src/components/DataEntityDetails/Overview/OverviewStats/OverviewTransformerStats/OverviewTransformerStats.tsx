@@ -49,17 +49,15 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             alignItems='flex-start'
             sx={{ mt: 1 }}
           >
-            {sources
-              ?.slice(0, displayedEntitiesNumber)
-              .map(source => (
-                <Button
-                  text={source.internalName || source.externalName}
-                  to={dataEntityDetailsPath(source.id)}
-                  key={source.id}
-                  buttonType='link-m'
-                  sx={{ my: 0.25 }}
-                />
-              ))}
+            {sources?.slice(0, displayedEntitiesNumber).map(source => (
+              <Button
+                text={source.internalName || source.externalName}
+                to={dataEntityDetailsPath(source.id)}
+                key={source.id}
+                buttonType='link-m'
+                sx={{ my: 0.25 }}
+              />
+            ))}
             {unknownSourcesCount ? (
               <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
                 {unknownSourcesCount} {t('more source')}
@@ -96,17 +94,15 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             alignItems='flex-start'
             sx={{ mt: 1 }}
           >
-            {targets
-              ?.slice(0, displayedEntitiesNumber)
-              .map(target => (
-                <Button
-                  text={target.internalName || target.externalName}
-                  to={dataEntityDetailsPath(target.id)}
-                  key={target.id}
-                  sx={{ my: 0.25 }}
-                  buttonType='link-m'
-                />
-              ))}
+            {targets?.slice(0, displayedEntitiesNumber).map(target => (
+              <Button
+                text={target.internalName || target.externalName}
+                to={dataEntityDetailsPath(target.id)}
+                key={target.id}
+                sx={{ my: 0.25 }}
+                buttonType='link-m'
+              />
+            ))}
             {unknownTargetsCount ? (
               <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
                 {unknownTargetsCount} {t('more target')}

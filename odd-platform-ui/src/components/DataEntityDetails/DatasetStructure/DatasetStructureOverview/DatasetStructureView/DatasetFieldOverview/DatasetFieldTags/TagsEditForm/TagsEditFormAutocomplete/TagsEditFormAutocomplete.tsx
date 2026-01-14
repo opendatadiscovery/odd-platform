@@ -6,7 +6,7 @@ import {
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
-import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { type UseFieldArrayAppend } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { type Tag } from 'generated-sources';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -15,9 +15,9 @@ import { ClearIcon } from 'components/shared/icons';
 import { fetchTagsList as searchTags } from 'redux/thunks';
 import { OptionsContainer } from '../TagsEditFormStyles';
 
-type DatasetFieldTagsFormType = {
+interface DatasetFieldTagsFormType {
   tagNames: Pick<Tag, 'name' | 'important' | 'external'>[];
-};
+}
 
 interface TagsEditFormAutocompleteProps {
   append: UseFieldArrayAppend<DatasetFieldTagsFormType, 'tagNames'>;
