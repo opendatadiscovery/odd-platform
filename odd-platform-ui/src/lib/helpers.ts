@@ -69,7 +69,6 @@ export const pseudoRandNum = (function xoshiro128p() {
   let c = Date.now();
   let d = Date.now();
   return () => {
-    /* eslint-disable no-bitwise */
     const t = b << 9;
     const r = a + d;
     c ^= a;
@@ -98,7 +97,7 @@ export const getEllipsisTextByWidth = (
   if (typeof el.getSubStringLength !== 'undefined') {
     el.textContent = text;
     let len = text.length;
-    // eslint-disable-next-line no-plusplus
+
     while (el.getSubStringLength(0, len--) > width) {
       el.textContent = `${text.slice(0, len)}...`;
     }

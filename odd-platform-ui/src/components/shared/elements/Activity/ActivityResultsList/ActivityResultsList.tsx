@@ -62,7 +62,6 @@ const ActivityResultsList: FC<ActivityResultsListProps> = ({
           <li>
             <ul style={{ padding: 0 }}>
               {Object.entries(activitiesByDate).map(([activityDate, activities], idx) => (
-                // eslint-disable-next-line react/no-array-index-key
                 <Grid key={`${activityDate}-${idx}`} container>
                   <ListSubheader sx={{ width: '100%', p: 0 }}>
                     <Grid justifyContent='space-between' container px={2}>

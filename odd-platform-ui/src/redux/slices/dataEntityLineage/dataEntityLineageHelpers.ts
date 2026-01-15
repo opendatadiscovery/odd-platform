@@ -253,7 +253,6 @@ export const groupingUpstreamNodes = (
   const startId = 2 ** 30;
   let increment = 0;
 
-  // eslint-disable-next-line no-plusplus
   const generateNumberId = () => startId + increment++;
 
   const groupedNodes: GroupingUpstreamNodes[] = [];
@@ -346,7 +345,6 @@ export const groupingDownstreamNodes = (
   const startId = 2 ** 30;
   let increment = 0;
 
-  // eslint-disable-next-line no-plusplus
   const generateNumberId = () => startId + increment++;
 
   const groupedNodes: GroupingDownstreamNodes[] = [];

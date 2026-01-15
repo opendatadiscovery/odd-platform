@@ -3,7 +3,6 @@ import { Box, Grid } from '@mui/material';
 import Button from 'components/shared/elements/Button/Button';
 
 interface AppDateRangePickerFooterProps {
-  // eslint-disable-next-line react/no-unused-prop-types
   position: string;
   onClickDoneBtn: () => void;
   ranges: { label: string; value: Date[] }[];

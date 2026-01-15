@@ -144,7 +144,6 @@ const MultipleFilterItemAutocomplete: React.FC<MultipleFilterItemAutocompletePro
         <span>
           {parts.map((part, i) => (
             <S.HighlightedTextPart
-              // eslint-disable-next-line react/no-array-index-key
               key={i}
               isHighlighted={part.toLowerCase() === highlight.toLowerCase()}
             >

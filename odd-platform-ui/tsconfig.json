@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "src",
     "target": "esnext",
+    "types": ["vitest/globals"],
     "lib": [
       "dom",
       "dom.iterable",
