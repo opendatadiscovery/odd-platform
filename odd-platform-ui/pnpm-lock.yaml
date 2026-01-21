@@ -92,7 +92,7 @@ dependencies:
     version: 4.2.2(react@18.2.0)
   i18next:
     specifier: ^23.2.0
-    version: 23.2.0
+    version: 23.2.11
   i18next-browser-languagedetector:
     specifier: ^7.0.2
     version: 7.0.2
@@ -122,7 +122,7 @@ dependencies:
     version: 2.4.1(csstype@3.1.3)(react-dom@18.2.0)(react@18.2.0)
   react-i18next:
     specifier: ^13.0.0
-    version: 13.0.0(i18next@23.2.0)(react-dom@18.2.0)(react@18.2.0)
+    version: 13.0.0(i18next@23.2.11)(react-dom@18.2.0)(react@18.2.0)
   react-infinite-scroll-component:
     specifier: ^6.1.0
     version: 6.1.0(react@18.2.0)
@@ -659,7 +659,7 @@ packages:
     resolution: {integrity: sha512-m4HEDZleaaCH+XgDDsPF15Ht6wTLsgDTeR3WYj9Q/k76JtWhrJjcP4+/XlG8LGT/Rol9qUfOIztXeA84ATpqPQ==}
     dependencies:
       '@babel/helper-module-imports': 7.22.5
-      '@babel/runtime': 7.22.11
+      '@babel/runtime': 7.23.5
       '@emotion/hash': 0.9.1
       '@emotion/memoize': 0.8.1
       '@emotion/serialize': 1.1.2
@@ -1641,7 +1641,7 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       '@babel/code-frame': 7.22.13
-      '@babel/runtime': 7.22.11
+      '@babel/runtime': 7.23.5
       '@types/aria-query': 5.0.1
       aria-query: 5.1.3
       chalk: 4.1.2
@@ -4740,7 +4740,7 @@ packages:
       eol: 0.9.1
       esprima-next: 5.8.4
       gulp-sort: 2.0.0
-      i18next: 23.2.0
+      i18next: 23.2.11
       lodash: 4.17.21
       parse5: 6.0.1
       sortobject: 4.16.0
@@ -4749,10 +4749,10 @@ packages:
       vinyl-fs: 4.0.0
     dev: true
 
-  /i18next@23.2.0:
-    resolution: {integrity: sha512-fAJHauzKpsHNP66ThBcexsrPJ9FoIuFgj2c0y9LmL9936XQL10ijfLe/fGm1r7GlmO7jhMdWt78oUi8jM3UCKQ==}
+  /i18next@23.2.11:
+    resolution: {integrity: sha512-MA4FsxOjyCaOZtRDB4yuwjCvqYEioD4G4LlXOn7SO3rnQUlxTufyLsOqfL9MKakeLRBkefe8bqcs0D6Z/xFk1w==}
     dependencies:
-      '@babel/runtime': 7.22.11
+      '@babel/runtime': 7.23.5
 
   /iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
@@ -6387,7 +6387,7 @@ packages:
       - csstype
     dev: false
 
-  /react-i18next@13.0.0(i18next@23.2.0)(react-dom@18.2.0)(react@18.2.0):
+  /react-i18next@13.0.0(i18next@23.2.11)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-qRFbrSgynsBSjfnSTb/Um3mw9uPjOfDi4Iq2rMCuzfsRsYGdkEdyCr0i+T0bR0bG6xwULvK4k1oRVLLd7ZDBVw==}
     peerDependencies:
       i18next: '>= 23.0.1'
@@ -6402,7 +6402,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.22.11
       html-parse-stringify: 3.0.1
-      i18next: 23.2.0
+      i18next: 23.2.11
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
