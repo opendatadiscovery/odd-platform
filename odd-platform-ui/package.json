@@ -117,6 +117,7 @@
     "@vitejs/plugin-react": "^5.1.2",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-lodash": "^7.4.0",
@@ -140,7 +141,7 @@
     "minimist": "1.2.6"
   },
   "engines": {
-    "node": ">=22.11",
+    "node": ">=24.8.0 <25.0.0",
     "pnpm": ">=9.12.3 <10"
   },
   "pnpm": {
