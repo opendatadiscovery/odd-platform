@@ -2,9 +2,9 @@ import React from 'react';
 import { MessageState } from 'generated-sources';
 import * as S from './MessageStatus.styles';
 
-type MessageStatusProps = {
+interface MessageStatusProps {
   status: MessageState | undefined;
-};
+}
 
 const MESSAGE_STATUS_NAME_MAP = {
   [MessageState.PENDING_SEND]: 'Pending',

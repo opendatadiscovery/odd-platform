@@ -15,9 +15,9 @@ interface TagsEditProps {
   datasetFieldId: number;
 }
 
-type DatasetFieldTagsFormType = {
+interface DatasetFieldTagsFormType {
   tagNames: Pick<Tag, 'name' | 'important' | 'external'>[];
-};
+}
 
 const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl, datasetFieldId }) => {
   const dispatch = useAppDispatch();

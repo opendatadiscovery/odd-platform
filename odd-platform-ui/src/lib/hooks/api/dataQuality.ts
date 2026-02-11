@@ -4,7 +4,7 @@ import { dataQualityRunsApi } from 'lib/api';
 import type { DataQualityResults } from 'generated-sources/models/DataQualityResults';
 import type { DataQualityRunStatusCount } from 'generated-sources/models/DataQualityRunStatusCount';
 
-const emptyTestResults: Array<DataQualityRunStatusCount> = [
+const emptyTestResults: DataQualityRunStatusCount[] = [
   {
     status: 'SUCCESS',
     count: 0,

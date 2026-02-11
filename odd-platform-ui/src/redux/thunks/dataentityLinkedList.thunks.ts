@@ -10,7 +10,7 @@ import { dataEntityApi } from 'lib/api';
 export const fetchDataEntityGroupLinkedList = handleResponseAsyncThunk<
   {
     dataEntityGroupId: number;
-    linkedItemsList: Array<DataEntity>;
+    linkedItemsList: DataEntity[];
     pageInfo: CurrentPageInfo;
   },
   DataEntityApiGetDataEntityGroupsChildrenRequest

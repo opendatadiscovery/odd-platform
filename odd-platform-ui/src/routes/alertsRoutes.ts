@@ -1,5 +1,5 @@
 const BASE_PATH = '/alerts';
-const AlertsRoutes = {
+export const AlertsRoutes = {
   ALL_PATH: `all`,
   MY_PATH: `my`,
   DEPENDENTS_PATH: `dependents`,

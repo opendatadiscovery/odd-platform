@@ -31,8 +31,8 @@ type DateTimePatternNames =
   | 'qualityTestRun'
   | 'datedList';
 type TimeZones = 'us' | 'eu';
-type DateTimePatterns = Record<DateTimePatternNames, { [key in TimeZones]: string }>;
-type Helpers = {
+type DateTimePatterns = Record<DateTimePatternNames, Record<TimeZones, string>>;
+interface Helpers {
   formatDistanceStrict: (...args: Parameters<typeof formatDistanceStrict>) => string;
   add: (...args: Parameters<typeof add>) => Date;
   formatDistanceToNow: (...args: Parameters<typeof formatDistanceToNow>) => string;
@@ -42,7 +42,7 @@ type Helpers = {
   formatDuration: (...args: Parameters<typeof formatDuration>) => string;
   intervalToDuration: (...args: Parameters<typeof intervalToDuration>) => Duration;
   minutesToMilliseconds: (...args: Parameters<typeof minutesToMilliseconds>) => number;
-};
+}
 type UseAppDateTimeReturn = Record<
   `${DateTimePatternNames}FormattedDateTime`,
   (date: number | Date) => string

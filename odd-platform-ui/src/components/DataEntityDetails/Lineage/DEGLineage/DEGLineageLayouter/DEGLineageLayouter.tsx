@@ -28,7 +28,7 @@ const DEGLineageLayouter: FC<DEGLineageLayouterProps> = ({ nodes, edges }) => {
     queryParams: { full },
   } = useQueryParams<DEGLineageQueryParams>(defaultDEGLineageQuery);
 
-  const nodesRefsById = useRef<{ [nodeId: string]: HTMLDivElement | null }>({});
+  const nodesRefsById = useRef<Record<string, HTMLDivElement | null>>({});
 
   const setNodes = useSetAtom(nodesAtom);
   const setEdges = useSetAtom(edgesAtom);

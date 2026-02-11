@@ -14,10 +14,10 @@ const StyledText = styled('text')(({ theme }) => ({
   '&:hover': { fill: theme.palette.button.tertiary.normal.color },
 }));
 
-const NodeListButton: React.FC<NodeListIconProps> = ({ text, onClick }) => (
+const ItemsButton: React.FC<NodeListIconProps> = ({ text, onClick }) => (
   <StyledText onClick={onClick} x='50' y='40' fontSize='14' fill='black'>
     {text}
   </StyledText>
 );
 
-export default NodeListButton;
+export default ItemsButton;

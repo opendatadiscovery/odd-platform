@@ -11,7 +11,7 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { roleApi } from 'lib/api';
 
 export const fetchRolesList = handleResponseAsyncThunk<
-  { items: Array<Role>; pageInfo: CurrentPageInfo },
+  { items: Role[]; pageInfo: CurrentPageInfo },
   RoleApiGetRolesListRequest
 >(
   actions.fetchRolesActType,

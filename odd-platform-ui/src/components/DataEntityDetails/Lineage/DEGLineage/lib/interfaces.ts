@@ -21,9 +21,9 @@ export interface DataEntityGroupLineage {
   edges: Edge[];
 }
 
-export type DEGLineageQueryParams = {
+export interface DEGLineageQueryParams {
   full: boolean; // full or compact view
   x: number | undefined; // zoom x position
   y: number | undefined; // zoom y position
   s: number | undefined; // scale
-};
+}

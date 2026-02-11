@@ -1,108 +1,112 @@
 .rmdp-container {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 .rmdp-calendar {
-    padding: 16px 16px 0 16px !important;
+  padding: 16px 16px 0 16px !important;
 }
 
 .rmdp-day-picker {
-    padding-bottom: 16px !important;
-    border-bottom: 1px solid #EBECF0 !important;
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid #ebecf0 !important;
 }
 
 .rmdp-border-bottom {
-    border: none !important;
+  border: none !important;
 }
 
 .rmdp-arrow-container {
-    border-radius: 0 !important;
+  border-radius: 0 !important;
 }
 
 .rmdp-arrow-container:hover {
-    background-color: transparent !important;
-    box-shadow: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
 }
 
 .rmdp-arrow-container:hover .rmdp-arrow {
-    border: solid #42526E !important;
-    border-width: 0 2px 2px 0 !important;
+  border: solid #42526e !important;
+  border-width: 0 2px 2px 0 !important;
 }
 
 .rmdp-arrow {
-    border: solid #7A869A !important;
-    border-width: 0 2px 2px 0 !important;
-    display: inline-block !important;
-    height: 8px !important;
-    margin-top: 5px !important;
-    padding: 4px !important;
-    width: 4px !important;
+  border: solid #7a869a !important;
+  border-width: 0 2px 2px 0 !important;
+  display: inline-block !important;
+  height: 8px !important;
+  margin-top: 5px !important;
+  padding: 4px !important;
+  width: 4px !important;
 }
 
 .rmdp-header-values {
-    font-weight: 500 !important;
-    color: #091E42 !important;
+  font-weight: 500 !important;
+  color: #091e42 !important;
 }
 
 .rmdp-week-day {
-    font-weight: 400 !important;
-    font-size: 12px !important;
-    color: #7A869A !important;
+  font-weight: 400 !important;
+  font-size: 12px !important;
+  color: #7a869a !important;
 }
 
 .rmdp-week {
-    justify-content: center !important;
+  justify-content: center !important;
 }
 
 .rmdp-day.rmdp-deactive {
-    color: #A8B0BD !important;
+  color: #a8b0bd !important;
 }
 
 .rmdp-day.rmdp-disabled {
-    background-color: #0080FF !important;
-    color: white !important;
-    border-radius: 4px !important;
+  background-color: #0080ff !important;
+  color: white !important;
+  border-radius: 4px !important;
 }
 
 .rmdp-day {
-    color: #091E42 !important;
+  color: #091e42 !important;
 }
 
 .rmdp-day.rmdp-today span {
-    border: 1px solid #0080FF !important;
-    color: #091E42 !important;
-    background-color: transparent !important;
+  border: 1px solid #0080ff !important;
+  color: #091e42 !important;
+  background-color: transparent !important;
 }
 
 .rmdp-day span {
-    border-radius: 4px !important;
+  border-radius: 4px !important;
 }
 
 .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover {
-    background-color: #E5F2FF !important;
-    color: #091E42 !important;
+  background-color: #e5f2ff !important;
+  color: #091e42 !important;
 }
 
-.rmdp-range.start, .rmdp-range.end {
-    border-radius: 4px !important;
+.rmdp-range.start,
+.rmdp-range.end {
+  border-radius: 4px !important;
 }
 
 .rmdp-range {
-    background-color: #E5F2FF !important;
-    box-shadow: none !important;
-    color: #091E42 !important;
+  background-color: #e5f2ff !important;
+  box-shadow: none !important;
+  color: #091e42 !important;
 }
 
-.rmdp-day.rmdp-range.start, .rmdp-day.rmdp-range.end {
-    background-color: #0080FF !important;
-    color: white !important;
+.rmdp-day.rmdp-range.start,
+.rmdp-day.rmdp-range.end {
+  background-color: #0080ff !important;
+  color: white !important;
 }
 
-.rmdp-day.rmdp-range.start span:hover, .rmdp-day.rmdp-range.end span:hover {
-    background-color: #0080FF !important;
-    color: white !important;
+.rmdp-day.rmdp-range.start span:hover,
+.rmdp-day.rmdp-range.end span:hover {
+  background-color: #0080ff !important;
+  color: white !important;
 }
 
-.rmdp-day.rmdp-today.rmdp-range.end span, .rmdp-day.rmdp-today.rmdp-range.start span {
-    color: white !important;
+.rmdp-day.rmdp-today.rmdp-range.end span,
+.rmdp-day.rmdp-today.rmdp-range.start span {
+  color: white !important;
 }

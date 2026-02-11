@@ -57,10 +57,10 @@ const Overview: FC = () => {
             </S.Container>
             <S.Container square elevation={0}>
               <WithPermissionsProvider
-                  allowedPermissions={[Permission.TERM_TAGS_UPDATE]}
-                  resourcePermissions={termPermissions ?? []}
-                  render={() => <OverviewTags tags={termDetails.tags} />}
-               />
+                allowedPermissions={[Permission.TERM_TAGS_UPDATE]}
+                resourcePermissions={termPermissions ?? []}
+                render={() => <OverviewTags tags={termDetails.tags} />}
+              />
             </S.Container>
             <S.Container square elevation={0}>
               <WithPermissionsProvider

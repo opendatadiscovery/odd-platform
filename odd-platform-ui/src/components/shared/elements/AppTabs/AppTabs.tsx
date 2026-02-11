@@ -8,7 +8,7 @@ import AppLinkTab from 'components/shared/elements/AppTabs/AppTab/AppLinkTab';
 import AppTabLabel from 'components/shared/elements/AppTabs/AppTabLabel/AppTabLabel';
 import { TabsContainer } from 'components/shared/elements/AppTabs/AppTabsStyles';
 
-export type AppTabItem<ValueT = number | string | boolean> = {
+export interface AppTabItem<ValueT = number | string | boolean> {
   name: string;
   link?: string;
   hint?: number | string;
@@ -16,10 +16,12 @@ export type AppTabItem<ValueT = number | string | boolean> = {
   value?: ValueT;
   hidden?: boolean;
   disabled?: boolean;
-};
+}
 
-interface AppTabsProps
-  extends Pick<TabsProps, 'value' | 'onChange' | 'orientation' | 'sx'> {
+interface AppTabsProps extends Pick<
+  TabsProps,
+  'value' | 'onChange' | 'orientation' | 'sx'
+> {
   items: AppTabItem[];
   handleTabChange?: (newTab: number) => void;
   selectedTab?: number | boolean;

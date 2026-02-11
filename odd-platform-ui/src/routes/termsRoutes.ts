@@ -22,7 +22,7 @@ export function termsPath() {
   return BASE_PATH;
 }
 
-const TermDetailsRoutes = {
+export const TermDetailsRoutes = {
   OVERVIEW: 'overview',
   LINKED_ENTITIES: 'linked-entities',
   LINKED_COLUMNS: 'linked-columns',

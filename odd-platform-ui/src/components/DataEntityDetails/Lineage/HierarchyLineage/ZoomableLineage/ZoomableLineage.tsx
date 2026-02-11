@@ -30,7 +30,7 @@ const ZoomableLineage = React.memo<ZoomableLineageProps>(
       setQueryParams(prev => ({ ...prev, t: JSON.stringify(zoom.transformMatrix) }));
     };
 
-    const handleOnDoubleClick = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    const handleOnDoubleClick = (e: React.MouseEvent<SVGSVGElement>) => {
       const point = localPoint(e) || { x: 0, y: 0 };
       zoom.scale({ scaleX: 2, scaleY: 2, point });
     };

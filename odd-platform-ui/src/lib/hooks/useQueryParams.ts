@@ -2,22 +2,22 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryStringPackage, { type StringifyOptions } from 'query-string';
 
-type QueryParams<Params extends Record<string, unknown>> = {
+type QueryParams<Params extends object> = {
   [Key in keyof Params]: Params[Key];
 };
 
-type SetURLQueryParams<Params extends Record<string, unknown>> = (
+type SetURLQueryParams<Params extends object> = (
   value: QueryParams<Params> | ((prev: QueryParams<Params>) => QueryParams<Params>)
 ) => void;
 
-interface UseQueryParamsReturn<Params extends Record<string, unknown>> {
+interface UseQueryParamsReturn<Params extends object> {
   queryParams: QueryParams<Params>;
   queryString: string;
   defaultQueryString: string;
   setQueryParams: SetURLQueryParams<Params>;
 }
 
-const useQueryParams = <Params extends Record<string, unknown>>(
+const useQueryParams = <Params extends object>(
   defaultVal: Params
 ): UseQueryParamsReturn<Params> => {
   const { stringify, parse } = queryStringPackage;

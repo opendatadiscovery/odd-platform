@@ -1,4 +1,5 @@
-import { defineConfig, loadEnv, type UserConfigExport } from 'vite';
+/// <reference types="vitest" />
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
@@ -25,12 +26,12 @@ export default defineConfig(({ mode }) => {
 
   const defaultPlugins = [react(), tsconfigPaths()];
 
-  const defaultConfig: UserConfigExport = {
+  const defaultConfig = {
     plugins: defaultPlugins,
     build: { outDir: 'build/ui' },
     test: {
       globals: true,
-      environment: 'jsdom',
+      environment: 'jsdom' as const,
       setupFiles: './src/setupTests.ts',
     },
   };
@@ -43,7 +44,10 @@ export default defineConfig(({ mode }) => {
           checker({
             overlay: { initialIsOpen: false },
             typescript: true,
-            eslint: { lintCommand: 'eslint --ext .tsx,.ts src/' },
+            eslint: {
+              lintCommand: 'eslint src/',
+              useFlatConfig: true,
+            },
           }),
           ...defaultPlugins,
         ],

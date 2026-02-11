@@ -12,13 +12,13 @@ import DatasetDataTableRowCell from './DatasetDataTableRowCell';
 type EditedRowsData = Record<string, TableData>;
 
 declare module '@tanstack/react-table' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line unused-imports/no-unused-vars
   interface TableMeta<TData extends RowData> {
     editedRowsData: EditedRowsData;
     setEditedRowsData: React.Dispatch<React.SetStateAction<EditedRowsData>>;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line unused-imports/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
     fieldType: LookupTableFieldType;
   }

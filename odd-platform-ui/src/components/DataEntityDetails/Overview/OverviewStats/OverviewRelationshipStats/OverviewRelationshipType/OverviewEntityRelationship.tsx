@@ -68,17 +68,15 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
                 alignItems='flex-start'
                 sx={{ mt: 1 }}
               >
-                {targets
-                  ?.slice(0, displayedEntitiesNumber)
-                  .map(target => (
-                    <RelationshipKey
-                      key={target.oddrn}
-                      name={target.name}
-                      oddrn={target.oddrn}
-                      id={target.id}
-                      dataentityId={relationshipDetails.targetDataEntity.id}
-                    />
-                  ))}
+                {targets?.slice(0, displayedEntitiesNumber).map(target => (
+                  <RelationshipKey
+                    key={target.oddrn}
+                    name={target.name}
+                    oddrn={target.oddrn}
+                    id={target.id}
+                    dataentityId={relationshipDetails.targetDataEntity.id}
+                  />
+                ))}
               </Grid>
             </Grid>
             <Grid item container xs={6} alignItems='flex-start' alignContent='flex-start'>
@@ -99,17 +97,15 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
                 alignItems='flex-start'
                 sx={{ mt: 1 }}
               >
-                {sources
-                  ?.slice(0, displayedEntitiesNumber)
-                  .map(source => (
-                    <RelationshipKey
-                      key={source.oddrn}
-                      name={source.name}
-                      oddrn={source.oddrn}
-                      id={source.id}
-                      dataentityId={relationshipDetails.sourceDataEntity.id}
-                    />
-                  ))}
+                {sources?.slice(0, displayedEntitiesNumber).map(source => (
+                  <RelationshipKey
+                    key={source.oddrn}
+                    name={source.name}
+                    oddrn={source.oddrn}
+                    id={source.id}
+                    dataentityId={relationshipDetails.sourceDataEntity.id}
+                  />
+                ))}
               </Grid>
             </Grid>
           </Grid>

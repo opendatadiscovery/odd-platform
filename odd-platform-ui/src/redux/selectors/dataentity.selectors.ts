@@ -16,7 +16,7 @@ const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
 export const getDataEntityTypesByClassName = (entityClassName: DataEntityClassNameEnum) =>
   createSelector(
     dataEntitiesState,
-    (dataEntities): Array<DataEntityType> =>
+    (dataEntities): DataEntityType[] =>
       Object.values(dataEntities.classesAndTypesDict.entityClasses).find(
         entityClass => entityClass.name === entityClassName
       )?.types || []

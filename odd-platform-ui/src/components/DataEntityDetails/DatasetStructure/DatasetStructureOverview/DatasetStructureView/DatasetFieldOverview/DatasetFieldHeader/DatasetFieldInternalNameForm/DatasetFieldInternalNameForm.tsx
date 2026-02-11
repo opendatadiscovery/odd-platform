@@ -8,10 +8,10 @@ import type { InternalNameFormData } from 'generated-sources';
 import { Button, DialogWrapper, Input } from 'components/shared/elements';
 import { updateDatasetFieldInternalName } from 'redux/slices/datasetStructure.slice';
 
-type DatasetFieldInternalNameFormProps = {
+interface DatasetFieldInternalNameFormProps {
   openBtnEl: ReactElement;
   datasetFieldId: number;
-};
+}
 
 const DatasetFieldInternalNameForm = ({
   openBtnEl,

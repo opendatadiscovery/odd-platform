@@ -15,15 +15,13 @@ import type { ErrorState } from 'redux/interfaces';
 export function useDataEntityAttachments({
   dataEntityId,
 }: DataEntityAttachmentApiGetAttachmentsRequest) {
-  return useQuery<
-    DataEntityAttachments,
-    ErrorState,
-    Array<DataEntityFile | DataEntityLink>
-  >({
-    queryKey: ['dataEntityAttachments'],
-    queryFn: () => dataEntityAttachmentApi.getAttachments({ dataEntityId }),
-    select: data => [...data.files, ...data.links],
-  });
+  return useQuery<DataEntityAttachments, ErrorState, (DataEntityFile | DataEntityLink)[]>(
+    {
+      queryKey: ['dataEntityAttachments'],
+      queryFn: () => dataEntityAttachmentApi.getAttachments({ dataEntityId }),
+      select: data => [...data.files, ...data.links],
+    }
+  );
 }
 
 export function useSaveDataEntityLinks() {

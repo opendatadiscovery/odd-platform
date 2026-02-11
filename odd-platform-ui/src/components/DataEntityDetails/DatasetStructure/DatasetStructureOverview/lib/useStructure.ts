@@ -24,17 +24,15 @@ export default function useStructure() {
   // Create a filtered dataset structure based on the search query
   const filteredDatasetStructureRoot = useMemo(() => {
     if (!searchQuery) return datasetStructureRoot;
-    return datasetStructureRoot.filter(item =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.internalName?.toLowerCase().includes(searchQuery.toLowerCase())
+    return datasetStructureRoot.filter(
+      item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.internalName?.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery, datasetStructureRoot]);
 
   const idxToScroll = useMemo(
-    () =>
-      filteredDatasetStructureRoot.findIndex(
-        field => field.id === selectedFieldId
-      ),
+    () => filteredDatasetStructureRoot.findIndex(field => field.id === selectedFieldId),
     [selectedFieldId, filteredDatasetStructureRoot]
   );
 

@@ -13,7 +13,7 @@ import type { DataSourceEntityList } from 'lib/interfaces';
 import EntityItem from './EntityItem/EntityItem';
 import TableHeader from './TableHeader/TableHeader';
 
-interface EntitiesResultsListProps {
+interface EntitiesListProps {
   entities: DataEntity[];
   hasNextPage: boolean;
   isEntitiesLoaded: boolean;
@@ -23,7 +23,7 @@ interface EntitiesResultsListProps {
   >;
 }
 
-const EntitiesResultsList: FC<EntitiesResultsListProps> = ({
+const EntitiesList: FC<EntitiesListProps> = ({
   entities,
   fetchNextPage,
   hasNextPage,
@@ -82,4 +82,4 @@ const EntitiesResultsList: FC<EntitiesResultsListProps> = ({
   );
 };
 
-export default EntitiesResultsList;
+export default EntitiesList;

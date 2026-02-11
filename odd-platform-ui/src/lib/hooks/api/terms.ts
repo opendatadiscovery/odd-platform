@@ -49,10 +49,10 @@ export function useGetTermByID(params: TermApiGetTermDetailsRequest) {
   });
 }
 
-type ResponseWithPageInfo = {
-  items: Array<unknown>;
+interface ResponseWithPageInfo {
+  items: unknown[];
   pageInfo: PageInfo & { nextPage?: number };
-};
+}
 
 function addNextPage<R extends ResponseWithPageInfo>(
   response: R,

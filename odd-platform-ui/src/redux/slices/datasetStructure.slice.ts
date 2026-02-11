@@ -34,9 +34,7 @@ export const updateDatasetStructure = (
     ),
     allFieldIdsByVersion: {
       ...state.allFieldIdsByVersion,
-      [dataSetVersionId]: fieldList.reduce<{
-        [key: number]: number[];
-      }>(
+      [dataSetVersionId]: fieldList.reduce<Record<number, number[]>>(
         (fieldsList, field) => ({
           ...fieldsList,
           [field.parentFieldId || 0]: [

@@ -49,7 +49,6 @@ const TruncatedList = <Item,>({
         <TruncateMarkup lines={lines} ellipsis={ellipsisWithOnClick}>
           <div>
             {items.map((item, idx) => (
-              // eslint-disable-next-line react/no-array-index-key
               <TruncateMarkup.Atom key={idx}>{children(item)}</TruncateMarkup.Atom>
             ))}
           </div>

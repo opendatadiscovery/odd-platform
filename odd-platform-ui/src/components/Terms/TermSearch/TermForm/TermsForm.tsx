@@ -1,7 +1,7 @@
 import React, { cloneElement, type FC, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Typography, Alert,IconButton } from '@mui/material';
+import { Grid, Typography, Alert } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { TermDetails, TermFormData } from 'generated-sources';
 import {
@@ -121,11 +121,11 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
     <form id='term-create-form' onSubmit={handleSubmit(onSubmit)}>
       {error && (
         <Alert
-          severity="error"
+          severity='error'
           sx={{ mb: 2, alignItems: 'center' }}
           action={
             <Typography
-              component="button"
+              component='button'
               onClick={() => setError(null)}
               sx={{
                 fontSize: '1.1rem',

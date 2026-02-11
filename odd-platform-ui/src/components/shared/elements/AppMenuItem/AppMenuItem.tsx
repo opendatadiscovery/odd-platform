@@ -3,18 +3,17 @@ import { type MenuItemProps } from '@mui/material';
 import { type Variant } from '@mui/material/styles/createTypography';
 import * as S from 'components/shared/elements/AppMenuItem/AppMenuItemStyles';
 
-interface AppMenuItemProps
-  extends Pick<
-    MenuItemProps,
-    | 'children'
-    | 'onClick'
-    | 'divider'
-    | 'value'
-    | 'defaultValue'
-    | 'ref'
-    | 'disabled'
-    | 'sx'
-  > {
+interface AppMenuItemProps extends Pick<
+  MenuItemProps,
+  | 'children'
+  | 'onClick'
+  | 'divider'
+  | 'value'
+  | 'defaultValue'
+  | 'ref'
+  | 'disabled'
+  | 'sx'
+> {
   minWidth?: number;
   maxWidth?: number;
   removeTextStyles?: boolean;

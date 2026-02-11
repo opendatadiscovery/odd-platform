@@ -13,7 +13,7 @@ import {
 } from 'components/shared/elements';
 import { useAppDateTime } from 'lib/hooks';
 
-interface MetadataValueEditFieldProps {
+interface MetadataValueEditorProps {
   metadataType: MetadataFieldType | '';
   metadataValue?: string;
   fieldName?: string;
@@ -21,7 +21,7 @@ interface MetadataValueEditFieldProps {
   size?: TextFieldProps['size'];
 }
 
-const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
+const MetadataValueEditor: React.FC<MetadataValueEditorProps> = ({
   metadataType,
   metadataValue,
   fieldName = 'value',
@@ -125,4 +125,4 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   );
 };
 
-export default MetadataValueEditField;
+export default MetadataValueEditor;

@@ -8,7 +8,9 @@ interface DataEntityList extends Omit<GeneratedDataEntityList, 'pageInfo'> {
   pageInfo: InfiniteQueryPageInfo;
 }
 
-export interface DataSourceEntityList
-  extends Omit<GeneratedDataSourceEntityList, 'entities'> {
+export interface DataSourceEntityList extends Omit<
+  GeneratedDataSourceEntityList,
+  'entities'
+> {
   entities: DataEntityList;
 }

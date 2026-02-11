@@ -2,7 +2,7 @@ import React from 'react';
 import { type SvgIconProps } from '@mui/material/SvgIcon';
 import AppSvgIcon from 'components/shared/icons/AppSvgIcon';
 
-const SystemIcon: React.FC<SvgIconProps<'svg'>> = ({ sx, ...props }) => (
+const SystemIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
   <AppSvgIcon sx={sx} viewBox='0 0 12 10' {...props}>
     <svg
       width='11'

@@ -20,9 +20,9 @@ export const dataEntityGroupLinkedListSlice = createSlice({
 
         const linkedItemsIdsByDataEntityGroupId = {
           ...state.linkedItemsIdsByDataEntityGroupId,
-          linkedItemsIdsByDataEntityGroupId: linkedItemsList.reduce<{
-            [dataEntityGroupId: string]: number[];
-          }>(
+          linkedItemsIdsByDataEntityGroupId: linkedItemsList.reduce<
+            Record<string, number[]>
+          >(
             (memo, linkedItem) => ({
               ...memo,
               [dataEntityGroupId]: [...(memo?.[dataEntityGroupId] || []), linkedItem.id],

@@ -22,13 +22,13 @@ interface MarkdownProps {
   variant?: TypographyVariant;
 }
 
-export type ReactMarkdownProps = {
+export interface ReactMarkdownProps {
   node: Element;
   children: ReactNode[];
   sourcePosition?: Position;
   index?: number;
   siblingCount?: number;
-};
+}
 
 type MarkdownElementProps<HTMLElement> = Omit<
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>,
@@ -72,8 +72,14 @@ type MarkdownPreviewProps = MarkdownElementProps<HTMLParagraphElement>;
 
 const Preview =
   (variant?: TypographyVariant) =>
-  ({ ...props }: MarkdownPreviewProps) =>
-    !variant ? <div {...props} /> : <Typography paragraph variant={variant} {...props} />;
+  ({ children, ...props }: MarkdownPreviewProps) =>
+    !variant ? (
+      <div {...props}>{children}</div>
+    ) : (
+      <Typography paragraph variant={variant} {...props}>
+        {children}
+      </Typography>
+    );
 
 const Markdown: FC<MarkdownProps> = ({
   value,

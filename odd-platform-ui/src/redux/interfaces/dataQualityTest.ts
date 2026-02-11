@@ -9,6 +9,4 @@ export interface DataSetQualityTestsStatusCount {
   unknown: number;
 }
 
-export interface DatasetQualityTestList {
-  [suiteName: string]: DataQualityTest[];
-}
+export type DatasetQualityTestList = Record<string, DataQualityTest[]>;

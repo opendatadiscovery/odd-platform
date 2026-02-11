@@ -37,10 +37,10 @@ const NumberFormatted: React.FC<NumberFormattedProps> = ({
       : '0';
   }, [value, precision]);
 
-  if (numVal || numVal === 0) {
+  if (!Number.isNaN(numVal) && (numVal || numVal === 0)) {
     formattedNumber = formatNumber();
   } else {
-    formattedNumber = value ?? '';
+    formattedNumber = '';
   }
 
   return (

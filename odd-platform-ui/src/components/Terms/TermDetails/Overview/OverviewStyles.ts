@@ -13,5 +13,5 @@ export const Container = styled(AppPaper)(({ theme }) => ({
 export const DefinitionContainer = styled(AppPaper)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  padding: `${theme.spacing(2)}`,
+  padding: theme.spacing(2),
 }));

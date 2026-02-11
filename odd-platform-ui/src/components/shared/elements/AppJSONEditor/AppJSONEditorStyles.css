@@ -1,55 +1,61 @@
-.jse-group-button, .jse-sort, .jse-transform, .jse-undo, .jse-redo {
-    display: none;
+.jse-group-button,
+.jse-sort,
+.jse-transform,
+.jse-undo,
+.jse-redo {
+  display: none;
 }
 
 .jse-button {
-    color: #7A869A !important;
+  color: #7a869a !important;
 }
 
-.jse-button:hover, .jse-button:focus {
-    background: none !important;
+.jse-button:hover,
+.jse-button:focus {
+  background: none !important;
 }
 
 .jse-main {
-    border-radius: 4px;
-    border: 1px solid #C1C7D0 !important;
+  border-radius: 4px;
+  border: 1px solid #c1c7d0 !important;
 }
 
 .cm-editor {
-    min-height: 400px !important;
-    max-height: calc(100vh - 328px) !important;
+  min-height: 400px !important;
+  max-height: calc(100vh - 328px) !important;
 }
 
 .jse-menu {
-    background-color: #EBECF0 !important;
-    border: none !important;
+  background-color: #ebecf0 !important;
+  border: none !important;
 }
 
 .jse-contents {
-    border: none !important;
+  border: none !important;
 }
 
-.jse-separator:first-child, .jse-separator {
-    width: 0 !important;
+.jse-separator:first-child,
+.jse-separator {
+  width: 0 !important;
 }
 
 .jse-validation-errors-overview {
-    background: #FFF7E6 !important;
+  background: #fff7e6 !important;
 }
 
 .jse-message.jse-error {
-    background: #FFF0F0 !important;
-    color: #000000 !important;
+  background: #fff0f0 !important;
+  color: #000000 !important;
 }
 
 .jse-validation-error .jse-validation-error-icon {
-    color: #E69900 !important;
+  color: #e69900 !important;
 }
 
 .jse-text .fa-icon {
-    color: red !important;
+  color: red !important;
 }
 
 .cm-tooltip-hover {
-    display: none;
+  display: none;
 }

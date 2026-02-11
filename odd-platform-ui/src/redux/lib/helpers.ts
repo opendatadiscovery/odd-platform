@@ -31,14 +31,14 @@ export const isDateObject = (value: unknown): value is Date =>
 export const isNotDateObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && !(value instanceof Date);
 
-export const isArray = (value: unknown): value is Array<unknown> => Array.isArray(value);
+export const isArray = (value: unknown): value is unknown[] => Array.isArray(value);
 
 export const castDatesToTimestampInItemsArray = <
   Data extends object,
   RData extends object,
 >(
-  data: Array<Data>
-): Array<RData> =>
+  data: Data[]
+): RData[] =>
   data.map<RData>(item =>
     Object.entries(item).reduce<RData>(
       (memo, [key, value]) =>
@@ -79,11 +79,9 @@ export function setPageInfo<Item extends { id: string | number; createdAt: numbe
 export const notEmpty = <TValue>(value: TValue | null | undefined): value is TValue =>
   value !== null && value !== undefined;
 
-export function castDatesToTimestamp<Data>(
-  data: Array<Data>
-): SerializeDateToNumber<Data>[];
+export function castDatesToTimestamp<Data>(data: Data[]): SerializeDateToNumber<Data>[];
 export function castDatesToTimestamp<Data>(data: Data): SerializeDateToNumber<Data>;
-export function castDatesToTimestamp<Data>(data: Array<Data> | Data) {
+export function castDatesToTimestamp<Data>(data: Data[] | Data) {
   if (!data) return {};
 
   if (Array.isArray(data)) {

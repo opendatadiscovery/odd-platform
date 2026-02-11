@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "src",
     "target": "esnext",
+    "types": ["vitest/globals"],
     "lib": [
       "dom",
       "dom.iterable",
@@ -18,7 +19,7 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,

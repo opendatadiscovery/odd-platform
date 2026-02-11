@@ -12,7 +12,6 @@ const SkeletonWrapper: React.FC<SkeletonProps> = ({ length = 1, renderContent })
   return (
     <>
       {[...Array(length)].map((_, key) => (
-        // eslint-disable-next-line react/no-array-index-key
         <div key={key} style={{ width: '100%' }}>
           {renderContent({ randWidth, key })}
         </div>

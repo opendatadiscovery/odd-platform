@@ -17,7 +17,7 @@ import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { useTermsRouteParams } from 'routes';
 import TermSearchFilters from './TermSearchFilters/TermSearchFilters';
-import TermsSearchResults from './TermSearchResults/TermSearchResults';
+import TermSearchResults from './TermSearchResults/TermSearchResults';
 import TermSearchHeader from './TermSearchHeader/TermSearchHeader';
 
 const TermSearch: React.FC = () => {
@@ -37,7 +37,7 @@ const TermSearch: React.FC = () => {
       dispatch(createTermSearch({ termSearchFormData }))
         .unwrap()
         .then(termSearch => {
-          navigate(`${termSearch.searchId}`);
+          navigate(termSearch.searchId);
         });
     }
   }, [routerTermSearchId, createTermSearch, isTermSearchCreating]);
@@ -80,7 +80,7 @@ const TermSearch: React.FC = () => {
           >
             <TermSearchHeader />
           </WithPermissionsProvider>
-          <TermsSearchResults />
+          <TermSearchResults />
         </PageWithLeftSidebar.ListContainer>
       </PageWithLeftSidebar.ContentContainer>
     </PageWithLeftSidebar.MainContainer>

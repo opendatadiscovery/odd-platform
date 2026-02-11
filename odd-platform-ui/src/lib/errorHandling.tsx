@@ -13,8 +13,8 @@ export const getErrorResponse = async (response: Response): Promise<AppError> =>
   let body: Record<string, string> = {};
   try {
     body = await response.clone().json();
-  } catch (e) {
-    // do nothing;
+  } catch {
+    // do nothing
   }
 
   return {
@@ -52,8 +52,8 @@ export const showServerErrorToast = async (
   let body: Record<string, string> = {};
   try {
     body = await response.json();
-  } catch (e) {
-    // do nothing;
+  } catch {
+    // do nothing
   }
 
   let message = body?.message || 'An error occurred';

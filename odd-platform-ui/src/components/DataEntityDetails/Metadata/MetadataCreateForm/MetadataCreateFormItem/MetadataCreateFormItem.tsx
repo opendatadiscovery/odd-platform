@@ -19,7 +19,7 @@ import {
   AutocompleteSuggestion,
   Input,
 } from 'components/shared/elements';
-import MetadataValueEditField from '../../MetadataValueEditor/MetadataValueEditor';
+import MetadataValueEditor from '../../MetadataValueEditor/MetadataValueEditor';
 
 const MetadataCreateFormItem: React.FC = () => {
   const { t } = useTranslation();
@@ -224,7 +224,7 @@ const MetadataCreateFormItem: React.FC = () => {
             {capitalize(selectedType)}
           </Box>
           <Box sx={{ mt: 1.5 }}>
-            <MetadataValueEditField
+            <MetadataValueEditor
               fieldName='metadata.value'
               metadataType={selectedType}
               labeled

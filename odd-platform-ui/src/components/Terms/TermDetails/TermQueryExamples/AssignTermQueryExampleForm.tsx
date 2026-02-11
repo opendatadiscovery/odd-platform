@@ -12,9 +12,9 @@ interface AssignTermQueryFormProps {
   termId: number;
 }
 
-type FormData = {
+interface FormData {
   exampleId: number;
-};
+}
 
 const AssignTermQueryExampleForm: React.FC<AssignTermQueryFormProps> = ({
   openBtnEl,

@@ -97,7 +97,7 @@ const DatasetTermActivityField: FC<DatasetTermActivityFieldProps> = ({
   );
 
   const groupTermsByNamespace = (state: ActivityData[]) =>
-    state.reduce<{ [key: string]: ActivityData[] }>(
+    state.reduce<Record<string, ActivityData[]>>(
       (memo, activity) =>
         activity.namespace
           ? {

@@ -13,7 +13,7 @@ import {
 import { AlertIcon, DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import CollectorFormDialog from '../CollectorForm/CollectorForm';
+import CollectorForm from '../CollectorForm/CollectorForm';
 import CollectorItemToken from './CollectorItemToken/CollectorItemToken';
 import * as S from './CollectorItemStyles';
 
@@ -37,7 +37,7 @@ const CollectorItem: FC<CollectorItemProps> = ({ collector }) => {
         </Typography>
         <S.Actions>
           <WithPermissions permissionTo={Permission.COLLECTOR_UPDATE}>
-            <CollectorFormDialog
+            <CollectorForm
               collector={collector}
               btnCreateEl={
                 <Button

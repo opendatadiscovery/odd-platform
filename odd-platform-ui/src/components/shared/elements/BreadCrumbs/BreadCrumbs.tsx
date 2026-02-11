@@ -5,7 +5,7 @@ import ChevronIcon from 'components/shared/icons/ChevronIcon';
 import * as S from './BreadCrumbs.styles';
 
 interface BreadCrumbsProps {
-  pathNames: Array<string | number>;
+  pathNames: (string | number)[];
   labelsMap: Record<string, string | undefined>;
 }
 
