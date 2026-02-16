@@ -11,6 +11,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityCountInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityType;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityUserList;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
@@ -90,7 +91,7 @@ public class ActivityServiceImpl implements ActivityService {
                                           final Long namespaceId,
                                           final List<Long> tagIds,
                                           final List<Long> ownerIds,
-                                          final List<Long> userIds,
+                                          final List<String> usernames,
                                           final ActivityType type,
                                           final ActivityEventType eventType,
                                           final Long lastEventId,
@@ -102,17 +103,17 @@ public class ActivityServiceImpl implements ActivityService {
             eventType != null ? ActivityEventTypeDto.valueOf(eventType.name()) : null;
         if (type == null) {
             return fetchAllActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds, ownerIds,
-                userIds, eventTypeDto, lastEventId, lastEventDateTime);
+                usernames, eventTypeDto, lastEventId, lastEventDateTime);
         }
         return switch (type) {
-            case MY_OBJECTS -> fetchMyActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds, userIds,
+            case MY_OBJECTS -> fetchMyActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds, usernames,
                 eventTypeDto, lastEventId, lastEventDateTime);
             case DOWNSTREAM -> fetchDependentActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds,
-                userIds, eventTypeDto, lastEventId, lastEventDateTime, LineageStreamKind.DOWNSTREAM);
+                usernames, eventTypeDto, lastEventId, lastEventDateTime, LineageStreamKind.DOWNSTREAM);
             case UPSTREAM -> fetchDependentActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds,
-                userIds, eventTypeDto, lastEventId, lastEventDateTime, LineageStreamKind.UPSTREAM);
+                usernames, eventTypeDto, lastEventId, lastEventDateTime, LineageStreamKind.UPSTREAM);
             case ALL -> fetchAllActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds, ownerIds,
-                userIds, eventTypeDto, lastEventId, lastEventDateTime);
+                usernames, eventTypeDto, lastEventId, lastEventDateTime);
         };
     }
 
@@ -121,7 +122,7 @@ public class ActivityServiceImpl implements ActivityService {
                                                     final OffsetDateTime endDate,
                                                     final Integer size,
                                                     final Long dataEntityId,
-                                                    final List<Long> userIds,
+                                                    final List<String> usernames,
                                                     final ActivityEventType eventType,
                                                     final Long lastEventId,
                                                     final OffsetDateTime lastEventDateTime) {
@@ -130,7 +131,7 @@ public class ActivityServiceImpl implements ActivityService {
         }
         final ActivityEventTypeDto eventTypeDto =
             eventType != null ? ActivityEventTypeDto.valueOf(eventType.name()) : null;
-        return activityRepository.findDataEntityActivities(beginDate, endDate, size, dataEntityId, userIds,
+        return activityRepository.findDataEntityActivities(beginDate, endDate, size, dataEntityId, usernames,
                 eventTypeDto, lastEventId, lastEventDateTime)
             .map(activityMapper::mapToActivity);
     }
@@ -142,19 +143,19 @@ public class ActivityServiceImpl implements ActivityService {
                                                      final Long namespaceId,
                                                      final List<Long> tagIds,
                                                      final List<Long> ownerIds,
-                                                     final List<Long> userIds,
+                                                     final List<String> usernames,
                                                      final ActivityEventType eventType) {
         final ActivityEventTypeDto eventTypeDto =
             eventType != null ? ActivityEventTypeDto.valueOf(eventType.name()) : null;
         final Mono<Long> totalCount =
-            getTotalCount(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, userIds, eventTypeDto);
+            getTotalCount(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, usernames, eventTypeDto);
         final Mono<Long> myObjectActivitiesCount =
             getMyObjectActivitiesCount(beginDate, endDate, datasourceId, namespaceId,
-                tagIds, userIds, eventTypeDto);
+                tagIds, usernames, eventTypeDto);
         final Mono<Long> downstreamActivitiesCount = getDependentActivitiesCount(beginDate, endDate, datasourceId,
-            namespaceId, tagIds, userIds, eventTypeDto, LineageStreamKind.DOWNSTREAM);
+            namespaceId, tagIds, usernames, eventTypeDto, LineageStreamKind.DOWNSTREAM);
         final Mono<Long> upstreamActivitiesCount = getDependentActivitiesCount(beginDate, endDate, datasourceId,
-            namespaceId, tagIds, userIds, eventTypeDto, LineageStreamKind.UPSTREAM);
+            namespaceId, tagIds, usernames, eventTypeDto, LineageStreamKind.UPSTREAM);
         return Mono.zip(totalCount, myObjectActivitiesCount, downstreamActivitiesCount, upstreamActivitiesCount)
             .map(function(
                 (total, myObjectsCount, downstreamCount, upstreamCount) -> new ActivityCountInfo()
@@ -165,6 +166,12 @@ public class ActivityServiceImpl implements ActivityService {
             ));
     }
 
+    @Override
+    public Mono<ActivityUserList> getUsersList(final Integer page, final Integer size, final String query) {
+        return activityRepository.getUsersList(page, size, query)
+            .map(activityMapper::mapToActivityUserList);
+    }
+
     private Flux<Activity> fetchAllActivities(final OffsetDateTime beginDate,
                                               final OffsetDateTime endDate,
                                               final Integer size,
@@ -172,12 +179,12 @@ public class ActivityServiceImpl implements ActivityService {
                                               final Long namespaceId,
                                               final List<Long> tagIds,
                                               final List<Long> ownerIds,
-                                              final List<Long> userIds,
+                                              final List<String> usernames,
                                               final ActivityEventTypeDto eventType,
                                               final Long lastEventId,
                                               final OffsetDateTime lastEventDateTime) {
         return activityRepository.findAllActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds,
-                ownerIds, userIds, eventType, lastEventId, lastEventDateTime)
+                ownerIds, usernames, eventType, lastEventId, lastEventDateTime)
             .map(activityMapper::mapToActivity);
     }
 
@@ -187,13 +194,13 @@ public class ActivityServiceImpl implements ActivityService {
                                              final Long datasourceId,
                                              final Long namespaceId,
                                              final List<Long> tagIds,
-                                             final List<Long> userIds,
+                                             final List<String> usernames,
                                              final ActivityEventTypeDto eventType,
                                              final Long lastEventId,
                                              final OffsetDateTime lastEventDateTime) {
         return authIdentityProvider.fetchAssociatedOwner()
             .flatMapMany(owner -> activityRepository.findMyActivities(beginDate, endDate, size, datasourceId,
-                namespaceId, tagIds, userIds, eventType, owner.getId(), lastEventId, lastEventDateTime))
+                namespaceId, tagIds, usernames, eventType, owner.getId(), lastEventId, lastEventDateTime))
             .map(activityMapper::mapToActivity)
             .switchIfEmpty(Flux.empty());
     }
@@ -204,14 +211,14 @@ public class ActivityServiceImpl implements ActivityService {
                                                     final Long datasourceId,
                                                     final Long namespaceId,
                                                     final List<Long> tagIds,
-                                                    final List<Long> userIds,
+                                                    final List<String> usernames,
                                                     final ActivityEventTypeDto eventType,
                                                     final Long lastEventId,
                                                     final OffsetDateTime lastEventDateTime,
                                                     final LineageStreamKind lineageStreamKind) {
         return dataEntityRelationsService.getDependentDataEntityOddrns(lineageStreamKind)
             .flatMapMany(oddrns -> activityRepository.findDependentActivities(beginDate, endDate, size, datasourceId,
-                namespaceId, tagIds, userIds, eventType, oddrns, lastEventId, lastEventDateTime))
+                namespaceId, tagIds, usernames, eventType, oddrns, lastEventId, lastEventDateTime))
             .map(activityMapper::mapToActivity)
             .switchIfEmpty(Flux.empty());
     }
@@ -222,10 +229,10 @@ public class ActivityServiceImpl implements ActivityService {
                                      final Long namespaceId,
                                      final List<Long> tagIds,
                                      final List<Long> ownerIds,
-                                     final List<Long> userIds,
+                                     final List<String> usernames,
                                      final ActivityEventTypeDto eventType) {
         return activityRepository.getTotalActivitiesCount(beginDate, endDate, datasourceId, namespaceId, tagIds,
-                ownerIds, userIds, eventType)
+                ownerIds, usernames, eventType)
             .defaultIfEmpty(0L);
     }
 
@@ -234,12 +241,12 @@ public class ActivityServiceImpl implements ActivityService {
                                                   final Long datasourceId,
                                                   final Long namespaceId,
                                                   final List<Long> tagIds,
-                                                  final List<Long> userIds,
+                                                  final List<String> usernames,
                                                   final ActivityEventTypeDto eventType) {
         return authIdentityProvider.fetchAssociatedOwner()
             .flatMap(
                 owner -> activityRepository.getMyObjectsActivitiesCount(beginDate, endDate, datasourceId, namespaceId,
-                    tagIds, userIds, eventType, owner.getId()))
+                    tagIds, usernames, eventType, owner.getId()))
             .defaultIfEmpty(0L);
     }
 
@@ -248,12 +255,12 @@ public class ActivityServiceImpl implements ActivityService {
                                                    final Long datasourceId,
                                                    final Long namespaceId,
                                                    final List<Long> tagIds,
-                                                   final List<Long> userIds,
+                                                   final List<String> usernames,
                                                    final ActivityEventTypeDto eventType,
                                                    final LineageStreamKind lineageStreamKind) {
         return dataEntityRelationsService.getDependentDataEntityOddrns(lineageStreamKind)
             .flatMap(oddrns -> activityRepository.getDependentActivitiesCount(beginDate, endDate, datasourceId,
-                namespaceId, tagIds, userIds, eventType, oddrns))
+                namespaceId, tagIds, usernames, eventType, oddrns))
             .defaultIfEmpty(0L);
     }
 

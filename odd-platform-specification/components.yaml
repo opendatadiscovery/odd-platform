@@ -4209,6 +4209,30 @@ components:
         body:
           type: string
 
+    ActivityUserList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityUser'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    ActivityUser:
+      type: object
+      properties:
+        owner_id:
+          type: integer
+          format: int64
+        username:
+          type: string
+      required:
+        - name
+
   parameters:
     PageParam:
       name: page
