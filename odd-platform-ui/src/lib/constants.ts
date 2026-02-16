@@ -123,6 +123,8 @@ export const DataEntityClassTypeLabelMap: Map<
     TypeNameEnum.GRAPH_RELATIONSHIP,
     { normal: 'Graph Relationship', plural: 'Graph Relationships' },
   ],
+  [TypeNameEnum.VECTOR_STORE, { normal: 'Vector store', plural: 'Vector stores' }],
+  [TypeNameEnum.LOOKUP_TABLE, { normal: 'Lookup table', plural: 'Lookup tables' }],
 ]);
 
 // content width constants

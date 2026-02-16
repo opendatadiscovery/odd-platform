@@ -103,8 +103,8 @@ importers:
         specifier: ^2.3.1
         version: 2.3.1(@types/react@18.2.39)(react@18.2.0)
       lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+        specifier: v4.17.23
+        version: 4.17.23
       query-string:
         specifier: ^8.1.0
         version: 8.1.0
@@ -3254,8 +3254,8 @@ packages:
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   log-update@6.1.0:
     resolution: {integrity: sha512-9ie8ItPR6tjY5uYJh8K/Zrv/RMZ5VOlOWvtZdEHYSTFKZfIBPQa9tOAEeAWhd+AnIneLJ22w5fjOYtoutpWq5w==}
@@ -6050,7 +6050,7 @@ snapshots:
       classnames: 2.3.2
       d3-path: 1.0.9
       d3-shape: 1.3.7
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 18.2.0
 
@@ -6059,7 +6059,7 @@ snapshots:
       '@types/lodash': 4.14.202
       '@types/react': 18.2.39
       classnames: 2.3.2
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 18.2.0
       reduce-css-calc: 1.3.0
@@ -7075,7 +7075,7 @@ snapshots:
   eslint-plugin-lodash@7.4.0(eslint@9.39.2):
     dependencies:
       eslint: 9.39.2
-      lodash: 4.17.21
+      lodash: 4.17.23
 
   eslint-plugin-prettier@5.5.5(eslint-config-prettier@10.1.8(eslint@9.39.2))(eslint@9.39.2)(prettier@3.7.4):
     dependencies:
@@ -7601,7 +7601,7 @@ snapshots:
       esprima-next: 5.8.4
       gulp-sort: 2.0.0
       i18next: 23.2.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       parse5: 6.0.1
       sortobject: 4.16.0
       through2: 4.0.2
@@ -7986,7 +7986,7 @@ snapshots:
 
   lodash.merge@4.6.2: {}
 
-  lodash@4.17.21: {}
+  lodash@4.17.23: {}
 
   log-update@6.1.0:
     dependencies:
@@ -8736,7 +8736,7 @@ snapshots:
     dependencies:
       clsx: 2.0.0
       eventemitter3: 4.0.7
-      lodash: 4.17.21
+      lodash: 4.17.23
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       react-is: 16.13.1
