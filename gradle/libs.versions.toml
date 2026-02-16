@@ -115,8 +115,8 @@ logback-core = { module = 'ch.qos.logback:logback-core', version.ref = 'logback'
 spring-boot-test = { module = 'org.springframework.boot:spring-boot-starter-test' }
 reactor-test = { module = 'io.projectreactor:reactor-test' }
 testcontainers = { module = 'org.testcontainers:testcontainers', version.ref = 'testcontainers' }
-testcontainers-postgresql = { module = 'org.testcontainers:postgresql', version.ref = 'testcontainers' }
-testcontainers-junit-jupiter = { module = 'org.testcontainers:junit-jupiter', version.ref = 'testcontainers' }
+testcontainers-postgresql = { module = 'org.testcontainers:testcontainers-postgresql', version.ref = 'testcontainers' }
+testcontainers-junit-jupiter = { module = 'org.testcontainers:testcontainers-junit-jupiter', version.ref = 'testcontainers' }
 easy-random-core = { module = 'org.jeasy:easy-random-core', version.ref = 'easy-random-core' }
 protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf-java' }
 snappy-java = { module = 'org.xerial.snappy:snappy-java', version.ref = 'snappy-java' }
