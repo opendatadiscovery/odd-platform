@@ -51,4 +51,9 @@ public interface ReactiveSearchFacetRepository {
                                                                 final int page,
                                                                 final int size,
                                                                 final FacetStateDto state);
+
+    Mono<Map<SearchFilterId, Long>> getLastRunStatusesFacetForDataEntity(final String query,
+                                                                         final int page,
+                                                                         final int size,
+                                                                         final FacetStateDto state);
 }

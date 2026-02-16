@@ -2086,6 +2086,69 @@ paths:
       tags:
         - dataQualityRuns
 
+  /api/dataqatests/latestruns/search:
+    post:
+      summary: Get Data Quality latest runs search uuid
+      description: Get Data Quality latest runs search uuid
+      operationId: createDataQualityLatestRunsSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataQualityLatestRunSearchForm'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SearchFacetsData'
+      tags:
+        - dataQualityRuns
+
+  /api/dataqatests/tablehelath/search:
+    post:
+      summary: Get Data Quality table health search uuid
+      description: Get Data Quality table health search uuid
+      operationId: createDataQualityTableHealthSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataQualityTableHealthSearchForm'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SearchFacetsData'
+      tags:
+        - dataQualityRuns
+
+  /api/dataqatests/monitoredtables/search:
+    post:
+      summary: Get Data Quality monitored tables search uuid
+      description: Get Data Quality monitored tables search uuid
+      operationId: createDataQualityMonitoredTablesSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataQualityBaseSearchForm'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SearchFacetsData'
+      tags:
+        - dataQualityRuns
+
   /api/queryexample:
     get:
       summary: List of QueryExamples
