@@ -25,8 +25,13 @@ public class ArrayFieldComparer<T> implements Comparer<T> {
 
     @Override
     public boolean equals(final String value, final T context) {
-        return fieldExtractor.apply(context).stream()
-            .anyMatch(value::equals);
+        final List<String> listOfElements = fieldExtractor.apply(context)
+            .stream()
+            .toList();
+
+        return value == null
+            ? listOfElements.isEmpty()
+            : listOfElements.stream().anyMatch(value::equals);
     }
 
     @Override
