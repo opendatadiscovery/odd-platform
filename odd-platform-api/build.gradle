@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '3.1.0'
-    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.springframework.boot' version '3.2.12'
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'com.google.cloud.tools.jib' version '3.2.1'
     id 'checkstyle'
     id "org.sonarqube" version "3.3"
@@ -66,6 +66,12 @@ dependencies {
     testImplementation libs.easy.random.core
 
     jooqGenerationContainer libs.testcontainers.postgresql
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.4"
+    }
 }
 
 springBoot {

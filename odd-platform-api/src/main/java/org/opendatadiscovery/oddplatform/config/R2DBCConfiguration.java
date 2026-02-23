@@ -5,9 +5,7 @@ import io.r2dbc.pool.ConnectionPoolConfiguration;
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
-import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -19,6 +17,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.r2dbc.connection.R2dbcTransactionManager;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.transaction.ReactiveTransactionManager;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Configuration
 public class R2DBCConfiguration {
@@ -112,10 +111,11 @@ public class R2DBCConfiguration {
 
     private String getCustomSchemaDBUrl(final String customUrl, final String dataSourceUrl) {
         final String dbUrl = (StringUtils.isNotBlank(customUrl) ? customUrl : dataSourceUrl);
-        final URIBuilder uri = new URIBuilder(URI.create(dbUrl.substring("jdbc:".length())));
+        final String baseUrl = dbUrl.substring("jdbc:".length());
 
-        uri.addParameter(SCHEMA_PART_FOR_CUSTOM_DB_URL, VALUE_PART_FOR_CUSTOM_DB_URL);
-
-        return "r2dbc:" + uri;
+        return "r2dbc:" + UriComponentsBuilder.fromUriString(baseUrl)
+            .queryParam(SCHEMA_PART_FOR_CUSTOM_DB_URL, VALUE_PART_FOR_CUSTOM_DB_URL)
+            .build()
+            .toUriString();
     }
 }
