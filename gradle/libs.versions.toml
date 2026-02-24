@@ -1,8 +1,6 @@
 [versions]
-spring-webflux = '6.0.9'
-spring-aws-param-store = '2.2.6.RELEASE'
-spring-starter-cloud = '3.1.0'
-spring-starter-bootstrap = '3.1.0'
+spring-webflux = '6.1.14'
+spring-cloud-aws = '3.2.1'
 reactor-extra = '3.5.1'
 micrometer-registry-prometheus = '1.9.0'
 ingestion-contract-server = '0.1.40'
@@ -36,7 +34,7 @@ uuid-generator = '4.0.1'
 shedlock-version = '4.42.0'
 json-schema-validator = '1.0.84'
 caffeine = '3.1.1'
-lombok = '1.18.24'
+lombok = '1.18.34'
 testcontainers = '1.19.3'
 slf4j-api = '1.7.30'
 logback = '1.2.11'
@@ -45,14 +43,13 @@ protobuf-java = '3.21.12'
 snappy-java = '1.1.9.1'
 minio = '8.4.6'
 okhttp = '4.10.0'
-spring-mail = '3.1.0'
-spring-freemarker = '3.1.5'
+spring-mail = '3.2.12'
 
 [libraries]
 spring-starter-webflux = { module = 'org.springframework.boot:spring-boot-starter-webflux' }
-spring-starter-cloud = { module = 'org.springframework.cloud:spring-cloud-starter', version.ref = 'spring-starter-cloud' }
-spring-starter-bootstrap = { module = 'org.springframework.cloud:spring-cloud-starter-bootstrap', version.ref = 'spring-starter-bootstrap' }
-spring-aws-param-store = { module = 'org.springframework.cloud:spring-cloud-starter-aws-parameter-store-config', version.ref = 'spring-aws-param-store'}
+spring-starter-cloud = { module = 'org.springframework.cloud:spring-cloud-starter' }
+spring-starter-bootstrap = { module = 'org.springframework.cloud:spring-cloud-starter-bootstrap' }
+spring-aws-param-store = { module = 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store', version.ref = 'spring-cloud-aws' }
 spring-webflux = { module = 'org.springframework:spring-webflux', version.ref = 'spring-webflux' }
 spring-jooq = { module = 'org.springframework.boot:spring-boot-starter-jooq' }
 spring-actuator = { module = 'org.springframework.boot:spring-boot-starter-actuator' }
