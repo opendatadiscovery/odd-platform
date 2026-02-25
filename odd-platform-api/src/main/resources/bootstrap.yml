@@ -1,8 +1,10 @@
-aws:
-  paramstore:
-    prefix: /odd
-    enabled: false
-    profileSeparator: "_"
-    name: platform_config
-  secretsmanager:
-    enabled: false
+spring:
+  cloud:
+    aws:
+      parameterstore:
+        prefix: /odd
+        enabled: false
+        profile-separator: "_"
+        name: platform_config
+      secretsmanager:
+        enabled: false
