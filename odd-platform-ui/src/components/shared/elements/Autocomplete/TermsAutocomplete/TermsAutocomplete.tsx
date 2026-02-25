@@ -83,6 +83,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
     value: FilterOption | string | null
   ) => {
     if (!value) return;
+    if (typeof value !== 'string' && !value.id) return;
     setSelectedTerm(value as TermRef);
     setSearchText(typeof value === 'string' ? value : value.name);
     field.onChange(typeof value === 'string' ? value : value.id);
