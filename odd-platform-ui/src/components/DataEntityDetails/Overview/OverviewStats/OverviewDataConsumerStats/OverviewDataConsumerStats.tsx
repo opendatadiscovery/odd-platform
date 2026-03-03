@@ -21,11 +21,11 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
 
   return (
     <Grid container>
-      <Grid sx={{ ml: 0, mb: 1.25 }} item xs={12}>
+      <Grid sx={{ ml: 0, mb: 1.25 }} size={12}>
         <EntityClassItem entityClassName={DataEntityClassNameEnum.CONSUMER} fullName />
       </Grid>
-      <Grid item container xs={6} alignItems='flex-start' alignContent='flex-start'>
-        <Grid item container xs={12} alignItems='baseline'>
+      <Grid container alignItems='flex-start' alignContent='flex-start' size={6}>
+        <Grid container alignItems='baseline' size={12}>
           <Typography variant='h2'>
             {(inputs?.length || 0) + (unknownInputsCount || 0)}
           </Typography>
@@ -33,7 +33,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
             {t('inputs')}
           </Typography>
         </Grid>
-        <Grid item container xs={12} direction='column' alignItems='flex-start'>
+        <Grid container direction='column' alignItems='flex-start' size={12}>
           {inputs?.slice(0, displayedEntitiesNumber).map(input => (
             <Button
               text={input.internalName || input.externalName}

@@ -30,7 +30,12 @@ const EmptyContentPlaceholder: FC<EmptyContentPlaceholderProps> = ({
   return isContentLoaded && isContentEmpty ? (
     <Grid
       container
-      sx={{ height: fullPage ? `calc(100vh - ${offsetTop}px)` : 'auto', ...sx }}
+      alignItems='center'
+      justifyContent='center'
+      sx={{
+        ...(sx as object),
+        height: fullPage ? `calc(100vh - ${offsetTop}px)` : 'auto',
+      }}
     >
       <Grid
         container
@@ -38,10 +43,10 @@ const EmptyContentPlaceholder: FC<EmptyContentPlaceholderProps> = ({
         justifyContent='center'
         flexDirection={position === 'vertical' ? 'column' : 'row'}
       >
-        <Grid item sx={{ display: 'flex', mr: 1 }}>
+        <Grid sx={{ display: 'flex', mr: 1 }}>
           <NoDataIcon width={iconSize} height={iconSize} />
         </Grid>
-        <Grid item alignItems='center'>
+        <Grid alignItems='center'>
           <Typography variant={fullPage ? 'h2' : 'h4'}>
             {text ?? t('No information to display')}
           </Typography>

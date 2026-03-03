@@ -22,7 +22,6 @@ const RelationshipSkeletonItem = ({ randWidth }: { randWidth: () => string }) =>
     </Grid>
   </>
 );
-
 export const RelationshipSkeleton: React.FC = () => (
   <SkeletonWrapper
     length={3}
@@ -36,13 +35,13 @@ export const RelationshipSkeleton: React.FC = () => (
           borderBottomColor: theme.palette.divider,
         })}
       >
-        <Grid item xs={3} pl={theme => theme.spacing(1)}>
+        <Grid size={3} pl={theme => theme.spacing(1)}>
           <RelationshipSkeletonItem randWidth={randWidth} />
         </Grid>
-        <Grid item xs={2} pl={theme => theme.spacing(1)}>
+        <Grid size={2} pl={theme => theme.spacing(1)}>
           <RelationshipSkeletonItem randWidth={randWidth} />
         </Grid>
-        <Grid item xs={7} pl={theme => theme.spacing(1)}>
+        <Grid size={7} pl={theme => theme.spacing(1)}>
           <RelationshipSkeletonItem randWidth={randWidth} />
         </Grid>
       </Grid>

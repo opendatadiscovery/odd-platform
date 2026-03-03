@@ -1,30 +1,28 @@
-import createTypography, {
-  type TypographyOptions,
-} from '@mui/material/styles/createTypography';
+// Typography options are passed to createTheme which handles responsive styles
 import { createTheme } from '@mui/material/styles';
-import type { CSSObject } from 'styled-components';
 import { breakpoints } from 'theme/breakpoints';
 import { palette } from 'theme/palette';
 import { mapKeysToValue } from 'lib/helpers';
 import { getButtonFontType } from 'components/shared/elements/Button/helpers';
 
-export const { pxToRem } = createTypography(palette, {} as TypographyOptions);
+const htmlFontSize = 16;
+export const pxToRem = (px: number): string => `${px / htmlFontSize}rem`;
 
-export const breakpointDownLgBody1: CSSObject = {
+export const breakpointDownLgBody1 = {
   [createTheme({ breakpoints }).breakpoints.down('md')]: {
     fontSize: pxToRem(14),
     lineHeight: pxToRem(20),
   },
 };
 
-export const breakpointDownLgBody2: CSSObject = {
+export const breakpointDownLgBody2 = {
   [createTheme({ breakpoints }).breakpoints.down('md')]: {
     fontSize: pxToRem(12),
     lineHeight: pxToRem(16),
   },
 };
 
-export const typography = createTypography(palette, {
+export const typography = {
   h0: {
     fontSize: pxToRem(24),
     lineHeight: pxToRem(36),
@@ -162,4 +160,4 @@ export const typography = createTypography(palette, {
       ...breakpointDownLgBody2,
     }
   ),
-});
+};

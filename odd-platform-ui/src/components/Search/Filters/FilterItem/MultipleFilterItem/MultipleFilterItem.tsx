@@ -16,10 +16,10 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({ name, facetName }) => {
 
   return (
     <Grid container>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <MultipleFilterItemAutocomplete name={name} facetName={facetName} />
       </Grid>
-      <Grid display='inline-flex' item xs={12} sx={{ my: 0.25, mx: -0.25 }} container>
+      <Grid display='inline-flex' sx={{ my: 0.25, mx: -0.25 }} container size={12}>
         {selectedOptions?.map(option => (
           <SelectedFilterOption
             key={option.entityId}

@@ -21,17 +21,17 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
 
   return (
     <Grid container>
-      <Grid item xs={12} sx={{ ml: 0, mb: 1.25 }}>
+      <Grid sx={{ ml: 0, mb: 1.25 }} size={12}>
         <EntityClassItem entityClassName={DataEntityClassNameEnum.INPUT} fullName />
       </Grid>
-      <Grid item container xs={6} alignItems='flex-start' alignContent='flex-start'>
-        <Grid item container xs={12} alignItems='baseline'>
+      <Grid container alignItems='flex-start' alignContent='flex-start' size={6}>
+        <Grid container alignItems='baseline' size={12}>
           <Typography variant='h2' sx={{ mr: 0.5 }}>
             {(outputs?.length || 0) + (unknownOutputsCount || 0)}
           </Typography>
           <Typography variant='h4'>{t('outputs')}</Typography>
         </Grid>
-        <Grid item container xs={12} direction='column' alignItems='flex-start'>
+        <Grid container direction='column' alignItems='flex-start' size={12}>
           {outputs?.slice(0, displayedEntitiesNumber).map(output => (
             <Button
               text={output.internalName || output.externalName}

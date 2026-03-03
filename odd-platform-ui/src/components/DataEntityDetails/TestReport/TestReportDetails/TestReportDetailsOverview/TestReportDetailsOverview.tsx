@@ -147,7 +147,7 @@ const TestReportDetailsOverview: React.FC = () => {
           )}
 
           {!!qualityTest?.linkedUrlList?.length && (
-            <Grid item sx={{ mt: 2.25 }} xs={12}>
+            <Grid sx={{ mt: 2.25 }} size={12}>
               <Typography variant='h4'>{t('Links')}</Typography>
               <Grid container sx={{ mt: 1 }}>
                 {qualityTest.linkedUrlList.map(({ name, url }) => (

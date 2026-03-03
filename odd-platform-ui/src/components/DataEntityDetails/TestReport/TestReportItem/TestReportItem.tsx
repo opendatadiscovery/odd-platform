@@ -31,11 +31,29 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
 
   const collapseBtn = (
     <Button
-      sx={{
-        mr: 1,
-        backgroundColor: open ? '#091E42' : '#7A869A',
-        '&:hover': { backgroundColor: open ? '#091E42' : '#7A869A' },
-      }}
+      sx={[
+        {
+          mr: 1,
+        },
+        open
+          ? {
+              backgroundColor: '#091E42',
+            }
+          : {
+              backgroundColor: '#7A869A',
+            },
+        open
+          ? {
+              '&:hover': {
+                backgroundColor: '#091E42',
+              },
+            }
+          : {
+              '&:hover': {
+                backgroundColor: '#7A869A',
+              },
+            },
+      ]}
       buttonType='secondary-sm'
       icon={open ? <MinusIcon width={6} height={6} /> : <PlusIcon width={6} height={6} />}
       aria-label='expand row'
@@ -47,16 +65,11 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
     <Grid container direction='column' wrap='nowrap'>
       <S.TestReportBySuitNameHeader container wrap='nowrap'>
         {collapseBtn}
-        <Grid
-          item
-          container
-          wrap='nowrap'
-          onClick={() => setOpen(prevState => !prevState)}
-        >
-          <Grid item>
+        <Grid container wrap='nowrap' onClick={() => setOpen(prevState => !prevState)}>
+          <Grid>
             <Typography variant='body1'>{suitName}</Typography>
           </Grid>
-          <S.TestRunStatusContainer item container>
+          <S.TestRunStatusContainer container>
             {Object.entries(dataQATestReport).map(
               ([testType, count]) =>
                 count !== 0 && (

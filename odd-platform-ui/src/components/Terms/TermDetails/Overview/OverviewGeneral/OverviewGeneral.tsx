@@ -36,18 +36,18 @@ const OverviewGeneral: React.FC = () => {
 
   return (
     <Grid container>
-      <Grid item container sm={12}>
-        <Grid item sm={12}>
+      <Grid container size={12}>
+        <Grid size={12}>
           <LabeledInfoItem inline label={t('Namespace')} labelWidth={4}>
             {termDetails.namespace?.name}
           </LabeledInfoItem>
         </Grid>
-        <Grid item sm={12}>
+        <Grid size={12}>
           <LabeledInfoItem inline label={t('Created')} labelWidth={4}>
             {createdAt}
           </LabeledInfoItem>
         </Grid>
-        <Grid item sm={12} sx={{ mt: 2 }}>
+        <Grid sx={{ mt: 2 }} size={12}>
           <LabeledInfoItem label={t('Owners')}>
             {ownership?.map(ownershipItem => (
               <OwnerItem key={ownershipItem.id}>

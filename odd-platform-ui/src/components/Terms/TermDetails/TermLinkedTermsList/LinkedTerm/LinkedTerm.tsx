@@ -17,12 +17,11 @@ const LinkedTerm: React.FC<LinkedTermProps> = ({ linkedTerm }) => {
       <Container container>
         <TermLinkedTermsColContainer
           $colType='colmd'
-          item
           container
           justifyContent='space-between'
           wrap='nowrap'
         >
-          <NameContainer container item>
+          <NameContainer container>
             <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
               <Typography ml={0.5} variant='body1' noWrap title={linkedTerm.term.name}>
                 {linkedTerm.term.name}
@@ -30,7 +29,7 @@ const LinkedTerm: React.FC<LinkedTermProps> = ({ linkedTerm }) => {
             </Box>
           </NameContainer>
         </TermLinkedTermsColContainer>
-        <TermLinkedTermsColContainer item $colType='collg'>
+        <TermLinkedTermsColContainer $colType='collg'>
           <Typography variant='body1' title={linkedTerm.term.namespace?.name} noWrap>
             {linkedTerm.term.namespace?.name}
           </Typography>

@@ -71,7 +71,7 @@ const CollectorsListView = () => {
   };
 
   return (
-    <Grid container flexDirection='column' alignItems='center'>
+    <Grid container flexDirection='column'>
       <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 1 }}>
         <Typography variant='h1'>{t('Collectors')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>

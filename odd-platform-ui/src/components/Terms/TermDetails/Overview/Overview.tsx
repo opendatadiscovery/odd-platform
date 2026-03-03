@@ -34,7 +34,7 @@ const Overview: FC = () => {
     <>
       {termDetails && !isTermDetailsFetching && (
         <Grid container spacing={2} sx={{ mt: 0 }}>
-          <Grid item xs={8}>
+          <Grid size={8}>
             <S.DefinitionContainer elevation={9}>
               <TermDefinition
                 termId={termId}
@@ -43,7 +43,7 @@ const Overview: FC = () => {
               />
             </S.DefinitionContainer>
           </Grid>
-          <Grid item xs={4}>
+          <Grid size={4}>
             <S.Container square elevation={0}>
               <WithPermissionsProvider
                 allowedPermissions={[

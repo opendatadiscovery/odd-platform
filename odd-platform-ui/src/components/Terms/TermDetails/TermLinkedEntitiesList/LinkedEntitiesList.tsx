@@ -72,7 +72,7 @@ const LinkedEntitiesList: FC = () => {
   return (
     <Grid>
       <Grid container flexWrap='nowrap' justifyContent='flex-start' sx={{ mt: 2 }}>
-        <Grid item xs={3} sx={{ mr: 1 }}>
+        <Grid sx={{ mr: 1 }} size={3}>
           <Input
             variant='search-m'
             placeholder={t('Search')}
@@ -83,7 +83,7 @@ const LinkedEntitiesList: FC = () => {
             handleSearchClick={handleOnClickSearch}
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid size={2}>
           <AppSelect defaultValue='All entities' onChange={handleOnClickSearch}>
             <AppMenuItem value='All entities' onClick={() => setEntityClassId(undefined)}>
               All entities
@@ -101,22 +101,22 @@ const LinkedEntitiesList: FC = () => {
         </Grid>
       </Grid>
       <TermLinkedEntitiesResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
-        <TermLinkedEntitiesColContainer item $colType='colmd'>
+        <TermLinkedEntitiesColContainer $colType='colmd'>
           <Typography variant='caption'>{t('Name')}</Typography>
         </TermLinkedEntitiesColContainer>
-        <TermLinkedEntitiesColContainer item $colType='collg'>
+        <TermLinkedEntitiesColContainer $colType='collg'>
           <Typography variant='caption'>{t('Namespace')}</Typography>
         </TermLinkedEntitiesColContainer>
-        <TermLinkedEntitiesColContainer item $colType='colsm'>
+        <TermLinkedEntitiesColContainer $colType='colsm'>
           <Typography variant='caption'>{t('Datasource')}</Typography>
         </TermLinkedEntitiesColContainer>
-        <TermLinkedEntitiesColContainer item $colType='colsm'>
+        <TermLinkedEntitiesColContainer $colType='colsm'>
           <Typography variant='caption'>{t('Owner')}</Typography>
         </TermLinkedEntitiesColContainer>
-        <TermLinkedEntitiesColContainer item $colType='colxs'>
+        <TermLinkedEntitiesColContainer $colType='colxs'>
           <Typography variant='caption'>{t('Created')}</Typography>
         </TermLinkedEntitiesColContainer>
-        <TermLinkedEntitiesColContainer item $colType='colxs'>
+        <TermLinkedEntitiesColContainer $colType='colxs'>
           <Typography variant='caption'>{t('Updated')}</Typography>
         </TermLinkedEntitiesColContainer>
       </TermLinkedEntitiesResultsTableHeader>

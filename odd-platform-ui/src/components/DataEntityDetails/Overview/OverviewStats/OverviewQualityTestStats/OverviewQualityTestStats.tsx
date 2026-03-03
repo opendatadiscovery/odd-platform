@@ -40,14 +40,14 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
 
   return (
     <Grid container flexDirection='column'>
-      <Grid item sx={{ mb: 1.25 }}>
+      <Grid sx={{ mb: 1.25 }}>
         <EntityClassItem
           entityClassName={DataEntityClassNameEnum.QUALITY_TEST}
           fullName
         />
       </Grid>
       <S.StatsContainer container>
-        <Grid item lg={4} container flexDirection='column' alignItems='flex-start'>
+        <Grid container flexDirection='column' alignItems='flex-start' size={4}>
           <Typography variant='h4' sx={{ mb: 1 }}>
             {datasetsList?.length || 0}{' '}
             {`dataset${datasetsList?.length === 1 ? '' : 's'}`}
@@ -73,7 +73,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           ) : null}
         </Grid>
         {suiteUrl && (
-          <Grid item lg={4}>
+          <Grid size={4}>
             <Grid container flexDirection='column' alignItems='flex-start'>
               <Typography variant='h4' sx={{ mb: 1 }}>
                 {t('Suite')}
@@ -88,7 +88,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             </Grid>
           </Grid>
         )}
-        <S.Overview item lg={4}>
+        <S.Overview size={4}>
           <Typography variant='h4'>{t('Last execution')}</Typography>
           {qualityTest?.latestRun?.status && (
             <LabeledInfoItem

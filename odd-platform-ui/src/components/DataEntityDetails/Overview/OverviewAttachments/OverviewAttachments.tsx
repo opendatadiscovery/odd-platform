@@ -14,7 +14,7 @@ const OverviewAttachments: FC = () => {
   const { data, isError, isLoading } = useDataEntityAttachments({ dataEntityId });
 
   return (
-    <Grid item container>
+    <Grid container>
       <Grid container>
         <AttachmentsHeader />
         {isLoading && (

@@ -22,22 +22,22 @@ const QueryExampleDetailsLinkedEntities = ({
         })}
         wrap='nowrap'
       >
-        <Grid item xs={2} pl={1}>
+        <Grid pl={1} size={2}>
           <Typography variant='caption'>{t('Name')}</Typography>
         </Grid>
-        <Grid item xs={4} pl={1}>
+        <Grid pl={1} size={4}>
           <Typography variant='caption'>{t('Namespace')}</Typography>
         </Grid>
-        <Grid item xs={2} pl={1}>
+        <Grid pl={1} size={2}>
           <Typography variant='caption'>{t('Datasource')}</Typography>
         </Grid>
-        <Grid item xs={2} pl={1}>
+        <Grid pl={1} size={2}>
           <Typography variant='caption'>{t('Owner')}</Typography>
         </Grid>
-        <Grid item xs={1} pl={1}>
+        <Grid pl={1} size={1}>
           <Typography variant='caption'>{t('Created')}</Typography>
         </Grid>
-        <Grid item xs={1} pl={1}>
+        <Grid pl={1} size={1}>
           <Typography variant='caption'>{t('Updated')}</Typography>
         </Grid>
       </Grid>

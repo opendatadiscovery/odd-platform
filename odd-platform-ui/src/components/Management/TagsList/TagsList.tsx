@@ -68,7 +68,7 @@ const TagsListView = () => {
   };
 
   return (
-    <Grid container flexDirection='column' alignItems='center'>
+    <Grid container flexDirection='column'>
       <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 1 }}>
         <Typography variant='h1'>{t('Tags')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
@@ -98,17 +98,17 @@ const TagsListView = () => {
         </WithPermissions>
       </Grid>
       <Grid sx={{ borderBottom: '1px solid', borderBottomColor: 'divider' }} container>
-        <Grid lg={4} pl={1} item>
+        <Grid pl={1} size={4}>
           <Typography variant='subtitle2' color='texts.hint'>
             {t('Name')}
           </Typography>
         </Grid>
-        <Grid lg={5} item>
+        <Grid size={5}>
           <Typography variant='subtitle2' color='texts.hint'>
             {t('Priority')}
           </Typography>
         </Grid>
-        <Grid item lg={3} />
+        <Grid size={3} />
       </Grid>
       {tagsList.length > 0 && (
         <ScrollableContainer $offsetY={140} id='tags-list' sx={{ width: '100%' }}>

@@ -24,16 +24,16 @@ const TestRunItem: React.FC<QualityTestRunItemProps> = ({
 
   return (
     <Container container>
-      <ColContainer item $colType='md'>
+      <ColContainer $colType='md'>
         <Typography variant='body1'>
           {dataQATestRun.startTime &&
             qualityTestRunFormattedDateTime(dataQATestRun.startTime.getTime())}
         </Typography>
       </ColContainer>
-      <ColContainer item $colType='sm'>
+      <ColContainer $colType='sm'>
         <TestRunStatusItem sx={{ ml: -0.5 }} typeName={dataQATestRun.status} />
       </ColContainer>
-      <ColContainer item $colType='lg'>
+      <ColContainer $colType='lg'>
         <Typography variant='body1' title={dataQATestRun.statusReason} noWrap>
           {dataQATestRun.statusReason}
         </Typography>
@@ -48,7 +48,7 @@ const TestRunItem: React.FC<QualityTestRunItemProps> = ({
           </StatusReasonModalBtnContainer>
         )}
       </ColContainer>
-      <ColContainer item $colType='sm'>
+      <ColContainer $colType='sm'>
         <Typography variant='body1'>
           {dataQATestRun.endTime &&
             dataQATestRun.startTime &&

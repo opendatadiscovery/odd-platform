@@ -16,15 +16,14 @@ export const EntityRelationship: React.FC<EntityRelationshipProps> = ({
   sourceDataEntity,
   erdRelationship,
 }) => (
-  <Grid item container flexWrap='nowrap' columnGap={1}>
+  <Grid container flexWrap='nowrap' columnGap={1}>
     <Grid
-      item
       container
-      xs={2}
       direction='column'
       alignItems='flex-start'
       alignContent='flex-start'
       sx={{ overflow: 'hidden' }}
+      size={2}
     >
       <Typography variant='h4' sx={{ mb: 2 }}>
         Parent:
@@ -36,24 +35,22 @@ export const EntityRelationship: React.FC<EntityRelationshipProps> = ({
       />
     </Grid>
     <Grid
-      item
       container
-      xs={4}
       alignItems='center'
       justifyContent='center'
       flex='none'
       sx={{ p: 2 }}
+      size={4}
     >
       <RelationshipIcon type={erdRelationship.cardinality} />
     </Grid>
     <Grid
-      item
       container
-      xs={2}
       direction='column'
       alignItems='flex-start'
       alignContent='flex-start'
       sx={{ overflow: 'hidden' }}
+      size={2}
     >
       <Typography variant='h4' sx={{ mb: 2 }}>
         Child:
@@ -64,19 +61,18 @@ export const EntityRelationship: React.FC<EntityRelationshipProps> = ({
         oddrn={sourceDataEntity.oddrn || ''}
       />
     </Grid>
-    <Grid item container xs={2} alignItems='flex-start' alignContent='flex-start'>
+    <Grid container alignItems='flex-start' alignContent='flex-start' size={2}>
       <Typography variant='h4' sx={{ mb: 2 }}>
         Cardinality:
       </Typography>
       {(erdRelationship.cardinality ?? 'Not specified').replaceAll('_', ' ')}
     </Grid>
     <Grid
-      item
       container
-      xs={2}
       direction='column'
       alignItems='flex-start'
       alignContent='flex-start'
+      size={2}
     >
       <Typography variant='h4' sx={{ mb: 2 }}>
         Is Identifying:

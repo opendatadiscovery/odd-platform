@@ -146,13 +146,12 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
           {dqSLAReport ? (
             <Grid container direction='column' sx={{ py: 0.5 }}>
               <Grid
-                item
                 container
                 wrap='nowrap'
                 justifyContent='space-between'
                 alignItems='center'
               >
-                <Grid item container alignItems='center'>
+                <Grid container alignItems='center'>
                   <Typography variant='h4' sx={{ mr: 0.5 }}>
                     SLA
                   </Typography>
@@ -165,7 +164,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
                     <InformationIcon width={14} height={14} />
                   </AppTooltip>
                 </Grid>
-                <Grid item>
+                <Grid>
                   <CopyButton stringToCopy={slaRef} buttonType='secondary-m-icon' />
                 </Grid>
               </Grid>
@@ -176,7 +175,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
                 flexWrap='nowrap'
                 alignItems='center'
               >
-                <Grid item container flexWrap='nowrap' width='fit-content'>
+                <Grid container flexWrap='nowrap' width='fit-content'>
                   <Typography variant='h3' color={`slaStatus.${dqSLAReport.slaColour}`}>
                     {dqSLAReport?.success}
                   </Typography>
@@ -184,7 +183,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
                     /{dqSLAReport?.total}
                   </Typography>
                 </Grid>
-                <Grid sx={{ ml: 1 }} item container flexDirection='column'>
+                <Grid sx={{ ml: 1 }} container flexDirection='column'>
                   <S.Bar
                     $slaColor={dqSLAReport.slaColour}
                     value={slaBarValue}

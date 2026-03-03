@@ -8,10 +8,8 @@ interface Props {
 
 const MultipleFilterItem: React.FC<Props> = ({ autocomplete, options }) => (
   <Grid container>
-    <Grid item xs={12}>
-      {autocomplete}
-    </Grid>
-    <Grid display='inline-flex' item xs={12} sx={{ my: 0.25, mx: -0.25 }} container>
+    <Grid size={12}>{autocomplete}</Grid>
+    <Grid display='inline-flex' sx={{ my: 0.25, mx: -0.25 }} container size={12}>
       {options}
     </Grid>
   </Grid>

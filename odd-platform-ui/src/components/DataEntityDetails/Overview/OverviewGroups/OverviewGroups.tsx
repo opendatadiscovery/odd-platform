@@ -80,12 +80,11 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
         </Box>
       ) : (
         <Grid
-          item
-          xs={12}
           container
           alignItems='center'
           justifyContent='flex-start'
           wrap='nowrap'
+          size={12}
         >
           <Typography variant='subtitle2'>{t('Not created')}.</Typography>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TO_GROUP}>

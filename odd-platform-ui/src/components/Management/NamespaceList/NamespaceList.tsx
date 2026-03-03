@@ -70,7 +70,7 @@ const NamespaceList = () => {
   };
 
   return (
-    <Grid container flexDirection='column' alignItems='center'>
+    <Grid container flexDirection='column'>
       <Grid container sx={{ mb: 1 }} alignItems='center' justifyContent='space-between'>
         <Typography variant='h1'>{t('Namespaces')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>

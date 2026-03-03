@@ -29,7 +29,7 @@ const TermQueryExamples: React.FC = () => {
 
   return (
     <Grid container gap={2} mt={2}>
-      <Grid item display='flex' justifyContent='end' alignItems='center' xs={12}>
+      <Grid display='flex' justifyContent='end' alignItems='center' size={12}>
         <WithPermissions permissionTo={Permission.QUERY_EXAMPLE_TERM_CREATE}>
           <AssignTermQueryExampleForm
             termId={termId}
@@ -43,7 +43,7 @@ const TermQueryExamples: React.FC = () => {
           />
         </WithPermissions>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <QueryExamplesListHeader />
         {queryExamples.map(qe => (
           <QueryExamplesListItem

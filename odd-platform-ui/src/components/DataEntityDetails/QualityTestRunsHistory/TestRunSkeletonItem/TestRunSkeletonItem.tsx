@@ -9,13 +9,13 @@ interface SkeletonProps {
 
 const TestRunSkeletonItem: React.FC<SkeletonProps> = ({ width }) => (
   <Grid container sx={{ py: 1.25, px: 1 }} wrap='nowrap'>
-    <Grid item xs={3}>
+    <Grid size={3}>
       <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
-    <Grid item xs={7}>
+    <Grid size={7}>
       <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
-    <Grid item xs={2}>
+    <Grid size={2}>
       <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
   </Grid>

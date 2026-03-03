@@ -70,10 +70,10 @@ const TermSearch: React.FC = () => {
   return (
     <PageWithLeftSidebar.MainContainer>
       <PageWithLeftSidebar.ContentContainer container spacing={2}>
-        <PageWithLeftSidebar.LeftSidebarContainer item xs={3}>
+        <PageWithLeftSidebar.LeftSidebarContainer size={3}>
           <TermSearchFilters />
         </PageWithLeftSidebar.LeftSidebarContainer>
-        <PageWithLeftSidebar.ListContainer item xs={9}>
+        <PageWithLeftSidebar.ListContainer size={9}>
           <WithPermissionsProvider
             allowedPermissions={[Permission.TERM_CREATE]}
             resourcePermissions={[]}

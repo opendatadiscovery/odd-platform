@@ -43,7 +43,7 @@ const QueryExampleDetailsContainer: React.FC = () => {
 
   return queryExampleDetails && !isLoading ? (
     <Grid container gap={2} flexDirection='column'>
-      <Grid item display='flex' alignItems='center' justifyContent='space-between'>
+      <Grid display='flex' alignItems='center' justifyContent='space-between'>
         <Typography variant='h1'>{`Query Example #${exampleId}`}</Typography>
         <Box display='flex' alignItems='center'>
           <TimeGapIcon />
@@ -64,13 +64,13 @@ const QueryExampleDetailsContainer: React.FC = () => {
           />
         </Box>
       </Grid>
-      <Grid item alignItems='center'>
+      <Grid alignItems='center'>
         <QueryExampleDetailsTabs
           linkedEntitiesHint={queryExampleDetails?.linkedEntities.pageInfo.total}
           linkedTermsHint={queryExampleDetails?.linkedTerms?.items.length}
         />
       </Grid>
-      <Grid item container gap={2} flexDirection='column' alignItems='start'>
+      <Grid container gap={2} flexDirection='column' alignItems='start'>
         {tab === 'overview' && (
           <QueryExampleDetailsOverview
             definition={queryExampleDetails.definition}

@@ -25,12 +25,12 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
 
   return (
     <S.Container container>
-      <Grid item>
+      <Grid>
         <Typography variant='body1' noWrap title={namespace.name}>
           {namespace.name}
         </Typography>
       </Grid>
-      <S.ActionsContainer item>
+      <S.ActionsContainer>
         <WithPermissions permissionTo={Permission.NAMESPACE_UPDATE}>
           <NamespaceForm
             namespace={namespace}

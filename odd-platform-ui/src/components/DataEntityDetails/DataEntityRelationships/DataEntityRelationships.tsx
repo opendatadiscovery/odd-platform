@@ -26,7 +26,7 @@ const DataEntityRelationships: React.FC = () => {
 
   return (
     <Grid container gap={2} mt={2}>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <RelationshipListHeader />
         {relationshipDetailsList.map(relationshipDetails => (
           <RelationshipListItem

@@ -37,7 +37,7 @@ const LinkedColumnsList: FC = () => {
   return (
     <Grid>
       <Grid container flexWrap='nowrap' justifyContent='flex-start' sx={{ mt: 2 }}>
-        <Grid item xs={3} sx={{ mr: 1 }}>
+        <Grid sx={{ mr: 1 }} size={3}>
           <Input
             variant='search-m'
             placeholder={t('Search')}
@@ -50,19 +50,19 @@ const LinkedColumnsList: FC = () => {
         </Grid>
       </Grid>
       <TermLinkedColumnsResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
-        <TermLinkedColumnsColContainer item $colType='collg'>
+        <TermLinkedColumnsColContainer $colType='collg'>
           <Typography variant='caption'>{t('Name')}</Typography>
         </TermLinkedColumnsColContainer>
-        <TermLinkedColumnsColContainer item $colType='colmd'>
+        <TermLinkedColumnsColContainer $colType='colmd'>
           <Typography variant='caption'>{t('Dataset')}</Typography>
         </TermLinkedColumnsColContainer>
-        <TermLinkedColumnsColContainer item $colType='colmd'>
+        <TermLinkedColumnsColContainer $colType='colmd'>
           <Typography variant='caption'>{t('Namespace')}</Typography>
         </TermLinkedColumnsColContainer>
-        <TermLinkedColumnsColContainer item $colType='colsm'>
+        <TermLinkedColumnsColContainer $colType='colsm'>
           <Typography variant='caption'>{t('Datasource')}</Typography>
         </TermLinkedColumnsColContainer>
-        <TermLinkedColumnsColContainer item $colType='colsm'>
+        <TermLinkedColumnsColContainer $colType='colsm'>
           <Typography variant='caption'>{t('Owner')}</Typography>
         </TermLinkedColumnsColContainer>
       </TermLinkedColumnsResultsTableHeader>

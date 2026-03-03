@@ -51,7 +51,7 @@ const Overview: React.FC = () => {
     <>
       {dataEntityDetails && !isDataEntityDetailsFetching ? (
         <Grid container spacing={2} sx={{ mt: 0 }}>
-          <Grid item xs={9}>
+          <Grid size={9}>
             <SectionContainer elevation={9}>
               <OverviewStats />
             </SectionContainer>
@@ -90,7 +90,7 @@ const Overview: React.FC = () => {
             </SectionContainer>
             <OverviewMetrics showOverview={isDataset} />
           </Grid>
-          <Grid item xs={3}>
+          <Grid size={3}>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
                 allowedPermissions={[

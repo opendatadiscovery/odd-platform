@@ -48,27 +48,15 @@ const OwnerAssociationsActive: React.FC<OwnerAssociationsActiveProps> = ({ size 
   );
 
   return (
-    <Grid container flexDirection='column' alignItems='center'>
+    <Grid container flexDirection='column'>
       <S.TableHeader container>
-        <Grid item lg={2}>
-          {tableCellText(t('User name'))}
-        </Grid>
-        <Grid item lg={2}>
-          {tableCellText(t('Owner name'))}
-        </Grid>
-        <Grid item lg={2}>
-          {tableCellText('Role')}
-        </Grid>
-        <Grid item lg={1.5}>
-          {tableCellText(t('Provider'))}
-        </Grid>
-        <Grid item lg={1.5}>
-          {tableCellText(t('Resolved by'))}
-        </Grid>
-        <Grid item lg={1.5}>
-          {tableCellText(t('Resolved at'))}
-        </Grid>
-        <Grid item lg={1.5} />
+        <Grid size={2}>{tableCellText(t('User name'))}</Grid>
+        <Grid size={2}>{tableCellText(t('Owner name'))}</Grid>
+        <Grid size={2}>{tableCellText('Role')}</Grid>
+        <Grid size={1.5}>{tableCellText(t('Provider'))}</Grid>
+        <Grid size={1.5}>{tableCellText(t('Resolved by'))}</Grid>
+        <Grid size={1.5}>{tableCellText(t('Resolved at'))}</Grid>
+        <Grid size={1.5} />
       </S.TableHeader>
       {activeAssociations.length > 0 && (
         <ScrollableContainer container id='active-associations-list'>
