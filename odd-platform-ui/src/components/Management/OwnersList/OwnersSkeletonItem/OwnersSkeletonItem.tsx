@@ -12,7 +12,7 @@ const OwnersSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
     length={length}
     renderContent={({ randWidth, key }) => (
       <Grid key={key} container sx={{ py: 1.5, px: 1 }} wrap='nowrap'>
-        <Grid item xs={3}>
+        <Grid size={3}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
       </Grid>

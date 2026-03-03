@@ -29,14 +29,14 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
 
   return (
     <S.Container container>
-      <Grid item lg={3.53}>
+      <Grid size={3.53}>
         <Typography variant='body1' noWrap title={name}>
           {name}
         </Typography>
       </Grid>
-      <Grid item container lg={6.73} flexWrap='nowrap' />
-      <Grid item lg={2}>
-        <S.ActionsContainer container item>
+      <Grid container flexWrap='nowrap' size={6.73} />
+      <Grid size={2}>
+        <S.ActionsContainer container>
           <Button
             text={
               isAdministrator || !hasAccessTo(Permission.POLICY_UPDATE)

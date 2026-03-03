@@ -143,10 +143,10 @@ const OwnerAssociationForm: React.FC = () => {
 
   return (
     <Grid container>
-      <Grid item xs={12} container justifyContent='center'>
+      <Grid container justifyContent='center' size={12}>
         <UserSyncIcon sx={{ width: '76px', height: '41px' }} />
       </Grid>
-      <Grid item xs={12} container alignItems='center' sx={{ mt: 2 }} direction='column'>
+      <Grid container alignItems='center' sx={{ mt: 2 }} direction='column' size={12}>
         <Typography variant='h3'>
           {identity?.username ? (
             <>
@@ -159,7 +159,7 @@ const OwnerAssociationForm: React.FC = () => {
           {t('This will allow you to bind existing entities in your account.')}
         </Typography>
       </Grid>
-      <Grid item xs={12} container alignItems='center' direction='column'>
+      <Grid container alignItems='center' direction='column' size={12}>
         <S.FormContainer
           id='owner-connect-form'
           onSubmit={methods.handleSubmit(onSubmit)}
@@ -202,11 +202,10 @@ const OwnerAssociationForm: React.FC = () => {
                     />
                     {possibleOwners.length ? (
                       <S.SuggestedOwnersContainer
-                        item
-                        xs={12}
                         container
                         direction='column'
                         alignItems='flex-start'
+                        size={12}
                       >
                         <Typography variant='subtitle2'>{t("Maybe it's you")}</Typography>
                         {possibleOwners.map(owner => (

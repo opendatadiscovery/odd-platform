@@ -20,7 +20,7 @@ const EntityClassItem: React.FC<EntityClassItemProps> = ({
     $entityClassName={entityClassName}
     $large={large}
     sx={sx}
-    component='span'
+    as='span'
     title={entityClassName && DataEntityClassLabelMap.get(entityClassName)?.normal}
   >
     {entityClassName &&

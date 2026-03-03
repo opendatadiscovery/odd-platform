@@ -20,12 +20,12 @@ const AppErrorPage: React.FC<AppErrorPageProps> = ({
   return showError ? (
     <Grid container height={`calc(100vh - ${toolbarHeight}px - ${offsetTop}px)`}>
       <Grid container alignItems='center' justifyContent='center'>
-        <Grid item>
+        <Grid>
           <Typography variant='errorCode' sx={{ mr: 4 }}>
             {error?.status}
           </Typography>
         </Grid>
-        <Grid item alignItems='center'>
+        <Grid alignItems='center'>
           <Typography variant='h1'>{error?.statusText ?? t('Unknown Error')}</Typography>
           <Grid container alignItems='center'>
             <Typography variant='body1'>{t('Return to the')}</Typography>

@@ -57,8 +57,8 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
 
   return (
     <Grid container>
-      <Grid item container justifyContent='space-between'>
-        <Grid item container alignItems='center' xs={9}>
+      <Grid container justifyContent='space-between'>
+        <Grid container alignItems='center' size={9}>
           <Typography variant='h1' title={field.internalName ?? field.name} noWrap>
             {field.internalName ?? field.name}
           </Typography>
@@ -84,7 +84,7 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
           />
         </Grid>
         {!field.isPrimaryKey && !!lookupTableField && lookupTableId && (
-          <Grid item display='flex' alignItems='center'>
+          <Grid display='flex' alignItems='center'>
             <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DEFINITION_UPDATE}>
               <ColumnForm
                 btnEl={

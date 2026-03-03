@@ -31,13 +31,13 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
 
   return (
     <S.Container container>
-      <Grid item lg={4}>
+      <Grid size={4}>
         <Typography variant='body1'>{name}</Typography>
       </Grid>
-      <Grid item lg={6}>
+      <Grid size={6}>
         <OwnerRoleCell roles={roles} />
       </Grid>
-      <S.ActionsContainer container item lg={2}>
+      <S.ActionsContainer container size={2}>
         <WithPermissions permissionTo={Permission.OWNER_UPDATE}>
           <OwnerForm
             ownerId={ownerId}

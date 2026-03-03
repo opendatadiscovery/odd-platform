@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Variant } from '@mui/material/styles/createTypography';
+import { type TypographyVariant } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 import { type EventType } from 'lib/interfaces';
 import LabelItem from 'components/shared/elements/LabelItem/LabelItem';
@@ -8,7 +8,7 @@ import * as S from 'components/shared/elements/Activity/ActivityFields/OwnerActi
 export interface OwnerWithRoleProps {
   ownerName?: string;
   roleName?: string;
-  ownerTypographyVariant?: Variant;
+  ownerTypographyVariant?: TypographyVariant;
   typeOfChange?: EventType;
 }
 

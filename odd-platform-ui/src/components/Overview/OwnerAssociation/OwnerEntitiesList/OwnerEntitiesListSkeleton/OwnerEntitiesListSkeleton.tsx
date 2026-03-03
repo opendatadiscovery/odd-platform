@@ -11,7 +11,7 @@ const OwnerEntitiesListSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   );
 
   const dataListSkeleton = (key: number) => (
-    <Grid container item key={key} xs={3} justifyContent='center' mr={3}>
+    <Grid container key={key} justifyContent='center' mr={3} size={3}>
       <Skeleton width={width} height='34px' sx={{ mb: 2 }} />
       {[...Array(5)].map((_, id) => dataSkeleton(id))}
     </Grid>

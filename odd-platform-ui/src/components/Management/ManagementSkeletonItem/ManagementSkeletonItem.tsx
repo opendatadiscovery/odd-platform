@@ -13,7 +13,7 @@ const ManagementSkeletonItem: React.FC<SkeletonProps> = ({ length = 5 }) => (
     length={length}
     renderContent={({ randWidth, key }) => (
       <Grid container sx={{ py: 1.5, px: 1 }} wrap='nowrap' key={key}>
-        <Grid item xs={3}>
+        <Grid size={3}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
       </Grid>

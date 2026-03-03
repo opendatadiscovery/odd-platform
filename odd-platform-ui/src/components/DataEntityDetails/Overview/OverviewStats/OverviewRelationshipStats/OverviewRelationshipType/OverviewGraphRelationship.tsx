@@ -15,7 +15,7 @@ const OverviewGraphRelationship: React.FC<OverviewGraphRelationshipProps> = ({
 
   return (
     <Grid container>
-      <Grid item xs={12} sx={{ mb: 1.25 }}>
+      <Grid sx={{ mb: 1.25 }} size={12}>
         <EntityClassItem
           entityClassName={DataEntityClassNameEnum.RELATIONSHIP}
           fullName
@@ -28,14 +28,13 @@ const OverviewGraphRelationship: React.FC<OverviewGraphRelationshipProps> = ({
           graphRelationship={relationshipDetails.graphRelationship!}
         />
       )}
-      <Grid item container flexWrap='nowrap' columnGap={1} sx={{ my: 1.25 }}>
+      <Grid container flexWrap='nowrap' columnGap={1} sx={{ my: 1.25 }}>
         <Grid
-          item
           container
-          xs={6}
           direction='column'
           alignItems='flex-start'
           alignContent='flex-start'
+          size={6}
         >
           <Typography variant='h4' sx={{ mb: 1.25 }}>
             Attributes:

@@ -78,7 +78,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
 
   return (
     <S.Container container wrap='nowrap'>
-      <S.LabelContainer item sm={2}>
+      <S.LabelContainer size={2}>
         <AppTooltip
           title={
             isNestedField(metadataItem.field.name)
@@ -95,7 +95,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
           </S.Label>
         </AppTooltip>
       </S.LabelContainer>
-      <Grid item container wrap='nowrap' zeroMinWidth>
+      <Grid container wrap='nowrap' sx={{ minWidth: 0 }}>
         {editMode ? (
           <FormProvider {...methods}>
             <S.EditForm onSubmit={methods.handleSubmit(handleUpdate)}>

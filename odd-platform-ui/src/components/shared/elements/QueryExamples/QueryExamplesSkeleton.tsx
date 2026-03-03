@@ -22,7 +22,6 @@ const QueryExamplesSkeletonItem = ({ randWidth }: { randWidth: () => string }) =
     </Grid>
   </>
 );
-
 const QueryExamplesSkeleton: React.FC = () => (
   <SkeletonWrapper
     length={3}
@@ -36,13 +35,13 @@ const QueryExamplesSkeleton: React.FC = () => (
           borderBottomColor: theme.palette.divider,
         })}
       >
-        <Grid item xs={4} pl={theme => theme.spacing(1)}>
+        <Grid size={4} pl={theme => theme.spacing(1)}>
           <QueryExamplesSkeletonItem randWidth={randWidth} />
         </Grid>
-        <Grid item xs={5} pl={theme => theme.spacing(1)}>
+        <Grid size={5} pl={theme => theme.spacing(1)}>
           <QueryExamplesSkeletonItem randWidth={randWidth} />
         </Grid>
-        <Grid item xs={3} pl={theme => theme.spacing(1)}>
+        <Grid size={3} pl={theme => theme.spacing(1)}>
           <QueryExamplesSkeletonItem randWidth={randWidth} />
         </Grid>
       </Grid>

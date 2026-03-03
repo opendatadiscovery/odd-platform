@@ -35,7 +35,7 @@ const DatasetDataTableRowCellDate: React.FC<Props> = ({
 
   return isEditing ? (
     <AppDatePicker
-      inputFormat={POSTGRES_DATE_FORMAT}
+      format={POSTGRES_DATE_FORMAT}
       defaultDate={defaultDate}
       onChange={handleChange}
     />

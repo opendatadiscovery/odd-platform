@@ -54,8 +54,8 @@ const LookupTables: React.FC = () => {
   return (
     <ListLayout>
       <Grid container flexDirection='column' gap={2}>
-        <Grid item container flexDirection='column' gap={1}>
-          <Grid item container alignItems='center' justifyContent='space-between'>
+        <Grid container flexDirection='column' gap={1}>
+          <Grid container alignItems='center' justifyContent='space-between'>
             <Typography variant='h1'>{t('Lookup Tables')}</Typography>
             <Typography variant='subtitle1' color='texts.info'>
               <NumberFormatted value={facets?.total} /> {t('lookup tables overall')}
@@ -82,7 +82,7 @@ const LookupTables: React.FC = () => {
             </WithPermissions>
           </Grid>
         </Grid>
-        <Grid item>
+        <Grid>
           <LookupTablesList />
         </Grid>
       </Grid>

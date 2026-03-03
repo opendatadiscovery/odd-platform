@@ -29,25 +29,25 @@ const ResolvedAssociationRequest: React.FC<Props> = ({
 
   return (
     <S.AssociationsItemContainer container>
-      <Grid item lg={1.5}>
+      <Grid size={1.5}>
         <Typography variant='body1' noWrap title={username}>
           {username}
         </Typography>
       </Grid>
-      <Grid item lg={1.5}>
+      <Grid size={1.5}>
         <Typography variant='body1' noWrap title={ownerName}>
           {ownerName}
         </Typography>
       </Grid>
-      <Grid item lg={2}>
+      <Grid size={2}>
         <OwnerRoleCell roles={roles} />
       </Grid>
-      <Grid item lg={1.5}>
+      <Grid size={1.5}>
         <Typography variant='body1' noWrap title={provider}>
           {provider}
         </Typography>
       </Grid>
-      <Grid item lg={2}>
+      <Grid size={2}>
         <Typography
           variant='body1'
           noWrap
@@ -56,10 +56,10 @@ const ResolvedAssociationRequest: React.FC<Props> = ({
           {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity.username}
         </Typography>
       </Grid>
-      <Grid item lg={1.5}>
+      <Grid size={1.5}>
         <RequestStatus status={status} />
       </Grid>
-      <Grid item lg={2}>
+      <Grid size={2}>
         <Typography variant='body1' noWrap>
           {statusUpdatedAt &&
             associationRequestFormattedDateTime(statusUpdatedAt?.getTime())}

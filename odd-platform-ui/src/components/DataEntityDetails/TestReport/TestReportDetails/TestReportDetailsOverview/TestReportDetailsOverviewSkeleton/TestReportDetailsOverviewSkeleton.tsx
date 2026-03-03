@@ -9,7 +9,7 @@ interface SkeletonProps {
 
 const TestReportDetailsOverviewSkeleton: React.FC<SkeletonProps> = ({ length }) => {
   const skeletonItem = (xs: GridSize, width: string) => (
-    <Grid item xs={xs}>
+    <Grid size={xs}>
       <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
   );

@@ -22,10 +22,10 @@ const QueryExampleDetailsLinkedTerms = ({
         })}
         wrap='nowrap'
       >
-        <Grid item xs={2} pl={1}>
+        <Grid pl={1} size={2}>
           <Typography variant='caption'>{t('Name')}</Typography>
         </Grid>
-        <Grid item xs={4} pl={1}>
+        <Grid pl={1} size={4}>
           <Typography variant='caption'>{t('Namespace')}</Typography>
         </Grid>
       </Grid>

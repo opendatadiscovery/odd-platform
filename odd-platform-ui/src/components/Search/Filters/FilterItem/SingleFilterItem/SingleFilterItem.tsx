@@ -38,7 +38,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
 
   return facetOptions.length ? (
     <Grid container>
-      <Grid container item xs={12}>
+      <Grid container size={12}>
         <AppSelect
           sx={{ mt: 2 }}
           label={name}

@@ -72,21 +72,21 @@ const TestRunsHistory: React.FC = () => {
         ))}
       </AppSelect>
       <RunsTableHeader container wrap='nowrap' sx={{ mt: 2 }}>
-        <ColContainer item $colType='md'>
+        <ColContainer $colType='md'>
           <Typography variant='caption'>{t('Start time')}</Typography>
         </ColContainer>
-        <ColContainer item $colType='sm'>
+        <ColContainer $colType='sm'>
           <Typography variant='caption'>{t('Status')}</Typography>
         </ColContainer>
-        <ColContainer item $colType='lg'>
+        <ColContainer $colType='lg'>
           <Typography variant='caption'>{t('Status reason')}</Typography>
         </ColContainer>
-        <ColContainer item $colType='sm'>
+        <ColContainer $colType='sm'>
           <Typography variant='caption'>{t('Duration')}</Typography>
         </ColContainer>
       </RunsTableHeader>
       <Grid container>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <InfiniteScroll
             next={fetchPage}
             hasMore={!!pageInfo?.hasNext}

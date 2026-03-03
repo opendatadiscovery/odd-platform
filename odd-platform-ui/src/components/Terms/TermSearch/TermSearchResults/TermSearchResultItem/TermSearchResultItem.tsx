@@ -25,22 +25,22 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
   return (
     <S.TermSearchResultsItemLink to={termDetailsOverviewLink}>
       <S.TermSearchResultsContainer container>
-        <TermSearchResultsColContainer item $colType='collg'>
-          <TermSearchNameContainer container item>
+        <TermSearchResultsColContainer $colType='collg'>
+          <TermSearchNameContainer container>
             <Typography variant='body1' noWrap>
               {termSearchResult.name}
             </Typography>
           </TermSearchNameContainer>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType='collg'>
+        <TermSearchResultsColContainer $colType='collg'>
           <Typography variant='body1' title={termSearchResult.namespace.name} noWrap>
             {termSearchResult.namespace.name}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType='collg'>
+        <TermSearchResultsColContainer $colType='collg'>
           <Grid container direction='column' alignItems='flex-start'>
             {termSearchResult.ownership?.map(ownership => (
-              <Grid item key={ownership.id}>
+              <Grid key={ownership.id}>
                 <Typography variant='body1' title={ownership.owner.name} noWrap>
                   {ownership.owner.name}
                 </Typography>
@@ -48,24 +48,24 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
             ))}
           </Grid>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType='colxs'>
+        <TermSearchResultsColContainer $colType='colxs'>
           <Typography variant='body1' noWrap>
             {usingCount}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType='colsm'>
+        <TermSearchResultsColContainer $colType='colsm'>
           <Typography variant='body1' noWrap>
             {termSearchResult.createdAt &&
               termFormattedDateTime(termSearchResult.createdAt.getTime())}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType='colsm'>
+        <TermSearchResultsColContainer $colType='colsm'>
           <Typography variant='body1' noWrap>
             {termSearchResult.updatedAt &&
               formatDistanceToNowStrict(termSearchResult.updatedAt, { addSuffix: true })}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType='colxs' />
+        <TermSearchResultsColContainer $colType='colxs' />
       </S.TermSearchResultsContainer>
     </S.TermSearchResultsItemLink>
   );

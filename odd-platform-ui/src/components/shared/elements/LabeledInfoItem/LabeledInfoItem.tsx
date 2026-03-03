@@ -46,7 +46,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
 
   return (
     <Container container sx={sx} $inline={inline}>
-      <LabelContainer item xs={labelWidth || 'auto'}>
+      <LabelContainer size={labelWidth || 'auto'}>
         <Label
           title={typeof label === 'string' ? label : ''}
           variant={variant}
@@ -56,8 +56,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
           {label}
         </Label>
       </LabelContainer>
-
-      <ValueContainer item xs={getXS()} sx={{ width: '100%' }}>
+      <ValueContainer sx={{ width: '100%' }} size={getXS()}>
         <Value
           sx={valueSx}
           $runStatus={runStatus}

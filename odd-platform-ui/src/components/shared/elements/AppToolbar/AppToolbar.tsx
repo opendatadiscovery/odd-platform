@@ -51,7 +51,7 @@ const AppToolbar: FC = () => {
     <S.Bar position='fixed' elevation={elevation}>
       <S.Container disableGutters>
         <S.ContentContainer container>
-          <S.LogoContainer item xs={3}>
+          <S.LogoContainer size={3}>
             <S.Title to='/'>
               <S.Logo />
               <Typography variant='h4' noWrap>
@@ -59,11 +59,11 @@ const AppToolbar: FC = () => {
               </Typography>
             </S.Title>
           </S.LogoContainer>
-          <S.ActionsContainer item xs={9}>
-            <Grid item sx={{ pl: 1 }}>
+          <S.ActionsContainer size={9}>
+            <Grid sx={{ pl: 1 }}>
               <ToolbarTabs />
             </Grid>
-            <S.SectionDesktop item>
+            <S.SectionDesktop>
               <AppInfoMenu />
               <Box
                 display='flex'

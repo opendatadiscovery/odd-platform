@@ -68,7 +68,7 @@ const OwnersList = () => {
   };
 
   return (
-    <Grid container flexDirection='column' alignItems='center'>
+    <Grid container flexDirection='column'>
       <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 1 }}>
         <Typography variant='h1'>{t('Owners')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
@@ -98,17 +98,17 @@ const OwnersList = () => {
         </WithPermissions>
       </Grid>
       <Grid sx={{ borderBottom: '1px solid', borderBottomColor: 'divider' }} container>
-        <Grid px={1} item lg={4}>
+        <Grid px={1} size={4}>
           <Typography variant='subtitle2' color='texts.hint'>
             {t('Name')}
           </Typography>
         </Grid>
-        <Grid px={1} item lg={6}>
+        <Grid px={1} size={6}>
           <Typography variant='subtitle2' color='texts.hint'>
             {t('Roles')}
           </Typography>
         </Grid>
-        <Grid px={1} item lg={2} />
+        <Grid px={1} size={2} />
       </Grid>
       {ownersList.length > 0 && (
         <ScrollableContainer container id='owners-list'>

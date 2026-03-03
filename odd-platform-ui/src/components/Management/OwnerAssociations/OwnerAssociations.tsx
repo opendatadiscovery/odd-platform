@@ -44,7 +44,7 @@ const OwnerAssociations: React.FC = () => {
 
   return (
     <OwnerAssociationsAtomProvider>
-      <Grid container flexDirection='column' alignItems='center'>
+      <Grid container flexDirection='column'>
         <WithPermissionsProvider
           allowedPermissions={[Permission.OWNER_RELATION_MANAGE]}
           resourcePermissions={[]}

@@ -85,7 +85,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
   return (
     <S.Container container>
       <Grid container flexWrap='nowrap'>
-        <Grid container flexWrap='nowrap' item lg={8}>
+        <Grid container flexWrap='nowrap' size={8}>
           <Grid container flexDirection='column'>
             <Typography variant='h4'>{alertTitlesMap.get(type)}</Typography>
             <Grid container flexWrap='nowrap' alignItems='center' sx={{ mt: 0.5 }}>
@@ -105,7 +105,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
             </Grid>
           </Grid>
         </Grid>
-        <S.Wrapper container item lg={4}>
+        <S.Wrapper container size={4}>
           {resolvedInfo}
           <AlertStatusItem status={alertStatus} />
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_RESOLVE}>

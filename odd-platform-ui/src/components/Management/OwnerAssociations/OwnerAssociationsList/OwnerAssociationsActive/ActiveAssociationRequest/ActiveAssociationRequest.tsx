@@ -40,25 +40,25 @@ const ActiveAssociationRequest: React.FC<ActiveAssociationRequestProps> = ({
 
   return (
     <S.AssociationsItemContainer container>
-      <Grid item lg={2}>
+      <Grid size={2}>
         <Typography variant='body1' noWrap title={username}>
           {username}
         </Typography>
       </Grid>
-      <Grid item lg={2}>
+      <Grid size={2}>
         <Typography variant='body1' noWrap title={ownerName}>
           {ownerName}
         </Typography>
       </Grid>
-      <Grid item lg={2}>
+      <Grid size={2}>
         <OwnerRoleCell roles={roles} />
       </Grid>
-      <Grid item lg={1.5}>
+      <Grid size={1.5}>
         <Typography variant='body1' noWrap title={provider}>
           {provider}
         </Typography>
       </Grid>
-      <Grid item lg={1.5}>
+      <Grid size={1.5}>
         <Typography
           variant='body1'
           noWrap
@@ -67,13 +67,13 @@ const ActiveAssociationRequest: React.FC<ActiveAssociationRequestProps> = ({
           {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity.username}
         </Typography>
       </Grid>
-      <Grid item lg={1.5}>
+      <Grid size={1.5}>
         <Typography variant='body1' noWrap>
           {statusUpdatedAt &&
             associationRequestFormattedDateTime(statusUpdatedAt?.getTime())}
         </Typography>
       </Grid>
-      <S.AssociationsItemActionsContainer container item lg={1.5}>
+      <S.AssociationsItemActionsContainer container size={1.5}>
         <ConfirmationDialog
           actionTitle='Are you sure you want to remove the association?'
           actionName='Remove'

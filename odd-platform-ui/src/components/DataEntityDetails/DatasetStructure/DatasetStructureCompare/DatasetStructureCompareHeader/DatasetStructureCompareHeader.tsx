@@ -82,7 +82,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
         <Button text='Close' buttonType='secondary-m' onClick={handleCloseClick} />
       </Grid>
       <Grid container mt={2}>
-        <Grid item container xs={6} alignItems='center'>
+        <Grid container alignItems='center' size={6}>
           <Typography variant='body1' mr={1}>
             From
           </Typography>
@@ -112,7 +112,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
             ))}
           </AppSelect>
         </Grid>
-        <Grid item container xs={6} alignItems='center'>
+        <Grid container alignItems='center' size={6}>
           <Typography variant='body1' mr={1}>
             To
           </Typography>

@@ -67,11 +67,11 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityI
         <OverviewDQReportSkeleton />
       ) : (
         <Grid container direction='column'>
-          <Grid item container wrap='nowrap' justifyContent='space-between'>
-            <Grid item>
+          <Grid container wrap='nowrap' justifyContent='space-between'>
+            <Grid>
               <Typography variant='h4'>{t('Test report')}</Typography>
             </Grid>
-            <Grid item>
+            <Grid>
               <Button
                 text={t('See all')}
                 to={dataEntityTestReportsPath(dataEntityId)}
@@ -79,7 +79,7 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityI
               />
             </Grid>
           </Grid>
-          <Grid item container sx={{ mt: 1.25 }} justifyContent='space-between'>
+          <Grid container sx={{ mt: 1.25 }} justifyContent='space-between'>
             <Typography variant='h4'>
               {datasetQualityTestReport?.score}% {t('score')}
             </Typography>

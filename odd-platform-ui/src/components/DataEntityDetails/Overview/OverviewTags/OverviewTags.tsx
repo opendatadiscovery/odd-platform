@@ -92,12 +92,11 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
         </TagsContainer>
       ) : (
         <Grid
-          item
-          xs={12}
           container
           alignItems='center'
           justifyContent='flex-start'
           wrap='nowrap'
+          size={12}
         >
           <Typography variant='subtitle2'>{t('Not created')}.</Typography>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_TAGS_UPDATE}>

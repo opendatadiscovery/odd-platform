@@ -21,12 +21,11 @@ const LinkedEntity: React.FC<LinkedEntityProps> = ({ linkedEntity }) => {
       <Container container>
         <TermLinkedEntitiesColContainer
           $colType='colmd'
-          item
           container
           justifyContent='space-between'
           wrap='nowrap'
         >
-          <NameContainer container item>
+          <NameContainer container>
             <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
               <MetadataStale
                 isStale={linkedEntity.isStale}
@@ -42,7 +41,7 @@ const LinkedEntity: React.FC<LinkedEntityProps> = ({ linkedEntity }) => {
               </Typography>
             </Box>
           </NameContainer>
-          <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
+          <Grid container justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
             {linkedEntity.entityClasses?.map(entityClass => (
               <EntityClassItem
                 sx={{ ml: 0.5 }}
@@ -52,7 +51,7 @@ const LinkedEntity: React.FC<LinkedEntityProps> = ({ linkedEntity }) => {
             ))}
           </Grid>
         </TermLinkedEntitiesColContainer>
-        <TermLinkedEntitiesColContainer item $colType='collg'>
+        <TermLinkedEntitiesColContainer $colType='collg'>
           <Typography
             variant='body1'
             title={linkedEntity.dataSource.namespace?.name}
@@ -61,15 +60,15 @@ const LinkedEntity: React.FC<LinkedEntityProps> = ({ linkedEntity }) => {
             {linkedEntity.dataSource.namespace?.name}
           </Typography>
         </TermLinkedEntitiesColContainer>
-        <TermLinkedEntitiesColContainer item $colType='colsm'>
+        <TermLinkedEntitiesColContainer $colType='colsm'>
           <Typography variant='body1' title={linkedEntity.dataSource?.name} noWrap>
             {linkedEntity.dataSource?.name}
           </Typography>
         </TermLinkedEntitiesColContainer>
-        <TermLinkedEntitiesColContainer item $colType='colsm'>
+        <TermLinkedEntitiesColContainer $colType='colsm'>
           <Grid container direction='column' alignItems='flex-start'>
             {linkedEntity.ownership?.map(ownership => (
-              <Grid item key={ownership.id}>
+              <Grid key={ownership.id}>
                 <Typography variant='body1' title={ownership.owner.name} noWrap>
                   {ownership.owner.name}
                 </Typography>
@@ -77,7 +76,7 @@ const LinkedEntity: React.FC<LinkedEntityProps> = ({ linkedEntity }) => {
             ))}
           </Grid>
         </TermLinkedEntitiesColContainer>
-        <TermLinkedEntitiesColContainer item $colType='colxs'>
+        <TermLinkedEntitiesColContainer $colType='colxs'>
           <Typography
             variant='body1'
             title={
@@ -90,7 +89,7 @@ const LinkedEntity: React.FC<LinkedEntityProps> = ({ linkedEntity }) => {
               linkedEntityFormattedDateTime(linkedEntity.sourceCreatedAt.getTime())}
           </Typography>
         </TermLinkedEntitiesColContainer>
-        <TermLinkedEntitiesColContainer item $colType='colxs'>
+        <TermLinkedEntitiesColContainer $colType='colxs'>
           <Typography
             variant='body1'
             title={
