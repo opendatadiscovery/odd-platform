@@ -72,6 +72,9 @@ dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.4"
     }
+    dependencies {
+        dependency 'com.nimbusds:nimbus-jose-jwt:9.37.4'
+    }
 }
 
 springBoot {
