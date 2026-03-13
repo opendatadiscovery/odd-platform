@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '3.2.12'
+    id 'org.springframework.boot' version '3.4.10'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.google.cloud.tools.jib' version '3.4.1'
     id 'checkstyle'
@@ -70,11 +70,11 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.4"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.1"
         mavenBom "io.netty:netty-bom:4.1.124.Final"
     }
     dependencies {
-        dependency 'com.nimbusds:nimbus-jose-jwt:9.37.4'
+        dependency 'com.nimbusds:nimbus-jose-jwt:9.37.4'        
     }
 }
 
