@@ -75,7 +75,9 @@ dependencyManagement {
     }
     dependencies {
         dependency 'com.nimbusds:nimbus-jose-jwt:9.37.4'        
+        mavenBom "io.netty:netty-bom:4.1.124.Final"
     }
+    
 }
 
 springBoot {
