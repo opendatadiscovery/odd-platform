@@ -74,8 +74,7 @@ dependencyManagement {
         mavenBom "io.netty:netty-bom:4.1.124.Final"
     }
     dependencies {
-        dependency 'com.nimbusds:nimbus-jose-jwt:9.37.4'        
-        mavenBom "io.netty:netty-bom:4.1.124.Final"
+        dependency 'com.nimbusds:nimbus-jose-jwt:9.37.4'   
     }
     
 }
