@@ -104,10 +104,10 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
 
   const getCounterMetric = (metric: Metric) => (
     <Grid container sx={{ ml: 2, mt: 0.5 }} flexWrap='nowrap' alignItems='center'>
-      <Grid container flexDirection='column' item lg={3.4}>
+      <Grid container flexDirection='column' size={3.4}>
         {metric.labels?.map(getLabel)}
       </Grid>
-      <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
+      <Grid display='flex' flexWrap='nowrap' size={8.6}>
         <AppTooltip title={metric.metricPoint?.counterValue?.total}>
           <NumberFormatted value={metric.metricPoint?.counterValue?.total} />
         </AppTooltip>
@@ -117,10 +117,10 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
 
   const getGaugeMetric = (metric: Metric) => (
     <Grid container sx={{ ml: 2, mt: 0.5 }} flexWrap='nowrap' alignItems='center'>
-      <Grid container flexDirection='column' item lg={3.35}>
+      <Grid container flexDirection='column' size={3.35}>
         {metric.labels?.map(getLabel)}
       </Grid>
-      <Grid item display='flex' flexWrap='nowrap' lg={8.65}>
+      <Grid display='flex' flexWrap='nowrap' size={8.65}>
         <AppTooltip title={metric.metricPoint?.gaugeValue?.value}>
           <NumberFormatted value={metric.metricPoint?.gaugeValue?.value} />
         </AppTooltip>
@@ -130,10 +130,10 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
 
   const getHistogramMetric = (metric: Metric) => (
     <Grid container sx={{ ml: 2, mt: 1 }} flexWrap='nowrap' alignItems='center'>
-      <Grid container flexDirection='column' item lg={3.4}>
+      <Grid container flexDirection='column' size={3.4}>
         {metric.labels?.map(getLabel)}
       </Grid>
-      <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
+      <Grid display='flex' flexWrap='nowrap' size={8.6}>
         {metric.metricPoint?.histogramValue?.buckets?.map((bucket, idx) => (
           <Grid
             key={bucket.count}
@@ -157,10 +157,10 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
 
   const getSummaryMetric = (metric: Metric) => (
     <Grid container sx={{ ml: 2, mt: 1 }} flexWrap='nowrap' alignItems='center'>
-      <Grid container flexDirection='column' item lg={3.4}>
+      <Grid container flexDirection='column' size={3.4}>
         {metric.labels?.map(getLabel)}
       </Grid>
-      <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
+      <Grid display='flex' flexWrap='nowrap' size={8.6}>
         {metric.metricPoint?.summaryValue?.quantile?.map(quantile => (
           <Grid
             key={quantile.quantile}
@@ -186,7 +186,7 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
     <Grid container flexDirection='column'>
       <Grid container flexDirection='column' mt={0.5} mb={1.5}>
         <Grid container flexWrap='nowrap' alignItems='center'>
-          <Grid item container flexWrap='nowrap' alignItems='center' lg={3.5} mr={0.5}>
+          <Grid container flexWrap='nowrap' alignItems='center' mr={0.5} size={3.5}>
             <AppTooltip title={`Name: ${family.name}`}>
               <Typography variant='subtitle1' noWrap>
                 {family.description ? family.description : family.name}
@@ -197,9 +197,7 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
               {`(${family.unit})`}
             </Typography>
           </Grid>
-          <Grid item lg={8.5}>
-            {emptyLabelsMetricValue}
-          </Grid>
+          <Grid size={8.5}>{emptyLabelsMetricValue}</Grid>
         </Grid>
         {family.metrics
           .filter(metric => (metric?.labels ? metric?.labels?.length > 0 : false))

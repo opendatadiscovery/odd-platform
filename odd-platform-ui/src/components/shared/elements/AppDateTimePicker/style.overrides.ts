@@ -1,15 +1,15 @@
 export const dateTimePaperPropsStyles = {
   sx: {
-    '.MuiCalendarOrClockPicker-root': { width: '290px' },
-    '.MuiClockPicker-root': { width: '290px' },
-    '.MuiCalendarOrClockPicker-root > div': { width: '290px' },
-    '.MuiCalendarPicker-root': { width: '250px' },
+    '.MuiPickersLayout-contentWrapper': { width: '290px' },
+    '.MuiTimeClock-root': { width: '290px' },
+    '.MuiPickersLayout-contentWrapper > div': { width: '290px' },
+    '.MuiDateCalendar-root': { width: '250px' },
     '.MuiPickersCalendarHeader-root': {
       display: 'flex',
       alignItems: 'center',
       justifyItems: 'center',
     },
-    '.MuiClockPicker-arrowSwitcher': { width: '220px', left: '34px' },
+    '.MuiTimeClock-arrowSwitcher': { width: '220px', left: '34px' },
     '.MuiPickersArrowSwitcher-root': { display: 'inline-flex' },
     '.MuiPickersCalendarHeader-label': { textAlign: 'center' },
     '.MuiPickersArrowSwitcher-spacer': { width: '160px' },
@@ -23,9 +23,8 @@ export const dateTimePaperPropsStyles = {
       right: 0,
       textAlign: 'center',
     },
-    '.css-9reuh9-MuiPickersArrowSwitcher-root': { marginLeft: '-8px' },
     '.MuiPickersArrowSwitcher-button': { padding: '12px', color: 'black' },
-    '.MuiDayPicker-weekDayLabel': {
+    '.MuiDayCalendar-weekDayLabel': {
       padding: '4px 5.5px',
       height: 'auto',
       color: '#7A869A',
@@ -42,11 +41,6 @@ export const dateTimePaperPropsStyles = {
       lineHeight: '20px',
 
       '&:hover': { backgroundColor: '#B3D1FF' },
-    },
-    '.css-b0ubwu-MuiButtonBase-root-MuiPickersDay-root.Mui-selected': {
-      color: 'white',
-      backgroundColor: '#0A58FF',
-      border: 'none',
     },
     '.Mui-selected': {
       color: 'white',

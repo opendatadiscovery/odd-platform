@@ -25,7 +25,7 @@ const OwnersSection: FC = () => {
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
   return (
-    <Grid item sm={12} sx={{ mt: 2 }}>
+    <Grid sx={{ mt: 2 }} size={12}>
       <LabeledInfoItem label={t('Owners')}>
         {ownership?.length ? (
           ownership?.map(ownershipItem => (

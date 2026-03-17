@@ -18,7 +18,17 @@ const DatasetFieldDescriptionEdit: FC<DatasetFieldDescriptionEditProps> = ({
   handleMarkdownChange,
   error,
 }) => (
-  <Box sx={{ pt: error ? 0 : 2.5 }}>
+  <Box
+    sx={[
+      error
+        ? {
+            pt: 0,
+          }
+        : {
+            pt: 2.5,
+          },
+    ]}
+  >
     <Typography mb={0.5} variant='subtitle1' color='error'>
       {error}
     </Typography>
@@ -34,5 +44,4 @@ const DatasetFieldDescriptionEdit: FC<DatasetFieldDescriptionEditProps> = ({
     </S.ActionsContainer>
   </Box>
 );
-
 export default DatasetFieldDescriptionEdit;

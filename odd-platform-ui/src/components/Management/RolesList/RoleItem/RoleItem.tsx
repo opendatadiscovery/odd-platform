@@ -31,12 +31,12 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
 
   return (
     <S.Container container>
-      <Grid item lg={3.53}>
+      <Grid size={3.53}>
         <Typography variant='body1' noWrap title={name}>
           {name}
         </Typography>
       </Grid>
-      <Grid item container lg={6.73} flexWrap='nowrap'>
+      <Grid container flexWrap='nowrap' size={6.73}>
         <TruncateMarkup lines={1} tokenize='words'>
           <div style={{ display: 'flex' }}>
             {policies.map((policy, idx) => (
@@ -49,8 +49,8 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
           </div>
         </TruncateMarkup>
       </Grid>
-      <Grid item lg={2}>
-        <S.ActionsContainer container item>
+      <Grid size={2}>
+        <S.ActionsContainer container>
           <WithPermissions
             permissionTo={Permission.ROLE_UPDATE}
             extraCheck={!isAdministrator}

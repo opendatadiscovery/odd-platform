@@ -36,7 +36,7 @@ const LinkedTermsList: FC = () => {
   return (
     <Grid>
       <Grid container flexWrap='nowrap' justifyContent='flex-start' sx={{ mt: 2 }}>
-        <Grid item xs={3} sx={{ mr: 1 }}>
+        <Grid sx={{ mr: 1 }} size={3}>
           <Input
             variant='search-m'
             placeholder='Search'
@@ -50,10 +50,10 @@ const LinkedTermsList: FC = () => {
         </Grid>
       </Grid>
       <TermLinkedTermsResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
-        <TermLinkedTermsColContainer item $colType='colmd'>
+        <TermLinkedTermsColContainer $colType='colmd'>
           <Typography variant='caption'>Name</Typography>
         </TermLinkedTermsColContainer>
-        <TermLinkedTermsColContainer item $colType='collg'>
+        <TermLinkedTermsColContainer $colType='collg'>
           <Typography variant='caption'>Namespace</Typography>
         </TermLinkedTermsColContainer>
       </TermLinkedTermsResultsTableHeader>

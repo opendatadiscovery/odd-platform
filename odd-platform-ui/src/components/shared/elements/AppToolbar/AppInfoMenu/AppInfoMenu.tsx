@@ -70,7 +70,7 @@ const AppInfoMenu: React.FC = () => {
 
   return (
     <Grid>
-      <Grid item>
+      <Grid>
         <Button
           sx={{ mr: 1 }}
           icon={<InformationIcon width={16} height={16} />}

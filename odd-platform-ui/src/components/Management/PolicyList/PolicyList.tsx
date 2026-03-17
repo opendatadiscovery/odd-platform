@@ -71,7 +71,7 @@ const PolicyList: React.FC = () => {
   );
 
   return (
-    <Grid container flexDirection='column' alignItems='center'>
+    <Grid container flexDirection='column'>
       <S.Caption container sx={{ mb: 1 }}>
         <Typography variant='h1'>{t('Policies')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
@@ -98,13 +98,13 @@ const PolicyList: React.FC = () => {
         </WithPermissions>
       </S.Caption>
       <S.TableHeader container flexWrap='nowrap'>
-        <Grid item lg={3.53}>
+        <Grid size={3.53}>
           <Typography variant='subtitle2' color='texts.hint'>
             {t('Policy name')}
           </Typography>
         </Grid>
-        <Grid item lg={6.73} />
-        <Grid item lg={1.74} />
+        <Grid size={6.73} />
+        <Grid size={1.74} />
       </S.TableHeader>
       <S.ScrollContainer $isContentExists={!contentNotExists} id='policy-list'>
         <InfiniteScroll

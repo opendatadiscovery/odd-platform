@@ -11,10 +11,10 @@ const Management: React.FC = () => (
     resourcePermissions={[]}
   >
     <S.Container container wrap='nowrap'>
-      <S.SidebarContainer item xs={3}>
+      <S.SidebarContainer size={3}>
         <ManagementTabs />
       </S.SidebarContainer>
-      <S.ContentContainer item xs={9}>
+      <S.ContentContainer size={9}>
         <ManagementRoutes />
       </S.ContentContainer>
     </S.Container>

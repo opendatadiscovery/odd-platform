@@ -50,23 +50,21 @@ const NewAssociationRequest: React.FC<NewAssociationRequestProps> = ({
 
   return (
     <S.AssociationsItemContainer container>
-      <Grid item lg={2.5}>
+      <Grid size={2.5}>
         <Typography variant='body1' noWrap title={username}>
           {username}
         </Typography>
       </Grid>
-      <Grid item lg={2.5}>
+      <Grid size={2.5}>
         <Typography variant='body1' noWrap title={ownerName}>
           {ownerName}
         </Typography>
       </Grid>
-      <Grid item lg={2.5}>
+      <Grid size={2.5}>
         <OwnerRoleCell roles={roles} />
       </Grid>
-      <Grid item lg={1.5}>
-        {provider}
-      </Grid>
-      <S.AssociationsItemActionsContainer container item lg={3}>
+      <Grid size={1.5}>{provider}</Grid>
+      <S.AssociationsItemActionsContainer container size={3}>
         <ConfirmationDialog
           actionTitle={t('Are you sure you want to accept association request?')}
           actionName={t('Accept')}

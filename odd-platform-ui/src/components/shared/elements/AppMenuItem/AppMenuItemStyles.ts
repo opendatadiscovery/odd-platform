@@ -4,7 +4,7 @@ import {
   MenuItem,
   menuItemClasses,
 } from '@mui/material';
-import { type Variant } from '@mui/material/styles/createTypography';
+import { type TypographyVariant } from '@mui/material/styles';
 import styled from 'styled-components';
 
 interface AppMenuItemStyleProps {
@@ -14,7 +14,7 @@ interface AppMenuItemStyleProps {
 
 interface AppListItemTextProps {
   $removeTextStyles: boolean;
-  $fontVariant: Variant;
+  $fontVariant: TypographyVariant;
 }
 
 export const StyledAppMenuItem = styled(MenuItem)<AppMenuItemStyleProps>(

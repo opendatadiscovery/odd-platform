@@ -33,7 +33,7 @@ const AppCircularProgress: React.FC<AppCircularProgressProps> = ({
       <S.Progress size={size} />
     </S.SpinnerContainer>
     {text && (
-      <S.TextContainer item container xs={10}>
+      <S.TextContainer container size={10}>
         <Typography variant='body2' color='textSecondary'>
           {text}
         </Typography>

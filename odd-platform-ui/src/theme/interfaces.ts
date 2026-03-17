@@ -1,4 +1,4 @@
-import type { TypeBackground } from '@mui/material/styles/createPalette';
+import type { TypeBackground, TypographyStyle } from '@mui/material/styles';
 import type { ToastType } from 'react-hot-toast';
 import type {
   AlertStatus,
@@ -174,22 +174,22 @@ declare module '@mui/material/styles' {
 }
 
 // typography interfaces
-declare module '@mui/material/styles/createTypography' {
-  interface Typography extends Record<ButtonFont, TypographyStyle> {
+declare module '@mui/material/styles' {
+  interface TypographyVariants extends Record<ButtonFont, TypographyStyle> {
     errorCode: TypographyStyle;
     totalCountTitle: TypographyStyle;
     h0: TypographyStyle;
   }
 
-  interface TypographyOptions extends Record<ButtonFont, TypographyStyle> {
-    errorCode?: TypographyStyleOptions;
-    totalCountTitle?: TypographyStyleOptions;
-    label?: TypographyStyleOptions;
-    title?: TypographyStyleOptions;
-    h0?: TypographyStyleOptions;
+  interface TypographyVariantsOptions extends Record<ButtonFont, TypographyStyle> {
+    errorCode?: TypographyStyle;
+    totalCountTitle?: TypographyStyle;
+    label?: TypographyStyle;
+    title?: TypographyStyle;
+    h0?: TypographyStyle;
   }
 }
-declare module '@mui/material/Typography/Typography' {
+declare module '@mui/material/Typography' {
   interface TypographyPropsVariantOverrides extends Record<ButtonFont, true> {
     errorCode: true;
     totalCountTitle: true;

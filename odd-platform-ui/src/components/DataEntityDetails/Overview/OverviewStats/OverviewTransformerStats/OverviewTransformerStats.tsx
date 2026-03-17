@@ -27,12 +27,12 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
 
   return (
     <Grid container>
-      <Grid item xs={12} sx={{ mb: 1.25 }}>
+      <Grid sx={{ mb: 1.25 }} size={12}>
         <EntityClassItem entityClassName={DataEntityClassNameEnum.TRANSFORMER} fullName />
       </Grid>
       <Grid container flexWrap='nowrap' columnGap={1}>
-        <Grid item container xs={6} alignItems='flex-start' alignContent='flex-start'>
-          <Grid item container xs={12} alignItems='baseline'>
+        <Grid container alignItems='flex-start' alignContent='flex-start' size={6}>
+          <Grid container alignItems='baseline' size={12}>
             <StatIconContainer sx={{ mr: 1 }}>
               <UpstreamIcon />
             </StatIconContainer>
@@ -42,12 +42,11 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             <Typography variant='h4'>{t('sources')}</Typography>
           </Grid>
           <Grid
-            item
             container
-            xs={12}
             direction='column'
             alignItems='flex-start'
             sx={{ mt: 1 }}
+            size={12}
           >
             {sources?.slice(0, displayedEntitiesNumber).map(source => (
               <Button
@@ -76,8 +75,8 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             ) : null}
           </Grid>
         </Grid>
-        <Grid item container xs={6} alignItems='flex-start' alignContent='flex-start'>
-          <Grid item container xs={12} alignItems='baseline'>
+        <Grid container alignItems='flex-start' alignContent='flex-start' size={6}>
+          <Grid container alignItems='baseline' size={12}>
             <StatIconContainer sx={{ mr: 1 }}>
               <DownstreamIcon />
             </StatIconContainer>
@@ -87,12 +86,11 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             <Typography variant='h4'>{t('targets')}</Typography>
           </Grid>
           <Grid
-            item
             container
-            xs={12}
             direction='column'
             alignItems='flex-start'
             sx={{ mt: 1 }}
+            size={12}
           >
             {targets?.slice(0, displayedEntitiesNumber).map(target => (
               <Button

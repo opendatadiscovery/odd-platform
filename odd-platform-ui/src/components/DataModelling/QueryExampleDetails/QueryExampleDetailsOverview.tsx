@@ -26,5 +26,4 @@ const QueryExampleDetailsOverview = ({
     </AppPaper>
   </>
 );
-
 export default QueryExampleDetailsOverview;

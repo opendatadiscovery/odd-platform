@@ -56,5 +56,4 @@ const RelationshipListItem = ({ relationshipDetails }: RelationshipListItemProps
     </Table.Cell>
   </Table.RowContainer>
 );
-
 export default RelationshipListItem;

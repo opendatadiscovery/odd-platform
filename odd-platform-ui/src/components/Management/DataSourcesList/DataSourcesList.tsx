@@ -70,7 +70,7 @@ const DataSourcesListView = () => {
   };
 
   return (
-    <Grid container flexDirection='column' alignItems='center'>
+    <Grid container flexDirection='column'>
       <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 1 }}>
         <Typography variant='h1'>{t('Datasources')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>

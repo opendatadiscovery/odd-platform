@@ -14,13 +14,13 @@ const LookupTablesSkeleton: React.FC = () => (
     length={10}
     renderContent={({ randWidth, key }) => (
       <Grid key={key} display='flex'>
-        <Grid item pl={1} flex='1 0'>
+        <Grid pl={1} flex='1 0'>
           <LookupTablesSkeletonItem randWidth={randWidth} />
         </Grid>
-        <Grid item pl={1} flex='1 0 44%'>
+        <Grid pl={1} flex='1 0 44%'>
           <LookupTablesSkeletonItem randWidth={randWidth} />
         </Grid>
-        <Grid item pl={1} flex='1 0'>
+        <Grid pl={1} flex='1 0'>
           <LookupTablesSkeletonItem randWidth={randWidth} />
         </Grid>
       </Grid>

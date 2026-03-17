@@ -34,7 +34,7 @@ const OverviewMetadata: React.FC = () => {
       <div ref={contentRef} style={containerStyle}>
         <Grid container>
           <Grid container>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <S.SubtitleContainer>
                 <Typography variant='h2'>{t('Metadata')}</Typography>
                 <WithPermissions
@@ -66,12 +66,11 @@ const OverviewMetadata: React.FC = () => {
               ))
             ) : (
               <Grid
-                item
-                xs={12}
                 container
                 alignItems='center'
                 justifyContent='flex-start'
                 wrap='nowrap'
+                size={12}
               >
                 <Typography variant='subtitle2'>{t('Not created')}</Typography>
                 <WithPermissions
@@ -95,7 +94,7 @@ const OverviewMetadata: React.FC = () => {
           </Grid>
         </Grid>
         {predefinedMetadata.length > 0 && (
-          <S.PredefinedContainer item container>
+          <S.PredefinedContainer container>
             <Grid container>
               {predefinedMetadata.map(item => (
                 <MetadataItem

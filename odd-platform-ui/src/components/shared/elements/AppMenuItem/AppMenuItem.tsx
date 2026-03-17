@@ -1,6 +1,6 @@
 import React from 'react';
 import { type MenuItemProps } from '@mui/material';
-import { type Variant } from '@mui/material/styles/createTypography';
+import { type TypographyVariant } from '@mui/material/styles';
 import * as S from 'components/shared/elements/AppMenuItem/AppMenuItemStyles';
 
 interface AppMenuItemProps extends Pick<
@@ -17,7 +17,7 @@ interface AppMenuItemProps extends Pick<
   minWidth?: number;
   maxWidth?: number;
   removeTextStyles?: boolean;
-  fontVariant?: Variant;
+  fontVariant?: TypographyVariant;
 }
 
 const AppMenuItem: React.FC<AppMenuItemProps> = React.forwardRef(

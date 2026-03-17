@@ -31,7 +31,7 @@ const DatasetDataTableRowForm = ({
         return (
           <AppDatePicker
             {...field}
-            inputFormat='yyyy-MM-dd'
+            format='yyyy-MM-dd'
             onChange={date => {
               if (date && isValid(date)) {
                 field.onChange(format(date, 'yyyy-MM-dd'));

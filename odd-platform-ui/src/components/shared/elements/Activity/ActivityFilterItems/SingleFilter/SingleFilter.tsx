@@ -47,7 +47,7 @@ const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventT
 
   return (
     <Grid container>
-      <Grid container item xs={12}>
+      <Grid container size={12}>
         <AppSelect
           defaultValue={defaultOption}
           sx={{ mt: 2 }}

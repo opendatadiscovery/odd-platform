@@ -18,36 +18,36 @@ const OverviewDatasetStats: React.FC<OverviewDatasetStatsProps> = ({ stats }) =>
 
   return (
     <Grid container>
-      <Grid item xs={12} sx={{ ml: 0, mb: 1.25 }}>
+      <Grid sx={{ ml: 0, mb: 1.25 }} size={12}>
         <EntityClassItem entityClassName={DataEntityClassNameEnum.SET} fullName />
       </Grid>
-      <Grid alignItems='center' item container xs={4}>
-        <Grid item xs={12}>
+      <Grid alignItems='center' container size={4}>
+        <Grid size={12}>
           <Typography variant='h4'>{t('Rows')}</Typography>
         </Grid>
-        <Grid item container xs={12} wrap='nowrap' alignItems='center'>
+        <Grid container wrap='nowrap' alignItems='center' size={12}>
           <RowsIcon sx={{ mr: 1 }} />
           <Typography variant='h2'>
             <NumberFormatted value={stats?.rowsCount} />
           </Typography>
         </Grid>
       </Grid>
-      <Grid alignItems='center' item container xs={4}>
-        <Grid item xs={12}>
+      <Grid alignItems='center' container size={4}>
+        <Grid size={12}>
           <Typography variant='h4'>{t('Columns')}</Typography>
         </Grid>
-        <Grid item container xs={12} wrap='nowrap' alignItems='center'>
+        <Grid container wrap='nowrap' alignItems='center' size={12}>
           <ColumnsIcon sx={{ mr: 1 }} />
           <Typography variant='h2'>
             <NumberFormatted value={stats?.fieldsCount} />
           </Typography>
         </Grid>
       </Grid>
-      <Grid alignItems='center' item container xs={4}>
-        <Grid item xs={12}>
+      <Grid alignItems='center' container size={4}>
+        <Grid size={12}>
           <Typography variant='h4'>{t('Used by')}</Typography>
         </Grid>
-        <Grid item container xs={12} wrap='nowrap' alignItems='center'>
+        <Grid container wrap='nowrap' alignItems='center' size={12}>
           <UserIcon sx={{ mr: 1 }} />
           <Typography variant='h2'>
             <NumberFormatted value={stats?.consumersCount} />

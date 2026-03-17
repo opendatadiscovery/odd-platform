@@ -48,21 +48,13 @@ const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size }) => 
   );
 
   return (
-    <Grid container flexDirection='column' alignItems='center'>
+    <Grid container flexDirection='column'>
       <S.TableHeader container>
-        <Grid item lg={2.5}>
-          {tableCellText(t('User name'))}
-        </Grid>
-        <Grid item lg={2.5}>
-          {tableCellText(t('Owner name'))}
-        </Grid>
-        <Grid item lg={2.5}>
-          {tableCellText('Role')}
-        </Grid>
-        <Grid item lg={1.5}>
-          {tableCellText(t('Provider'))}
-        </Grid>
-        <Grid item lg={3} />
+        <Grid size={2.5}>{tableCellText(t('User name'))}</Grid>
+        <Grid size={2.5}>{tableCellText(t('Owner name'))}</Grid>
+        <Grid size={2.5}>{tableCellText('Role')}</Grid>
+        <Grid size={1.5}>{tableCellText(t('Provider'))}</Grid>
+        <Grid size={3} />
       </S.TableHeader>
       {newAssociations.length > 0 && (
         <ScrollableContainer container id='new-associations-list'>

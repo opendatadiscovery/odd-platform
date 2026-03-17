@@ -21,10 +21,12 @@ const LinkItem: FC<LinkItemProps> = ({ idx, onItemRemove, fieldsCount }) => {
 
   return (
     <Grid
-      sx={theme => ({
-        borderBottom: isLastLink ? 'none' : `1px solid ${theme.palette.divider}`,
-        mt: isFirstLink ? 0 : 2,
-      })}
+      sx={[
+        theme => ({
+          borderBottom: isLastLink ? 'none' : `1px solid ${theme.palette.divider}`,
+          mt: isFirstLink ? 0 : 2,
+        }),
+      ]}
     >
       <Controller
         name={`items.${idx}.url`}

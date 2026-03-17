@@ -20,7 +20,18 @@ const InternalDescriptionEdit: FC<InternalDescriptionEditProps> = ({
   toggleEditMode,
   error,
 }) => (
-  <Box onKeyDown={handlePressEnter} sx={{ pt: error ? 0 : 2.5 }}>
+  <Box
+    onKeyDown={handlePressEnter}
+    sx={[
+      error
+        ? {
+            pt: 0,
+          }
+        : {
+            pt: 2.5,
+          },
+    ]}
+  >
     <Typography mb={0.5} variant='subtitle1' color='error'>
       {error}
     </Typography>
@@ -36,5 +47,4 @@ const InternalDescriptionEdit: FC<InternalDescriptionEditProps> = ({
     </S.ActionsContainer>
   </Box>
 );
-
 export default InternalDescriptionEdit;

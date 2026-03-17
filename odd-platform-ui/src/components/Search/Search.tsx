@@ -73,10 +73,10 @@ const Search: React.FC = () => {
   return (
     <PageWithLeftSidebar.MainContainer>
       <PageWithLeftSidebar.ContentContainer container>
-        <PageWithLeftSidebar.LeftSidebarContainer item xs={3}>
+        <PageWithLeftSidebar.LeftSidebarContainer size={3}>
           <Filters />
         </PageWithLeftSidebar.LeftSidebarContainer>
-        <PageWithLeftSidebar.ListContainer item xs={9}>
+        <PageWithLeftSidebar.ListContainer size={9}>
           <MainSearch placeholder={t('Search')} disableSuggestions />
           <WithPermissionsProvider
             allowedPermissions={[Permission.DATA_ENTITY_GROUP_CREATE]}

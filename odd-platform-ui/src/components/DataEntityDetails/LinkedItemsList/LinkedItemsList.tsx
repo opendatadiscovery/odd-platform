@@ -46,19 +46,19 @@ const LinkedItemsList: React.FC = () => {
   return (
     <S.Container>
       <S.ResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
-        <S.ColContainer item $colType='colmd'>
+        <S.ColContainer $colType='colmd'>
           <Typography variant='caption'>{t('Name')}</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType='collg'>
+        <S.ColContainer $colType='collg'>
           <Typography variant='caption'>{t('Entities')}</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType='colsm'>
+        <S.ColContainer $colType='colsm'>
           <Typography variant='caption'>{t('Owners')}</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType='colxs'>
+        <S.ColContainer $colType='colxs'>
           <Typography variant='caption'>{t('Created')}</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType='colxs'>
+        <S.ColContainer $colType='colxs'>
           <Typography variant='caption'>{t('Updated')}</Typography>
         </S.ColContainer>
       </S.ResultsTableHeader>

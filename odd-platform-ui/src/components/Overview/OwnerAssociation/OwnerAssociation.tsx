@@ -62,7 +62,18 @@ const OwnerAssociation: FC = () => {
       return (
         <S.Container>
           {showRejectMsg && (
-            <S.RejectMsg container sx={{ mb: showRejectMsg ? 3 : 0 }}>
+            <S.RejectMsg
+              container
+              sx={[
+                showRejectMsg
+                  ? {
+                      mb: 3,
+                    }
+                  : {
+                      mb: 0,
+                    },
+              ]}
+            >
               <Grid container>
                 <S.AlertIcn />
                 <Typography variant='body2'>
@@ -80,15 +91,11 @@ const OwnerAssociation: FC = () => {
         </S.Container>
       );
     }
-
     if (identity && ownership) {
       return <OwnerEntitiesList />;
     }
-
     return null;
   };
-
   return getContent();
 };
-
 export default OwnerAssociation;
