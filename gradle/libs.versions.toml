@@ -37,7 +37,7 @@ logback = '1.2.11'
 easy-random-core = '5.0.0'
 protobuf-java = '3.21.12'
 snappy-java = '1.1.9.1'
-minio = '8.4.6'
+minio = '8.5.17'
 okhttp = '4.12.0'
 spring-mail = '3.4.10'
 
