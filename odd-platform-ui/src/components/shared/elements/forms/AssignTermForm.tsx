@@ -70,7 +70,7 @@ const AssignTermForm: FC<AssignTermFormProps> = ({
             <Typography variant='body2' color='texts.secondary' component='span'>
               {t('Namespace')}:
             </Typography>
-            {selectedTerm.namespace.name}
+            {selectedTerm.namespace?.name}
           </Grid>
           <Grid container flexDirection='column' sx={{ mt: 2 }}>
             <Typography variant='body2' color='texts.secondary' component='span'>
