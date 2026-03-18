@@ -71,12 +71,14 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.1"
-        mavenBom "io.netty:netty-bom:4.1.124.Final"
+        mavenBom "io.netty:netty-bom:4.1.129.Final"
     }
     dependencies {
-        dependency 'com.nimbusds:nimbus-jose-jwt:9.37.4'   
+        dependency 'com.nimbusds:nimbus-jose-jwt:9.37.4'
+        dependency 'ch.qos.logback:logback-core:1.5.25'
+        dependency 'ch.qos.logback:logback-classic:1.5.25'
+        dependency 'com.fasterxml.jackson.core:jackson-core:2.18.6'
     }
-    
 }
 
 springBoot {
@@ -99,7 +101,7 @@ jooqGenerate {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.21.12"
+        artifact = "com.google.protobuf:protoc:3.25.5"
     }
 }
 
