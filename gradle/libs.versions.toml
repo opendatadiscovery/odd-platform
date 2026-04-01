@@ -1,6 +1,6 @@
 [versions]
-spring-webflux = '6.1.14'
-spring-cloud-aws = '3.2.1'
+spring-webflux = '6.2.11'
+spring-cloud-aws = '3.3.1'
 reactor-extra = '3.5.1'
 micrometer-registry-prometheus = '1.9.0'
 ingestion-contract-server = '0.1.40'
@@ -18,17 +18,13 @@ flyway-core = '9.19.4'
 psql-driver = '42.7.2'
 jakarta-validation = '3.0.2'
 jakarta-annotation = '2.1.1'
-jackson-annotations = '2.15.2'
-jackson-datatype-jsr310 = '2.15.2'
-jackson-yaml = '2.15.2'
 jackson-databind-nullable = '0.2.6'
 jetbrains-annotations = '23.0.0'
 swagger-annotations = '2.2.11'
 springfox-core = '3.0.0'
 springdoc-openapi = '2.2.0'
 mapstruct = '1.5.3.Final'
-opentelemetry = '1.6.0'
-opentelemetry-alpha = '1.6.0-alpha'
+opentelemetry = '1.43.0'
 slack-api = '1.27.0'
 uuid-generator = '4.0.1'
 shedlock-version = '4.42.0'
@@ -39,11 +35,11 @@ testcontainers = '1.19.3'
 slf4j-api = '1.7.30'
 logback = '1.2.11'
 easy-random-core = '5.0.0'
-protobuf-java = '3.21.12'
-snappy-java = '1.1.9.1'
-minio = '8.4.6'
+protobuf-java = '3.25.5'
+snappy-java = '1.1.10.4'
+minio = '8.6.0'
 okhttp = '4.12.0'
-spring-mail = '3.2.12'
+spring-mail = '3.4.10'
 
 [libraries]
 spring-starter-webflux = { module = 'org.springframework.boot:spring-boot-starter-webflux' }
@@ -81,10 +77,10 @@ flyway-core = { module = 'org.flywaydb:flyway-core', version.ref = 'flyway-core'
 psql-driver = { module = 'org.postgresql:postgresql', version.ref = 'psql-driver' }
 jakarta-annotation = { module = 'jakarta.annotation:jakarta.annotation-api', version.ref = 'jakarta-annotation' }
 jakarta-validation = { module = 'jakarta.validation:jakarta.validation-api', version.ref = 'jakarta-validation' }
-jackson-datatype-jsr310 = { module = 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310', version.ref = 'jackson-datatype-jsr310' }
+jackson-datatype-jsr310 = { module = 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310' }
 jackson-databind-nullable = { module = 'org.openapitools:jackson-databind-nullable', version.ref = 'jackson-databind-nullable' }
-jackson-annotations = { module = 'com.fasterxml.jackson.core:jackson-annotations', version.ref = 'jackson-annotations' }
-jackson-yaml = { module = 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml', version.ref = 'jackson-yaml' }
+jackson-annotations = { module = 'com.fasterxml.jackson.core:jackson-annotations' }
+jackson-yaml = { module = 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml' }
 jetbrains-annotations = { module = 'org.jetbrains:annotations', version.ref = 'jetbrains-annotations' }
 swagger-annotations = { module = 'io.swagger.core.v3:swagger-annotations', version.ref = 'swagger-annotations' }
 springfox-core = { module = 'io.springfox:springfox-core', version.ref = 'springfox-core' }
@@ -93,10 +89,9 @@ spring-mail = { module = 'org.springframework.boot:spring-boot-starter-mail', ve
 spring-freemarker = { module = 'org.springframework.boot:spring-boot-starter-freemarker', version.ref = 'spring-mail' }
 mapstruct = { module = 'org.mapstruct:mapstruct', version.ref = 'mapstruct' }
 mapstruct-processor = { module = 'org.mapstruct:mapstruct-processor', version.ref = 'mapstruct' }
-opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref = 'opentelemetry' }
-opentelemetry-api-metrics = { module = 'io.opentelemetry:opentelemetry-api-metrics', version.ref = 'opentelemetry-alpha' }
-opentelemetry-sdk-metrics = { module = 'io.opentelemetry:opentelemetry-sdk-metrics', version.ref = 'opentelemetry-alpha' }
-opentelemetry-exporter-otlp-metrics = { module = 'io.opentelemetry:opentelemetry-exporter-otlp-metrics', version.ref = 'opentelemetry-alpha' }
+opentelemetry-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry" }
+opentelemetry-sdk-metrics = { module = "io.opentelemetry:opentelemetry-sdk-metrics", version.ref = "opentelemetry" }
+opentelemetry-exporter-otlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "opentelemetry" }
 slack-api-model = { module = 'com.slack.api:slack-api-model', version.ref = 'slack-api' }
 slack-api = { module = 'com.slack.api:slack-api-client', version.ref = 'slack-api' }
 uuid-generator = { module = 'com.fasterxml.uuid:java-uuid-generator', version.ref = 'uuid-generator' }
@@ -163,10 +158,9 @@ flyway = [
     'psql-driver'
 ]
 opentelemetry = [
-    'opentelemetry-api',
-    'opentelemetry-api-metrics',
-    'opentelemetry-sdk-metrics',
-    'opentelemetry-exporter-otlp-metrics'
+  "opentelemetry-api",
+  "opentelemetry-sdk-metrics",
+  "opentelemetry-exporter-otlp"
 ]
 testcontainers = [
     'testcontainers',

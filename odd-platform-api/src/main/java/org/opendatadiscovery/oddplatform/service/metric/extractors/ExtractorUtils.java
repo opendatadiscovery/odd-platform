@@ -3,6 +3,8 @@ package org.opendatadiscovery.oddplatform.service.metric.extractors;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.sdk.metrics.data.DoublePointData;
 import io.opentelemetry.sdk.metrics.data.LongPointData;
+import io.opentelemetry.sdk.metrics.internal.data.ImmutableDoublePointData;
+import io.opentelemetry.sdk.metrics.internal.data.ImmutableLongPointData;
 import org.jetbrains.annotations.Nullable;
 
 public class ExtractorUtils {
@@ -14,7 +16,7 @@ public class ExtractorUtils {
 
         final long now = nanoTime(System.currentTimeMillis());
 
-        return LongPointData.create(now, now, attributes, value.longValue());
+        return ImmutableLongPointData.create(now, now, attributes, value.longValue());
     }
 
     @Nullable
@@ -25,7 +27,7 @@ public class ExtractorUtils {
 
         final long now = nanoTime(System.currentTimeMillis());
 
-        return DoublePointData.create(now, now, attributes, value.doubleValue());
+        return ImmutableDoublePointData.create(now, now, attributes, value.doubleValue());
     }
 
     private static long nanoTime(final long now) {
