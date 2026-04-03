@@ -42,7 +42,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
     mutations: {
-      onError: async (e: unknown) => await showServerErrorToast(e as Response),
+      onError: async (err: unknown) => await showServerErrorToast(err as Response),
     },
   },
 });
