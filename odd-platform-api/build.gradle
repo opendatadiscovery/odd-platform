@@ -71,7 +71,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.1"
-        mavenBom "io.netty:netty-bom:4.1.129.Final"
+        mavenBom "io.netty:netty-bom:4.1.128.Final"
     }
     dependencies {
         dependency 'com.nimbusds:nimbus-jose-jwt:9.37.4'
