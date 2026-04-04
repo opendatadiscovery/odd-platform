@@ -102,6 +102,7 @@ export const DataEntityClassTypeLabelMap: Map<
     TypeNameEnum.ML_MODEL_ARTIFACT,
     { normal: 'ML model artifact', plural: 'ML model artifacts' },
   ],
+  [TypeNameEnum.ML_MODEL, { normal: 'ML model', plural: 'ML models' }],
   [TypeNameEnum.DASHBOARD, { normal: 'Dashboard', plural: 'Dashboards' }],
   [TypeNameEnum.VIEW, { normal: 'View', plural: 'Views' }],
   [TypeNameEnum.DAG, { normal: 'Dag', plural: 'Dags' }],

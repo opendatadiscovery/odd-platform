@@ -780,6 +780,7 @@ components:
             - ML_EXPERIMENT
             - ML_MODEL_TRAINING
             - ML_MODEL_INSTANCE
+            - ML_MODEL
             - DASHBOARD
             - ML_MODEL_ARTIFACT
             - VIEW
