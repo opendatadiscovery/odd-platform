@@ -13,7 +13,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   );
 
   const infoBarItemSkeleton = (key: number) => (
-    <Grid sx={{ mr: 3 }} key={key} item xs={3}>
+    <Grid sx={{ mr: 3 }} key={key} size={3}>
       <Skeleton width='100%' height='94px' />
     </Grid>
   );
@@ -23,7 +23,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   );
 
   const dataListSkeleton = (key: number) => (
-    <Grid container item key={key} xs={3} justifyContent='center' mr={3}>
+    <Grid container key={key} justifyContent='center' mr={3} size={3}>
       <Skeleton width={width} height='34px' sx={{ mb: 2 }} />
       {[...Array(5)].map((_, id) => dataSkeleton(id))}
     </Grid>

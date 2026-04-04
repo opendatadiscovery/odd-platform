@@ -25,16 +25,16 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
 
   return (
     <S.Container container>
-      <Grid lg={4} item>
+      <Grid size={4}>
         <Typography variant='body1' noWrap title={tag.name}>
           {tag.name}
         </Typography>
       </Grid>
-      <Grid lg={5} item>
+      <Grid size={5}>
         <Typography variant='body1'>{tag.important ? t('important') : ''}</Typography>
       </Grid>
       {!tag.external && (
-        <S.ActionsContainer lg={3} container item>
+        <S.ActionsContainer container size={3}>
           <WithPermissions permissionTo={Permission.TAG_UPDATE}>
             <TagEditForm
               tag={tag}

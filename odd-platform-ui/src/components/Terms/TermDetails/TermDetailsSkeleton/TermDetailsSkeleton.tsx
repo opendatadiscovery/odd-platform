@@ -8,7 +8,7 @@ interface SkeletonProps {
 
 const TermDetailsSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   const tabsSkeletonItem = (key: number) => (
-    <Grid key={key} item xs={2}>
+    <Grid key={key} size={2}>
       <Skeleton width={width} height={34} />
     </Grid>
   );
@@ -16,11 +16,11 @@ const TermDetailsSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   return (
     <Grid container>
       <Grid container justifyContent='space-between'>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <Skeleton width={width} height={40} />
         </Grid>
       </Grid>
-      <Grid container item xs={6} sx={{ mt: 3 }} wrap='nowrap'>
+      <Grid container sx={{ mt: 3 }} wrap='nowrap' size={6}>
         {[...Array(6)].map((_, id) => tabsSkeletonItem(id))}
       </Grid>
     </Grid>

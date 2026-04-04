@@ -35,7 +35,7 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
 
   return (
     <Grid container>
-      <Grid item xs={12} sx={{ mb: 1.25 }}>
+      <Grid sx={{ mb: 1.25 }} size={12}>
         <EntityClassItem
           entityClassName={DataEntityClassNameEnum.RELATIONSHIP}
           fullName
@@ -50,8 +50,8 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
           />
 
           <Grid container flexWrap='nowrap' columnGap={1} sx={{ mt: 1.25 }}>
-            <Grid item container xs={6} alignItems='flex-start' alignContent='flex-start'>
-              <Grid item container xs={12} alignItems='baseline'>
+            <Grid container alignItems='flex-start' alignContent='flex-start' size={6}>
+              <Grid container alignItems='baseline' size={12}>
                 <StatIconContainer sx={{ mr: 1 }}>
                   <UpstreamIcon />
                 </StatIconContainer>
@@ -61,12 +61,11 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
                 <Typography variant='h4'>Referenced Key</Typography>
               </Grid>
               <Grid
-                item
                 container
-                xs={12}
                 direction='column'
                 alignItems='flex-start'
                 sx={{ mt: 1 }}
+                size={12}
               >
                 {targets?.slice(0, displayedEntitiesNumber).map(target => (
                   <RelationshipKey
@@ -79,8 +78,8 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
                 ))}
               </Grid>
             </Grid>
-            <Grid item container xs={6} alignItems='flex-start' alignContent='flex-start'>
-              <Grid item container xs={12} alignItems='baseline'>
+            <Grid container alignItems='flex-start' alignContent='flex-start' size={6}>
+              <Grid container alignItems='baseline' size={12}>
                 <StatIconContainer sx={{ mr: 1 }}>
                   <DownstreamIcon />
                 </StatIconContainer>
@@ -90,12 +89,11 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
                 <Typography variant='h4'>Foreign Key</Typography>
               </Grid>
               <Grid
-                item
                 container
-                xs={12}
                 direction='column'
                 alignItems='flex-start'
                 sx={{ mt: 1 }}
+                size={12}
               >
                 {sources?.slice(0, displayedEntitiesNumber).map(source => (
                   <RelationshipKey

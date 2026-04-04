@@ -16,11 +16,11 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
   const randWidth = () => `${Math.round(75 + pseudoRandNum() * 15)}%`;
 
   const structureRowItem = (key: number) => (
-    <Grid key={key} item xs={1} height='34px' container wrap='wrap'>
-      <Grid item xs={12}>
+    <Grid key={key} height='34px' container wrap='wrap' size={1}>
+      <Grid size={12}>
         <Skeleton width={randWidth()} height={mainSkeletonHeight} />
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <Skeleton width={randWidth()} height={mainSkeletonHeight} />
       </Grid>
     </Grid>
@@ -28,22 +28,22 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
 
   const structureRow = (key: number) => (
     <Grid key={key} container justifyContent='space-between' sx={{ pt: 5, pl: 5 }}>
-      <Grid item xs={3} container wrap='wrap'>
-        <Grid item xs={10} height='26px'>
+      <Grid container wrap='wrap' size={3}>
+        <Grid height='26px' size={10}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={10} height='20px'>
+        <Grid height='20px' size={10}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
-      <Grid item xs={9} container justifyContent='flex-end'>
-        <Grid item xs={2} height='34px'>
+      <Grid container justifyContent='flex-end' size={9}>
+        <Grid height='34px' size={2}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={2} height='34px'>
+        <Grid height='34px' size={2}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={2} height='34px'>
+        <Grid height='34px' size={2}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
         {[...Array(4)].map((_, id) => structureRowItem(id))}
@@ -54,10 +54,10 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
   return showSkeleton ? (
     <Grid container sx={{ px: 1 }}>
       <Grid container height='34px' justifyContent='space-between'>
-        <Grid item xs={5}>
+        <Grid size={5}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={2} container justifyContent='flex-end'>
+        <Grid container justifyContent='flex-end' size={2}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
       </Grid>

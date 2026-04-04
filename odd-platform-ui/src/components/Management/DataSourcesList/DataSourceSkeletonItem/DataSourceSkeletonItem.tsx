@@ -15,8 +15,8 @@ const DataSourceSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
     renderContent={({ randWidth, key }) => (
       <Container key={key} sx={{ mb: 1 }}>
         <Grid container alignItems='flex-start' spacing={2}>
-          <Grid item container xs={12}>
-            <Grid item xs={2}>
+          <Grid container size={12}>
+            <Grid size={2}>
               <Skeleton width={randWidth()} height={mainSkeletonHeight} />
             </Grid>
           </Grid>

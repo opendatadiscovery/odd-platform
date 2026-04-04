@@ -3,15 +3,14 @@ import { Box, type Theme } from '@mui/material';
 import type { SxProps } from '@mui/system';
 import { DatePicker, type DatePickerProps } from '@mui/x-date-pickers';
 import { CalendarIcon } from 'components/shared/icons';
-import Input from 'components/shared/elements/Input/Input';
 
 export const metadataDatePickerInputFormat = 'd MMM yyyy';
 export const minDate = new Date(1900, 0, 1);
 export const maxDate = new Date(2099, 11, 31);
 
 interface AppDatePickerProps extends Pick<
-  DatePickerProps<Date, Date>,
-  'onChange' | 'onAccept' | 'label' | 'inputFormat' | 'disableMaskedInput'
+  DatePickerProps<Date>,
+  'onChange' | 'onAccept' | 'label' | 'format'
 > {
   sx?: SxProps<Theme>;
   errorText?: string;
@@ -20,16 +19,7 @@ interface AppDatePickerProps extends Pick<
 
 const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
   (
-    {
-      onChange,
-      onAccept,
-      label,
-      inputFormat,
-      disableMaskedInput,
-      sx,
-      defaultDate,
-      errorText,
-    },
+    { onChange, onAccept, label, format: formatProp, sx, defaultDate, errorText },
     ref
   ) => {
     const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
@@ -48,34 +38,27 @@ const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
           ref={ref as unknown as React.Ref<HTMLDivElement>}
           minDate={minDate}
           maxDate={maxDate}
-          onChange={date => {
+          onChange={(date, context) => {
             setSelectedDate(date);
-            onChange(date);
-            return onChange;
+            if (onChange) onChange(date, context);
           }}
-          onAccept={date => {
+          onAccept={(date, context) => {
             setSelectedDate(date);
-            return onAccept;
+            if (onAccept) onAccept(date, context);
           }}
-          inputFormat={inputFormat ?? metadataDatePickerInputFormat}
-          disableMaskedInput={disableMaskedInput}
+          format={formatProp ?? metadataDatePickerInputFormat}
           label={label}
           value={selectedDate}
-          components={{
-            OpenPickerIcon: AppDatePickerIcon,
+          slots={{
+            openPickerIcon: AppDatePickerIcon,
           }}
-          OpenPickerButtonProps={{ disableRipple: true }}
-          renderInput={params => (
-            <Input
-              maxWidth={320}
-              variant='main-m'
-              inputProps={params.inputProps}
-              ref={params.inputRef}
-              type='date'
-              error={errorText}
-              calendar={params.InputProps?.endAdornment}
-            />
-          )}
+          slotProps={{
+            openPickerButton: { disableRipple: true },
+            textField: {
+              error: !!errorText,
+              helperText: errorText,
+            },
+          }}
         />
       </Box>
     );

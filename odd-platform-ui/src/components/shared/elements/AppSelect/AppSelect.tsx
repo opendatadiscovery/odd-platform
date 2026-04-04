@@ -5,12 +5,13 @@ import { DropdownIcon } from 'components/shared/icons';
 import type { AppSelectSizes } from 'components/shared/elements/AppSelect/AppSelectStyles';
 import * as S from 'components/shared/elements/AppSelect/AppSelectStyles';
 
-interface AppSelectProps extends SelectProps {
+export type AppSelectProps = SelectProps & {
   size?: AppSelectSizes;
   containerSx?: SxProps<Theme>;
   maxMenuHeight?: number;
   dataQAId?: string;
-}
+  placeholder?: string;
+};
 
 const AppSelect: React.FC<AppSelectProps> = React.forwardRef(
   (

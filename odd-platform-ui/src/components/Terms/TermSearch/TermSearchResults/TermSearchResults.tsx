@@ -63,25 +63,25 @@ const TermSearchResults: React.FC = () => {
   return (
     <Grid sx={{ mt: 2 }}>
       <S.TermSearchResultsTableHeader container $scrollbarWidth={scrollbarWidth}>
-        <S.TermSearchResultsColContainer item $colType='collg'>
+        <S.TermSearchResultsColContainer $colType='collg'>
           <Typography variant='caption'>{t('Term name')}</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='collg'>
+        <S.TermSearchResultsColContainer $colType='collg'>
           <Typography variant='caption'>{t('Namespace')}</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='collg'>
+        <S.TermSearchResultsColContainer $colType='collg'>
           <Typography variant='caption'>{t('Owner')}</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='colxs'>
+        <S.TermSearchResultsColContainer $colType='colxs'>
           <Typography variant='caption'>{t('Using')}</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='colsm'>
+        <S.TermSearchResultsColContainer $colType='colsm'>
           <Typography variant='caption'>{t('Created')}</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='colsm'>
+        <S.TermSearchResultsColContainer $colType='colsm'>
           <Typography variant='caption'>{t('Last update')}</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='colxs' />
+        <S.TermSearchResultsColContainer $colType='colxs' />
       </S.TermSearchResultsTableHeader>
       {isTermSearchCreating ? (
         <TermSearchResultsSkeleton length={10} />

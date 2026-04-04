@@ -93,8 +93,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         $rowHeight={rowHeight}
         $isRowSelected={isRowSelected}
       >
-        <Grid container item sx={{ py: 1.75 }} flexWrap='nowrap'>
-          <S.RowInfoWrapper container $nesting={nesting} item sx={{ px: 1 }}>
+        <Grid container sx={{ py: 1.75 }} flexWrap='nowrap'>
+          <S.RowInfoWrapper container $nesting={nesting} sx={{ px: 1 }}>
             {collapseBlock}
             <Grid container minWidth={0} justifyContent='space-between' flexWrap='nowrap'>
               <Grid container minWidth={0} flexDirection='column'>
@@ -154,7 +154,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
           </S.RowInfoWrapper>
         </Grid>
       </S.RowContainer>
-      <Grid item>
+      <Grid>
         <Collapse in={open} timeout='auto' unmountOnExit>
           {open && childFields.length
             ? childFields.map(field => renderStructureItem(field, nesting + 1))

@@ -24,16 +24,16 @@ const TestItem: React.FC<TestItemProps> = ({
 
   return (
     <Container container $active={active}>
-      <Grid item xs={0.25}>
+      <Grid size={0.25}>
         {latestRunStatus && <TestRunStatusIcon typeName={latestRunStatus} />}
       </Grid>
-      <Grid container item wrap='nowrap' xs={11.75}>
-        <Grid item xs={10}>
+      <Grid container wrap='nowrap' size={11.75}>
+        <Grid size={10}>
           <Typography variant='body1' noWrap>
             {testName}
           </Typography>
         </Grid>
-        <Grid item container xs={2} justifyContent='flex-end'>
+        <Grid container justifyContent='flex-end' size={2}>
           <Typography variant='body1'>
             {testEndTime &&
               testStartTime &&

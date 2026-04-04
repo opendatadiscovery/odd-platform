@@ -9,7 +9,7 @@ const TestReportSkeleton: React.FC = () => (
     renderContent={({ randWidth }) => (
       <Grid container>
         <Grid container justifyContent='space-between'>
-          <TestReportContainer container item xs={6}>
+          <TestReportContainer container size={6}>
             <Skeleton width={randWidth()} height={mainSkeletonHeight} />
             <Skeleton width={randWidth()} height={mainSkeletonHeight} />
             <Skeleton width={randWidth()} height={mainSkeletonHeight} />
@@ -17,7 +17,7 @@ const TestReportSkeleton: React.FC = () => (
             <Skeleton width={randWidth()} height={mainSkeletonHeight} />
             <Skeleton width={randWidth()} height={mainSkeletonHeight} />
           </TestReportContainer>
-          <Grid container item xs={2} justifyContent='flex-end'>
+          <Grid container justifyContent='flex-end' size={2}>
             <Skeleton width={randWidth()} height={mainSkeletonHeight} />
           </Grid>
         </Grid>

@@ -29,7 +29,7 @@ const IntegrationPreviewList: FC = () => {
     ) ?? [];
 
   return (
-    <Grid container flexDirection='column' alignItems='center'>
+    <Grid container flexDirection='column'>
       <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 1 }}>
         <Typography variant='h1'>{t('Integrations')}</Typography>
         {data && (

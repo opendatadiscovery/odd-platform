@@ -1,7 +1,5 @@
-import { styled } from '@mui/material';
+import { styled, type CSSObject } from '@mui/material';
 import { Link } from 'react-router-dom';
-import type { CSSProperties } from 'react';
-import type { CSSObject } from 'styled-components';
 import { mapKeysToValue } from 'lib/helpers';
 import { type ButtonColor, type ButtonSize, type Button } from './interfaces';
 import { getButtonFontType, getButtonType } from './helpers';
@@ -19,11 +17,11 @@ export const StyledButton = styled('button')<ButtonProps>(({
   $size,
   $iconButton,
   $fullWidth,
-}) => {
+}): CSSObject => {
   const btnType = getButtonType($color, $size, $iconButton);
   const btnFontType = getButtonFontType($color, $size);
 
-  const common = {
+  const common: CSSObject = {
     width: $fullWidth ? '100%' : 'auto',
     display: 'flex',
     justifyContent: 'center',
@@ -33,12 +31,12 @@ export const StyledButton = styled('button')<ButtonProps>(({
     minWidth: 0,
     boxSizing: 'border-box',
 
-    color: theme.palette.button[$color].normal.color,
-    backgroundColor: theme.palette.button[$color].normal.background,
+    color: theme.palette.button[$color].normal.color as string,
+    backgroundColor: theme.palette.button[$color].normal.background as string,
 
-    fontWeight: theme.typography[btnFontType].fontWeight,
-    fontSize: theme.typography[btnFontType].fontSize,
-    lineHeight: theme.typography[btnFontType].lineHeight,
+    fontWeight: theme.typography[btnFontType].fontWeight as number,
+    fontSize: theme.typography[btnFontType].fontSize as string,
+    lineHeight: theme.typography[btnFontType].lineHeight as string,
 
     '&:hover': {
       cursor: 'pointer',
@@ -56,7 +54,7 @@ export const StyledButton = styled('button')<ButtonProps>(({
     },
   };
 
-  const stylesByButtonType: Record<Button, CSSProperties> = {
+  const stylesByButtonType: Record<Button, CSSObject> = {
     [getButtonType('main', 'lg')]: {
       height: '32px',
       borderRadius: '4px',
@@ -135,7 +133,7 @@ export const StyledButton = styled('button')<ButtonProps>(({
     },
   };
 
-  return { ...(common as CSSObject), ...stylesByButtonType[btnType] };
+  return { ...common, ...stylesByButtonType[btnType] };
 });
 
 export const StyledLink = styled(Link)<{

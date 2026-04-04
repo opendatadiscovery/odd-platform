@@ -34,7 +34,7 @@ const DataSourceItem: FC<DataSourceItemProps> = ({ dataSource }) => {
     <S.Container elevation={0}>
       <Grid container alignItems='flex-start'>
         <Grid container justifyContent='space-between' alignItems='center'>
-          <Grid container item xs={8} alignItems='center'>
+          <Grid container alignItems='center' size={8}>
             <DatasourceLogo width={32} padding={1} rounded name={dataSource.oddrn} />
             <Typography variant='h4' title={dataSource.name} ml={1}>
               {dataSource.name}

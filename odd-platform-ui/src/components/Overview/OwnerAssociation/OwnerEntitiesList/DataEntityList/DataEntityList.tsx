@@ -26,7 +26,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
   isNotFetched,
 }) =>
   isNotFetched ? null : (
-    <S.DataEntityListContainer item lg={3}>
+    <S.DataEntityListContainer size={3}>
       <S.SectionCaption variant='h4' sx={{ mb: 2 }}>
         {entityListIcon}
         {entityListName}

@@ -31,14 +31,14 @@ const OverviewGeneral: React.FC = () => {
 
   return (
     <Grid container>
-      <Grid item container sm={12}>
-        <Grid item sm={12}>
+      <Grid container size={12}>
+        <Grid size={12}>
           <LabeledInfoItem inline label={t('Namespace')} labelWidth={4}>
             {dataEntityDetails.dataSource?.namespace?.name}
           </LabeledInfoItem>
         </Grid>
         {!dataEntityDetails.manuallyCreated && dataEntityDetails.dataSource?.oddrn && (
-          <Grid item sm={12}>
+          <Grid size={12}>
             <LabeledInfoItem inline label='Datasource' labelWidth={4}>
               <Grid container flexWrap='nowrap' alignItems='center'>
                 <DatasourceLogo
@@ -57,31 +57,31 @@ const OverviewGeneral: React.FC = () => {
           </Grid>
         )}
         {sourceCreatedAt && (
-          <Grid item sm={12}>
+          <Grid size={12}>
             <LabeledInfoItem inline label={t('Created at')} labelWidth={4}>
               {sourceCreatedAt}
             </LabeledInfoItem>
           </Grid>
         )}
         {sourceUpdatedAt && (
-          <Grid item sm={12}>
+          <Grid size={12}>
             <LabeledInfoItem inline label={t('Updated')} labelWidth={4}>
               {sourceUpdatedAt}
             </LabeledInfoItem>
           </Grid>
         )}
-        <Grid item sm={12}>
+        <Grid size={12}>
           <LabeledInfoItem inline label={t('View count')} labelWidth={4}>
             {dataEntityDetails.viewCount}
           </LabeledInfoItem>
         </Grid>
-        <Grid item sm={12} sx={{ mt: 2 }}>
+        <Grid sx={{ mt: 2 }} size={12}>
           <LabeledInfoItem
             labelWidth={12}
             label={
               <Grid container justifyContent='space-between'>
-                <Grid item>ODDRN</Grid>
-                <Grid item>
+                <Grid>ODDRN</Grid>
+                <Grid>
                   <CopyButton text='Copy' stringToCopy={dataEntityDetails.oddrn} />
                 </Grid>
               </Grid>

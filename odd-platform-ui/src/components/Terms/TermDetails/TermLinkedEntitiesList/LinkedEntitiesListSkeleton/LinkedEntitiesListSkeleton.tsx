@@ -10,31 +10,31 @@ const LinkedEntitiesListSkeleton: React.FC = () => (
     length={10}
     renderContent={({ randWidth, key }) => (
       <Grid container sx={{ py: 1.25 }} key={key} wrap='nowrap'>
-        <ColContainer item $colType='collg'>
+        <ColContainer $colType='collg'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType='colxs'>
+        <ColContainer $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType='colxs'>
+        <ColContainer $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType='colxs'>
+        <ColContainer $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType='colmd'>
+        <ColContainer $colType='colmd'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType='colmd'>
+        <ColContainer $colType='colmd'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType='colmd'>
+        <ColContainer $colType='colmd'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType='colsm'>
+        <ColContainer $colType='colsm'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType='colsm'>
+        <ColContainer $colType='colsm'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
       </Grid>

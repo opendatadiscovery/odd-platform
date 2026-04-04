@@ -84,12 +84,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             )}
           </S.Adornment>
         </div>
-
         {props.hint && <S.Hint>{props.hint}</S.Hint>}
         {props.error && <S.Hint $isError>{props.error}</S.Hint>}
       </S.Container>
     );
   }
 );
-
 export default Input;

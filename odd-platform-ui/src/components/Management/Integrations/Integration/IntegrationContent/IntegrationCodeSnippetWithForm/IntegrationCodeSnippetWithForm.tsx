@@ -56,7 +56,7 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
                       control={<Checkbox sx={{ mr: 1 }} />}
                       disableTypography
                       label={
-                        <Grid item lg={4}>
+                        <Grid size={4}>
                           <Typography variant='body1'>{arg.name}</Typography>
                         </Grid>
                       }
@@ -91,10 +91,10 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
                 }}
                 render={({ field }) => (
                   <Grid container flexWrap='nowrap' alignItems='center' sx={{ mb: 1 }}>
-                    <Grid item lg={4}>
+                    <Grid size={4}>
                       <Typography variant='body1'>{arg.name}</Typography>
                     </Grid>
-                    <Grid item lg={8}>
+                    <Grid size={8}>
                       <Input
                         {...field}
                         variant='main-m'

@@ -65,7 +65,6 @@ const MetadataValueEditor: React.FC<MetadataValueEditorProps> = ({
             {...field}
             sx={{ mt: 1 }}
             label={labeled ? defaultText : ''}
-            disableMaskedInput
             defaultDate={
               metadataType === MetadataFieldType.DATETIME && metadataValue
                 ? metadataValue

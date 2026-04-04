@@ -30,14 +30,14 @@ const QueryExampleDetailsLinkedTermsItem = ({
       })}
       wrap='nowrap'
     >
-      <Grid container item xs={2} pl={1}>
+      <Grid container pl={1} size={2}>
         <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
           <Typography ml={0.5} variant='body1' noWrap title={term.name}>
             {term.name}
           </Typography>
         </Box>
       </Grid>
-      <Grid container item xs={4} pl={1}>
+      <Grid container pl={1} size={4}>
         <Typography variant='body1' title={term.namespace.name} noWrap>
           {term.namespace.name}
         </Typography>

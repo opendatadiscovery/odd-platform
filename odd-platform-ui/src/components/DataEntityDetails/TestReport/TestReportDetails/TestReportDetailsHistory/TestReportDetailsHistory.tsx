@@ -41,13 +41,13 @@ const TestReportDetailsHistory: React.FC = () => {
           btnCreateEl={
             <S.QualityTestRunItemContainer container>
               <S.QualityTestRunItem container>
-                <Grid container item lg={6} justifyContent='flex-start'>
+                <Grid container justifyContent='flex-start' size={6}>
                   <Typography variant='body1'>
                     {dataQATestRun?.startTime &&
                       qualityTestRunFormattedDateTime(dataQATestRun?.startTime.getTime())}
                   </Typography>
                 </Grid>
-                <Grid container item lg={3} justifyContent='center'>
+                <Grid container justifyContent='center' size={3}>
                   <Typography variant='body1' align='right'>
                     {dataQATestRun?.startTime &&
                       dataQATestRun?.endTime &&
@@ -58,7 +58,7 @@ const TestReportDetailsHistory: React.FC = () => {
                       )}
                   </Typography>
                 </Grid>
-                <Grid container item lg={3} justifyContent='flex-end'>
+                <Grid container justifyContent='flex-end' size={3}>
                   <TestRunStatusItem typeName={dataQATestRun.status} />
                 </Grid>
               </S.QualityTestRunItem>

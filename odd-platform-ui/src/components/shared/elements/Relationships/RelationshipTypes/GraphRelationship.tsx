@@ -15,15 +15,14 @@ export const GraphRelationship: React.FC<GraphRelationshipProps> = ({
   sourceDataEntity,
   graphRelationship,
 }) => (
-  <Grid item container flexWrap='nowrap' columnGap={1}>
+  <Grid container flexWrap='nowrap' columnGap={1}>
     <Grid
-      item
       container
-      xs={2}
       direction='column'
       alignItems='flex-start'
       alignContent='flex-start'
       sx={{ overflow: 'hidden' }}
+      size={2}
     >
       <Typography variant='h4' sx={{ mb: 2 }}>
         Source:
@@ -35,22 +34,20 @@ export const GraphRelationship: React.FC<GraphRelationshipProps> = ({
       />
     </Grid>
     <Grid
-      item
       container
-      xs={4}
       alignItems='center'
       justifyContent='center'
       flex='none'
       sx={{ p: 2 }}
+      size={4}
     />
     <Grid
-      item
       container
-      xs={2}
       direction='column'
       alignItems='flex-start'
       alignContent='flex-start'
       sx={{ overflow: 'hidden' }}
+      size={2}
     >
       <Typography variant='h4' sx={{ mb: 2 }}>
         Target:
@@ -62,12 +59,11 @@ export const GraphRelationship: React.FC<GraphRelationshipProps> = ({
       />
     </Grid>
     <Grid
-      item
       container
-      xs={2}
       direction='column'
       alignItems='flex-start'
       alignContent='flex-start'
+      size={2}
     >
       <Typography variant='h4' sx={{ mb: 2 }}>
         Is Directed:
@@ -85,6 +81,6 @@ export const GraphRelationship: React.FC<GraphRelationshipProps> = ({
         </Grid>
       )}
     </Grid>
-    <Grid xs={2} />
+    <Grid size={2} />
   </Grid>
 );

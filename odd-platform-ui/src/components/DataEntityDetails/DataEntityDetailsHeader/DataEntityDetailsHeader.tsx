@@ -72,7 +72,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   return (
     <Grid container flexDirection='column' alignItems='flex-start'>
       <Grid container alignItems='center' flexWrap='nowrap'>
-        <Grid container item lg={7} alignItems='center' flexWrap='nowrap'>
+        <Grid container alignItems='center' flexWrap='nowrap' size={7}>
           <Typography variant='h0' noWrap sx={{ mr: 1 }}>
             {internalName || externalName}
           </Typography>
@@ -102,12 +102,11 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
         </Grid>
         <Grid
           container
-          item
-          lg={5}
           sx={{ ml: 1 }}
           alignItems='center'
           flexWrap='nowrap'
           justifyContent='flex-end'
+          size={5}
         >
           {entityLastIngestedAt}
           <WithPermissions

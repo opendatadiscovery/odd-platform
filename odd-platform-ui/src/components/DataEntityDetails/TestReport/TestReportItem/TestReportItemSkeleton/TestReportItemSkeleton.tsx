@@ -10,13 +10,13 @@ interface SkeletonProps {
 const TestReportItemSkeleton: React.FC<SkeletonProps> = ({ length }) => {
   const skeletonItem = (width?: string) => (
     <Grid container justifyContent='space-between' sx={{ mb: 2 }}>
-      <Grid item xs={2}>
+      <Grid size={2}>
         <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
-      <Grid item xs={4}>
+      <Grid size={4}>
         <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
-      <Grid item xs={2}>
+      <Grid size={2}>
         <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
     </Grid>
@@ -27,7 +27,7 @@ const TestReportItemSkeleton: React.FC<SkeletonProps> = ({ length }) => {
       length={length}
       renderContent={({ randWidth, key }) => (
         <Grid key={key} container sx={{ py: 1.25, px: 1 }}>
-          <Grid container item xs={4} sx={{ mb: 2 }}>
+          <Grid container sx={{ mb: 2 }} size={4}>
             <Skeleton width={randWidth()} height={mainSkeletonHeight} />
           </Grid>
           {skeletonItem(randWidth())}

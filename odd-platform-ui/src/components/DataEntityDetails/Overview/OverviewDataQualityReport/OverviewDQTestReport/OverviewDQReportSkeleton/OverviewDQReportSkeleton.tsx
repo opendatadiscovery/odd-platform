@@ -17,48 +17,48 @@ const OverviewDQReportSkeleton: React.FC<SkeletonProps> = ({ length }) => {
   const skeleton = (key: number) => (
     <Grid key={key} container>
       <ReportSkeleton container justifyContent='space-between'>
-        <Grid item xs={8}>
+        <Grid size={8}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height='100%' />
         </Grid>
-        <Grid item xs={2}>
+        <Grid size={2}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height='100%' />
         </Grid>
       </ReportSkeleton>
       <ReportSkeleton container justifyContent='space-between' sx={{ mt: 3 }}>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height='100%' />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height='100%' />
         </Grid>
       </ReportSkeleton>
       <ReportSkeleton container>
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height='100%' />
         </Grid>
       </ReportSkeleton>
       <SkeletonStatItem container sx={{ mt: 1 }}>
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height='100%' />
         </Grid>
       </SkeletonStatItem>
       <SkeletonStatItem container sx={{ mt: 1 }}>
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height='100%' />
         </Grid>
       </SkeletonStatItem>
       <SkeletonStatItem container sx={{ mt: 1 }}>
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height='100%' />
         </Grid>
       </SkeletonStatItem>
       <SkeletonStatItem container sx={{ mt: 1 }}>
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height='100%' />
         </Grid>
       </SkeletonStatItem>
       <SkeletonStatItem container sx={{ mt: 1 }}>
-        <Grid item xs={6}>
+        <Grid size={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height='100%' />
         </Grid>
       </SkeletonStatItem>

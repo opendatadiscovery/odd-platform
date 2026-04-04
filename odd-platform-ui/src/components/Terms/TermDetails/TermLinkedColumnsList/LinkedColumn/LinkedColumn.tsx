@@ -23,12 +23,11 @@ const LinkedColumn: React.FC<LinkedColumnProps> = ({ linkedColumn }) => {
       <Container container>
         <TermLinkedColumnsColContainer
           $colType='collg'
-          item
           container
           justifyContent='space-between'
           wrap='nowrap'
         >
-          <NameContainer container item>
+          <NameContainer container>
             <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
               <Typography
                 ml={0.5}
@@ -42,7 +41,6 @@ const LinkedColumn: React.FC<LinkedColumnProps> = ({ linkedColumn }) => {
           </NameContainer>
           <Grid
             container
-            item
             justifyContent='flex-end'
             wrap='nowrap'
             flexBasis={0}
@@ -59,12 +57,12 @@ const LinkedColumn: React.FC<LinkedColumnProps> = ({ linkedColumn }) => {
             <TypeFieldLabel typeName={linkedColumn.type.type} sx={{ ml: 1 }} />
           </Grid>
         </TermLinkedColumnsColContainer>
-        <TermLinkedColumnsColContainer item $colType='colmd'>
+        <TermLinkedColumnsColContainer $colType='colmd'>
           <Typography variant='body1' title={linkedColumn.dataEntityName} noWrap>
             {linkedColumn.dataEntityName}
           </Typography>
         </TermLinkedColumnsColContainer>
-        <TermLinkedColumnsColContainer item $colType='colmd'>
+        <TermLinkedColumnsColContainer $colType='colmd'>
           <Typography
             variant='body1'
             title={linkedColumn.dataSource?.namespace?.name}
@@ -73,15 +71,15 @@ const LinkedColumn: React.FC<LinkedColumnProps> = ({ linkedColumn }) => {
             {linkedColumn.dataSource?.namespace?.name}
           </Typography>
         </TermLinkedColumnsColContainer>
-        <TermLinkedColumnsColContainer item $colType='colsm'>
+        <TermLinkedColumnsColContainer $colType='colsm'>
           <Typography variant='body1' title={linkedColumn.dataSource?.name} noWrap>
             {linkedColumn.dataSource?.name}
           </Typography>
         </TermLinkedColumnsColContainer>
-        <TermLinkedColumnsColContainer item $colType='colsm'>
+        <TermLinkedColumnsColContainer $colType='colsm'>
           <Grid container direction='column' alignItems='flex-start'>
             {linkedColumn.ownership?.map(ownership => (
-              <Grid item key={ownership.id}>
+              <Grid key={ownership.id}>
                 <Typography variant='body1' title={ownership.owner.name} noWrap>
                   {ownership.owner.name}
                 </Typography>

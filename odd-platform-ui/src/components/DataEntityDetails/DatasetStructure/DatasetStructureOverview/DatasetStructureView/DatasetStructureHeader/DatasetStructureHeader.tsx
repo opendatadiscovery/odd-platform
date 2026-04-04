@@ -79,13 +79,12 @@ const DatasetStructureHeader: FC = () => {
   return (
     <Grid
       p={2}
-      item
       justifyContent='space-between'
       alignItems={typesExpanded ? 'flex-start' : 'center'}
       container
       flexWrap='nowrap'
     >
-      <Grid item>
+      <Grid>
         <Typography variant='h5' sx={{ display: 'flex' }}>
           <ColumnsIcon />
           <NumberFormatted sx={{ mx: 0.5 }} value={datasetFieldFieldsCount} />
@@ -94,7 +93,7 @@ const DatasetStructureHeader: FC = () => {
           </Typography>
         </Typography>
       </Grid>
-      <Grid item container flexWrap='nowrap' ml={1}>
+      <Grid container flexWrap='nowrap' ml={1}>
         <DatasetStructureTypeCounts
           fieldsCount={datasetFieldFieldsCount}
           typesCount={datasetFieldTypesCount}
@@ -102,13 +101,7 @@ const DatasetStructureHeader: FC = () => {
           setExpanded={setTypesExpanded}
         />
       </Grid>
-      <Grid
-        item
-        container
-        flexWrap='nowrap'
-        alignItems='center'
-        justifyContent='flex-end'
-      >
+      <Grid container flexWrap='nowrap' alignItems='center' justifyContent='flex-end'>
         <Input
           name='search'
           variant='search-m'

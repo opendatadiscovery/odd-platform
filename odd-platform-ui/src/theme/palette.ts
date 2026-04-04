@@ -1,5 +1,3 @@
-import createPalette from '@mui/material/styles/createPalette';
-
 const colors = {
   black: '#000000',
   white: '#FFFFFF',
@@ -64,7 +62,7 @@ const colors = {
   purple5: '#EAE5FF',
 } as const;
 
-export const palette = createPalette({
+export const palette = {
   border: {
     primary: colors.black10,
     secondary: colors.black20,
@@ -338,4 +336,4 @@ export const palette = createPalette({
     DELETED: { background: colors.orange5, color: colors.orange50 },
     ERROR_SENDING: { background: colors.red5, color: colors.red50 },
   },
-} as const);
+} as const;

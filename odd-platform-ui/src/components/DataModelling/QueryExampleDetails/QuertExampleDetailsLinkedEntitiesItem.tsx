@@ -33,7 +33,7 @@ const QueryExampleDetailsLinkedEntitiesItem = ({
       })}
       wrap='nowrap'
     >
-      <Grid container item xs={2} pl={1}>
+      <Grid container pl={1} size={2}>
         <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
           <MetadataStale
             isStale={entity.isStale}
@@ -56,20 +56,20 @@ const QueryExampleDetailsLinkedEntitiesItem = ({
           ))}
         </Box>
       </Grid>
-      <Grid container item xs={4} pl={1}>
+      <Grid container pl={1} size={4}>
         <Typography variant='body1' title={entity.dataSource.namespace?.name} noWrap>
           {entity.dataSource.namespace?.name}
         </Typography>
       </Grid>
-      <Grid item xs={2} pl={1}>
+      <Grid pl={1} size={2}>
         <Typography variant='body1' title={entity.dataSource?.name} noWrap>
           {entity.dataSource?.name}
         </Typography>
       </Grid>
-      <Grid item xs={2} pl={1}>
+      <Grid pl={1} size={2}>
         <Grid container direction='column' alignItems='flex-start'>
           {entity.ownership?.map(ownership => (
-            <Grid item key={ownership.id}>
+            <Grid key={ownership.id}>
               <Typography variant='body1' title={ownership.owner.name} noWrap>
                 {ownership.owner.name}
               </Typography>
@@ -77,7 +77,7 @@ const QueryExampleDetailsLinkedEntitiesItem = ({
           ))}
         </Grid>
       </Grid>
-      <Grid item xs={1} pl={1}>
+      <Grid pl={1} size={1}>
         <Typography
           variant='body1'
           title={
@@ -90,7 +90,7 @@ const QueryExampleDetailsLinkedEntitiesItem = ({
             linkedEntityFormattedDateTime(entity.sourceCreatedAt.getTime())}
         </Typography>
       </Grid>
-      <Grid item xs={1} pl={1}>
+      <Grid pl={1} size={1}>
         <Typography
           variant='body1'
           title={

@@ -19,7 +19,6 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
       <Container container>
         <ColContainer
           $colType='colmd'
-          item
           container
           justifyContent='space-between'
           wrap='nowrap'
@@ -39,11 +38,11 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
             </Typography>
           </Box>
         </ColContainer>
-        <ColContainer $colType='collg' item container wrap='wrap' />
-        <ColContainer item $colType='colsm'>
+        <ColContainer $colType='collg' container wrap='wrap' />
+        <ColContainer $colType='colsm'>
           <Grid container direction='column' alignItems='flex-start'>
             {linkedItem.ownership?.map(ownership => (
-              <Grid item key={ownership.id}>
+              <Grid key={ownership.id}>
                 <Typography variant='body1' title={ownership.owner.name} noWrap>
                   {ownership.owner.name}
                 </Typography>
@@ -51,7 +50,7 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
             ))}
           </Grid>
         </ColContainer>
-        <ColContainer item $colType='colxs'>
+        <ColContainer $colType='colxs'>
           <Typography
             variant='body1'
             title={
@@ -64,7 +63,7 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
               linkedEntityFormattedDateTime(linkedItem.sourceCreatedAt.getTime())}
           </Typography>
         </ColContainer>
-        <ColContainer item $colType='colxs'>
+        <ColContainer $colType='colxs'>
           <Typography
             variant='body1'
             title={

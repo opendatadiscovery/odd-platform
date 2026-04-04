@@ -42,10 +42,10 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({ name, filterName, dataQ
 
   return (
     <Grid container data-qa={dataQA}>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <MultipleFilterAutocomplete name={name} filterName={filterName} />
       </Grid>
-      <Grid display='inline-flex' item xs={12} sx={{ my: 0.25, mx: -0.25 }} container>
+      <Grid display='inline-flex' sx={{ my: 0.25, mx: -0.25 }} container size={12}>
         {selectedOptions &&
           selectedOptions?.length > 0 &&
           selectedOptions.map(option => (

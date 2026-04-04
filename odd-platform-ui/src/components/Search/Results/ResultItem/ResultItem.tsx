@@ -75,14 +75,12 @@ const ResultItem: React.FC<ResultItemProps> = ({
       onClick={() => navigate(detailsLink)}
     >
       <SearchCol
-        lg={grid.lg.nm}
-        md={grid.md.nm}
-        item
         container
         justifyContent='space-between'
         wrap='nowrap'
+        size={{ md: grid.md.nm, lg: grid.lg.nm }}
       >
-        <S.NameContainer container item>
+        <S.NameContainer container>
           <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
             <MetadataStale
               isStale={searchResult.isStale}
@@ -106,7 +104,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             <DataEntityDetailsPreview dataEntityId={searchResult.id} />
           </Box>
         </S.NameContainer>
-        <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
+        <Grid container justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
           {showClassIcons &&
             searchResult.entityClasses?.map(entityClass => (
               <EntityClassItem
@@ -119,12 +117,12 @@ const ResultItem: React.FC<ResultItemProps> = ({
       </SearchCol>
       {searchClassIdPredicate(DataEntityClassNameEnum.SET) ? (
         <>
-          <SearchCol item lg={grid.lg.us} md={grid.md.us}>
+          <SearchCol size={{ md: grid.md.us, lg: grid.lg.us }}>
             <Typography variant='body1' noWrap>
               {searchResult.stats?.consumersCount}
             </Typography>
           </SearchCol>
-          <SearchCol item lg={grid.lg.rc} md={grid.md.rc}>
+          <SearchCol size={{ md: grid.md.rc, lg: grid.lg.rc }}>
             <S.RCContainer variant='body1' noWrap mr={1}>
               <RowsIcon fill='#C4C4C4' sx={{ mr: 0.25 }} />
               <NumberFormatted value={searchResult.stats?.rowsCount} />
@@ -138,13 +136,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
       ) : null}
       {searchClassIdPredicate(DataEntityClassNameEnum.TRANSFORMER) ? (
         <>
-          <SearchCol lg={grid.lg.sr} md={grid.md.sr} item container wrap='wrap'>
+          <SearchCol container wrap='wrap' size={{ md: grid.md.sr, lg: grid.lg.sr }}>
             <TruncatedCell
               dataList={searchResult.sourceList}
               externalEntityId={searchResult.id}
             />
           </SearchCol>
-          <SearchCol item lg={grid.lg.tr} md={grid.md.tr}>
+          <SearchCol size={{ md: grid.md.tr, lg: grid.lg.tr }}>
             <TruncatedCell
               dataList={searchResult.targetList}
               externalEntityId={searchResult.id}
@@ -153,7 +151,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
         </>
       ) : null}
       {searchClassIdPredicate(DataEntityClassNameEnum.CONSUMER) ? (
-        <SearchCol item lg={grid.lg.sr} md={grid.md.sr}>
+        <SearchCol size={{ md: grid.md.sr, lg: grid.lg.sr }}>
           <TruncatedCell
             dataList={searchResult.inputList}
             externalEntityId={searchResult.id}
@@ -162,13 +160,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
       ) : null}
       {searchClassIdPredicate(DataEntityClassNameEnum.QUALITY_TEST) ? (
         <>
-          <SearchCol item container wrap='wrap' lg={grid.lg.en} md={grid.md.en}>
+          <SearchCol container wrap='wrap' size={{ md: grid.md.en, lg: grid.lg.en }}>
             <TruncatedCell
               dataList={searchResult.datasetsList}
               externalEntityId={searchResult.id}
             />
           </SearchCol>
-          <SearchCol item lg={grid.lg.su} md={grid.md.su}>
+          <SearchCol size={{ md: grid.md.su, lg: grid.lg.su }}>
             <TruncatedCell
               dataList={searchResult.linkedUrlList}
               externalEntityId={searchResult.id}
@@ -177,13 +175,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
         </>
       ) : null}
       {searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP) ? (
-        <SearchCol item lg={grid.lg.ne} md={grid.md.ne}>
+        <SearchCol size={{ md: grid.md.ne, lg: grid.lg.ne }}>
           <Typography variant='body1' noWrap>
             {searchResult?.itemsCount}
           </Typography>
         </SearchCol>
       ) : null}
-      <SearchCol item lg={grid.lg.nd} md={grid.md.nd} flexDirection='column'>
+      <SearchCol flexDirection='column' size={{ md: grid.md.nd, lg: grid.lg.nd }}>
         {searchResult.dataSource.namespace?.name ? (
           <Typography
             variant='body1'
@@ -216,10 +214,10 @@ const ResultItem: React.FC<ResultItemProps> = ({
           <Typography variant='subtitle2'>{t('manually created')}</Typography>
         )}
       </SearchCol>
-      <SearchCol item lg={grid.lg.ow} md={grid.md.ow}>
+      <SearchCol size={{ md: grid.md.ow, lg: grid.lg.ow }}>
         <Grid container direction='column' alignItems='flex-start'>
           {searchResult.ownership?.map(ownership => (
-            <Grid item key={ownership.id}>
+            <Grid key={ownership.id}>
               <Typography variant='body1' title={ownership.owner.name} noWrap>
                 {ownership.owner.name}
               </Typography>
@@ -227,21 +225,17 @@ const ResultItem: React.FC<ResultItemProps> = ({
           ))}
         </Grid>
       </SearchCol>
-      <SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
+      <SearchCol size={{ md: grid.md.gr, lg: grid.lg.gr }}>
         <TruncatedCell
           dataList={searchResult.dataEntityGroups}
           externalEntityId={searchResult.id}
         />
       </SearchCol>
-      <SearchCol item lg={grid.lg.st} md={grid.md.st}>
+      <SearchCol size={{ md: grid.md.st, lg: grid.lg.st }}>
         <EntityStatus entityStatus={searchResult.status} />
       </SearchCol>
-      <SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
-        {createdAtDS}
-      </SearchCol>
-      <SearchCol item lg={grid.lg.up} md={grid.md.up}>
-        {updatedAtDS}
-      </SearchCol>
+      <SearchCol size={{ md: grid.md.cr, lg: grid.lg.cr }}>{createdAtDS}</SearchCol>
+      <SearchCol size={{ md: grid.md.up, lg: grid.lg.up }}>{updatedAtDS}</SearchCol>
     </S.Container>
   );
 };

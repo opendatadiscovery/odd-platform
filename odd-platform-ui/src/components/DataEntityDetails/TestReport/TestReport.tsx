@@ -69,10 +69,10 @@ const TestReport: React.FC = () => {
         {isTestReportFetching ? <TestReportSkeleton /> : null}
         {isTestReportNotLoaded ? null : (
           <Grid container alignItems='center' wrap='nowrap'>
-            <S.TestReportContainer container item>
+            <S.TestReportContainer container>
               {renderTestReportItems}
             </S.TestReportContainer>
-            <Grid container item justifyContent='flex-end'>
+            <Grid container justifyContent='flex-end'>
               <Typography variant='subtitle1'>{` ${datasetTestReport?.total} ${t(
                 'tests'
               )}`}</Typography>
@@ -83,7 +83,7 @@ const TestReport: React.FC = () => {
           {isDatasetTestListFetching ? <TestReportItemSkeleton length={5} /> : null}
           {datasetQualityTestList ? (
             <Grid container sx={{ mt: 4 }}>
-              <Grid item lg={7.91} sx={{ pr: 2 }}>
+              <Grid sx={{ pr: 2 }} size={7.91}>
                 <S.TestReportItemCont container>
                   {Object.entries(datasetQualityTestList).map(
                     ([suitName, dataQATestList]) => (
@@ -100,7 +100,7 @@ const TestReport: React.FC = () => {
                 </S.TestReportItemCont>
               </Grid>
               {dataQATestId ? (
-                <Grid item lg={4.09}>
+                <Grid size={4.09}>
                   <AppPaper square elevation={0}>
                     <TestReportDetails />
                   </AppPaper>
