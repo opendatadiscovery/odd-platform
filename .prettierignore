@@ -1,6 +1,0 @@
-.idea
-dist
-envs
-node_modules
-reports
-**/generated/**/*.ts

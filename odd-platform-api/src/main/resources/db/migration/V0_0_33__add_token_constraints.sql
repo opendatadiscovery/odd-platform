@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX IF NOT EXISTS collector_token_unique ON collector (token_id) WHERE deleted_at IS NULL;

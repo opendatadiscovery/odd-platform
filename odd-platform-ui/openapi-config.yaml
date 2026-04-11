@@ -1,8 +1,0 @@
-generatorName: typescript-fetch
-inputSpec: ./odd-platform-specification/openapi.yaml
-outputDir: odd-platform-ui/src/generated-sources
-additionalProperties:
-  supportsES6: true
-  typescriptThreePlus: true
-  prefixParameterInterfaces: true
-  enumPropertyNaming: original

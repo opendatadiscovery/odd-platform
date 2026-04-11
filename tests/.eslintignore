@@ -1,3 +1,0 @@
-# Specify files you do not want to lint
-dist/
-playwright-report/
