@@ -1,0 +1,127 @@
+{
+  "metric_families" : [
+    {
+      "name" : "http_requests",
+      "type" : "GAUGE",
+      "unit" : "req/sec",
+      "metrics" : [
+        {
+          "labels" : [
+            {
+              "name" : "env",
+              "value" : "prod"
+            },
+            {
+              "name" : "instance-id",
+              "value" : "131332423"
+            }
+          ],
+          "metric_points" : [
+            {
+              "timestamp" : "1676399903",
+              "gauge_value" : {
+                "value" : 200
+              }
+            }
+          ]
+        },
+        {
+          "labels" : [
+            {
+              "name" : "env",
+              "value" : "stage"
+            },
+            {
+              "name" : "instance-id",
+              "value" : "333"
+            }
+          ],
+          "metric_points" : [
+            {
+              "timestamp" : "1676399903",
+              "gauge_value" : {
+                "value" : 150
+              }
+            }
+          ]
+        },
+        {
+          "labels" : [],
+          "metric_points" : [
+            {
+              "timestamp" : "1676399903",
+              "gauge_value" : {
+                "value" : 100
+              }
+            }
+          ]
+        },
+        {
+          "labels" : [
+            {
+              "name" : "env",
+              "value" : "dev"
+            },
+            {
+              "name" : "instance-id",
+              "value" : "234234324"
+            }
+          ],
+          "metric_points" : [
+            {
+              "timestamp" : "1676399903",
+              "gauge_value" : {
+                "value" : 350
+              }
+            },
+            {
+              "timestamp" : "167639803",
+              "gauge_value" : {
+                "value" : 300
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name" : "queue_size",
+      "type" : "COUNTER",
+      "unit" : "count",
+      "metrics" : [
+        {
+          "labels" : [],
+          "metric_points" : [
+            {
+              "timestamp" : "1676399903",
+              "counter_value" : {
+                "total" : 150,
+                "created" : "1676399903"
+              }
+            }
+          ]
+        },
+        {
+          "labels" : [
+            {
+              "name" : "env",
+              "value" : "prod"
+            },
+            {
+              "name" : "queue_name",
+              "value" : "kafka"
+            }
+          ],
+          "metric_points" : [
+            {
+              "timestamp" : "1676399903",
+              "counter_value" : {
+                "total" : 200
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

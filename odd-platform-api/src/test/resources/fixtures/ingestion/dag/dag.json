@@ -1,0 +1,1399 @@
+{
+  "data_source_oddrn": "//mysql/host/example.com/databases/oddadapter",
+  "items": [
+    {
+      "oddrn": "//dag/host/example.com/airflow/oddadapter/rootdataentitygroup",
+      "name": "test root dag",
+      "description": "",
+      "owner": "oddadapter",
+      "metadata": [
+      ],
+      "type": "DAG",
+      "data_entity_group": {
+        "entities_list": [
+          "//dag/host/example.com/airflow/oddadapter/dataentitygroup",
+          "//mysql/host/example.com/databases/oddadapter/tables/employees",
+          "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view",
+          "//mysql/host/example.com/databases/oddadapter/tables/jobs"
+        ],
+        "group_oddrn": null
+      }
+    },
+    {
+      "oddrn": "//dag/host/example.com/airflow/oddadapter/dataentitygroup",
+      "name": "test dag",
+      "description": "",
+      "owner": "oddadapter",
+      "metadata": [
+      ],
+      "type": "DAG",
+      "data_entity_group": {
+        "entities_list": [
+          "//mysql/host/example.com/databases/oddadapter/tables/countries",
+          "//mysql/host/example.com/databases/oddadapter/tables/departments"
+        ],
+        "group_oddrn": null
+      }
+    },
+    {
+      "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/countries",
+      "name": "countries",
+      "description": "",
+      "owner": "oddadapter",
+      "metadata": [
+        {
+          "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetExtension",
+          "metadata": {
+            "engine": "InnoDB",
+            "version": 10,
+            "row_format": "Dynamic",
+            "avg_row_length": 0,
+            "data_length": 16384,
+            "max_data_length": 0,
+            "index_length": 16384,
+            "data_free": 0,
+            "table_collation": "latin1_swedish_ci"
+          }
+        }
+      ],
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": "//mysql/host/example.com/databases/oddadapter/tables/departments",
+        "rows_number": 0,
+        "field_list": [
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/countries/columns/country_id",
+            "name": "country_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 1,
+                  "character_maximum_length": 2,
+                  "character_octet_length": 2,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "column_key": "PRI",
+                  "privileges": "select,insert,update,references",
+                  "json": "[{\"A\": \"a\"}]"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_CHAR",
+              "logical_type": "char",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/countries/columns/country_name",
+            "name": "country_name",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 2,
+                  "character_maximum_length": 40,
+                  "character_octet_length": 40,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/countries/columns/region_id",
+            "name": "region_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 3,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "MUL",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/departments",
+      "name": "departments",
+      "description": "",
+      "owner": "oddadapter",
+      "metadata": [
+        {
+          "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetExtension",
+          "metadata": {
+            "engine": "InnoDB",
+            "version": 10,
+            "row_format": "Dynamic",
+            "avg_row_length": 0,
+            "data_length": 16384,
+            "max_data_length": 0,
+            "index_length": 32768,
+            "data_free": 0,
+            "table_collation": "latin1_swedish_ci",
+            "json": [{"name":"JSon","type":"JSON","value":"sdcsdcs"}]
+          }
+        }
+      ],
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees",
+        "rows_number": 0,
+        "field_list": [
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/departments/columns/department_id",
+            "name": "department_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 1,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "PRI",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/departments/columns/department_name",
+            "name": "department_name",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 2,
+                  "character_maximum_length": 30,
+                  "character_octet_length": 30,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/departments/columns/manager_id",
+            "name": "manager_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 3,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "MUL",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/departments/columns/location_id",
+            "name": "location_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 4,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "MUL",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees",
+      "name": "employees",
+      "description": "",
+      "owner": "oddadapter",
+      "metadata": [
+        {
+          "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetExtension",
+          "metadata": {
+            "engine": "InnoDB",
+            "version": 10,
+            "row_format": "Dynamic",
+            "avg_row_length": 0,
+            "data_length": 16384,
+            "max_data_length": 0,
+            "index_length": 49152,
+            "data_free": 0,
+            "table_collation": "latin1_swedish_ci"
+          }
+        }
+      ],
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": "//mysql/host/example.com/databases/oddadapter/tables/countries",
+        "rows_number": 0,
+        "field_list": [
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/employee_id",
+            "name": "employee_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 1,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "PRI",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/first_name",
+            "name": "first_name",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 2,
+                  "character_maximum_length": 20,
+                  "character_octet_length": 20,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/last_name",
+            "name": "last_name",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 3,
+                  "character_maximum_length": 25,
+                  "character_octet_length": 25,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/email",
+            "name": "email",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 4,
+                  "character_maximum_length": 25,
+                  "character_octet_length": 25,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/phone_number",
+            "name": "phone_number",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 5,
+                  "character_maximum_length": 20,
+                  "character_octet_length": 20,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/hire_date",
+            "name": "hire_date",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 6,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/job_id",
+            "name": "job_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 7,
+                  "character_maximum_length": 10,
+                  "character_octet_length": 10,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "column_key": "MUL",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/salary",
+            "name": "salary",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 8,
+                  "numeric_precision": 8,
+                  "numeric_scale": 2,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "decimal",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/commission_pct",
+            "name": "commission_pct",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 9,
+                  "numeric_precision": 2,
+                  "numeric_scale": 2,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "decimal",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/manager_id",
+            "name": "manager_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 10,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "MUL",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/employees/columns/department_id",
+            "name": "department_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 11,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "MUL",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view",
+      "name": "emp_details_view",
+      "description": "VIEW",
+      "owner": "oddadapter",
+      "metadata": [],
+      "type": "VIEW",
+      "dataset": {
+        "parent_oddrn": "//mysql/host/example.com/databases/oddadapter/tables/jobs",
+        "field_list": [
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/employee_id",
+            "name": "employee_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 1,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/job_id",
+            "name": "job_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 2,
+                  "character_maximum_length": 10,
+                  "character_octet_length": 10,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/manager_id",
+            "name": "manager_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 3,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/department_id",
+            "name": "department_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 4,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/location_id",
+            "name": "location_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 5,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/country_id",
+            "name": "country_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 6,
+                  "character_maximum_length": 2,
+                  "character_octet_length": 2,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_CHAR",
+              "logical_type": "char",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/first_name",
+            "name": "first_name",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 7,
+                  "character_maximum_length": 20,
+                  "character_octet_length": 20,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/last_name",
+            "name": "last_name",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 8,
+                  "character_maximum_length": 25,
+                  "character_octet_length": 25,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/salary",
+            "name": "salary",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 9,
+                  "numeric_precision": 8,
+                  "numeric_scale": 2,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "decimal",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/commission_pct",
+            "name": "commission_pct",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 10,
+                  "numeric_precision": 2,
+                  "numeric_scale": 2,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "decimal",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/department_name",
+            "name": "department_name",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 11,
+                  "character_maximum_length": 30,
+                  "character_octet_length": 30,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/job_title",
+            "name": "job_title",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 12,
+                  "character_maximum_length": 35,
+                  "character_octet_length": 35,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/city",
+            "name": "city",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 13,
+                  "character_maximum_length": 30,
+                  "character_octet_length": 30,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/state_province",
+            "name": "state_province",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 14,
+                  "character_maximum_length": 25,
+                  "character_octet_length": 25,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/country_name",
+            "name": "country_name",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 15,
+                  "character_maximum_length": 40,
+                  "character_octet_length": 40,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/emp_details_view/columns/region_name",
+            "name": "region_name",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 16,
+                  "character_maximum_length": 25,
+                  "character_octet_length": 25,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          }
+        ]
+      },
+      "data_transformer": {
+        "sql": "select `e`.`employee_id` AS `employee_id`,`e`.`job_id` AS `job_id`,`e`.`manager_id` AS `manager_id`,`e`.`department_id` AS `department_id`,`d`.`location_id` AS `location_id`,`l`.`country_id` AS `country_id`,`e`.`first_name` AS `first_name`,`e`.`last_name` AS `last_name`,`e`.`salary` AS `salary`,`e`.`commission_pct` AS `commission_pct`,`d`.`department_name` AS `department_name`,`j`.`job_title` AS `job_title`,`l`.`city` AS `city`,`l`.`state_province` AS `state_province`,`c`.`country_name` AS `country_name`,`r`.`region_name` AS `region_name` from `oddadapter`.`employees` `e` join `oddadapter`.`departments` `d` join `oddadapter`.`jobs` `j` join `oddadapter`.`locations` `l` join `oddadapter`.`countries` `c` join `oddadapter`.`regions` `r` where ((`e`.`department_id` = `d`.`department_id`) and (`d`.`location_id` = `l`.`location_id`) and (`l`.`country_id` = `c`.`country_id`) and (`c`.`region_id` = `r`.`region_id`) and (`j`.`job_id` = `e`.`job_id`))",
+        "inputs": [],
+        "outputs": []
+      }
+    },
+    {
+      "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/jobs",
+      "name": "jobs",
+      "description": "",
+      "owner": "oddadapter",
+      "metadata": [
+        {
+          "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetExtension",
+          "metadata": {
+            "engine": "InnoDB",
+            "version": 10,
+            "row_format": "Dynamic",
+            "avg_row_length": 0,
+            "data_length": 16384,
+            "max_data_length": 0,
+            "index_length": 0,
+            "data_free": 0,
+            "table_collation": "latin1_swedish_ci"
+          }
+        }
+      ],
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": "//mysql/host/example.com/databases/oddadapter",
+        "rows_number": 0,
+        "field_list": [
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/jobs/columns/job_id",
+            "name": "job_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 1,
+                  "character_maximum_length": 10,
+                  "character_octet_length": 10,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "column_key": "PRI",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/jobs/columns/job_title",
+            "name": "job_title",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 2,
+                  "character_maximum_length": 35,
+                  "character_octet_length": 35,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/jobs/columns/min_salary",
+            "name": "min_salary",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 3,
+                  "numeric_precision": 8,
+                  "numeric_scale": 0,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "decimal",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/jobs/columns/max_salary",
+            "name": "max_salary",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 4,
+                  "numeric_precision": 8,
+                  "numeric_scale": 0,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "decimal",
+              "is_nullable": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/job_history",
+      "name": "job_history",
+      "description": "",
+      "owner": "oddadapter",
+      "metadata": [
+        {
+          "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetExtension",
+          "metadata": {
+            "engine": "InnoDB",
+            "version": 10,
+            "row_format": "Dynamic",
+            "avg_row_length": 0,
+            "data_length": 16384,
+            "max_data_length": 0,
+            "index_length": 32768,
+            "data_free": 0,
+            "table_collation": "latin1_swedish_ci"
+          }
+        }
+      ],
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": "//mysql/host/example.com/databases/oddadapter",
+        "rows_number": 0,
+        "field_list": [
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/job_history/columns/employee_id",
+            "name": "employee_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 1,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "PRI",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/job_history/columns/start_date",
+            "name": "start_date",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 2,
+                  "column_key": "PRI",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/job_history/columns/end_date",
+            "name": "end_date",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 3,
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/job_history/columns/job_id",
+            "name": "job_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 4,
+                  "character_maximum_length": 10,
+                  "character_octet_length": 10,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "column_key": "MUL",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/job_history/columns/department_id",
+            "name": "department_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 5,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "MUL",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/locations",
+      "name": "locations",
+      "description": "",
+      "owner": "oddadapter",
+      "metadata": [
+        {
+          "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetExtension",
+          "metadata": {
+            "engine": "InnoDB",
+            "version": 10,
+            "row_format": "Dynamic",
+            "avg_row_length": 0,
+            "data_length": 16384,
+            "max_data_length": 0,
+            "index_length": 0,
+            "data_free": 0,
+            "auto_increment": 1,
+            "table_collation": "latin1_swedish_ci"
+          }
+        }
+      ],
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": "//mysql/host/example.com/databases/oddadapter",
+        "rows_number": 0,
+        "field_list": [
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/locations/columns/location_id",
+            "name": "location_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 1,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "PRI",
+                  "extra": "auto_increment",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/locations/columns/street_address",
+            "name": "street_address",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 2,
+                  "character_maximum_length": 40,
+                  "character_octet_length": 40,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/locations/columns/postal_code",
+            "name": "postal_code",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 3,
+                  "character_maximum_length": 12,
+                  "character_octet_length": 12,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/locations/columns/city",
+            "name": "city",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 4,
+                  "character_maximum_length": 30,
+                  "character_octet_length": 30,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/locations/columns/state_province",
+            "name": "state_province",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 5,
+                  "character_maximum_length": 25,
+                  "character_octet_length": 25,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/locations/columns/country_id",
+            "name": "country_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 6,
+                  "character_maximum_length": 2,
+                  "character_octet_length": 2,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_CHAR",
+              "logical_type": "char",
+              "is_nullable": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/regions",
+      "name": "regions",
+      "description": "",
+      "owner": "oddadapter",
+      "metadata": [
+        {
+          "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetExtension",
+          "metadata": {
+            "engine": "InnoDB",
+            "version": 10,
+            "row_format": "Dynamic",
+            "avg_row_length": 0,
+            "data_length": 16384,
+            "max_data_length": 0,
+            "index_length": 0,
+            "data_free": 0,
+            "table_collation": "latin1_swedish_ci"
+          }
+        }
+      ],
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": "//mysql/host/example.com/databases/oddadapter",
+        "rows_number": 0,
+        "field_list": [
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/regions/columns/region_id",
+            "name": "region_id",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 1,
+                  "numeric_precision": 10,
+                  "numeric_scale": 0,
+                  "column_key": "PRI",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_INTEGER",
+              "logical_type": "int",
+              "is_nullable": false
+            }
+          },
+          {
+            "oddrn": "//mysql/host/example.com/databases/oddadapter/tables/regions/columns/region_name",
+            "name": "region_name",
+            "owner": "oddadapter",
+            "metadata": [
+              {
+                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/mysql.json#/definitions/MysqlDataSetFieldExtension",
+                "metadata": {
+                  "ordinal_position": 2,
+                  "character_maximum_length": 25,
+                  "character_octet_length": 25,
+                  "character_set_name": "latin1",
+                  "collation_name": "latin1_swedish_ci",
+                  "privileges": "select,insert,update,references"
+                }
+              }
+            ],
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

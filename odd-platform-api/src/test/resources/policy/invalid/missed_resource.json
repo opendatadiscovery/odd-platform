@@ -1,0 +1,9 @@
+{
+  "statements": [
+    {
+      "permissions": [
+        "TAG_CREATE"
+      ]
+    }
+  ]
+}

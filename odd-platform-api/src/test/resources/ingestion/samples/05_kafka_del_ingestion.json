@@ -1,0 +1,334 @@
+{
+  "data_source_oddrn": "//kafka/host/aws.kafka.connect.io",
+  "items": [
+    {
+      "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west",
+      "name": "user_transactions_west",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "metadata": [],
+      "updated_at": null,
+      "created_at": null,
+      "type": "KAFKA_TOPIC",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": null,
+        "field_list": [
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west/columns/id",
+            "name": "id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "long",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west/columns/amount",
+            "name": "amount",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west/columns/description",
+            "name": "description",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "string",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west/columns/created_at",
+            "name": "created_at",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "datetime",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west/columns/active",
+            "name": "active",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "boolean",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west/columns/type",
+            "name": "type",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_CHAR",
+              "logical_type": "character",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west/columns/duration",
+            "name": "duration",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DURATION",
+              "logical_type": "duration",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_east",
+      "name": "user_transactions_east",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "metadata": [],
+      "updated_at": null,
+      "created_at": null,
+      "type": "KAFKA_TOPIC",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": null,
+        "field_list": [
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_east/columns/id",
+            "name": "id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "long",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_east/columns/amount",
+            "name": "amount",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_east/columns/description",
+            "name": "description",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "string",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_east/columns/created_at",
+            "name": "created_at",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "datetime",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_east/columns/active",
+            "name": "active",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "boolean",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_east/columns/type",
+            "name": "type",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_CHAR",
+              "logical_type": "character",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_east/columns/duration",
+            "name": "duration",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DURATION",
+              "logical_type": "duration",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//kafkaconnect/host/aws.kafka.connect.io/connectors/user_transactions_kafka_connect",
+      "name": "user_transactions_kafka_connect",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "metadata": [],
+      "updated_at": null,
+      "created_at": null,
+      "type": "JOB",
+      "dataset": null,
+      "data_transformer": {
+        "source_code_url": null,
+        "sql": null,
+        "inputs": [
+          "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west",
+          "//kafka/host/aws.kafka.connect.io/topics/user_transactions_east"
+        ],
+        "outputs": [
+          "//s3/cloud/aws/account/buckets/data_lake/keys/raw"
+        ]
+      },
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    }
+  ]
+}

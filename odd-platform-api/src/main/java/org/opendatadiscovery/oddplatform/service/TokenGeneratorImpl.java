@@ -1,0 +1,53 @@
+package org.opendatadiscovery.oddplatform.service;
+
+import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
+import org.opendatadiscovery.oddplatform.dto.security.UserDto;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class TokenGeneratorImpl implements TokenGenerator {
+    private final AuthIdentityProvider authIdentityProvider;
+
+    @Override
+    public Mono<TokenPojo> generateToken() {
+        return authIdentityProvider.getCurrentUser()
+            .map(UserDto::username)
+            .map(this::generate)
+            .switchIfEmpty(Mono.defer(() -> Mono.just(this.generate(null))));
+    }
+
+    @Override
+    public Mono<TokenPojo> regenerateToken(final TokenPojo tokenPojo) {
+        return authIdentityProvider.getCurrentUser()
+            .map(UserDto::username)
+            .map(username -> this.regenerate(tokenPojo, username))
+            .switchIfEmpty(Mono.defer(() -> Mono.just(this.regenerate(tokenPojo, null))));
+    }
+
+    private TokenPojo generate(final String username) {
+        final LocalDateTime now = DateTimeUtil.generateNow();
+        return new TokenPojo()
+            .setCreatedAt(now)
+            .setCreatedBy(username)
+            .setValue(RandomStringUtils.randomAlphanumeric(40))
+            .setUpdatedAt(now)
+            .setUpdatedBy(username);
+    }
+
+    private TokenPojo regenerate(final TokenPojo token, final String username) {
+        if (token == null) {
+            throw new RuntimeException("Token is null");
+        }
+        return token
+            .setValue(RandomStringUtils.randomAlphanumeric(40))
+            .setUpdatedAt(DateTimeUtil.generateNow())
+            .setUpdatedBy(username);
+    }
+}

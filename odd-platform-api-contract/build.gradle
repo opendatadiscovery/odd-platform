@@ -1,0 +1,44 @@
+plugins {
+    id 'org.openapi.generator' version '6.5.0'
+}
+
+dependencies {
+    compileOnly libs.bundles.openapi
+}
+
+openApiGenerate {
+    generatorName = "spring"
+
+    inputSpec = "$projectDir/../odd-platform-specification/openapi.yaml"
+    outputDir = "$buildDir/generated"
+    templateDir = "$projectDir/../odd-platform-api-contract/templates"
+
+    apiPackage = "org.opendatadiscovery.oddplatform.api.contract.api"
+    invokerPackage = "org.opendatadiscovery.oddplatform.api.contract"
+    modelPackage = "org.opendatadiscovery.oddplatform.api.contract.model"
+
+    configOptions = [
+            dateLibrary   : "java8",
+            reactive      : "true",
+            interfaceOnly : "true",
+            useTags       : "true",
+            useSpringBoot3: "true"
+    ]
+
+    globalProperties = [
+            supportingFiles: "ApiUtil.java",
+            apiTests       : "false",
+            models         : "",
+            apis           : ""
+    ]
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "$buildDir/generated/src/main/java"
+        }
+    }
+}
+
+compileJava.dependsOn tasks.openApiGenerate

@@ -1,0 +1,647 @@
+{
+  "data_source_oddrn": "//redshift/host/4.3.2.1/databases/data_lake",
+  "items": [
+    {
+      "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm",
+      "name": "sales_denorm",
+      "version": null,
+      "description": "Denormalized data lake for bookshop",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "table_id": 1077375089,
+            "encoded": "N",
+            "diststyle": "consequat Ut",
+            "sortkey1": "in cupidatat",
+            "max_varchar": 21078221,
+            "sortkey1_enc": "aliqua",
+            "sortkey_num": 84918809,
+            "size": 456255,
+            "pct_used": 14407882.461331978,
+            "empty": 0,
+            "unsorted": 1,
+            "stats_off": 1,
+            "tbl_rows": 35000000,
+            "skew_rows": 1234512,
+            "estimated_visible_rows": 675000,
+            "risk_event": "consequat et amet non sit",
+            "vacuum_sort_benefit": 40239028,
+            "skew_sortkey1": 93360164
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": "2021-10-03T20:40:45+00:00",
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 35000000,
+        "field_list": [
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/TRANSACTION_ID",
+            "name": "TRANSACTION_ID",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/PAYMENT_METHOD_DESC",
+            "name": "PAYMENT_METHOD_DESC",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/TRANSACTION_CURRENCY_ISO3_CD",
+            "name": "TRANSACTION_CURRENCY_ISO3_CD",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/CARD_UUID",
+            "name": "CARD_UUID",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/CARD_ISSUER_NM",
+            "name": "CARD_ISSUER_NM",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/CARD_CURRENCY_ISO3_CD",
+            "name": "CARD_CURRENCY_ISO3_CD",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/CARD_TYPE_DESC",
+            "name": "CARD_TYPE_DESC",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/TRANSACTION_TMST",
+            "name": "TRANSACTION_TMST",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/TRANSACTION_DT",
+            "name": "TRANSACTION_DT",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/PROMO_IND",
+            "name": "PROMO_IND",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "bool",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/PROMO_NM",
+            "name": "PROMO_NM",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/IMMEDIATE_SHIPMENT_FLG",
+            "name": "IMMEDIATE_SHIPMENT_FLG",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "bool",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/CUSTOMER_ID",
+            "name": "CUSTOMER_ID",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/CUSTOMER_AGEGROUP_DESC",
+            "name": "CUSTOMER_AGEGROUP_DESC",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/LAST_LOGIN_DT",
+            "name": "LAST_LOGIN_DT",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/DELIVERY_ADRS_POSTCODE",
+            "name": "DELIVERY_ADRS_POSTCODE",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/DELIVERY_ADRS_COUNTRY_ISO3_CD",
+            "name": "DELIVERY_ADRS_COUNTRY_ISO3_CD",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/DELIVERY_ADRS_CITY_NM",
+            "name": "DELIVERY_ADRS_CITY_NM",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/CUSTOMER_TIER_NM",
+            "name": "CUSTOMER_TIER_NM",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/BOOK_ID",
+            "name": "BOOK_ID",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/BOOK_ISBN_CD",
+            "name": "BOOK_ISBN_CD",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/BOOK_NM",
+            "name": "BOOK_NM",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/BOOK_AUTHOR_NM",
+            "name": "BOOK_AUTHOR_NM",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/BOO_PUBLISHER_NM",
+            "name": "BOO_PUBLISHER_NM",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/BOOK_PUBLICATION_DT",
+            "name": "BOOK_PUBLICATION_DT",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/GROSS_TRANSACTION_AMT_LC",
+            "name": "GROSS_TRANSACTION_AMT_LC",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/MARKDOWN_AMT_LC",
+            "name": "MARKDOWN_AMT_LC",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/NET_TRANSACTION_AMT_LC",
+            "name": "NET_TRANSACTION_AMT_LC",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/VAT_AMT_LC",
+            "name": "VAT_AMT_LC",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/TRANSACTION_QTY",
+            "name": "TRANSACTION_QTY",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/INSERT_TMST",
+            "name": "INSERT_TMST",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/UPDATE_TMST",
+            "name": "UPDATE_TMST",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/META_LOAD_DT",
+            "name": "META_LOAD_DT",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    }
+  ]
+}

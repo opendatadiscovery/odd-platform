@@ -1,0 +1,28 @@
+{
+  "data_source_oddrn": "//kinesis/cloud/aws/account/111111111111/region/us-west-2",
+  "items": [
+    {
+      "oddrn": "//kinesis/cloud/aws/account/111111111111/region/us-west-2/streams/kds_clickstream",
+      "name": "kds_clickstream",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "metadata": [],
+      "updated_at": null,
+      "created_at": null,
+      "type": "KAFKA_TOPIC",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": null,
+        "field_list": []
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    }
+  ]
+}

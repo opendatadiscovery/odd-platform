@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Official documentation
+    url: https://docs.opendatadiscovery.org
+    about: Before reaching out for support, please refer to our documentation.

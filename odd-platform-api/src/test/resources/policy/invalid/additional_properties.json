@@ -1,0 +1,13 @@
+{
+  "statements": [
+    {
+      "resource": {
+        "type": "MANAGEMENT"
+      },
+      "permissions": [
+        "TAG_CREATE"
+      ]
+    }
+  ],
+  "invalid": []
+}

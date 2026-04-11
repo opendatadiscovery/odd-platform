@@ -1,0 +1,76 @@
+{
+  "data_source_oddrn": "//airflow/host/aws.airflow.aws.com",
+  "items": [
+    {
+      "oddrn": "//airflow/host/aws.airflow.aws.com/dags/preprocessing_job",
+      "name": "preprocessing_job",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "Weight rule": "downstream",
+            "Email on retry": "Yes",
+            "Email": "[airflow-s3@example.com]",
+            "Parameters": "None",
+            "Retry exponential backoff": "No",
+            "Task id": "s3_task",
+            "Do xcom push": "Yes",
+            "Pool slots": 1,
+            "Task type": "S3Operator",
+            "Shallow copy attrs": "()",
+            "Run as user": "None",
+            "Depends on past": "No",
+            "Trigger rule": "all_success",
+            "Sla": "None",
+            "Execution timeout": "None",
+            "Max retry delay": "None",
+            "Queue": "default",
+            "Task concurrency": "None",
+            "Email on failure": "Yes",
+            "Operator extra links": "()",
+            "Lineage data": "None",
+            "Subdag": "None",
+            "Autocommit": "No",
+            "Database": "None",
+            "On success callback": "None",
+            "S3 conn id": "s3_default",
+            "Retries": 0,
+            "Downstream task ids": "[second_task]",
+            "Retry delay": "0:05:00",
+            "Priority weight total": "2",
+            "Schedule interval": "10:00:00",
+            "Wait for downstream": "No",
+            "On failure callback": "None",
+            "On retry callback": "None",
+            "Pool": "default_pool",
+            "Priority weight": "2",
+            "Resources": "None"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "JOB",
+      "dataset": null,
+      "data_transformer": {
+        "source_code_url": null,
+        "sql": null,
+        "inputs": [
+          "//s3/cloud/aws/account/buckets/data_lake/keys/raw"
+        ],
+        "outputs": [
+          "//s3/cloud/aws/account/buckets/data_lake/keys/transaction_dataset"
+        ]
+      },
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    }
+  ]
+}

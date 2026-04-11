@@ -1,0 +1,257 @@
+spring:
+  session:
+    timeout: -1
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/odd-platform
+    username: odd-platform
+    password: odd-platform-password
+#  custom-datasource:
+#    url: jdbc:postgresql://127.0.0.1:5432/odd-platform
+#    username: odd-platform
+#    password: odd-platform-password
+  jooq:
+    sql-dialect: postgres
+  codec:
+    max-in-memory-size: 20MB
+
+genai:
+  enabled: false
+#  url: http://localhost:5000
+#  request_timeout: 2
+
+springdoc:
+  api-docs:
+    path: /api/v3/swagger-ui.html
+  swagger-ui:
+    path: /api/v3/api-docs
+
+session:
+  # INTERNAL_POSTGRESQL, REDIS, IN_MEMORY
+  provider: IN_MEMORY
+
+auth:
+  # DISABLED, LOGIN_FORM, OAUTH2, LDAP
+  type: DISABLED
+
+  # For dev/demo purposes only -- username1:password1,username2:password2,etc
+  login-form-credentials: admin:admin,root:root
+
+  # Server-To-Server token. Header 'X-API-Key: token'
+  s2s:
+    enabled: false
+#    token:
+
+  # For dev purposes only -- successful auth redirect URI
+  login-form-redirect:
+  ingestion:
+    filter:
+      enabled: false
+
+#  ldap:
+#    url:
+#    username:
+#    password:
+#    dn-pattern:
+#    base:
+#    user-filter:
+#      search-base:
+#      filter:
+#    groups:
+#      search-base:
+#      filter:
+#      admin-groups:
+#    active-directory:
+#      enabled: false
+#      domain:
+#  oauth2:
+#    client:
+#      okta:
+#        provider: 'okta'
+#        client-id:
+#        client-secret:
+#        client-name:
+#        redirect-uri: http://localhost:8080/login/oauth2/code/okta
+#        scope:
+#          - openid
+#        issuer-uri:
+#        user-name-attribute:
+#        admin-attribute:
+#        admin-principals:
+#      cognito:
+#        provider: 'cognito'
+#        client-id:
+#        client-secret:
+#        scope:
+#          - openid
+#        redirect-uri: 'http://localhost:8080/login/oauth2/code/cognito'
+#        client-name:
+#        issuer-uri:
+#        logout-uri:
+#        admin-attribute:
+#        admin-principals:
+#        admin-groups:
+#      github:
+#        provider: 'github'
+#        client-id:
+#        client-secret:
+#        scope:
+#          - user:read
+#          - read:org
+#        user-name-attribute: 'login'
+#        organization-name:
+#        admin-principals:
+#        admin-teams:
+#      google:
+#        provider: 'google'
+#        client-id:
+#        client-secret:
+#        scope:
+#          - openid
+#          - profile
+#          - email
+#        user-name-attribute:
+#        admin-principals:
+#        allowed-domain:
+#      keycloak:
+#        provider: 'keycloak'
+#        client-id:
+#        client-secret:
+#        scope:
+#          - openid
+#        client-name: 'Keycloak'
+#        redirect-uri: 'http://localhost:8080/login/oauth2/code/keycloak'
+#        issuer-uri:
+#        user-name-attribute:
+#        admin-attribute:
+#        admin-principals:
+#        pkce:
+#      azure:
+#        provider: 'azure'
+#        client-id:
+#        azure-tenant-id:
+#        client-secret:
+#        client-name: azure
+#        redirect-uri: http://localhost:8080/login/oauth2/code/azure
+#        scope:
+#          - openid
+#          - offline_access
+#          - https://graph.microsoft.com/user.read
+#        #Multi-tenant application
+#        issuer-uri: https://login.microsoftonline.com/${auth.oauth2.client.azure.azure-tenant-id}/v2.0
+#        #Single-tenant application
+##        authorization-uri: https://login.microsoftonline.com/${auth.oauth2.client.azure.azure-tenant-id}/oauth2/v2.0/authorize
+#        #Multi-tenant application
+#        authorization-uri: https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize
+#        #Single-tenant application
+##        token-uri: https://login.microsoftonline.com/${auth.oauth2.client.azure.azure-tenant-id}/oauth2/v2.0/token
+#        token-uri: https://login.microsoftonline.com/organizations/oauth2/v2.0/token
+#        user-info-uri: https://graph.microsoft.com/oidc/userinfo
+#        user-name-attribute: email
+#        admin-attribute: email
+#        admin-principals:
+#          - user@example.com
+#          - user2@example.com
+#        admin-groups:
+#          - Admins
+#          - Managers
+
+metrics:
+  storage: INTERNAL_POSTGRES # INTERNAL_POSTGRES, PROMETHEUS
+  prometheus-host: http://localhost:9090
+  export:
+    enabled: false
+    otlp-endpoint: http://localhost:4317
+
+housekeeping:
+  enabled: true
+  ttl:
+    resolved_alerts_days: 30
+    search_facets_days: 30
+    data_entity_delete_days: 30
+
+notifications:
+  enabled: false
+  message:
+    downstream-entities-depth: 1
+  wal:
+    advisory-lock-id: 100
+    replication-slot-name: odd_platform_replication_slot
+    publication-name: odd_platform_publication_alert
+#  receivers:
+#    slack:
+#      url:
+#    webhook:
+#      url:
+#    email:
+#      sender:
+#      password:
+#      host:
+#      port:
+#      protocol:
+#      smtp:
+#        auth:
+#        starttls:
+#      notification:
+#        emails: "yourFirst@gmail.com,yourSecond@gmail.com"
+
+partition:
+  advisory-lock-id: 90
+
+datacollaboration:
+  receive-event-advisory-lock-id: 110
+  sender-message-advisory-lock-id: 120
+  message-partition-period: 30
+  sending-messages-retry-count: 3
+  enabled: false
+#  slack-oauth-token:
+
+odd:
+#  platform-base-url:
+  tenant-id:
+  data-entity-stale-period: 7 # days
+  activity:
+    partition-period: 30
+
+attachment:
+  storage: LOCAL # LOCAL, REMOTE
+  max-file-size: 20 # mb
+  local:
+    path: /tmp/odd/attachments
+  remote:
+    url: http://localhost:9000
+    access-key:
+    secret-key:
+    bucket: odd
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health, prometheus, env, info
+  endpoint:
+    health:
+      enabled: true
+    prometheus:
+      enabled: true
+    env:
+      enabled: true
+    info:
+      enabled: true
+  health:
+    ldap:
+      enabled: false
+    redis:
+      enabled: false
+
+logging:
+  level:
+    org.springframework.transaction.interceptor: info
+    org.jooq.tools.LoggerListener: info
+    io.r2dbc.postgresql.QUERY: info
+    io.r2dbc.postgresql.PARAM: info
+    org.opendatadiscovery.oddplatform.notification: info
+    org.opendatadiscovery.oddplatform.housekeeping: info
+    org.opendatadiscovery.oddplatform.partition: info
+    org.opendatadiscovery.oddplatform.datacollaboration: info
+    org.opendatadiscovery.oddplatform.service.ingestion: info

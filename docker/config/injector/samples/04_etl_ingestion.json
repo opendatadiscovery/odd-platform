@@ -1,0 +1,100 @@
+{
+  "data_source_oddrn": "//airflow/host/2.1.3.4",
+  "items": [
+    {
+      "oddrn": "//airflow/host/2.1.3.4/jobs/BookETL",
+      "name": "BookETL",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "Weight rule": "downstream",
+            "Email on retry": "Yes",
+            "Email": "[airflow@example.com]",
+            "Parameters": "None",
+            "Retry exponential backoff": "No",
+            "Task id": "postgres_task",
+            "Do xcom push": "Yes",
+            "Pool slots": 1,
+            "Task type": "PostgresOperator",
+            "Shallow copy attrs": "()",
+            "Run as user": "None",
+            "Depends on past": "No",
+            "Trigger rule": "all_success",
+            "Sla": "None",
+            "Execution timeout": "None",
+            "Max retry delay": "None",
+            "Queue": "default",
+            "Task concurrency": "None",
+            "Email on failure": "No",
+            "Operator extra links": "()",
+            "Lineage data": "None",
+            "Subdag": "None",
+            "Autocommit": "No",
+            "Database": "None",
+            "On success callback": "None",
+            "Postgres conn id": "postgres_default",
+            "Retries": 0,
+            "Downstream task ids": "[second_task]",
+            "Retry delay": "0:05:00",
+            "Priority weight total": "2",
+            "Schedule interval": "10:00:00",
+            "Wait for downstream": "No",
+            "On failure callback": "None",
+            "On retry callback": "None",
+            "Pool": "default_pool",
+            "Priority weight": "1",
+            "Resources": "None"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "JOB",
+      "dataset": null,
+      "data_transformer": {
+        "source_code_url": null,
+        "sql": null,
+        "inputs": [
+          "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales"
+        ],
+        "outputs": [
+          "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm"
+        ]
+      },
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//airflow/host/2.1.3.4/jobs/BookETL/runs/1664399516",
+      "name": "BookETL",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "updated_at": null,
+      "created_at": null,
+      "type": "JOB_RUN",
+      "dataset": null,
+      "data_transformer_run": {
+        "transformer_oddrn": "//airflow/host/2.1.3.4/jobs/BookETL",
+        "start_time": "2021-10-10T18:26:53+00:00",
+        "end_time": "2021-10-10T18:27:08+00:00",
+        "status": "SUCCESS",
+        "status_reason": "wow such success"
+      },
+      "data_transformer": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    }
+  ]
+}

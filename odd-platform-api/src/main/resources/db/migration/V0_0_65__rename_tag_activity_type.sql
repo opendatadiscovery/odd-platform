@@ -1,0 +1,1 @@
+UPDATE activity set event_type = 'TAG_ASSIGNMENT_UPDATED' where event_type = 'TAGS_ASSOCIATION_UPDATED';

@@ -1,0 +1,395 @@
+{
+  "data_source_oddrn": "//s3/cloud",
+  "items": [
+    {
+      "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw",
+      "name": "data_lake",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "metadata": null,
+      "updated_at": null,
+      "created_at": "2021-10-03T20:40:45+00:00",
+      "type": "FILE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": null,
+        "field_list": [
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/user_id",
+            "name": "user_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "long integer",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_id",
+            "name": "transaction_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "long integer",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/user_session_id",
+            "name": "user_session_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "long integer",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_amount",
+            "name": "transaction_amount",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_description",
+            "name": "transaction_description",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "string",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_created_at",
+            "name": "transaction_created_at",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "datetime",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_active",
+            "name": "transaction_active",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "boolean",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_type",
+            "name": "transaction_type",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_CHAR",
+              "logical_type": "char",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_duration",
+            "name": "transaction_duration",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DURATION",
+              "logical_type": "duration",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset",
+      "name": "transaction_dataset",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "metadata": null,
+      "updated_at": null,
+      "created_at": null,
+      "type": "FILE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": null,
+        "field_list": [
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/user_id",
+            "name": "user_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "long integer",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_id",
+            "name": "transaction_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "long integer",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/user_session_id",
+            "name": "user_session_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "long integer",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_amount",
+            "name": "transaction_amount",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_description",
+            "name": "transaction_description",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "string",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_created_at",
+            "name": "transaction_created_at",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "datetime",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_active",
+            "name": "transaction_active",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "boolean",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/user_clickstream_rate",
+            "name": "user_clickstream_rate",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_type",
+            "name": "transaction_type",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_CHAR",
+              "logical_type": "char",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_duration",
+            "name": "transaction_duration",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DURATION",
+              "logical_type": "duration",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    }
+  ]
+}

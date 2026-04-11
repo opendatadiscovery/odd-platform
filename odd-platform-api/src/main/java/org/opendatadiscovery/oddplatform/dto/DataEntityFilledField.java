@@ -1,0 +1,17 @@
+package org.opendatadiscovery.oddplatform.dto;
+
+public enum DataEntityFilledField {
+    INTERNAL_NAME,
+    INTERNAL_DESCRIPTION,
+    INTERNAL_METADATA,
+    OWNERS,
+    CUSTOM_GROUP,
+    INTERNAL_TAGS,
+    TERMS,
+    DATASET_FIELD_DESCRIPTION,
+    DATASET_FIELD_TAGS,
+    DATASET_FIELD_ENUMS,
+    DATASET_FIELD_TERMS,
+    DATASET_FIELD_INTERNAL_NAME,
+    MANUALLY_CREATED
+}

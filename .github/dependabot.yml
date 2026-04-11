@@ -1,0 +1,34 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/odd-platform-ui"
+    schedule:
+      interval: weekly
+      time: "10:00"
+      timezone: Europe/Moscow
+    open-pull-requests-limit: 10
+    versioning-strategy: increase-if-necessary
+    labels:
+      - "scope: frontend"
+    ignore:
+      - dependency-name: react-scripts
+        versions:
+          - 4.0.3
+          - 5.0.0
+      - dependency-name: lodash
+        versions:
+          - 4.17.21
+      - dependency-name: react-json-tree
+        versions:
+          - 0.15.0
+      - dependency-name: d3-selection
+        versions:
+          - 2.0.0
+      - dependency-name: husky
+        versions:
+          - 4.3.8
+      - dependency-name: d3-zoom
+        versions:
+          - 2.0.0
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-minor" ]

@@ -1,0 +1,33 @@
+{
+  "data_source_oddrn": "//microservice/named",
+  "items": [
+    {
+      "oddrn": "//microservice/named/name/kds_clickstream_consumer",
+      "name": "kds_clickstream_consumer",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "metadata": [],
+      "updated_at": null,
+      "created_at": null,
+      "type": "MICROSERVICE",
+      "dataset": null,
+      "data_transformer": {
+        "source_code_url": null,
+        "sql": null,
+        "inputs": [
+          "//kinesis/cloud/aws/account/111111111111/region/us-west-2/streams/kds_clickstream"
+        ],
+        "outputs": [
+          "//s3/cloud/aws/account/buckets/data_lake/keys/raw"
+        ]
+      },
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    }
+  ]
+}

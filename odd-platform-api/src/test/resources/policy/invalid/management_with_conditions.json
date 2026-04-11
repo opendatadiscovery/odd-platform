@@ -1,0 +1,24 @@
+{
+  "statements": [
+    {
+      "resource": {
+        "type": "MANAGEMENT",
+        "conditions": {
+          "all": [
+            {
+              "is": "dataEntity:owner"
+            },
+            {
+              "eq": {
+                "dataEntity:namespace:name": "Open Data Discovery"
+              }
+            }
+          ]
+        }
+      },
+      "permissions": [
+        "TAG_CREATE"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+import React, { forwardRef, memo, useCallback } from 'react';
+import { Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { EntityClassItem, LabeledInfoItem } from 'components/shared/elements';
+import { EmptyIcon } from 'components/shared/icons';
+import { dataEntityDetailsPath, dataEntityLineagePath } from 'routes';
+import * as S from './Node.styles';
+import type { Node as NodeType } from '../../lib/interfaces';
+
+interface NodeProps {
+  x?: NodeType['x'];
+  y?: NodeType['y'];
+  id: NodeType['id'];
+  data: NodeType['data'];
+  handleOnNodeMouseEnter?: (nodeId: string) => void;
+  handleOnNodeMouseLeave?: () => void;
+  hidden?: boolean;
+  fullView?: boolean;
+}
+
+const Node = forwardRef<HTMLDivElement, NodeProps>(
+  (
+    { x, y, id, handleOnNodeMouseEnter, handleOnNodeMouseLeave, data, hidden, fullView },
+    ref
+  ) => {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+
+    const lineageLink = React.useMemo(
+      () =>
+        data?.entityClasses?.some(entityClass => entityClass.name === 'DATA_QUALITY_TEST')
+          ? dataEntityDetailsPath(id)
+          : dataEntityLineagePath(id),
+      [id, data?.entityClasses]
+    );
+
+    const handleTitleClick = React.useCallback(() => {
+      navigate(lineageLink);
+    }, [lineageLink]);
+
+    const onMouseEnter = useCallback(() => {
+      if (handleOnNodeMouseEnter) {
+        handleOnNodeMouseEnter(id);
+      }
+    }, [handleOnNodeMouseEnter]);
+
+    return (
+      <S.Container
+        ref={ref}
+        $translateX={x}
+        $translateY={y}
+        $hidden={hidden}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={handleOnNodeMouseLeave}
+      >
+        {data?.externalName ? (
+          <>
+            <S.TitleContainer variant='h4' onClick={handleTitleClick}>
+              {data?.internalName || data?.externalName}
+            </S.TitleContainer>
+            {fullView && (
+              <S.SourceContainer>
+                <LabeledInfoItem label={t('Space')} inline labelWidth={2}>
+                  {data?.dataSource?.namespace?.name}
+                </LabeledInfoItem>
+                <LabeledInfoItem label={t('Source')} inline labelWidth={2}>
+                  {data?.dataSource?.name}
+                </LabeledInfoItem>
+              </S.SourceContainer>
+            )}
+          </>
+        ) : (
+          <>
+            <EmptyIcon fill='black' stroke='black' width={28} height={28} />
+            <S.OddrnContainer>
+              <Typography variant='subtitle1'>ODDRN</Typography>
+              <Typography variant='subtitle1' sx={{ wordBreak: 'break-all' }}>
+                {data?.oddrn}
+              </Typography>
+            </S.OddrnContainer>
+          </>
+        )}
+        <S.ClassesContainer>
+          {data?.entityClasses?.map(entityClass => (
+            <EntityClassItem
+              key={entityClass.id}
+              sx={{ mr: 0.5 }}
+              entityClassName={entityClass.name}
+            />
+          ))}
+        </S.ClassesContainer>
+      </S.Container>
+    );
+  }
+);
+
+export default memo(Node);
