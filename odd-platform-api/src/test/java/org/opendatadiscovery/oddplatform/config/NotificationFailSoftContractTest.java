@@ -66,8 +66,8 @@ class NotificationFailSoftContractTest {
         Assertions.assertThat(read(EMAIL_SENDER))
             .as("PLT-016: EmailNotificationSender.send STILL wraps its checked failures in a raw "
                 + "RuntimeException (not a NotificationSenderException) — so an email failure escapes the "
-                + "processor's fail-soft catch. When this is RED, the sender was fixed: delete this @pins pin "
-                + "(ADR-0042 now fully enforced) and close PLT-016. See retrospectives/LSN-029.")
+                + "processor's fail-soft catch. When this is RED, the sender was fixed: delete this "
+                + "characterization pin (ADR-0042 is then fully enforced) and close PLT-016. See LSN-029.")
             .contains("throw new RuntimeException(");
         Assertions.assertThat(read(PROCESSOR))
             .as("PLT-016: the fail-soft loop catches ONLY NotificationSenderException — a narrow catch — so the "
