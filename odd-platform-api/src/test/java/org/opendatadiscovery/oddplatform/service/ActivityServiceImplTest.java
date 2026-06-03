@@ -113,7 +113,7 @@ class ActivityServiceImplTest {
             .expectNextCount(1).verifyComplete();
 
         verify(dataEntityRelationsService).getDependentDataEntityOddrns(eq(LineageStreamKind.DOWNSTREAM));
-        verify(activityRepository).findDependentActivities(any(), any(), any(), any(), any(), any(), any(), any(), any(),
-            any(), any());
+        verify(activityRepository).findDependentActivities(any(), any(), any(), any(), any(), any(), any(), any(),
+            any(), any(), any());
     }
 }

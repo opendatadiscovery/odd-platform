@@ -47,6 +47,7 @@ class AdrDataCollabDeliveryScanTest {
         Assertions.assertThat(read(SENDER_JOB))
             .as("ADR-0020: the sender job drains asynchronously behind a BLOCKING leader-election advisory lock "
                 + "(acquire(..., true)) — exactly one sender across replicas.")
-            .contains("leaderElectionManager.acquire(dataCollaborationProperties.getSenderMessageAdvisoryLockId(), true)");
+            .contains("leaderElectionManager.acquire(dataCollaborationProperties"
+                + ".getSenderMessageAdvisoryLockId(), true)");
     }
 }

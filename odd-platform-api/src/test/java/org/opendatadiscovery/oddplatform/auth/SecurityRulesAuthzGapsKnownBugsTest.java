@@ -73,7 +73,8 @@ class SecurityRulesAuthzGapsKnownBugsTest {
         Assertions.assertThat(read(OPENAPI))
             .as("PLT-012: but the SPEC (hence the client URL) uses the PLURAL /api/dataentities/{data_entity_id}/terms "
                 + "— so the singular path-matcher never matches the real request and DATA_ENTITY_ADD_TERM/DELETE_TERM "
-                + "are silently disabled. RED here = one side was aligned; drop this @pins and close PLT-012. See LSN-029.")
+                + "are silently disabled. RED here = one side was aligned; "
+                + "drop this @pins and close PLT-012. See LSN-029.")
             .contains("/api/dataentities/{data_entity_id}/terms");
     }
 }

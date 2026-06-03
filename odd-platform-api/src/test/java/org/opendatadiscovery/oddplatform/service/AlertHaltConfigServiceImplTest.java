@@ -42,7 +42,8 @@ class AlertHaltConfigServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        service = new AlertHaltConfigServiceImpl(alertHaltConfigRepository, alertHaltConfigMapper, dataEntityRepository);
+        service = new AlertHaltConfigServiceImpl(alertHaltConfigRepository, alertHaltConfigMapper,
+            dataEntityRepository);
     }
 
     @Test
