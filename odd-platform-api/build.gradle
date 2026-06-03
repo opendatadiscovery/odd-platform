@@ -171,17 +171,20 @@ test {
 }
 
 // Deterministic coverage report consumed by the CI coverage gate (Madrapps/jacoco-report).
-// Generated code is excluded so the percentage reflects hand-written code only:
+// The percentage reflects unit-testable hand-written business logic only. Excluded:
 //   - **/model/**            jOOQ-generated tables/records/pojos/routines/udt
 //   - **/api/contract/**     OpenAPI-generated request/response models
 //   - **/proto/**, protobuf  generated protobuf stubs
 //   - **/*MapperImpl*        MapStruct-generated impls (the hand-written interface defaults stay measured)
+//   - **/repository/**       jOOQ DSL data-access layer — exercised by Testcontainers integration tests,
+//                            not unit tests; excluded so the gate measures business logic (not the DB layer)
 def jacocoExcludes = [
     '**/model/**',
     '**/api/contract/**',
     '**/proto/**',
     '**/com/google/protobuf/**',
-    '**/*MapperImpl*'
+    '**/*MapperImpl*',
+    '**/repository/**'
 ]
 
 jacocoTestReport {
