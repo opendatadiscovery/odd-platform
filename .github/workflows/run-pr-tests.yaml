@@ -64,3 +64,18 @@ jobs:
           files: 'odd-platform-api/build/test-results/**/*.xml'
           check_name: Test Results
           comment_mode: create new
+
+      # Deterministic coverage gate + PR comment. Reads the JaCoCo XML produced by
+      # `odd-platform-api:build` (check.dependsOn jacocoTestReport). Generated code is
+      # excluded in build.gradle, so these percentages are of hand-written code.
+      # No external service / no extra secret — uses the default GITHUB_TOKEN.
+      - name: Publish coverage report
+        uses: Madrapps/jacoco-report@v1.8.0
+        if: always()
+        with:
+          paths: odd-platform-api/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Backend Coverage
+          update-comment: true
+          min-coverage-overall: 70
+          min-coverage-changed-files: 98
