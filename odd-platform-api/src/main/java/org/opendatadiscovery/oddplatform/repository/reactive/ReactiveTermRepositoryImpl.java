@@ -208,7 +208,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLES_FIELD))
             .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
             .select(jsonArrayAgg(field(assignedTerms.asterisk().toString())).as(AGG_ASSIGNED_TERMS))
-            .select(jsonArrayAgg(field(NAMESPACE.asterisk().toString())).as(ASSIGNED_TERM_NAMESPACES))
+            .select(jsonArrayAgg(field(assignedTermsNamespace.asterisk().toString())).as(ASSIGNED_TERM_NAMESPACES))
             .select(jsonArrayAgg(field(assignedTermRelations.asterisk().toString())).as(ASSIGNED_TERM_RELATIONS))
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
             .select(DSL.countDistinct(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID).as(COLUMNS_COUNT))

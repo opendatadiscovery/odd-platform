@@ -50,7 +50,11 @@ export default function useTermWiki({
 
   const [fetchedTerms, setFetchedTerms] = useState<Record<string, TermRef>>(() =>
     Object.fromEntries(
-      terms.map(term => [makeTermKey(term.namespace.name, term.name), term])
+      terms
+        // a contract-violating payload (namespace null) must degrade to an unresolved
+        // mention, not crash the first render with an unhandled TypeError
+        .filter(term => term.namespace?.name)
+        .map(term => [makeTermKey(term.namespace.name, term.name), term])
     )
   );
   const [unsuccessfulTerms, setUnsuccessfulTerms] = useState<Record<string, boolean>>({});
