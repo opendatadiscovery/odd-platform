@@ -38,14 +38,16 @@ class AdrControllerAdviceMappingScanTest {
     void exceptionHierarchyMapsToStatus() throws IOException {
         final String src = read(ADVICE);
         Assertions.assertThat(HANDLER.matcher(src).results().count())
-            .as("ADR-0007: the ControllerAdvice maps the whole exception hierarchy (>=6 handlers incl. the catch-all).")
-            .isGreaterThanOrEqualTo(6L);
+            .as("ADR-0007: the ControllerAdvice maps the whole exception hierarchy (>=7 handlers incl. the catch-all).")
+            .isGreaterThanOrEqualTo(7L);
         Assertions.assertThat(src)
             .as("ADR-0007: the specific exception→status mappings — BadUserRequest→400, NotFound→404, GenAI→500, "
+                + "the framework ResponseStatusException pass-through (#1760/#1761), "
                 + "and a final Exception→500 catch-all.")
             .contains("@ExceptionHandler(BadUserRequestException.class)")
             .contains("@ExceptionHandler(NotFoundException.class)")
             .contains("@ExceptionHandler(GenAIException.class)")
+            .contains("@ExceptionHandler(ResponseStatusException.class)")
             .contains("@ExceptionHandler(Exception.class)")
             .contains("HttpStatus.BAD_REQUEST")
             .contains("HttpStatus.NOT_FOUND")

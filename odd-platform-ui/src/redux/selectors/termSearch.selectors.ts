@@ -13,7 +13,10 @@ import type {
   TermSearchState,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import {
+  createErrorSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import { emptyArr } from 'lib/constants';
 
 export const getTermSearchCreateStatuses = createStatusesSelector(
@@ -27,6 +30,8 @@ export const getTermSearchFetchStatuses = createStatusesSelector(
 export const getTermSearchUpdateStatuses = createStatusesSelector(
   actions.updateTermsSearchActType
 );
+
+export const getTermSearchError = createErrorSelector(actions.getTermsSearchActType);
 
 export const getTermSearchResultsFetchStatuses = createStatusesSelector(
   actions.fetchTermsSearchResultsActType

@@ -3,13 +3,20 @@ import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
 import { useTranslation } from 'react-i18next';
-import { MainSearch, PageWithLeftSidebar } from 'components/shared/elements';
+import {
+  AppErrorPage,
+  MainSearch,
+  PageWithLeftSidebar,
+  SearchSessionExpired,
+} from 'components/shared/elements';
 import { useCreateSearch } from 'lib/hooks';
 import { getDataEntitiesSearch, updateDataEntitiesSearch } from 'redux/thunks';
 import {
   getSearchCreatingStatuses,
+  getSearchError,
   getSearchFacetsData,
   getSearchFacetsSynced,
+  getSearchFetchStatuses,
   getSearchId,
   getSearchMyObjects,
   getSearchQuery,
@@ -18,6 +25,8 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { useSearchRouteParams } from 'routes';
+import { resetLoaderByAction } from 'redux/slices/loader.slice';
+import * as actions from 'redux/actions';
 import Filters from './Filters/Filters';
 import Results from './Results/Results';
 
@@ -33,6 +42,18 @@ const Search: React.FC = () => {
   const searchFacetParams = useAppSelector(getSearchFacetsData);
   const searchFacetsSynced = useAppSelector(getSearchFacetsSynced);
   const { isLoading: isSearchCreating } = useAppSelector(getSearchCreatingStatuses);
+  const { isNotLoaded: isSearchNotLoaded } = useAppSelector(getSearchFetchStatuses);
+  const searchError = useAppSelector(getSearchError);
+
+  // A deep-linked session that failed to load: 404 = the ephemeral session is gone (expired
+  // TTL / foreign link) — a graceful dead-link state, not an error (#1760).
+  const isDeepLinkNotLoaded = !searchId && !!routerSearchId && isSearchNotLoaded;
+  const isSearchSessionExpired = isDeepLinkNotLoaded && searchError?.status === 404;
+
+  const handleStartNewSearch = React.useCallback(() => {
+    dispatch(resetLoaderByAction(actions.getDataEntitySearchActionType));
+    createSearch({ query: '', filters: {} });
+  }, [dispatch, createSearch]);
 
   React.useEffect(() => {
     if (!routerSearchId && !isSearchCreating && !searchId) {
@@ -69,6 +90,14 @@ const Search: React.FC = () => {
       updateSearchFacets();
     }
   }, [searchFacetParams]);
+
+  if (isSearchSessionExpired) {
+    return <SearchSessionExpired onStartNewSearch={handleStartNewSearch} />;
+  }
+
+  if (isDeepLinkNotLoaded) {
+    return <AppErrorPage showError error={searchError} />;
+  }
 
   return (
     <PageWithLeftSidebar.MainContainer>
