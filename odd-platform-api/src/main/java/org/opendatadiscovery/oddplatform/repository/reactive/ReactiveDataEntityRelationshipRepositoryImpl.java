@@ -16,6 +16,7 @@ import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.RelationshipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -70,6 +71,13 @@ public class ReactiveDataEntityRelationshipRepositoryImpl
         }
 
         conditionList.add(DATA_ENTITY.ENTITY_CLASS_IDS.eq(new Integer[] {DATA_RELATIONSHIP.getId()}));
+
+        // the catalog's default visibility predicates (mirrors getDataEntityDefaultConditions):
+        // soft-DELETED, hollow and exclude_from_search relationship entities are hidden from the
+        // listing, exactly as the data-entity list/search tier hides them (#1752).
+        conditionList.add(DATA_ENTITY.HOLLOW.isFalse());
+        conditionList.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
+        conditionList.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
 
         final Select<DataEntityRecord> homogeneousQuery = DSL.selectFrom(DATA_ENTITY)
             .where(conditionList);
