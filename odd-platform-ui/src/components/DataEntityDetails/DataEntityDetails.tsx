@@ -53,6 +53,11 @@ const DataEntityDetails: React.FC = () => {
     getDataEntityDeleteFromGroupStatuses
   );
 
+  // details.status?.status must NOT be a dependency here: it is populated by this
+  // fetch's own fulfilled action, so listing it re-fires the effect once per first
+  // visit — every page-open registered two GET /api/dataentities/{id} calls and the
+  // backend counted +2 views per visit (#1764). The refetch a status change needs is
+  // dispatched explicitly by StatusSettingsForm after the status update succeeds.
   useEffect(() => {
     dispatch(fetchDataEntityDetails({ dataEntityId }));
   }, [
@@ -60,7 +65,6 @@ const DataEntityDetails: React.FC = () => {
     isDataEntityGroupUpdated,
     isDataEntityAddedToGroup,
     isDataEntityDeletedFromGroup,
-    details.status?.status,
   ]);
 
   useEffect(() => {
