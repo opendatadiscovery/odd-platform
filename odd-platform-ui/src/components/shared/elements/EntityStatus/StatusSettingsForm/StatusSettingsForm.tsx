@@ -10,6 +10,7 @@ import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrappe
 import Button from 'components/shared/elements/Button/Button';
 import AppDateTimePicker from 'components/shared/elements/AppDateTimePicker/AppDateTimePicker';
 import { updateEntityStatus } from 'redux/slices/dataentities.slice';
+import { fetchDataEntityDetails } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import Checkbox from 'components/shared/elements/Checkbox/Checkbox';
 import DefaultEntityStatus from 'components/shared/elements/EntityStatus/DefaultEntityStatus/DefaultEntityStatus';
@@ -92,6 +93,11 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
 
     const updatedStatus = await updateStatus(params);
     dispatch(updateEntityStatus({ dataEntityId, status: updatedStatus }));
+    // Status changes have server-side effects beyond the status field (DELETED/restore
+    // soft-delete/restore lineage and group relations), so re-read the entity. This
+    // refetch used to be triggered reactively by details.status?.status sitting in the
+    // DataEntityDetails effect deps — the mechanism that double-counted views (#1764).
+    dispatch(fetchDataEntityDetails({ dataEntityId }));
     handleMenuClose?.();
   };
 
