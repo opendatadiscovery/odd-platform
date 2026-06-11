@@ -2,6 +2,7 @@ import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { RelationshipsType } from 'generated-sources';
 import React, { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { parseRelationshipsType } from './parseRelationshipsType';
 
 const RelationshipsTabs = () => {
   const tabs = useMemo<AppTabItem<RelationshipsType>[]>(
@@ -25,7 +26,7 @@ const RelationshipsTabs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const findInitTabIdx = useCallback(() => {
-    const type = searchParams.get('type') ?? RelationshipsType.ALL;
+    const type = parseRelationshipsType(searchParams.get('type'));
     return tabs.findIndex(tab => tab.value === type);
   }, [searchParams, tabs]);
 
