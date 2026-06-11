@@ -26,7 +26,8 @@ const AppErrorPage: React.FC<AppErrorPageProps> = ({
           </Typography>
         </Grid>
         <Grid item alignItems='center'>
-          <Typography variant='h1'>{error?.statusText ?? t('Unknown Error')}</Typography>
+          {/* HTTP/2 reason phrases are empty strings — || so a blank statusText still falls back. */}
+          <Typography variant='h1'>{error?.statusText || t('Unknown Error')}</Typography>
           <Grid container alignItems='center'>
             <Typography variant='body1'>{t('Return to the')}</Typography>
             <Button text={t('Home Page')} to='/' buttonType='tertiary-m' />

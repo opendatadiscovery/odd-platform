@@ -12,10 +12,13 @@ import org.opendatadiscovery.oddplatform.exception.GenAIException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.exception.UniqueConstraintException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 @Slf4j
@@ -56,6 +59,36 @@ public class ControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGenAIException(final GenAIException e) {
         return buildResponse(e);
+    }
+
+    // Framework-raised statuses (unmatched route -> 404, invalid/missing request input -> 400,
+    // method/media mismatches -> 405/415) must pass through, not fall to the 500 catch-all.
+    // WebExchangeBindException extends ResponseStatusException, so its more specific
+    // field-error handler above still wins.
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatus(final ResponseStatusException e) {
+        final HttpStatusCode status = e.getStatusCode();
+        final ErrorCode code;
+        if (status.value() == HttpStatus.NOT_FOUND.value()) {
+            code = ErrorCode.NOT_FOUND;
+        } else if (status.is4xxClientError()) {
+            code = ErrorCode.BAD_REQUEST;
+        } else {
+            code = ErrorCode.SERVER_EXCEPTION;
+        }
+
+        if (status.is4xxClientError()) {
+            log.warn("Request error {}: {}", status.value(), e.getReason());
+        } else {
+            log.error("Server error", e);
+        }
+
+        final ErrorResponse error = new ErrorResponse();
+        error.setMessage(StringUtils.isNotEmpty(e.getReason()) ? e.getReason() : status.toString());
+        error.setCode(code.getValue());
+        error.setResolvable(code.isResolvable());
+        error.setRetryable(code.isRetryable());
+        return ResponseEntity.status(status).body(error);
     }
 
     @ExceptionHandler(Exception.class)

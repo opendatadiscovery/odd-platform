@@ -57,6 +57,8 @@ export const getSearchResultsError = createErrorSelector(
   actions.fetchDataEntitySearchResultsActionType
 );
 
+export const getSearchError = createErrorSelector(actions.getDataEntitySearchActionType);
+
 export const getSearchFacetsSynced = createSelector(
   searchState,
   search => search.isFacetsStateSynced
