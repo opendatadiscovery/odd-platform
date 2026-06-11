@@ -4138,6 +4138,9 @@ components:
         erd_relationship_id:
           type: integer
           format: int64
+          description: >-
+            Internal id of the ERD detail record. Not a valid `relationship_id` path
+            parameter value - use the relationship's `id` field for that.
         fields_pairs:
           type: array
           items:
@@ -4172,6 +4175,9 @@ components:
         graph_relationship_id:
           type: integer
           format: int64
+          description: >-
+            Internal id of the graph detail record. Not a valid `relationship_id` path
+            parameter value - use the relationship's `id` field for that.
         is_directed:
           type: boolean
         attributes:
@@ -4385,6 +4391,11 @@ components:
     RelationshipIdParam:
       name: relationship_id
       in: path
+      description: >-
+        Id of the relationship-class data entity, i.e. the `id` field of
+        `DataEntityRelationship` / `DataEntityRelationshipDetails` items. The
+        `erd_relationship_id` and `graph_relationship_id` fields exposed in the details
+        payload are internal detail-record ids and are NOT valid values for this parameter.
       required: true
       schema:
         type: integer
