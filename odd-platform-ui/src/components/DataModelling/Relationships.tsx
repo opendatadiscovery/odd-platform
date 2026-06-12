@@ -3,7 +3,6 @@ import * as S from 'components/shared/styled-components';
 import { Typography } from '@mui/material';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
 import { useSearchParams } from 'react-router-dom';
-import { RelationshipsType } from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as Table from 'components/shared/elements/StyledComponents/Table';
 import { useSearchRelationships } from '../../lib/hooks/api/dataModelling/relatioships';
@@ -12,11 +11,12 @@ import RelationshipsTabs from './Relationships/RelationshipsTabs';
 import RelationshipsSearchInput from './Relationships/RelationshipsSearchInput';
 import RelationshipsTitle from './Relationships/RelationshipsTitle';
 import RelationshipsListItem from './Relationships/RelationshipsListItem';
+import { parseRelationshipsType } from './Relationships/parseRelationshipsType';
 
 const Relationships = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') ?? '';
-  const type = (searchParams.get('type') ?? RelationshipsType.ALL) as RelationshipsType;
+  const type = parseRelationshipsType(searchParams.get('type'));
   const { data, isLoading, hasNextPage, fetchNextPage } = useSearchRelationships({
     query,
     type,

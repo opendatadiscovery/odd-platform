@@ -29,9 +29,9 @@ export const GraphRelationship: React.FC<GraphRelationshipProps> = ({
         Source:
       </Typography>
       <RelationshipDatasetInfo
-        dataEntityId={targetDataEntity.id}
-        name={targetDataEntity.internalName || targetDataEntity.externalName || ''}
-        oddrn={targetDataEntity.oddrn || ''}
+        dataEntityId={sourceDataEntity.id}
+        name={sourceDataEntity.internalName || sourceDataEntity.externalName || ''}
+        oddrn={sourceDataEntity.oddrn || ''}
       />
     </Grid>
     <Grid
@@ -56,9 +56,9 @@ export const GraphRelationship: React.FC<GraphRelationshipProps> = ({
         Target:
       </Typography>
       <RelationshipDatasetInfo
-        dataEntityId={sourceDataEntity.id}
-        name={sourceDataEntity.internalName || sourceDataEntity.externalName || ''}
-        oddrn={sourceDataEntity.oddrn || ''}
+        dataEntityId={targetDataEntity.id}
+        name={targetDataEntity.internalName || targetDataEntity.externalName || ''}
+        oddrn={targetDataEntity.oddrn || ''}
       />
     </Grid>
     <Grid

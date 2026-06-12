@@ -18,6 +18,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.RelationshipsType;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.ErdRelationshipDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.RelationshipDetailsDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -134,6 +135,12 @@ public class ReactiveRelationshipsRepositoryImpl
             .where(RelationshipsType.ALL != type
                 ? RELATIONSHIPS.RELATIONSHIP_TYPE.eq(type.getValue())
                 : DSL.noCondition())
+            // soft-DELETED and hollow relationship entities are hidden from the dataset's tab —
+            // deliberately NOT exclude_from_search: that flag scopes discovery surfaces, and hiding a
+            // dataset's real relationship from its own contextual detail tab would be silent
+            // incompleteness (#1752).
+            .and(relationshipsDataEntity.field(DATA_ENTITY.HOLLOW).isFalse())
+            .and(relationshipsDataEntity.field(DATA_ENTITY.STATUS).ne(DataEntityStatusDto.DELETED.getId()))
             .groupBy(groupByFields);
 
         return jooqReactiveOperations.flux(query)

@@ -72,11 +72,11 @@ const RelationshipsListItem = ({ item }: Props) => (
     </Table.Cell>
     <Table.Cell $flex='1 0 16%'>
       <RelationshipDatasetInfo
-        dataEntityId={item.sourceDataEntity.id}
+        dataEntityId={item.targetDataEntity.id}
         name={
-          item.sourceDataEntity.internalName || item.sourceDataEntity.externalName || ''
+          item.targetDataEntity.internalName || item.targetDataEntity.externalName || ''
         }
-        oddrn={item.sourceDataEntity.oddrn || ''}
+        oddrn={item.targetDataEntity.oddrn || ''}
       />
     </Table.Cell>
   </Table.RowContainer>
