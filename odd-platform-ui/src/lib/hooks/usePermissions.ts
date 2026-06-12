@@ -8,8 +8,7 @@ interface UsePermissionReturn {
 }
 
 const usePermissions = (): UsePermissionReturn => {
-  const { isAllowedTo, getHasAccessTo } = useContext(PermissionContext);
-  const hasAccessTo = getHasAccessTo;
+  const { isAllowedTo, getHasAccessTo: hasAccessTo } = useContext(PermissionContext);
 
   return { isAllowedTo, hasAccessTo };
 };

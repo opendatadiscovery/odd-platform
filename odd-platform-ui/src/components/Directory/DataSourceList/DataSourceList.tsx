@@ -36,7 +36,7 @@ const DataSourceList: FC = () => {
   const dataSourceTypeName = getCapitalizedDatasourceNameFromPrefix(prefix);
 
   const transformToHeaderCells = (data: DataSourceDirectory[]): Cell[] => {
-    const keysToOmit: Array<keyof DataSourceDirectory> = [
+    const keysToOmit: (keyof DataSourceDirectory)[] = [
       'id',
       'properties',
       'entitiesCount',

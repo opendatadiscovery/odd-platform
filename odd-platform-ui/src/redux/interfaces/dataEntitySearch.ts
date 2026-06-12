@@ -10,29 +10,25 @@ export type OptionalFacetMap = Omit<FacetState, 'entityClasses'>;
 export type OptionalFacetNames = keyof OptionalFacetMap;
 export type SearchFacetNames = keyof Partial<FacetState>;
 
-export type FacetStateUpdate = {
+export interface FacetStateUpdate {
   facetName: SearchFacetNames;
   facetOptionId?: number | string;
   facetOptionName?: string;
   facetOptionState: boolean;
   facetSingle?: boolean;
-};
+}
 
-export type SearchTotalsByName = {
-  [entityClassName in DataEntityClassNameEnum]?: CountableSearchFilter;
-} & { all?: number; myObjectsTotal?: number };
+export type SearchTotalsByName = Partial<
+  Record<DataEntityClassNameEnum, CountableSearchFilter>
+> & { all?: number; myObjectsTotal?: number };
 
 export type SearchFilterStateSynced = SearchFilterState & {
   syncedState: boolean;
 };
 
-export type SearchFacetStateById = {
-  [facetOptionId: string]: SearchFilterStateSynced;
-};
+export type SearchFacetStateById = Record<string, SearchFilterStateSynced>;
 
-export type SearchFacetsByName = {
-  [facetName in SearchFacetNames]?: SearchFacetStateById;
-};
+export type SearchFacetsByName = Partial<Record<SearchFacetNames, SearchFacetStateById>>;
 
 export interface FacetOptions {
   facetName?: OptionalFacetNames;
@@ -40,11 +36,14 @@ export interface FacetOptions {
   page: number;
 }
 
-export type FacetOptionsByName = {
-  [facetName in OptionalFacetNames]?: {
-    items: CountableSearchFilter[];
-    pageInfo: CurrentPageInfo;
-  };
-};
+export type FacetOptionsByName = Partial<
+  Record<
+    OptionalFacetNames,
+    {
+      items: CountableSearchFilter[];
+      pageInfo: CurrentPageInfo;
+    }
+  >
+>;
 
 export type SearchClass = number | 'all' | 'my';

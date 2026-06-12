@@ -96,7 +96,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
               )}
               {alertChunkList && alertChunkList?.length > 0 && (
                 <Button
-                  text={`${showHistory ? t('Hide history') : t('Show history')}`}
+                  text={showHistory ? t('Hide history') : t('Show history')}
                   sx={{ ml: 1 }}
                   buttonType='tertiary-m'
                   onClick={() => setShowHistory(prev => !prev)}

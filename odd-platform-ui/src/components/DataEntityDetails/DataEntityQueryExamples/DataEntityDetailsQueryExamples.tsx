@@ -49,7 +49,7 @@ const DataEntityDetailsQueryExamples: React.FC = () => {
           <QueryExamplesListItem
             queryExample={qe}
             key={qe.definition}
-            dataEntityId={dataEntityId}
+            entityId={dataEntityId}
           />
         ))}
         {isLoading && <QueryExamplesSkeleton />}

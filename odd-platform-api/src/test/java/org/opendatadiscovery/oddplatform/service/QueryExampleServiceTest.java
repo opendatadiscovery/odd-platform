@@ -12,11 +12,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityQueryExampleFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExample;
-import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDatasetFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleFormData;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
@@ -48,6 +48,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityQueryExampleRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermQueryExampleRelationRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -69,6 +70,8 @@ public class QueryExampleServiceTest {
     @Mock
     private ReactiveDataEntityQueryExampleRelationRepository dataEntityToQueryExampleRepository;
     @Mock
+    private ReactiveTermQueryExampleRelationRepository termQueryExampleRelationRepository;
+    @Mock
     private DataEntityService dataEntityService;
     private final QueryExampleMapper queryExampleMapper = new QueryExampleMapperImpl();
 
@@ -84,6 +87,7 @@ public class QueryExampleServiceTest {
         );
 
         queryExampleMapper.setDateTimeMapper(new DateTimeMapperImpl());
+        queryExampleMapper.setTermMapper(termMapper);
         queryExampleMapper.setDataEntityMapper(
             new DataEntityMapperImpl(
                 new DataSourceMapperImpl(
@@ -122,6 +126,7 @@ public class QueryExampleServiceTest {
         queryExampleService = new QueryExampleServiceImpl(queryExampleRepository,
             queryExampleSearchEntrypointRepository,
             dataEntityToQueryExampleRepository,
+            termQueryExampleRelationRepository,
             dataEntityService,
             queryExampleMapper);
     }
@@ -149,8 +154,8 @@ public class QueryExampleServiceTest {
     @ParameterizedTest
     @MethodSource("queryExampleRelationProvider")
     @DisplayName("Creates new queryExample Relations")
-    public void createQueryExampleRelationsTest(final Long queryExampleId,
-                                                final QueryExampleDatasetFormData formData,
+    public void createQueryExampleRelationsTest(final Long datasetId,
+                                                final DataEntityQueryExampleFormData formData,
                                                 final DataEntityToQueryExamplePojo entityToQueryExamplePojo,
                                                 final QueryExampleDto queryExampleDto,
                                                 final QueryExample expected) {
@@ -162,7 +167,7 @@ public class QueryExampleServiceTest {
             .updateQueryExampleVectorsForDataEntity(anyLong())).thenReturn(Mono.just(1));
 
         queryExampleService
-            .createQueryExampleToDatasetRelationship(queryExampleId, formData)
+            .createQueryExampleToDatasetRelationship(datasetId, formData.getQueryExampleId())
             .as(StepVerifier::create)
             .assertNext(item -> {
                 assertEquals(expected.getDefinition(), item.getDefinition());
@@ -208,6 +213,8 @@ public class QueryExampleServiceTest {
         when(queryExampleRepository.delete(anyLong())).thenReturn(Mono.empty());
         when(dataEntityToQueryExampleRepository.removeRelationWithDataEntityByQueryId(anyLong()))
             .thenReturn(Flux.empty());
+        when(termQueryExampleRelationRepository.removeRelationWithTermByQueryId(anyLong()))
+            .thenReturn(Flux.empty());
 
         queryExampleService
             .deleteQueryExample(queryExampleId)
@@ -245,8 +252,7 @@ public class QueryExampleServiceTest {
             .thenReturn(Mono.empty());
 
         queryExampleService
-            .createQueryExampleToDatasetRelationship(1L,
-                new QueryExampleDatasetFormData().datasetId(1L))
+            .createQueryExampleToDatasetRelationship(1L, 1L)
             .as(StepVerifier::create)
             .verifyError(BadUserRequestException.class);
     }
@@ -293,7 +299,7 @@ public class QueryExampleServiceTest {
     private static Stream<Arguments> queryExampleRelationProvider() {
         return Stream.of(
             Arguments.arguments(1L,
-                new QueryExampleDatasetFormData().datasetId(1L),
+                new DataEntityQueryExampleFormData().queryExampleId(1L),
                 new DataEntityToQueryExamplePojo()
                     .setDataEntityId(1L)
                     .setQueryExampleId(1L),
@@ -302,7 +308,8 @@ public class QueryExampleServiceTest {
                         .setId(1L)
                         .setQuery("select 1 from dual")
                         .setDefinition("def"),
-                    List.of(new DataEntityPojo().setId(1L).setStatus((short) 3))
+                    List.of(new DataEntityPojo().setId(1L).setStatus((short) 3)),
+                    List.of()
                 ),
                 new QueryExample()
                     .query("select 1 from dual")
@@ -324,7 +331,8 @@ public class QueryExampleServiceTest {
                 pojo,
                 new QueryExampleDto(
                     pojo,
-                    List.of(new DataEntityPojo().setId(1L).setStatus((short) 3))
+                    List.of(new DataEntityPojo().setId(1L).setStatus((short) 3)),
+                    List.of()
                 ),
                 DataEntityDimensionsDto
                     .dimensionsBuilder()

@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
@@ -14,7 +15,9 @@ import reactor.core.publisher.Mono;
 
 public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo> {
 
-    Mono<Page<TermRefDto>> listTermRefDtos(final int page, final int size, final String query);
+    Mono<Page<TermRefDto>> listTermRefDtos(final int page, final int size, final String query,
+                                           final OffsetDateTime updatedAtRangeStartDateTime,
+                                           final OffsetDateTime updatedAtRangeEndDateTime);
 
     Mono<Boolean> existsByNamespace(final Long namespaceId);
 
@@ -37,4 +40,10 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
     Flux<LinkedTermDto> getDatasetFieldTerms(final long datasetFieldId);
 
     Mono<Boolean> hasDescriptionRelations(final long termId);
+
+    Flux<LinkedTermDto> getLinkedTermsByTargetTermId(long targetTermId);
+
+    Flux<LinkedTermDto> listByTerm(final Long termId, final String query, final Integer page, final Integer size);
+
+    Mono<LinkedTermDto> getTermByIdAndLinkedTermId(final Long assignedTermId, final Long targetTermId);
 }

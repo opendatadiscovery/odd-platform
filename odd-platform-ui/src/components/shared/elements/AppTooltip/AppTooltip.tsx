@@ -3,17 +3,16 @@ import type { Theme, TooltipProps } from '@mui/material';
 import type { SxProps } from '@mui/system';
 import * as S from './AppTooltipStyles';
 
-interface AppTooltipProps
-  extends Pick<
-    TooltipProps,
-    | 'placement'
-    | 'followCursor'
-    | 'componentsProps'
-    | 'disableHoverListener'
-    | 'onOpen'
-    | 'onClose'
-    | 'sx'
-  > {
+interface AppTooltipProps extends Pick<
+  TooltipProps,
+  | 'placement'
+  | 'followCursor'
+  | 'componentsProps'
+  | 'disableHoverListener'
+  | 'onOpen'
+  | 'onClose'
+  | 'sx'
+> {
   title: React.ReactElement | string | undefined | number;
   type?: S.TooltipColorTypes;
   checkForOverflow?: boolean;

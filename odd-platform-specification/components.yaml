@@ -189,6 +189,8 @@ components:
         - QUERY_EXAMPLE_DELETE
         - QUERY_EXAMPLE_DATASET_CREATE
         - QUERY_EXAMPLE_DATASET_DELETE
+        - QUERY_EXAMPLE_TERM_CREATE
+        - QUERY_EXAMPLE_TERM_DELETE
         - LOOKUP_TABLE_CREATE
         - LOOKUP_TABLE_UPDATE
         - LOOKUP_TABLE_DELETE
@@ -223,6 +225,7 @@ components:
         - OWNER_UPDATE
         - OWNER_DELETE
         - OWNER_ASSOCIATION_MANAGE
+        - OWNER_RELATION_MANAGE
         - DIRECT_OWNER_SYNC
         - POLICY_CREATE
         - POLICY_UPDATE
@@ -358,9 +361,42 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Role'
+        associated_user:
+          $ref: '#/components/schemas/AssociatedUser'
       required:
         - id
         - name
+
+    AssociatedUser:
+      type: object
+      properties:
+        oidc_username:
+          type: string
+        provider:
+          type: string
+
+    UserOwnerMappingFormData:
+      type: object
+      properties:
+        owner_id:
+          type: integer
+          format: int64
+        oidc_username:
+          type: string
+        provider:
+          type: string
+
+    ProviderList:
+      type: object
+      properties:
+        default_providers:
+          type: array
+          items:
+            type: string
+        active_providers:
+          type: array
+          items:
+            type: string
 
     OwnerList:
       type: object
@@ -716,6 +752,7 @@ components:
             - DATA_QUALITY_TEST
             - DATA_QUALITY_TEST_RUN
             - DATA_ENTITY_GROUP
+            - DATA_RELATIONSHIP
         types:
           type: array
           items:
@@ -756,6 +793,8 @@ components:
             - DOMAIN
             - VECTOR_STORE
             - LOOKUP_TABLE
+            - ENTITY_RELATIONSHIP
+            - GRAPH_RELATIONSHIP
       required:
         - id
         - name
@@ -2456,6 +2495,21 @@ components:
       properties:
         projectVersion:
           type: string
+        authType:
+          type: string
+
+    LinkedTermList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedTerm'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
 
     LinkedTerm:
       type: object
@@ -2504,6 +2558,9 @@ components:
           type: string
         definition:
           type: string
+        updated_at:
+          type: string
+          format: date-time
         namespace:
           $ref: '#/components/schemas/Namespace'
       required:
@@ -2523,6 +2580,10 @@ components:
               type: integer
             columns_using_count:
               type: integer
+            linked_terms_using_count:
+              type: integer
+            query_example_using_count:
+              type: integer
             created_at:
               type: string
               format: date-time
@@ -2540,6 +2601,10 @@ components:
           properties:
             tags:
               $ref: '#/components/schemas/TagList'
+            terms:
+              type: array
+              items:
+                $ref: '#/components/schemas/LinkedTerm'
 
     TermFormData:
       type: object
@@ -2572,6 +2637,24 @@ components:
           format: int64
       required:
         - term_id
+
+    QueryExampleTermFormData:
+      type: object
+      properties:
+        query_example_id:
+          type: integer
+          format: int64
+      required:
+        - query_example_id
+
+    LinkedTermFormData:
+      type: object
+      properties:
+        linked_term_id:
+          type: integer
+          format: int64
+      required:
+        - linked_term_id
 
     TermSearchFormData:
       type: object
@@ -2683,11 +2766,14 @@ components:
           type: string
         linked_entities:
           $ref: '#/components/schemas/DataEntityRefList'
+        linked_terms:
+          $ref: '#/components/schemas/LinkedTermList'
       required:
         - id
         - definition
         - query
         - linked_entities
+        - linked_terms
 
     QueryExampleDetails:
       allOf:
@@ -2696,6 +2782,8 @@ components:
           properties:
             linked_entities:
               $ref: '#/components/schemas/DataEntityList'
+            linked_terms:
+              $ref: '#/components/schemas/LinkedTermList'
             created_at:
               type: string
               format: date-time
@@ -2704,6 +2792,7 @@ components:
               format: date-time
           required:
             - linked_entities
+            - linked_terms
             - created_at
             - updated_at
 
@@ -2739,14 +2828,14 @@ components:
         - search_id
         - query
 
-    QueryExampleDatasetFormData:
+    DataEntityQueryExampleFormData:
       type: object
       properties:
-        dataset_id:
+        query_example_id:
           type: integer
           format: int64
       required:
-        - dataset_id
+        - query_example_id
 
     ActivityCountInfo:
       type: object
@@ -3119,6 +3208,19 @@ components:
         - items
         - page_info
 
+    OwnerAssociationRequestActivityList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnerAssociationRequestActivity'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
     OwnerAssociationRequest:
       type: object
       properties:
@@ -3129,8 +3231,15 @@ components:
           type: string
         provider:
           type: string
+        owner_id:
+          type: integer
+          format: int64
         owner_name:
           type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
         status:
           $ref: '#/components/schemas/OwnerAssociationRequestStatus'
         status_updated_by:
@@ -3149,6 +3258,25 @@ components:
         - PENDING
         - APPROVED
         - DECLINED
+
+    OwnerAssociationRequestActivity:
+      allOf:
+        - $ref: '#/components/schemas/OwnerAssociationRequest'
+        - type: object
+          properties:
+            activity_id:
+              type: integer
+              format: int64
+            event_type:
+              type: string
+
+    OwnerAssociationRequestStatusParam:
+      type: string
+      enum:
+        - PENDING
+        - APPROVED
+        - DECLINED
+        - RESOLVED
 
     OwnerAssociationRequestStatusFormData:
       type: object
@@ -3255,6 +3383,7 @@ components:
       enum:
         - DATA_ENTITY
         - TERM
+        - QUERY_EXAMPLE
         - MANAGEMENT
 
     MessageChannel:
@@ -3624,7 +3753,7 @@ components:
           items:
             $ref: '#/components/schemas/DataQualityCategoryResults'
         tables_dashboard:
-            $ref: '#/components/schemas/TablesDashboard'
+          $ref: '#/components/schemas/TablesDashboard'
       required:
         - test_results
         - tables_dashboard
@@ -3934,6 +4063,158 @@ components:
         - field_id
         - value
 
+    DataEntityRelationshipList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityRelationship'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    DataEntityRelationshipDetailsList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityRelationshipDetails'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    DataEntityRelationship:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        oddrn:
+          type: string
+        source_data_entity:
+          $ref: '#/components/schemas/DataEntityRef'
+        target_data_entity:
+          $ref: '#/components/schemas/DataEntityRef'
+        data_source:
+          $ref: '#/components/schemas/DataSourceSafe'
+        type:
+          $ref: '#/components/schemas/DataEntityRelationshipType'
+      required:
+        - id
+        - name
+        - oddrn
+        - source_data_entity
+        - target_data_entity
+        - data_source
+        - type
+
+    DataEntityRelationshipDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityRelationship'
+        - type: object
+          properties:
+            erd_relationship:
+              $ref: '#/components/schemas/ERDRelationshipDetails'
+            graph_relationship:
+              $ref: '#/components/schemas/GraphRelationshipDetails'
+
+    DataEntityRelationshipType:
+      type: string
+      enum:
+        - ENTITY_RELATIONSHIP
+        - GRAPH_RELATIONSHIP
+
+    ERDRelationshipDetails:
+      type: object
+      properties:
+        erd_relationship_id:
+          type: integer
+          format: int64
+          description: >-
+            Internal id of the ERD detail record. Not a valid `relationship_id` path
+            parameter value - use the relationship's `id` field for that.
+        fields_pairs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ERDRelationshipPairs'
+        is_identifying:
+          type: boolean
+        cardinality:
+          type: string
+      required:
+        - fields_pairs
+
+    ERDRelationshipPairs:
+      type: object
+      properties:
+        source_dataset_field_id:
+          type: integer
+          format: int64
+        source_dataset_field_oddrn:
+          type: string
+        target_dataset_field_id:
+          type: integer
+          format: int64
+        target_dataset_field_oddrn:
+          type: string
+      required:
+        - source_dataset_field_oddrn
+        - target_dataset_field_oddrn
+
+    GraphRelationshipDetails:
+      type: object
+      properties:
+        graph_relationship_id:
+          type: integer
+          format: int64
+          description: >-
+            Internal id of the graph detail record. Not a valid `relationship_id` path
+            parameter value - use the relationship's `id` field for that.
+        is_directed:
+          type: boolean
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/GraphRelationshipAttributes'
+
+    GraphRelationshipAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - field
+        - value
+
+    RelationshipsType:
+      type: string
+      enum:
+        - ERD
+        - GRAPH
+        - ALL
+
+    GenAIRequest:
+      type: object
+      properties:
+        body:
+          type: string
+
+    GenAIResponse:
+      type: object
+      properties:
+        body:
+          type: string
+
   parameters:
     PageParam:
       name: page
@@ -4044,6 +4325,14 @@ components:
         type: integer
         format: int64
 
+    LinkedTermIdParam:
+      name: linked_term_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
     PolicyIdParam:
       name: policy_id
       in: path
@@ -4098,6 +4387,26 @@ components:
       schema:
         type: integer
         format: int64
+
+    RelationshipIdParam:
+      name: relationship_id
+      in: path
+      description: >-
+        Id of the relationship-class data entity, i.e. the `id` field of
+        `DataEntityRelationship` / `DataEntityRelationshipDetails` items. The
+        `erd_relationship_id` and `graph_relationship_id` fields exposed in the details
+        payload are internal detail-record ids and are NOT valid values for this parameter.
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    RelationshipTypeParam:
+      name: type
+      in: query
+      required: true
+      schema:
+        $ref: '#/components/schemas/RelationshipsType'
 
   responses:
     Deleted:

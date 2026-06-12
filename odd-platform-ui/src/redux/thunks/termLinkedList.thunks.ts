@@ -5,7 +5,7 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { termApi } from 'lib/api';
 
 export const fetchTermLinkedList = handleResponseAsyncThunk<
-  { termId: number; linkedEntitiesList: Array<DataEntity>; pageInfo: CurrentPageInfo },
+  { termId: number; linkedEntitiesList: DataEntity[]; pageInfo: CurrentPageInfo },
   TermApiGetTermLinkedEntitiesRequest
 >(
   actions.fetchTermLinkedListAction,

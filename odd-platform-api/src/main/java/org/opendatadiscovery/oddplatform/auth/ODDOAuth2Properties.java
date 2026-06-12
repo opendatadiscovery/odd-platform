@@ -49,5 +49,6 @@ public class ODDOAuth2Properties {
         private Set<String> adminPrincipals;
         private String organizationName;
         private String allowedDomain;
+        private Boolean pkce;
     }
 }

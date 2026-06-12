@@ -111,7 +111,6 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
         <span>
           {parts?.map((part, idx) => (
             <S.HighlightedTextPart
-              // eslint-disable-next-line react/no-array-index-key
               key={`${part}-${idx}`}
               isHighlighted={part.toLowerCase() === highlight.toLowerCase()}
             >

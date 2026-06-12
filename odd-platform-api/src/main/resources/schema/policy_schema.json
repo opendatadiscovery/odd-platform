@@ -35,6 +35,9 @@
                 "$ref": "#/$defs/data_entity_permission"
               },
               {
+                "$ref": "#/$defs/query_example_permissions"
+              },
+              {
                 "$ref": "#/$defs/management_permissions"
               },
               {
@@ -123,6 +126,42 @@
               }
             }
           }
+        },{
+          "if": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "QUERY_EXAMPLE"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/query_example_permissions"
+                    },
+                    {
+                      "$ref": "#/$defs/all_permissions"
+                    }
+                  ]
+                }
+              }
+            }
+          }
         },
         {
           "if": {
@@ -177,6 +216,9 @@
             },
             {
               "$ref": "#/$defs/data_entity_policy_resource_condition"
+            },
+            {
+              "$ref": "#/$defs/query_example_policy_resource_condition"
             }
           ]
         }
@@ -399,6 +441,76 @@
       "maxProperties": 1,
       "minProperties": 1
     },
+    "query_example_policy_resource_condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "all": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/query_example_policy_resource_condition"
+          }
+        },
+        "any": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/query_example_policy_resource_condition"
+          }
+        },
+        "eq": {
+          "$ref": "#/$defs/query_example_policy_resource_condition_unary"
+        },
+        "not_eq": {
+          "$ref": "#/$defs/query_example_policy_resource_condition_unary"
+        },
+        "match": {
+          "$ref": "#/$defs/query_example_policy_resource_condition_unary"
+        },
+        "not_match": {
+          "$ref": "#/$defs/query_example_policy_resource_condition_unary"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "all"
+          ]
+        },
+        {
+          "required": [
+            "any"
+          ]
+        },
+        {
+          "required": [
+            "eq"
+          ]
+        },
+        {
+          "required": [
+            "not_eq"
+          ]
+        },
+        {
+          "required": [
+            "match"
+          ]
+        },
+        {
+          "required": [
+            "not_match"
+          ]
+        }
+      ]
+    },
+    "query_example_policy_resource_condition_unary": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/query_example_condition_key"
+      },
+      "maxProperties": 1,
+      "minProperties": 1
+    },
     "data_entity_resource_condition_key": {
       "type": "string",
       "enum": [
@@ -423,6 +535,12 @@
         "term:tag:name",
         "term:owner",
         "term:owner:title"
+      ]
+    },
+    "query_example_condition_key": {
+      "type": "string",
+      "enum": [
+        "queryexample:name"
       ]
     },
     "data_entity_permission": {
@@ -452,7 +570,9 @@
         "DATASET_FIELD_DELETE_TERM",
         "DATA_ENTITY_GROUP_UPDATE",
         "DATA_ENTITY_ATTACHMENT_MANAGE",
-        "DATA_ENTITY_STATUS_UPDATE"
+        "DATA_ENTITY_STATUS_UPDATE",
+        "QUERY_EXAMPLE_DATASET_DELETE",
+        "QUERY_EXAMPLE_DATASET_CREATE"
       ]
     },
     "term_permissions": {
@@ -464,6 +584,13 @@
         "TERM_OWNERSHIP_CREATE",
         "TERM_OWNERSHIP_UPDATE",
         "TERM_OWNERSHIP_DELETE"
+      ]
+    },
+    "query_example_permissions": {
+      "type": "string",
+      "enum": [
+        "QUERY_EXAMPLE_UPDATE",
+        "QUERY_EXAMPLE_DELETE"
       ]
     },
     "management_permissions": {
@@ -489,13 +616,23 @@
         "OWNER_UPDATE",
         "OWNER_DELETE",
         "OWNER_ASSOCIATION_MANAGE",
+        "OWNER_RELATION_MANAGE",
         "DIRECT_OWNER_SYNC",
         "POLICY_CREATE",
         "POLICY_UPDATE",
         "POLICY_DELETE",
         "ROLE_CREATE",
         "ROLE_UPDATE",
-        "ROLE_DELETE"
+        "ROLE_DELETE",
+        "LOOKUP_TABLE_CREATE",
+        "LOOKUP_TABLE_UPDATE",
+        "LOOKUP_TABLE_DELETE",
+        "LOOKUP_TABLE_DEFINITION_CREATE",
+        "LOOKUP_TABLE_DEFINITION_UPDATE",
+        "LOOKUP_TABLE_DEFINITION_DELETE",
+        "LOOKUP_TABLE_DATA_CREATE",
+        "LOOKUP_TABLE_DATA_UPDATE",
+        "LOOKUP_TABLE_DATA_DELETE"
       ]
     },
     "all_permissions": {
@@ -509,6 +646,7 @@
       "enum": [
         "DATA_ENTITY",
         "TERM",
+        "QUERY_EXAMPLE",
         "MANAGEMENT"
       ]
     }

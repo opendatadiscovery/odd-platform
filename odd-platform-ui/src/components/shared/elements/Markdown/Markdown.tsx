@@ -1,4 +1,4 @@
-import React, { type FC, type ReactNode, type CSSProperties } from 'react';
+import React, { type FC, type ReactNode, type CSSProperties, useEffect } from 'react';
 import type { ContextStore } from '@uiw/react-md-editor';
 import MDEditor from '@uiw/react-md-editor';
 import type { Position } from 'unist';
@@ -13,24 +13,22 @@ interface MarkdownProps {
   value: string;
   editor?: boolean;
   disableCopy?: boolean;
-  onChange?:
-    | ((
-        value?: string | undefined,
-        event?: React.ChangeEvent<HTMLTextAreaElement> | undefined,
-        state?: ContextStore | undefined
-      ) => void)
-    | undefined;
+  onChange?: (
+    value?: string | undefined,
+    event?: React.ChangeEvent<HTMLTextAreaElement> | undefined,
+    state?: ContextStore | undefined
+  ) => void;
   height?: CSSProperties['height'];
   variant?: TypographyVariant;
 }
 
-export type ReactMarkdownProps = {
+export interface ReactMarkdownProps {
   node: Element;
   children: ReactNode[];
   sourcePosition?: Position;
   index?: number;
   siblingCount?: number;
-};
+}
 
 type MarkdownElementProps<HTMLElement> = Omit<
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>,
@@ -74,8 +72,14 @@ type MarkdownPreviewProps = MarkdownElementProps<HTMLParagraphElement>;
 
 const Preview =
   (variant?: TypographyVariant) =>
-  ({ ...props }: MarkdownPreviewProps) =>
-    !variant ? <div {...props} /> : <Typography paragraph variant={variant} {...props} />;
+  ({ children, ...props }: MarkdownPreviewProps) =>
+    !variant ? (
+      <div {...props}>{children}</div>
+    ) : (
+      <Typography paragraph variant={variant} {...props}>
+        {children}
+      </Typography>
+    );
 
 const Markdown: FC<MarkdownProps> = ({
   value,
@@ -89,8 +93,16 @@ const Markdown: FC<MarkdownProps> = ({
     'data-color-mode'?: 'light' | 'dark';
   };
 
+  useEffect(() => {
+    document
+      .getElementById('md-editor')
+      ?.querySelector('textarea')
+      ?.setAttribute('spellcheck', 'true');
+  }, []);
+
   return editor ? (
     <MDEditor
+      id='md-editor'
       height={height}
       value={value}
       preview='edit'
@@ -103,7 +115,11 @@ const Markdown: FC<MarkdownProps> = ({
       style={{ width: '100%', backgroundColor: 'inherit' }}
       wrapperElement={wrapperElement}
       disableCopy={disableCopy}
-      components={{ div: MarkdownCopyButton, a: TermLink, p: Preview(variant) }}
+      components={{
+        a: TermLink,
+        div: MarkdownCopyButton,
+        p: Preview(variant),
+      }}
     />
   );
 };

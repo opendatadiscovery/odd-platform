@@ -9,11 +9,10 @@ export const metadataDatePickerInputFormat = 'd MMM yyyy';
 export const minDate = new Date(1900, 0, 1);
 export const maxDate = new Date(2099, 11, 31);
 
-interface AppDatePickerProps
-  extends Pick<
-    DatePickerProps<Date, Date>,
-    'onChange' | 'onAccept' | 'label' | 'inputFormat' | 'disableMaskedInput'
-  > {
+interface AppDatePickerProps extends Pick<
+  DatePickerProps<Date, Date>,
+  'onChange' | 'onAccept' | 'label' | 'inputFormat' | 'disableMaskedInput'
+> {
   sx?: SxProps<Theme>;
   errorText?: string;
   defaultDate?: string;

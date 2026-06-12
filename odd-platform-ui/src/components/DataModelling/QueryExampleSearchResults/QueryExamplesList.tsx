@@ -42,7 +42,7 @@ const QueryExamplesList = () => {
           scrollableTarget='query-examples-list'
         >
           {queryExamples.map(qe => (
-            <QueryExamplesListItem queryExample={qe} key={qe.definition} />
+            <QueryExamplesListItem queryExample={qe} key={JSON.stringify(qe)} />
           ))}
           {isLoading && <QueryExamplesSkeleton />}
           {isEmpty && <EmptyContentPlaceholder offsetTop={215} />}

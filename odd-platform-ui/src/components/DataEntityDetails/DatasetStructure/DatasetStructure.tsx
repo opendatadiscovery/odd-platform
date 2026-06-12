@@ -35,6 +35,9 @@ const DatasetStructure: FC = () => {
                 Permission.DATASET_FIELD_ADD_TERM,
                 Permission.DATASET_FIELD_DELETE_TERM,
                 Permission.DATASET_FIELD_INTERNAL_NAME_UPDATE,
+                Permission.LOOKUP_TABLE_DEFINITION_CREATE,
+                Permission.LOOKUP_TABLE_DEFINITION_UPDATE,
+                Permission.LOOKUP_TABLE_DEFINITION_DELETE,
               ]}
               resourcePermissions={resourcePermissions}
               Component={DatasetStructureOverview}
@@ -42,6 +45,7 @@ const DatasetStructure: FC = () => {
           }
         >
           <Route path=':versionId' />
+          <Route path='field/:fieldId' element={<Navigate to='overview' />} />
         </Route>
         <Route path='compare' element={<DatasetStructureCompare />} />
         <Route path='' element={<Navigate to='overview' />} />

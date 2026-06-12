@@ -9,18 +9,28 @@ export interface AppError {
   message: string;
 }
 
-export const getErrorResponse = async (response: Response): Promise<AppError> => {
+// The generated API client throws ResponseError wrapping the Response (runtime.ts), so the
+// real status/statusText/body live one level deeper than a bare fetch Response.
+const toResponse = (err: unknown): Response | undefined => {
+  if (err instanceof Response) return err;
+  const wrapped = (err as { response?: unknown })?.response;
+  return wrapped instanceof Response ? wrapped : undefined;
+};
+
+export const getErrorResponse = async (err: Response | unknown): Promise<AppError> => {
+  const response = toResponse(err);
+
   let body: Record<string, string> = {};
   try {
-    body = await response.clone().json();
-  } catch (e) {
-    // do nothing;
+    if (response) body = await response.clone().json();
+  } catch {
+    // do nothing
   }
 
   return {
-    status: response?.status,
-    statusText: response?.statusText,
-    url: response?.url,
+    status: response?.status as number,
+    statusText: response?.statusText as string,
+    url: response?.url as string,
     message: body?.message || 'An error occurred',
   };
 };
@@ -46,14 +56,16 @@ interface ErrorToastOptions {
 }
 
 export const showServerErrorToast = async (
-  response: Response,
+  err: Response | unknown,
   options?: ErrorToastOptions
 ) => {
+  const response = toResponse(err);
+
   let body: Record<string, string> = {};
   try {
-    body = await response.json();
-  } catch (e) {
-    // do nothing;
+    if (response) body = await response.clone().json();
+  } catch {
+    // do nothing
   }
 
   let message = body?.message || 'An error occurred';
@@ -62,7 +74,7 @@ export const showServerErrorToast = async (
     message = `${body?.message} ${options.additionalMessage}`;
   }
 
-  if (response.status) {
+  if (response?.status) {
     showToast('error', { id: response.url, message });
   }
 };

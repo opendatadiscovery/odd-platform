@@ -12,9 +12,9 @@ interface AssignEntityQueryFormProps {
   dataEntityId: number;
 }
 
-type FormData = {
+interface FormData {
   exampleId: number;
-};
+}
 
 const AssignEntityQueryExampleForm: React.FC<AssignEntityQueryFormProps> = ({
   openBtnEl,
@@ -35,8 +35,8 @@ const AssignEntityQueryExampleForm: React.FC<AssignEntityQueryFormProps> = ({
 
   const onSubmit = ({ exampleId }: FormData) => {
     mutateAsync({
-      exampleId,
-      queryExampleDatasetFormData: { datasetId: dataEntityId },
+      dataEntityId,
+      dataEntityQueryExampleFormData: { queryExampleId: exampleId },
     }).then(_ => {
       reset();
     });

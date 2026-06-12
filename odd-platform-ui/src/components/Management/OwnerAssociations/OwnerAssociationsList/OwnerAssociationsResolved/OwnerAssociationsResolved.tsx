@@ -1,21 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import {
-  getOwnerAssociationRequestsListFetchingError,
-  getOwnerAssociationRequestsListFetchingStatuses,
-  getResolvedAssociationRequestsList,
-  getResolvedOwnerAssociationRequestsPageInfo,
-} from 'redux/selectors';
 import {
   AppErrorPage,
   EmptyContentPlaceholder,
   ScrollableContainer,
 } from 'components/shared/elements';
-import { fetchOwnerAssociationRequestList } from 'redux/thunks';
+import { useGetOwnerAssociationActivityList } from 'lib/hooks/api/ownerAssociationRequest';
+import { OwnerAssociationRequestStatusParam } from 'generated-sources';
+import { useDebounce } from 'use-debounce';
 import ManagementSkeletonItem from '../../../ManagementSkeletonItem/ManagementSkeletonItem';
 import ResolvedAssociationRequest from './ResolvedAssociationRequest/ResolvedAssociationRequest';
 import { queryAtom } from '../../OwnerAssociationsStore/OwnerAssociationsAtoms';
@@ -29,29 +24,24 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
   size,
 }) => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
   const [query] = useAtom(queryAtom);
+  const [debouncedQuery] = useDebounce(query, 500);
 
-  const { hasNext, page } = useAppSelector(getResolvedOwnerAssociationRequestsPageInfo);
-  const requestList = useAppSelector(getResolvedAssociationRequestsList);
+  const { data, isLoading, isError, hasNextPage, fetchNextPage } =
+    useGetOwnerAssociationActivityList({
+      query: debouncedQuery || '',
+      size,
+      status: OwnerAssociationRequestStatusParam.RESOLVED,
+    });
 
-  const { isLoaded: isRequestsListFetched, isNotLoaded: isRequestsListNotFetched } =
-    useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
-  const ownerAssociationRequestsListFetchingError = useAppSelector(
-    getOwnerAssociationRequestsListFetchingError
+  const associationActivity = useMemo(
+    () => data?.pages.flatMap(page => page.items) ?? [],
+    [data?.pages]
   );
-
-  const fetchNextPage = React.useCallback(() => {
-    if (!hasNext) return;
-    dispatch(
-      fetchOwnerAssociationRequestList({
-        page: page + 1,
-        size,
-        query,
-        active: false,
-      })
-    );
-  }, [page, size, query]);
+  const isEmpty = useMemo(
+    () => associationActivity.length === 0 && !isLoading,
+    [associationActivity.length, isLoading]
+  );
 
   const tableCellText = (text: string) => (
     <Typography variant='subtitle2' color='texts.hint'>
@@ -62,58 +52,55 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.TableHeader container>
-        <Grid item lg={3}>
+        <Grid item lg={1.5}>
           {tableCellText(t('User name'))}
         </Grid>
-        <Grid item lg={2}>
+        <Grid item lg={1.5}>
           {tableCellText(t('Owner name'))}
         </Grid>
         <Grid item lg={2}>
+          {tableCellText('Role')}
+        </Grid>
+        <Grid item lg={1.5}>
           {tableCellText(t('Provider'))}
         </Grid>
         <Grid item lg={2}>
           {tableCellText(t('Resolved by'))}
         </Grid>
-        <Grid item lg={1}>
+        <Grid item lg={1.5}>
           {tableCellText(t('Status'))}
         </Grid>
         <Grid item lg={2}>
           {tableCellText(t('Resolved at'))}
         </Grid>
       </S.TableHeader>
-      {requestList.length > 0 && (
+      {associationActivity.length > 0 && (
         <ScrollableContainer container id='resolved-associations-list'>
           <InfiniteScroll
             scrollableTarget='resolved-associations-list'
             next={fetchNextPage}
-            hasMore={hasNext}
-            dataLength={requestList.length}
+            hasMore={hasNextPage}
+            dataLength={associationActivity.length}
             scrollThreshold='200px'
             loader={<ManagementSkeletonItem />}
           >
-            {requestList?.map(request => (
+            {associationActivity?.map(activity => (
               <ResolvedAssociationRequest
-                key={request.id}
-                ownerName={request.ownerName}
-                provider={request.provider}
-                username={request.username}
-                status={request.status}
-                statusUpdatedAt={request.statusUpdatedAt}
-                statusUpdatedBy={request.statusUpdatedBy}
+                key={activity.activityId}
+                ownerName={activity.ownerName}
+                provider={activity.provider}
+                username={activity.username}
+                roles={activity.roles}
+                status={activity.status}
+                statusUpdatedAt={activity.statusUpdatedAt}
+                statusUpdatedBy={activity.statusUpdatedBy}
               />
             ))}
           </InfiniteScroll>
         </ScrollableContainer>
       )}
-      <EmptyContentPlaceholder
-        isContentEmpty={!requestList.length}
-        isContentLoaded={isRequestsListFetched}
-      />
-      <AppErrorPage
-        showError={isRequestsListNotFetched}
-        error={ownerAssociationRequestsListFetchingError}
-        offsetTop={182}
-      />
+      <EmptyContentPlaceholder isContentEmpty={isEmpty} isContentLoaded={!isLoading} />
+      <AppErrorPage showError={isError} offsetTop={182} />
     </Grid>
   );
 };

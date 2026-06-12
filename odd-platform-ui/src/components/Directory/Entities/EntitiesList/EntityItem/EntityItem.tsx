@@ -80,7 +80,7 @@ const EntityItem: FC<EntityItemProps> = ({
         </Table.Cell>
         {!typeId && (
           <Table.Cell $flex={flexMap.type}>
-            {DataEntityClassTypeLabelMap.get(type.name)!.normal}
+            {DataEntityClassTypeLabelMap.get(type.name)?.normal ?? type.name}
           </Table.Cell>
         )}
         <Table.Cell $flex={flexMap.owner}>

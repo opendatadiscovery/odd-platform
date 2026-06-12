@@ -88,8 +88,9 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
         )}
         {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED]) && (
           <StringActivityField
-            activityName={`${t('Dataset field')} ${activity.oldState
-              .datasetFieldInformation?.name} ${t('description')}`}
+            activityName={`${t('Dataset field')} ${
+              activity.oldState.datasetFieldInformation?.name
+            } ${t('description')}`}
             oldState={activity.oldState.datasetFieldInformation?.description}
             newState={activity.newState.datasetFieldInformation?.description}
             hideAllDetails={hideAllDetails}
@@ -107,8 +108,9 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
         )}
         {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TAGS_UPDATED]) && (
           <ArrayActivityField
-            activityName={`${t('Tags')} ${t('in')} ${activity.oldState
-              .datasetFieldInformation?.name} ${t('column')}`}
+            activityName={`${t('Tags')} ${t('in')} ${
+              activity.oldState.datasetFieldInformation?.name
+            } ${t('column')}`}
             oldState={activity.oldState.datasetFieldInformation?.tags}
             newState={activity.newState.datasetFieldInformation?.tags}
             hideAllDetails={hideAllDetails}

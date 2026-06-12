@@ -8,7 +8,7 @@ import {
 } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/constants';
 
 const getContentHeights = (
-  content: Array<string | undefined>,
+  content: (string | undefined)[],
   defaultHeight: number
 ): number[] =>
   content?.map(text => {

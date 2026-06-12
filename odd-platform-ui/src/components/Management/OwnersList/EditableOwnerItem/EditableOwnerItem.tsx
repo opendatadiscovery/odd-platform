@@ -1,9 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import TruncateMarkup from 'react-truncate-markup';
 import { useTranslation } from 'react-i18next';
 import { type Owner, Permission } from 'generated-sources';
-import { Button, ConfirmationDialog } from 'components/shared/elements';
+import { Button, ConfirmationDialog, OwnerRoleCell } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { deleteOwner } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -36,17 +35,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
         <Typography variant='body1'>{name}</Typography>
       </Grid>
       <Grid item lg={6}>
-        <TruncateMarkup lines={1} tokenize='words'>
-          <div style={{ display: 'flex' }}>
-            {roles?.map((role, idx) => (
-              <TruncateMarkup.Atom key={role.id}>
-                <Typography variant='body1'>
-                  {`${idx ? ', ' : ''} ${role.name}`}
-                </Typography>
-              </TruncateMarkup.Atom>
-            ))}
-          </div>
-        </TruncateMarkup>
+        <OwnerRoleCell roles={roles} />
       </Grid>
       <S.ActionsContainer container item lg={2}>
         <WithPermissions permissionTo={Permission.OWNER_UPDATE}>

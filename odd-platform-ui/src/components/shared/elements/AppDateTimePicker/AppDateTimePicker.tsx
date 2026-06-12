@@ -9,17 +9,16 @@ import { dateTimePaperPropsStyles } from './style.overrides';
 
 const dateTimePickerInputFormat = 'd MMM yyyy, HH:mm';
 
-interface AppDateTimePickerProps
-  extends Pick<
-    DateTimePickerProps<Date, Date>,
-    | 'onChange'
-    | 'onAccept'
-    | 'label'
-    | 'inputFormat'
-    | 'disableMaskedInput'
-    | 'value'
-    | 'minDateTime'
-  > {
+interface AppDateTimePickerProps extends Pick<
+  DateTimePickerProps<Date, Date>,
+  | 'onChange'
+  | 'onAccept'
+  | 'label'
+  | 'inputFormat'
+  | 'disableMaskedInput'
+  | 'value'
+  | 'minDateTime'
+> {
   sx?: SxProps<Theme>;
   errorText?: string;
 }

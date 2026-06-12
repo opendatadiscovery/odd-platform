@@ -15,11 +15,13 @@ import org.opendatadiscovery.oddplatform.auth.ODDOAuth2Properties;
 import org.opendatadiscovery.oddplatform.auth.ODDOAuth2PropertiesConverter;
 import org.opendatadiscovery.oddplatform.auth.Provider;
 import org.opendatadiscovery.oddplatform.auth.authorization.AuthorizationCustomizer;
+import org.opendatadiscovery.oddplatform.auth.filter.S2sAuthenticationFilter;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.logout.OAuthLogoutSuccessHandler;
 import org.opendatadiscovery.oddplatform.auth.manager.extractor.ResourceExtractor;
 import org.opendatadiscovery.oddplatform.dto.security.UserProviderRole;
 import org.opendatadiscovery.oddplatform.service.permission.PermissionService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientPropertiesMapper;
@@ -73,6 +75,7 @@ import static org.springframework.security.web.server.util.matcher.ServerWebExch
 @RequiredArgsConstructor
 public class OAuthSecurityConfiguration {
     private final ODDOAuth2Properties properties;
+    private final S2sAuthenticationFilter s2sAuthenticationFilter;
     private final List<OAuthUserHandler<OAuth2User, OAuth2UserRequest>> oauthUserHandlers;
     private final List<OAuthUserHandler<OidcUser, OidcUserRequest>> oidcUserHandlers;
 
@@ -83,7 +86,8 @@ public class OAuthSecurityConfiguration {
         final ReactiveClientRegistrationRepository repo,
         final PermissionService permissionService,
         final List<ResourceExtractor> extractors,
-        final TemplateEngine templateEngine) {
+        final TemplateEngine templateEngine,
+        @Value("${auth.s2s.enabled:false}") final boolean s2sEnabled) {
         final List<ClientRegistration> clientRegistrations =
             IteratorUtils.toList(((InMemoryReactiveClientRegistrationRepository) repo).iterator());
 
@@ -99,6 +103,10 @@ public class OAuthSecurityConfiguration {
             sec = sec
                 .addFilterAfter(new LoginPageFilter(templateEngine, clientRegistrations, properties),
                     SecurityWebFiltersOrder.CSRF);
+        }
+
+        if (s2sEnabled) {
+            sec.addFilterAt(s2sAuthenticationFilter, SecurityWebFiltersOrder.HTTP_BASIC);
         }
 
         return sec.build();

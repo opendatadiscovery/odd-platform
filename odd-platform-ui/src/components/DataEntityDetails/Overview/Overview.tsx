@@ -65,13 +65,9 @@ const Overview: React.FC = () => {
             )}
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                allowedPermissions={[
-                  Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE,
-                  Permission.DATA_ENTITY_CUSTOM_METADATA_UPDATE,
-                  Permission.DATA_ENTITY_CUSTOM_METADATA_DELETE,
-                ]}
+                allowedPermissions={[Permission.DATA_ENTITY_DESCRIPTION_UPDATE]}
                 resourcePermissions={resourcePermissions}
-                Component={OverviewMetadata}
+                render={() => <OverviewDescription termRefs={termRefs} />}
               />
             </SectionContainer>
             <SectionContainer square elevation={0}>
@@ -81,14 +77,18 @@ const Overview: React.FC = () => {
                 Component={OverviewAttachments}
               />
             </SectionContainer>
-            <OverviewMetrics showOverview={isDataset} />
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                allowedPermissions={[Permission.DATA_ENTITY_DESCRIPTION_UPDATE]}
+                allowedPermissions={[
+                  Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE,
+                  Permission.DATA_ENTITY_CUSTOM_METADATA_UPDATE,
+                  Permission.DATA_ENTITY_CUSTOM_METADATA_DELETE,
+                ]}
                 resourcePermissions={resourcePermissions}
-                render={() => <OverviewDescription termRefs={termRefs} />}
+                Component={OverviewMetadata}
               />
             </SectionContainer>
+            <OverviewMetrics showOverview={isDataset} />
           </Grid>
           <Grid item xs={3}>
             <SectionContainer square elevation={0}>

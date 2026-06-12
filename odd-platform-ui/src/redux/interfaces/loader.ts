@@ -10,6 +10,6 @@ export interface ErrorState {
 export type AsyncRequestStatus = 'initial' | 'pending' | 'fulfilled' | 'rejected';
 
 export interface LoaderSliceState {
-  statuses: { [key: string]: AsyncRequestStatus };
-  errors: { [key: string]: ErrorState | undefined };
+  statuses: Record<string, AsyncRequestStatus>;
+  errors: Record<string, ErrorState | undefined>;
 }

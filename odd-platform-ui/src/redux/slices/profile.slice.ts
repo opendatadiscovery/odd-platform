@@ -24,12 +24,6 @@ export const profileSlice = createSlice({
     builder.addCase(thunks.fetchIdentity.fulfilled, (state, { payload }) => {
       state.owner = payload;
     });
-    builder.addCase(
-      thunks.createOwnerAssociationRequest.fulfilled,
-      (state, { payload }) => {
-        state.owner.associationRequest = payload;
-      }
-    );
     builder.addCase(thunks.fetchResourcePermissions.fulfilled, (state, { payload }) => {
       const { resourceId, permissionResourceType, permissions } = payload;
       state.permissions[permissionResourceType][resourceId] = permissions;

@@ -67,67 +67,62 @@ export interface NamespacesState extends EntityState<Namespace> {
 }
 
 export interface DataEntityGroupLinkedListState {
-  linkedItemsIdsByDataEntityGroupId: { [dataEntityGroupId: string]: number[] };
+  linkedItemsIdsByDataEntityGroupId: Record<string, number[]>;
   pageInfo?: CurrentPageInfo;
 }
 
 export interface MetaDataState {
-  dataEntityMetadata: {
-    [dataEntityId: string]: {
-      byId: { [metadataFiledId: string]: MetadataFieldValue };
+  dataEntityMetadata: Record<
+    string,
+    {
+      byId: Record<string, MetadataFieldValue>;
       allIds: number[];
-    };
-  };
+    }
+  >;
   metadataFields: MetadataField[];
 }
 
 export interface DatasetStructureState {
-  fieldById: { [fieldId: number]: DataSetField };
-  allFieldIdsByVersion: {
-    [versionId: number]: { [parentFieldId: number]: DataSetField['id'][] };
-  };
-  statsByVersionId: {
-    [versionId: number]: { typeStats: DataSetStructureTypesCount };
-  };
-  latestVersionByDataset: { [datasetId: string]: DataSetVersion['id'] };
-  fieldEnumsByFieldId: { [fieldId: number]: EnumValueList };
+  fieldById: Record<number, DataSetField>;
+  allFieldIdsByVersion: Record<number, Record<number, DataSetField['id'][]>>;
+  statsByVersionId: Record<number, { typeStats: DataSetStructureTypesCount }>;
+  latestVersionByDataset: Record<string, DataSetVersion['id']>;
+  fieldEnumsByFieldId: Record<number, EnumValueList>;
 }
 
 export interface DataQualityTestState {
-  qualityTestsById: { [qualityTestId: string]: DataQualityTest };
-  allSuiteNamesByDatasetId: {
-    [datasetId: string]: { [suiteName: string]: DataQualityTest['id'][] };
-  };
+  qualityTestsById: Record<string, DataQualityTest>;
+  allSuiteNamesByDatasetId: Record<string, Record<string, DataQualityTest['id'][]>>;
   qualityTestRunsPageInfo: CurrentPageInfo;
-  datasetTestReportByEntityId: { [dataEntityId: string]: DataSetTestReport };
-  datasetSLAReportByEntityId: { [dataEntityId: string]: DataSetSLAReport };
-  testReportBySuiteName: { [suiteName: string]: DataSetQualityTestsStatusCount };
+  datasetTestReportByEntityId: Record<string, DataSetTestReport>;
+  datasetSLAReportByEntityId: Record<string, DataSetSLAReport>;
+  testReportBySuiteName: Record<string, DataSetQualityTestsStatusCount>;
 }
 
 export interface DataEntityRunState extends EntityState<DataEntityRun> {
   pageInfo: CurrentPageInfo;
 }
 
-export interface DataEntityLineageState {
-  [dataEntityId: string]: DataEntityLineageById;
-}
+export type DataEntityLineageState = Record<string, DataEntityLineageById>;
 
 export interface OwnersState {
-  byId: { [ownerId: number]: Owner };
+  byId: Record<number, Owner>;
   allIds: number[];
   pageInfo: CurrentPageInfo;
-  ownershipDataEntity: {
-    [dataEntityId: string]: {
-      byId: { [ownershipId: string]: Ownership };
+  ownershipDataEntity: Record<
+    string,
+    {
+      byId: Record<string, Ownership>;
       allIds: number[];
-    };
-  };
-  ownershipTermDetails: {
-    [termId: string]: {
-      byId: { [ownershipId: string]: Ownership };
+    }
+  >;
+  ownershipTermDetails: Record<
+    string,
+    {
+      byId: Record<string, Ownership>;
       allIds: number[];
-    };
-  };
+    }
+  >;
 }
 
 export interface DataCollaborationState {
@@ -136,7 +131,7 @@ export interface DataCollaborationState {
 }
 
 export interface DataEntitiesState {
-  byId: { [dataEntityId: string]: GeneratedDataEntity & DataEntityDetailsState };
+  byId: Record<string, GeneratedDataEntity & DataEntityDetailsState>;
   allIds: number[];
   my: DataEntityRef[];
   myUpstream: DataEntityRef[];
@@ -158,22 +153,18 @@ export interface DataEntitySearchState {
   results: { items: DataEntity[]; pageInfo: CurrentPageInfo };
   suggestions: DataEntityRef[];
   facetState: SearchFacetsByName;
-  dataEntitySearchHighlightById: { [dataEntityId: number]: DataEntitySearchHighlight };
+  dataEntitySearchHighlightById: Record<number, DataEntitySearchHighlight>;
 }
 
 export interface AlertsState {
   alerts: PaginatedResponse<Alert[]> & { totals: AlertTotals };
-  dataEntityAlerts: {
-    [dataEntityId: number]: PaginatedResponse<Alert[]> & { alertCount: number };
-  };
+  dataEntityAlerts: Record<number, PaginatedResponse<Alert[]> & { alertCount: number }>;
   configs: EntityState<AlertsConfig>;
 }
 
 export interface ProfileState {
   owner: AssociatedOwner;
-  permissions: {
-    [key in PermissionResourceType]: { [resourceId: number]: Permission[] };
-  };
+  permissions: Record<PermissionResourceType, Record<number, Permission[]>>;
 }
 
 export interface OwnerAssociationState {
@@ -186,7 +177,7 @@ export interface AppInfoState {
 }
 
 export interface TermsState {
-  byId: { [termId: string]: TermDetails };
+  byId: Record<string, TermDetails>;
   allIds: Term['id'][];
   pageInfo?: CurrentPageInfo;
 }
@@ -202,26 +193,28 @@ export interface TermSearchState {
 }
 
 export interface TermLinkedListState {
-  linkedItemsIdsByTermId: { [termId: string]: number[] };
+  linkedItemsIdsByTermId: Record<string, number[]>;
   pageInfo: CurrentPageInfo;
 }
 
 export interface ActivitiesState {
   activities: {
-    activitiesByType: {
-      [key in ActivityType]: {
-        itemsByDate: { [date: string]: Activity[] };
+    activitiesByType: Record<
+      ActivityType,
+      {
+        itemsByDate: Record<string, Activity[]>;
         pageInfo: PageInfo<number>;
-      };
-    };
+      }
+    >;
     counts: ActivityCountInfo;
   };
-  dataEntityActivities: {
-    [dataEntityId: number]: {
-      itemsByDate: { [date: string]: Activity[] };
+  dataEntityActivities: Record<
+    number,
+    {
+      itemsByDate: Record<string, Activity[]>;
       pageInfo: PageInfo<number>;
-    };
-  };
+    }
+  >;
 }
 
 export interface RolesState extends EntityState<Role> {

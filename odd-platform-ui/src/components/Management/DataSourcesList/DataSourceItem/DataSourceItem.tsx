@@ -14,7 +14,7 @@ import {
 import { AlertIcon, DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import DataSourceFormDialog from '../DataSourceForm/DataSourceForm';
+import DataSourceForm from '../DataSourceForm/DataSourceForm';
 import DataSourceItemToken from './DataSourceItemToken/DataSourceItemToken';
 import * as S from './DataSourceItemStyles';
 
@@ -42,7 +42,7 @@ const DataSourceItem: FC<DataSourceItemProps> = ({ dataSource }) => {
           </Grid>
           <S.Actions>
             <WithPermissions permissionTo={Permission.DATA_SOURCE_UPDATE}>
-              <DataSourceFormDialog
+              <DataSourceForm
                 dataSource={dataSource}
                 btnCreateEl={
                   <Button
@@ -110,7 +110,6 @@ const DataSourceItem: FC<DataSourceItemProps> = ({ dataSource }) => {
           {!isHidden && (
             <InfoItem
               sx={{ p: 1, backgroundColor: 'warning.light', borderRadius: 1 }}
-              labelWidth={0.4}
               label={<AlertIcon fill='#E59900' width={24} height={24} />}
               info={
                 <Typography variant='body1'>

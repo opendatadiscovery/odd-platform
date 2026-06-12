@@ -38,7 +38,7 @@ public class IdentityServiceImpl implements IdentityService {
                 userOwnerMappingRepository.getAssociatedOwner(userDto.username(), userDto.provider())
                     .defaultIfEmpty(new OwnerPojo()),
                 ownerAssociationRequestRepository.getLastRequestForUsername(userDto.username())
-                    .defaultIfEmpty(new OwnerAssociationRequestDto(null, null, null)),
+                    .defaultIfEmpty(new OwnerAssociationRequestDto(null, null, null, null, null)),
                 permissionService.getNonContextualPermissionsForCurrentUser(PermissionResourceType.MANAGEMENT)
                     .collectList())
             .map(function((owner, request, permissions) -> {

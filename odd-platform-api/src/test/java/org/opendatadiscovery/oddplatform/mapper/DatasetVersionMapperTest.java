@@ -36,13 +36,13 @@ class DatasetVersionMapperTest {
         new DatasetVersionMapperImpl(
             new DatasetFieldApiMapperImpl(new TagMapperImpl(),
                 new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()), new TermMapperImpl(
-                new NamespaceMapperImpl(),
-                new DateTimeMapperImpl(),
-                new OwnershipMapperImpl(
-                    new OwnerMapperImpl(),
-                    new TitleMapperImpl()
-                )
-            )),
+                    new NamespaceMapperImpl(),
+                    new DateTimeMapperImpl(),
+                    new OwnershipMapperImpl(
+                        new OwnerMapperImpl(),
+                        new TitleMapperImpl()
+                    )
+                )),
             new DateTimeMapperImpl());
     private static final EasyRandom EASY_RANDOM;
 
@@ -102,7 +102,8 @@ class DatasetVersionMapperTest {
         final DataEntityIngestionDto dataEntityIngestionDto = new DataEntityIngestionDto();
         dataEntityIngestionDto.setDataSet(
             new DataEntityIngestionDto.DataSetIngestionDto(
-                "parentOddrn", null, "structHash", 1L));
+                "parentOddrn", null, "structHash",
+                1L));
         final long expectedVersion = 1L;
         final EnrichedDataEntityIngestionDto dto =
             new EnrichedDataEntityIngestionDto(expectedVersion, null, dataEntityIngestionDto);

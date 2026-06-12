@@ -1,7 +1,7 @@
-import React, { cloneElement, type FC, useEffect, useMemo } from 'react';
+import React, { cloneElement, type FC, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Alert } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { TermDetails, TermFormData } from 'generated-sources';
 import {
@@ -12,13 +12,17 @@ import {
   NamespaceAutocomplete,
 } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { createTerm, updateTerm } from 'redux/thunks';
+import { createTerm, updateTerm, fetchTermsSearchResults } from 'redux/thunks';
 import {
   getTermCreatingStatuses,
   getTermDetails,
   getTermUpdatingStatuses,
+  getTermSearchResults,
+  getTermSearchId,
+  getTermSearchFacetsSynced,
 } from 'redux/selectors';
 import { termDetailsPath, useTermsRouteParams } from 'routes';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -26,6 +30,7 @@ interface TermsFormDialogProps {
 
 const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { termId } = useTermsRouteParams();
@@ -37,6 +42,12 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const { isLoading: isTermUpdating, isLoaded: isTermUpdated } = useAppSelector(
     getTermUpdatingStatuses
   );
+
+  const searchId = useAppSelector(getTermSearchId);
+  const isTermSearchFacetsSynced = useAppSelector(getTermSearchFacetsSynced);
+  const existingTerms = useAppSelector(getTermSearchResults);
+
+  const [error, setError] = useState<string | null>(null);
 
   const defaultValues = useMemo(
     () => ({
@@ -55,20 +66,46 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
 
   useEffect(() => {
     reset(defaultValues);
-  }, [defaultValues]);
+  }, [defaultValues, reset]);
+
+  useEffect(() => {
+    if (searchId && isTermSearchFacetsSynced) {
+      dispatch(fetchTermsSearchResults({ searchId, page: 1, size: 1000 }));
+    }
+  }, [dispatch, searchId, isTermSearchFacetsSynced]);
 
   const clearState = () => {
     reset();
+    setError(null);
   };
 
   const onSubmit = (data: TermFormData) => {
+    // Check if we're in create mode (no term.id present)
+    if (!term?.id) {
+      const duplicateTerm = existingTerms.find(
+        (existingTerm: TermDetails) =>
+          existingTerm.name === data.name &&
+          existingTerm.namespace.name === data.namespaceName
+      );
+
+      if (duplicateTerm) {
+        setError('A term with the same name already exists in this namespace.');
+        return;
+      }
+    }
+
     const parsedData = { ...data };
+
+    // Determine whether to create or update the term
     (term && term.id
       ? dispatch(updateTerm({ termId: term.id, termFormData: parsedData }))
       : dispatch(createTerm({ termFormData: parsedData }))
     )
       .unwrap()
-      .then((response: TermDetails) => {
+      .then(async (response: TermDetails) => {
+        await queryClient.invalidateQueries({
+          queryKey: ['term', termId],
+        });
         clearState();
         navigate(termDetailsPath(response.id));
       });
@@ -76,12 +113,38 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
 
   const termFormTitle = (
     <Typography variant='h4' component='span'>
-      {term.id ? t('Edit') : t('Add')} {t('term')}
+      {term?.id ? t('Edit') : t('Add')} {t('term')}
     </Typography>
   );
 
   const termFormContent = () => (
     <form id='term-create-form' onSubmit={handleSubmit(onSubmit)}>
+      {error && (
+        <Alert
+          severity='error'
+          sx={{ mb: 2, alignItems: 'center' }}
+          action={
+            <Typography
+              component='button'
+              onClick={() => setError(null)}
+              sx={{
+                fontSize: '1.1rem',
+                color: 'inherit',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                marginLeft: 2,
+                lineHeight: '1.6rem',
+              }}
+            >
+              ×
+            </Typography>
+          }
+        >
+          {error}
+        </Alert>
+      )}
       <Controller
         name='name'
         control={control}
@@ -126,7 +189,7 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
 
   const termFormActionButtons = () => (
     <Button
-      text={term ? t('Save term') : t('Add term')}
+      text={term?.id ? t('Save term') : t('Add term')}
       buttonType='main-lg'
       type='submit'
       form='term-create-form'
@@ -144,8 +207,8 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
       title={termFormTitle}
       renderContent={termFormContent}
       renderActions={termFormActionButtons}
-      handleCloseSubmittedForm={term ? isTermUpdated : isTermCreated}
-      isLoading={term ? isTermUpdating : isTermCreating}
+      handleCloseSubmittedForm={term?.id ? isTermUpdated : isTermCreated}
+      isLoading={term?.id ? isTermUpdating : isTermCreating}
       clearState={clearState}
       formSubmitHandler={handleSubmit(onSubmit)}
     />

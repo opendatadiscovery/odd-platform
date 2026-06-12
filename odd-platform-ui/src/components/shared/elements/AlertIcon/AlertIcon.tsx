@@ -39,7 +39,7 @@ export const Container = styled('div')<{
 });
 
 const AlertIcon: React.FC<AlertIconProps> = ({ name, type, status }) => {
-  const alertTypes = new Map<Alert['type'], Array<string | undefined>>([
+  const alertTypes = new Map<Alert['type'], (string | undefined)[]>([
     [
       AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA,
       ['incompatibleSchemaHaltUntil', AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA],

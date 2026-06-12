@@ -51,7 +51,7 @@ const Results: React.FC = () => {
   const searchResults = useAppSelector(getSearchResults);
   const searchResultsError = useAppSelector(getSearchResultsError);
   const searchFiltersSynced = useAppSelector(getSearchFacetsSynced);
-  const { total, page, hasNext } = useAppSelector(getSearchResultsPageInfo);
+  const { page, hasNext } = useAppSelector(getSearchResultsPageInfo);
 
   const isSearchFetching = useAppSelector(getSearchIsFetching);
   const isSearchCreatingAndFetching = useAppSelector(getSearchIsCreatingAndFetching);
@@ -160,7 +160,7 @@ const Results: React.FC = () => {
           </InfiniteScroll>
           <EmptyContentPlaceholder
             isContentLoaded={!isSearchFetching}
-            isContentEmpty={!total}
+            isContentEmpty={!searchResults.length}
             text={t('No matches found')}
           />
         </S.ListContainer>

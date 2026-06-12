@@ -26,13 +26,13 @@ class DatasetFieldApiMapperTest {
     @InjectMocks
     DatasetFieldApiMapper datasetFieldApiMapper = new DatasetFieldApiMapperImpl(new TagMapperImpl(),
         new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()), new TermMapperImpl(
-        new NamespaceMapperImpl(),
-        new DateTimeMapperImpl(),
-        new OwnershipMapperImpl(
-            new OwnerMapperImpl(),
-            new TitleMapperImpl()
-        )
-    ));
+            new NamespaceMapperImpl(),
+            new DateTimeMapperImpl(),
+            new OwnershipMapperImpl(
+                new OwnerMapperImpl(),
+                new TitleMapperImpl()
+            )
+        ));
 
     @Test
     @DisplayName("mapping dataset fields")

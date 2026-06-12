@@ -44,6 +44,8 @@ tags:
   - name: dataQualityRuns
   - name: queryExample
   - name: referenceData
+  - name: genai
+  - name: relationship
 
 paths:
   /api/integrations:
@@ -991,6 +993,29 @@ paths:
       tags:
         - dataEntity
 
+  /api/dataentities/{data_entity_id}/queryexample:
+    post:
+      summary: add Dataset to QueryExample
+      description: Creates a new relation between QueryExample and Dataset
+      operationId: createQueryExampleToDatasetRelationshipNew
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityQueryExampleFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExample'
+      tags:
+        - dataEntity
+
   /api/dataentities/{data_entity_id}/statuses:
     put:
       summary: Update status to data entity
@@ -1022,6 +1047,20 @@ paths:
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
         - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntity
+
+  /api/dataentities/{data_entity_id}/queryexample/{example_id}:
+    delete:
+      summary: Delete Dataset from QueryExample
+      description: Deletes relationship between QueryExample and Dataset
+      operationId: deleteQueryExampleToDatasetRelationshipNew
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'
@@ -1768,6 +1807,24 @@ paths:
       tags:
         - dataSet
 
+  /api/datasets/{data_entity_id}/relationships:
+    get:
+      summary: Get list of relationships for dataset
+      description: Get information about DataSet's relationships for dataset by DataSet's id
+      operationId: getDataSetRelationships
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/RelationshipTypeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipDetailsList'
+      tags:
+        - dataSet
+
   /api/datasets/{data_entity_id}/structure/{version_id}:
     get:
       summary: Get DataSet structure information
@@ -1918,6 +1975,107 @@ paths:
       summary: Get Data Quality tests runs
       description: Get Data Quality tests runs
       operationId: getDataQualityTestsRuns
+      parameters:
+        - name: namespaceIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+        - name: datasourceIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+        - name: ownerIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+        - name: titleIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+        - name: tagIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+        - name: deNamespaceIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+        - name: deDatasourceIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+        - name: deOwnerIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+        - name: deTitleIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+        - name: deTagIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
       responses:
         '200':
           description: OK
@@ -2125,40 +2283,20 @@ paths:
       tags:
         - queryExample
 
-  /api/queryexample/{example_id}/dataset:
-    post:
-      summary: add Dataset to QueryExample
-      description: Creates a new relation between QueryExample and Dataset
-      operationId: createQueryExampleToDatasetRelationship
+  /api/queryexample/term/{term_id}:
+    get:
+      summary: Get QueryExample
+      description: Gets QueryExamples by Term's id
+      operationId: getQueryExampleByTermId
       parameters:
-        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/QueryExampleDatasetFormData'
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/QueryExample'
-      tags:
-        - queryExample
-
-  /api/queryexample/{example_id}/dataset/{data_entity_id}:
-    delete:
-      summary: Delete Dataset from QueryExample
-      description: Deletes relationship between QueryExample and Dataset
-      operationId: deleteQueryExampleToDatasetRelationship
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
-        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
-      responses:
-        '204':
-          $ref: './components.yaml/#/components/responses/Deleted'
+                $ref: './components.yaml/#/components/schemas/QueryExampleList'
       tags:
         - queryExample
 
@@ -2587,6 +2725,18 @@ paths:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
         - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: updated_at_range_start_date_time
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: updated_at_range_end_date_time
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
           description: OK
@@ -2714,6 +2864,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
       tags:
         - term
+
   /api/terms/{term_id}/linked_columns:
     get:
       summary: Get term linked columns
@@ -2731,6 +2882,100 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/DatasetFieldList'
+      tags:
+        - term
+
+  /api/terms/{term_id}/linked_terms:
+    get:
+      summary: Get term linked terms
+      description: Get data columns, which are using this term
+      operationId: getTermLinkedTerms
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LinkedTermList'
+      tags:
+        - term
+
+  /api/terms/{term_id}/queryexample:
+    post:
+      summary: add Term to QueryExample
+      description: Creates a new relation between QueryExample and Term
+      operationId: createQueryExampleToTermRelationship
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/QueryExampleTermFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExample'
+      tags:
+        - term
+
+  /api/terms/{term_id}/queryexample/{example_id}:
+    delete:
+      summary: Delete Term from QueryExample
+      description: Deletes relationship between QueryExample and Term
+      operationId: deleteQueryExampleToTermRelationship
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - term
+
+  /api/terms/{term_id}/term:
+    post:
+      summary: Add term to term
+      description: Link existing term with term
+      operationId: addLinkedTermToTerm
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LinkedTermFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LinkedTerm'
+      tags:
+        - term
+
+  /api/terms/{term_id}/term/{linked_term_id}:
+    delete:
+      summary: Delete term from term
+      description: Delete term from current linked terms list
+      operationId: deleteLinkedTermFromTerm
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/LinkedTermIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - term
 
@@ -3110,10 +3355,10 @@ paths:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
         - $ref: './components.yaml/#/components/parameters/SearchParam'
-        - name: active
+        - name: status
           in: query
           schema:
-            type: boolean
+            $ref: './components.yaml/#/components/schemas/OwnerAssociationRequestStatusParam'
           required: true
       responses:
         '200':
@@ -3141,6 +3386,85 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/OwnerAssociationRequest'
+      tags:
+        - ownerAssociationRequest
+
+  /api/owner_association_request/activity:
+    get:
+      summary: List of owner association requests activity
+      description: Gets the list of activity for owner association requests
+      operationId: getOwnerAssociationRequestActivityList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: status
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/OwnerAssociationRequestStatusParam'
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/OwnerAssociationRequestActivityList'
+      tags:
+        - ownerAssociationRequest
+
+  /api/owners/mapping:
+    post:
+      summary: Create user owner mapping
+      operationId: createUserOwnerMapping
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/UserOwnerMappingFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Owner'
+        '403':
+          $ref: './components.yaml/#/components/responses/Forbidden'
+      tags:
+        - ownerAssociationRequest
+
+  /api/owners/mapping/{owner_id}:
+    delete:
+      summary: Delete active user owner
+      description: Deletes active user  owner
+      operationId: deleteActiveUserOwnerMapping
+      parameters:
+        - name: owner_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - ownerAssociationRequest
+
+  /api/owners/providers:
+    get:
+      summary: Get list of auth providers
+      description: Returns Get list of auth providers
+      operationId: getAuthProviders
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ProviderList'
       tags:
         - ownerAssociationRequest
 
@@ -3812,3 +4136,78 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - referenceData
+
+  /api/relationships:
+    get:
+      summary: Get list of relationships
+      description: Get information about DataSet's relationships
+      operationId: getRelationships
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - $ref: './components.yaml/#/components/parameters/RelationshipTypeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipList'
+      tags:
+        - relationship
+
+  /api/relationships/erd/{relationship_id}:
+    get:
+      summary: Get erd relationship by id
+      description: Get information about DataSet's erd relationship for dataset by id
+      operationId: getERDRelationshipById
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/RelationshipIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipDetails'
+      tags:
+        - relationship
+
+  /api/relationships/graph/{relationship_id}:
+    get:
+      summary: Get graph relationship by id
+      description: Get information about DataSet's graph relationship for dataset by id
+      operationId: getGraphRelationshipById
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/RelationshipIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRelationshipDetails'
+      tags:
+        - relationship
+
+  /api/genai/ask:
+    post:
+      summary: Request to genai service
+      description: create request to genai service with specific question
+      operationId: genAiQuestion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/GenAIRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/GenAIResponse'
+      tags:
+        - genai

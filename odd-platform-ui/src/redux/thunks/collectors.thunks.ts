@@ -12,7 +12,7 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { collectorApi } from 'lib/api';
 
 export const fetchCollectorsList = handleResponseAsyncThunk<
-  { items: Array<Collector>; pageInfo: CurrentPageInfo },
+  { items: Collector[]; pageInfo: CurrentPageInfo },
   CollectorApiGetCollectorsListRequest
 >(
   actions.fetchCollectorsActionType,

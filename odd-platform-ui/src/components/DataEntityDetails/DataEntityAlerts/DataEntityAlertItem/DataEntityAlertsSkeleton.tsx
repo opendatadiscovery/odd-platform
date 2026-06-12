@@ -8,7 +8,7 @@ interface SkeletonProps {
   length?: number;
 }
 
-const AlertListSkeleton: React.FC<SkeletonProps> = ({ length }) => {
+const DataEntityAlertsSkeleton: React.FC<SkeletonProps> = ({ length }) => {
   const randomSkeletonWidth = () => {
     const rand = 75 + pseudoRandNum() * 15;
     return Math.round(rand);
@@ -31,4 +31,4 @@ const AlertListSkeleton: React.FC<SkeletonProps> = ({ length }) => {
   return <>{[...Array(length)].map((_, id) => skeleton(id))}</>;
 };
 
-export default AlertListSkeleton;
+export default DataEntityAlertsSkeleton;

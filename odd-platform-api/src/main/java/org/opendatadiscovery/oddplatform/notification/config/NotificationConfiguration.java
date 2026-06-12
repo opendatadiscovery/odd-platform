@@ -25,7 +25,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @Configuration
 @ConditionalOnNotifications
-@EnableConfigurationProperties(NotificationsProperties.class)
+@EnableConfigurationProperties({NotificationsProperties.class, EmailSenderProperties.class})
 public class NotificationConfiguration {
 
     @Bean
@@ -35,34 +35,38 @@ public class NotificationConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "notifications.receivers.email.sender")
-    public JavaMailSender mailSender(@Value("${notifications.receivers.email.sender}") final String senderEmail,
-                                     @Value("${notifications.receivers.email.password}") final String senderPassword,
-                                     @Value("${notifications.receivers.email.smtp}") final String smtpHost,
-                                     @Value("${notifications.receivers.email.port}") final int port) {
-        if (StringUtils.isBlank(senderEmail)) {
+    public JavaMailSender mailSender(final EmailSenderProperties emailProperties) {
+        if (StringUtils.isBlank(emailProperties.getSender())) {
             throw new IllegalArgumentException("senderEmail is empty");
         }
 
-        if (StringUtils.isBlank(senderPassword)) {
-            throw new IllegalArgumentException("senderPassword is empty");
+        if (StringUtils.isBlank(emailProperties.getHost())) {
+            throw new IllegalArgumentException("host is empty");
         }
 
-        if (StringUtils.isBlank(smtpHost)) {
-            throw new IllegalArgumentException("smtpHost is empty");
+        if (StringUtils.isBlank(emailProperties.getProtocol())) {
+            throw new IllegalArgumentException("protocol is empty");
         }
 
         final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-        mailSender.setHost(smtpHost);
-        mailSender.setPort(port);
-        mailSender.setUsername(senderEmail);
-        mailSender.setPassword(senderPassword);
+        mailSender.setHost(emailProperties.getHost());
+        mailSender.setPort(emailProperties.getPort());
+        mailSender.setUsername(emailProperties.getSender());
+
+        if (emailProperties.getPassword() != null) {
+            mailSender.setPassword(emailProperties.getPassword());
+        }
 
         final Properties props = mailSender.getJavaMailProperties();
 
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+        if (emailProperties.getProtocol().equals("smtp")) {
+            props.put("mail.transport.protocol", "smtp");
+            props.put("mail.smtp.auth", emailProperties.getSmtp().getAuth());
+            props.put("mail.smtp.starttls.enable", emailProperties.getSmtp().getStarttls());
+        } else {
+            props.put("mail.transport.protocol", emailProperties.getProtocol());
+        }
 
         return mailSender;
     }

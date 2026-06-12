@@ -76,20 +76,22 @@ const DatasetFieldDescription: FC<DatasetFieldDescriptionProps> = ({
           />
         )}
       </Grid>
-      {editMode ? (
-        <DatasetFieldDescriptionEdit
-          value={internalDescription}
-          handleMarkdownChange={handleRealtimeMarkdownChange}
-          handleUpdateDescription={handleUpdateDescription}
-          toggleEditMode={toggleEditMode}
-          error={error}
-        />
-      ) : (
-        <DatasetFieldDescriptionPreview
-          isDescriptionEmpty={!description}
-          value={transformDescriptionToMarkdown(description)}
-        />
-      )}
+      <Box width='100%'>
+        {editMode ? (
+          <DatasetFieldDescriptionEdit
+            value={internalDescription}
+            handleMarkdownChange={handleRealtimeMarkdownChange}
+            handleUpdateDescription={handleUpdateDescription}
+            toggleEditMode={toggleEditMode}
+            error={error}
+          />
+        ) : (
+          <DatasetFieldDescriptionPreview
+            isDescriptionEmpty={!description}
+            value={transformDescriptionToMarkdown(description)}
+          />
+        )}
+      </Box>
     </>
   );
 };

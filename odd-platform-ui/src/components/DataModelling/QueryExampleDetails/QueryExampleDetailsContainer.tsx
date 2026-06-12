@@ -1,39 +1,34 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import {
-  useDeleteQueryExample,
-  useGetQueryExampleDetails,
-} from 'lib/hooks/api/dataModelling/queryExamples';
+import { useGetQueryExampleDetails } from 'lib/hooks/api/dataModelling/queryExamples';
 import { useAppDateTime } from 'lib/hooks';
-import {
-  AppLoadingPage,
-  AppMenuItem,
-  AppPopover,
-  Button,
-  ConfirmationDialog,
-} from 'components/shared/elements';
-import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/icons';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { queryExamplesPath, useQueryExamplesRouteParams } from 'routes';
+import { AppLoadingPage } from 'components/shared/elements';
+import { TimeGapIcon } from 'components/shared/icons';
+import { useQueryExamplesRouteParams } from 'routes';
+import { WithPermissionsProvider } from 'components/shared/contexts';
+import { Permission, PermissionResourceType } from 'generated-sources';
+import { useResourcePermissions } from 'lib/hooks/api/permissions';
+import { useSearchParams } from 'react-router-dom';
 import QueryExampleDetailsTabs from './QueryExampleDetailsTabs';
 import QueryExampleDetailsOverview from './QueryExampleDetailsOverview';
 import QueryExampleDetailsLinkedEntities from './QueryExampleDetailsLinkedEntities';
-import QueryExampleForm from '../QueryExampleForm/QueryExampleForm';
+import QueryExampleDetailsLinkedTerms from './QueryExampleDetailsLinkedTerms';
+import { QueryExampleDetailsContainerActions } from './QueryExampleDetailsContainerActions';
 
 const QueryExampleDetailsContainer: React.FC = () => {
   const { queryExampleId: exampleId } = useQueryExamplesRouteParams();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+
+  const { data: resourcePermissions } = useResourcePermissions({
+    resourceId: exampleId,
+    permissionResourceType: PermissionResourceType.QUERY_EXAMPLE,
+  });
+
   const { data: queryExampleDetails, isLoading } = useGetQueryExampleDetails({
     exampleId,
   });
-  const { mutateAsync: deleteQueryExample } = useDeleteQueryExample();
 
-  const [selectedTab, setSelectedTab] = useState(0);
-  const handleTabChange = useCallback(() => {
-    setSelectedTab(prev => (prev === 0 ? 1 : 0));
-  }, []);
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get('tab') ?? 'overview';
 
   const { formatDistanceToNowStrict } = useAppDateTime();
 
@@ -46,14 +41,6 @@ const QueryExampleDetailsContainer: React.FC = () => {
     [queryExampleDetails?.updatedAt, formatDistanceToNowStrict]
   );
 
-  const handleDelete = useCallback(
-    async (id: number) => {
-      await deleteQueryExample({ exampleId: id });
-      navigate(queryExamplesPath());
-    },
-    [queryExampleDetails?.id]
-  );
-
   return queryExampleDetails && !isLoading ? (
     <Grid container gap={2} flexDirection='column'>
       <Grid item display='flex' alignItems='center' justifyContent='space-between'>
@@ -63,62 +50,45 @@ const QueryExampleDetailsContainer: React.FC = () => {
           <Typography variant='body1' sx={{ ml: 1 }}>
             {updatedAt}
           </Typography>
-          <QueryExampleForm
-            btnCreateEl={
-              <Button
-                text={t('Edit')}
-                buttonType='secondary-m'
-                startIcon={<EditIcon />}
-                sx={{ ml: 1 }}
-              />
-            }
-            queryExampleDetails={queryExampleDetails}
-          />
-          <AppPopover
-            renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-              <Button
-                aria-describedby={ariaDescribedBy}
-                buttonType='secondary-m'
-                icon={<KebabIcon />}
-                onClick={onClick}
-                sx={{ ml: 1 }}
+          <WithPermissionsProvider
+            allowedPermissions={[
+              Permission.QUERY_EXAMPLE_UPDATE,
+              Permission.QUERY_EXAMPLE_DELETE,
+            ]}
+            resourcePermissions={resourcePermissions ?? []}
+            render={() => (
+              <QueryExampleDetailsContainerActions
+                queryExampleDetails={queryExampleDetails}
               />
             )}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-            transformOrigin={{ vertical: -5, horizontal: 67 }}
-          >
-            <ConfirmationDialog
-              actionTitle={t('Are you sure you want to delete this query example?')}
-              actionName={t('Delete query example')}
-              actionText={
-                <>
-                  Query Example #{queryExampleDetails.id}{' '}
-                  {t('will be deleted permanently')}
-                </>
-              }
-              onConfirm={() => handleDelete(queryExampleDetails.id)}
-              actionBtn={<AppMenuItem>{t('Delete')}</AppMenuItem>}
-            />
-          </AppPopover>
+          />
         </Box>
       </Grid>
       <Grid item alignItems='center'>
         <QueryExampleDetailsTabs
-          selectedTab={selectedTab}
-          onHandleTabChange={handleTabChange}
           linkedEntitiesHint={queryExampleDetails?.linkedEntities.pageInfo.total}
+          linkedTermsHint={queryExampleDetails?.linkedTerms?.items.length}
         />
       </Grid>
       <Grid item container gap={2} flexDirection='column' alignItems='start'>
-        {selectedTab === 0 && (
+        {tab === 'overview' && (
           <QueryExampleDetailsOverview
             definition={queryExampleDetails.definition}
             query={queryExampleDetails.query}
           />
         )}
-        {selectedTab === 1 && (
+        {tab === 'linked-entities' && (
           <QueryExampleDetailsLinkedEntities
             entities={queryExampleDetails.linkedEntities.items}
+          />
+        )}
+        {tab === 'linked-terms' && (
+          <QueryExampleDetailsLinkedTerms
+            terms={
+              queryExampleDetails.linkedTerms.items
+                ? queryExampleDetails.linkedTerms.items.map(term => term.term)
+                : []
+            }
           />
         )}
       </Grid>

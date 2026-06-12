@@ -19,7 +19,8 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
   const termDetailsOverviewLink = termDetailsPath(termSearchResult.id);
   const usingCount =
     (termSearchResult.entitiesUsingCount ?? 0) +
-    (termSearchResult.columnsUsingCount ?? 0);
+    (termSearchResult.columnsUsingCount ?? 0) +
+    (termSearchResult.linkedTermsUsingCount ?? 0);
 
   return (
     <S.TermSearchResultsItemLink to={termDetailsOverviewLink}>

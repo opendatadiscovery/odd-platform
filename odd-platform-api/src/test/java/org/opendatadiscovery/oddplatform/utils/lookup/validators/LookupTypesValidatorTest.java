@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.utils.lookup.validators;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.UUID;
 import org.jooq.JSONB;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +30,9 @@ public class LookupTypesValidatorTest {
     private final LookupDecimalValidator decimalValidator = new LookupDecimalValidator();
     private final LookupJSONBValidator jsonbValidator = new LookupJSONBValidator();
     private final LookupUUIDValidator uuidValidator = new LookupUUIDValidator();
+    private final LookupIntegerValidator integerValidator = new LookupIntegerValidator();
+    private final LookupCharValidator charValidator = new LookupCharValidator();
+    private final LookupTimestampValidator timestampValidator = new LookupTimestampValidator();
 
     @Test
     public void booleanValidatorTest() {
@@ -66,6 +71,31 @@ public class LookupTypesValidatorTest {
     public void uuidValidatorTest() {
         assertEquals(UUID.fromString(UUID_EXAMPLE), uuidValidator.getValue(UUID_EXAMPLE, "column"));
 
-        assertThrows(BadUserRequestException.class, () -> jsonbValidator.getValue("not-uuid", "column"));
+        assertThrows(BadUserRequestException.class, () -> uuidValidator.getValue("not-uuid", "column"));
+    }
+
+    @Test
+    public void integerValidatorTest() {
+        assertEquals(Integer.valueOf(123), integerValidator.getValue("123", "column"));
+        assertEquals(Integer.valueOf(-7), integerValidator.getValue("-7", "column"));
+        assertNull(integerValidator.getValue("  ", "column"));
+
+        assertThrows(BadUserRequestException.class, () -> integerValidator.getValue("notinteger", "column"));
+    }
+
+    @Test
+    public void charValidatorTest() {
+        // VARCHAR validator is a pass-through: any string is accepted verbatim; null returns null.
+        assertEquals("any string", charValidator.getValue("any string", "column"));
+        assertNull(charValidator.getValue(null, "column"));
+    }
+
+    @Test
+    public void timestampValidatorTest() {
+        assertEquals(Timestamp.valueOf("2012-11-15 10:30:00"),
+            timestampValidator.getValue("2012-11-15 10:30:00", "column"));
+        assertNull(timestampValidator.getValue("  ", "column"));
+
+        assertThrows(BadUserRequestException.class, () -> timestampValidator.getValue("nottimestamp", "column"));
     }
 }

@@ -3,8 +3,6 @@ package org.opendatadiscovery.oddplatform.controller;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.QueryExampleApi;
-import org.opendatadiscovery.oddplatform.api.contract.model.QueryExample;
-import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDatasetFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleList;
@@ -51,27 +49,16 @@ public class QueryExampleController implements QueryExampleApi {
     }
 
     @Override
-    public Mono<ResponseEntity<QueryExample>>
-        createQueryExampleToDatasetRelationship(final Long exampleId,
-                                                final Mono<QueryExampleDatasetFormData> queryExampleDatasetFormData,
-                                                final ServerWebExchange exchange) {
-        return queryExampleDatasetFormData
-            .flatMap(item -> queryExampleService.createQueryExampleToDatasetRelationship(exampleId, item))
+    public Mono<ResponseEntity<QueryExampleList>> getQueryExampleByDatasetId(final Long dataEntityId,
+                                                                             final ServerWebExchange exchange) {
+        return queryExampleService.getQueryExampleByDatasetId(dataEntityId)
             .map(ResponseEntity::ok);
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> deleteQueryExampleToDatasetRelationship(final Long exampleId,
-                                                                              final Long dataEntityId,
-                                                                              final ServerWebExchange exchange) {
-        return queryExampleService.deleteQueryExampleDatasetRelationship(exampleId, dataEntityId)
-            .thenReturn(ResponseEntity.noContent().build());
-    }
-
-    @Override
-    public Mono<ResponseEntity<QueryExampleList>> getQueryExampleByDatasetId(final Long dataEntityId,
-                                                                             final ServerWebExchange exchange) {
-        return queryExampleService.getQueryExampleByDatasetId(dataEntityId)
+    public Mono<ResponseEntity<QueryExampleList>> getQueryExampleByTermId(final Long termId,
+                                                                          final ServerWebExchange exchange) {
+        return queryExampleService.getQueryExampleByTermId(termId)
             .map(ResponseEntity::ok);
     }
 

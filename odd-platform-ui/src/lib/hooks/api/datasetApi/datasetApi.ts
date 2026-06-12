@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { datasetApiClient } from 'lib/api';
+import type { DataSetApiGetDataSetRelationshipsRequest } from 'generated-sources';
 import { makeCompareFieldsTree } from './helpers';
 
 interface UseDatasetStructureCompareProps {
@@ -29,5 +30,15 @@ export function useDatasetStructureCompare({
       const isNested = structureDiffList.some(diff => diff.childFields?.length);
       return { isNested, structureDiffList };
     },
+  });
+}
+
+export function useGetDatasetRelationships({
+  dataEntityId,
+  type,
+}: DataSetApiGetDataSetRelationshipsRequest) {
+  return useQuery({
+    queryKey: ['getDatasetRelationships', dataEntityId, type],
+    queryFn: () => datasetApiClient.getDataSetRelationships({ dataEntityId, type }),
   });
 }

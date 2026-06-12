@@ -5,7 +5,6 @@ export function useAppInfo() {
   return useQuery({
     queryKey: ['appInfo'],
     queryFn: () => appInfoApi.getAppInfo(),
-    select: data => data.projectVersion,
   });
 }
 

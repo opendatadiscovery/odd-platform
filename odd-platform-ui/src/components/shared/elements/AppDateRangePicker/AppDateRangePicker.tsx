@@ -52,10 +52,10 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
     setRange({ rangeStart: startOfDay(beginDate), rangeEnd: endOfDay(endDate) });
   }, []);
 
-  type DisableSelectedDateParams = {
+  interface DisableSelectedDateParams {
     date: DateObject;
     selectedDate: DateObject | DateObject[];
-  };
+  }
 
   const disableSelectedDate = useCallback(
     ({ date, selectedDate }: DisableSelectedDateParams) => {

@@ -3,7 +3,7 @@ import type { DataEntity } from 'generated-sources';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
-import QueryExampleDetailsLinkedEntitiesItem from './QuertExampleDettailsLinkedEntitiesItem';
+import QueryExampleDetailsLinkedEntitiesItem from './QuertExampleDetailsLinkedEntitiesItem';
 
 interface QueryExampleDetailsLinkedEntitiesProps {
   entities: DataEntity[];

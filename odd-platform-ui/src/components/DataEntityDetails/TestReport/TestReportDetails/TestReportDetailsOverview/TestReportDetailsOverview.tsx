@@ -24,7 +24,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { useDataEntityRouteParams } from 'routes';
 import TestReportDetailsOverviewSkeleton from './TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
-import TestReportDetailsOverviewExpectationsModal from './TestReportDetailsOverviewParametersModal/TestReportDetailsOverviewParametersModal';
+import TestReportDetailsOverviewParametersModal from './TestReportDetailsOverviewParametersModal/TestReportDetailsOverviewParametersModal';
 import * as S from './TestReportDetailsOverviewStyles';
 
 const TestReportDetailsOverview: React.FC = () => {
@@ -137,7 +137,7 @@ const TestReportDetailsOverview: React.FC = () => {
               </S.Params>
               {showSeeMore && (
                 <Box sx={{ px: 1.5, py: 0.25 }}>
-                  <TestReportDetailsOverviewExpectationsModal
+                  <TestReportDetailsOverviewParametersModal
                     openBtnEl={<Button text={t('See more')} buttonType='tertiary-m' />}
                     expectations={qualityTest?.expectation as DataQualityTestExpectation}
                   />

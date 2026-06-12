@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatusParam;
 import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerAssociationRequestPojo;
@@ -91,7 +92,8 @@ public class ReactiveOwnerAssociationRequestRepositoryImplTest extends BaseInteg
         final List<OwnerAssociationRequestPojo> pendingCreated =
             repository.bulkCreate(pendingPojos).collectList().block();
         repository.bulkCreate(approvedPojos).collectList().block();
-        StepVerifier.create(repository.getDtoList(1, 30, null, true))
+        StepVerifier.create(repository.getDtoList(1, 30, null,
+                OwnerAssociationRequestStatusParam.PENDING))
             .assertNext(page -> {
                 assertThat(page.getTotal()).isEqualTo(pendingPojos.size());
                 assertThat(page.isHasNext()).isFalse();
@@ -121,7 +123,8 @@ public class ReactiveOwnerAssociationRequestRepositoryImplTest extends BaseInteg
         repository.bulkCreate(pendingPojos).collectList().block();
         final List<OwnerAssociationRequestPojo> approvedCreated =
             repository.bulkCreate(approvedPojos).collectList().block();
-        StepVerifier.create(repository.getDtoList(1, 30, null, false))
+        StepVerifier.create(repository.getDtoList(1, 30, null,
+                OwnerAssociationRequestStatusParam.RESOLVED))
             .assertNext(page -> {
                 assertThat(page.getTotal()).isEqualTo(approvedCreated.size());
                 assertThat(page.isHasNext()).isFalse();

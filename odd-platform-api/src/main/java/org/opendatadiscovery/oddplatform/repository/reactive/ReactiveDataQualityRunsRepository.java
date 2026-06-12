@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.io.Serializable;
+import org.opendatadiscovery.oddplatform.dto.DataQualityTestFiltersDto;
 import reactor.core.publisher.Flux;
 
 public interface ReactiveDataQualityRunsRepository {
@@ -16,9 +17,9 @@ public interface ReactiveDataQualityRunsRepository {
         Serializable {
     }
 
-    Flux<DataQualityRunsRecord> getLatestDataQualityRunsResults();
+    Flux<DataQualityRunsRecord> getLatestDataQualityRunsResults(final DataQualityTestFiltersDto filtersDto);
 
-    Flux<TableHealthRecord> getLatestTablesHealth();
+    Flux<TableHealthRecord> getLatestTablesHealth(final DataQualityTestFiltersDto filtersDto);
 
-    Flux<MonitoredtablesRecord> getMonitoredTables();
+    Flux<MonitoredtablesRecord> getMonitoredTables(final DataQualityTestFiltersDto filtersDto);
 }

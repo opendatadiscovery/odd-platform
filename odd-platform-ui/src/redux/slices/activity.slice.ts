@@ -55,7 +55,7 @@ export const activitiesSlice = createSlice({
       const { items, pageInfo, entityId: dataEntityId, isQueryUpdated } = payload;
 
       const itemsByDate = items.reduce(
-        (memo: { [date: string]: Activity[] }, activity: Activity) => ({
+        (memo: Record<string, Activity[]>, activity: Activity) => ({
           ...memo,
           [formatDate(activity.createdAt, datedListFormat)]: [
             ...(memo[formatDate(activity.createdAt, datedListFormat)] || []),

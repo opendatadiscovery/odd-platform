@@ -110,7 +110,7 @@ const SearchHighlights: React.FC<SearchHighlightsProps> = ({ dataEntityId }) => 
   };
 
   const getListedHighlights = (type: MultipleHighlightTypes) => {
-    if (highlights && highlights[type] && highlights[type]!.length > 0) {
+    if (highlights && highlights[type] && highlights[type].length > 0) {
       const isTag = (entity: any): entity is Tag => 'important' in entity;
       const isOwnership = (entity: any): entity is OwnershipHighlight =>
         'owner' in entity;

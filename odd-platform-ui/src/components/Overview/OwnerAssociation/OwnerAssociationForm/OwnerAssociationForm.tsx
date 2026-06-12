@@ -9,17 +9,13 @@ import type {
 } from '@mui/material/useAutocomplete';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { useTranslation } from 'react-i18next';
-import { getIdentity, getOwnerAssociationRequestCreatingStatuses } from 'redux/selectors';
+import { getIdentity } from 'redux/selectors';
 import type { Owner, OwnerFormData } from 'generated-sources';
 import { OwnerAssociationRequestStatus } from 'generated-sources';
 import { ClearIcon, UserSyncIcon } from 'components/shared/icons';
 import { AutocompleteSuggestion, Button, Input } from 'components/shared/elements';
-import {
-  createOwnerAssociationRequest,
-  fetchIdentity,
-  fetchOwnersList,
-} from 'redux/thunks';
-import { usePermissions } from 'lib/hooks';
+import { fetchIdentity, fetchOwnersList } from 'redux/thunks';
+import { useCreateOwnerAssociationRequest, usePermissions } from 'lib/hooks';
 import { setProfileOwnerName } from 'redux/slices/profile.slice';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import * as S from './OwnerAssociationFormStyles';
@@ -30,9 +26,8 @@ const OwnerAssociationForm: React.FC = () => {
   const { isAllowedTo: associateImmediately } = usePermissions();
 
   const identity = useAppSelector(getIdentity);
-  const { isLoading: isRequestCreating } = useAppSelector(
-    getOwnerAssociationRequestCreatingStatuses
-  );
+  const { mutateAsync: createOwnerAssociationRequest, isPending: isRequestCreating } =
+    useCreateOwnerAssociationRequest();
 
   const searchOwners = fetchOwnersList;
   const methods = useForm<OwnerFormData>({
@@ -123,15 +118,14 @@ const OwnerAssociationForm: React.FC = () => {
     }
   }, [autocompleteOpen, optionsSearchText]);
 
-  const onSubmit = (data: OwnerFormData) => {
-    dispatch(createOwnerAssociationRequest({ ownerFormData: data }))
-      .unwrap()
-      .then(({ status, ownerName }) => {
-        if (associateImmediately && status === OwnerAssociationRequestStatus.APPROVED) {
-          dispatch(setProfileOwnerName(ownerName));
-        }
-        dispatch(fetchIdentity());
-      });
+  const onSubmit = async (data: OwnerFormData) => {
+    const { status, ownerName } = await createOwnerAssociationRequest({
+      ownerFormData: data,
+    });
+    if (associateImmediately && status === OwnerAssociationRequestStatus.APPROVED) {
+      dispatch(setProfileOwnerName(ownerName));
+    }
+    dispatch(fetchIdentity());
   };
 
   useEffect(() => {

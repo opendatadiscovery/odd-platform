@@ -1,12 +1,6 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import {
-  getByRole,
-  getByText,
-  getByTextContent,
-  queryByRole,
-  render,
-} from 'lib/tests/testHelpers';
+import { getByRole, getByText, queryByRole, render } from 'lib/tests/testHelpers';
 import { dataEntityUsageInfoPayload } from 'lib/tests/mocks';
 import DataEntitiesUsageInfoView, {
   type DataEntitiesUsageInfoViewProps,
@@ -30,7 +24,7 @@ const setupComponent = (props: Partial<DataEntitiesUsageInfoViewProps> = {}) =>
 describe('DataEntitiesUsageInfoView', () => {
   it('render with mocked props', () => {
     setupComponent();
-    expect(getByTextContent('Total entities: 1')).toBeTruthy();
+    expect(getByText('Total entities')).toBeTruthy();
     expect(getByText('5 unfilled entities')).toBeTruthy();
     expect(getByRole('list')).toBeVisible();
   });

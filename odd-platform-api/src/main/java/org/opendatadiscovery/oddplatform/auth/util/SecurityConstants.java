@@ -9,6 +9,7 @@ import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManage
 import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.NO_CONTEXT;
+import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.QUERY_EXAMPLE;
 import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.TERM;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_DELETE;
@@ -58,6 +59,7 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.N
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_ASSOCIATION_MANAGE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_RELATION_MANAGE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.POLICY_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.POLICY_DELETE;
@@ -66,6 +68,8 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.Q
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_DATASET_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_DATASET_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_TERM_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_TERM_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.ROLE_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.ROLE_DELETE;
@@ -148,6 +152,14 @@ public final class SecurityConstants {
             NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher(
             "/api/owner_association_request/{owner_association_request_id}", PUT),
             OWNER_ASSOCIATION_MANAGE),
+        new SecurityRule(
+            NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher(
+            "/api/owners/mapping", POST),
+            OWNER_RELATION_MANAGE),
+        new SecurityRule(
+            NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher(
+            "/api/owners/mapping/{owner_id}", DELETE),
+            OWNER_RELATION_MANAGE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/policies", POST),
             POLICY_CREATE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/policies/{policy_id}", PUT),
@@ -172,6 +184,13 @@ public final class SecurityConstants {
             TERM_OWNERSHIP_DELETE),
         new SecurityRule(TERM, new PathPatternParserServerWebExchangeMatcher("/api/terms/{term_id}/tags", PUT),
             TERM_TAGS_UPDATE),
+        new SecurityRule(TERM,
+            new PathPatternParserServerWebExchangeMatcher("/api/terms/{term_id}/queryexample", POST),
+            QUERY_EXAMPLE_TERM_CREATE),
+        new SecurityRule(TERM,
+            new PathPatternParserServerWebExchangeMatcher("/api/terms/{term_id}/queryexample/{example_id}",
+                DELETE),
+            QUERY_EXAMPLE_TERM_DELETE),
         new SecurityRule(
             DATA_ENTITY,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/description", PUT),
@@ -290,18 +309,18 @@ public final class SecurityConstants {
             AuthorizationManagerType.DEG,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups/{data_entity_group_id}", PUT),
             DATA_ENTITY_GROUP_UPDATE),
-        new SecurityRule(NO_CONTEXT,
+        new SecurityRule(QUERY_EXAMPLE,
             new PathPatternParserServerWebExchangeMatcher("/api/queryexample/{example_id}", PUT),
             QUERY_EXAMPLE_UPDATE),
-        new SecurityRule(NO_CONTEXT,
+        new SecurityRule(QUERY_EXAMPLE,
             new PathPatternParserServerWebExchangeMatcher("/api/queryexample/{example_id}", DELETE),
             QUERY_EXAMPLE_DELETE),
-        new SecurityRule(NO_CONTEXT,
-            new PathPatternParserServerWebExchangeMatcher("/api/queryexample/{example_id}/dataset", POST),
+        new SecurityRule(DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/queryexample", POST),
             QUERY_EXAMPLE_DATASET_CREATE),
-        new SecurityRule(NO_CONTEXT,
+        new SecurityRule(DATA_ENTITY,
             new PathPatternParserServerWebExchangeMatcher(
-                "/api/queryexample/{example_id}/dataset/{data_entity_id}", DELETE),
+                "/api/dataentities/{data_entity_id}/queryexample/{example_id}", DELETE),
             QUERY_EXAMPLE_DATASET_DELETE),
         new SecurityRule(NO_CONTEXT,
             new PathPatternParserServerWebExchangeMatcher("/api/referencedata/table/{lookup_table_id}", PUT),

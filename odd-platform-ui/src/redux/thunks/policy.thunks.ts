@@ -13,7 +13,7 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { policyApi } from 'lib/api';
 
 export const fetchPolicyList = handleResponseAsyncThunk<
-  { items: Array<Policy>; pageInfo: CurrentPageInfo },
+  { items: Policy[]; pageInfo: CurrentPageInfo },
   PolicyApiGetPolicyListRequest
 >(
   actions.fetchPolicyListActType,
@@ -81,12 +81,11 @@ export const fetchPolicyDetails = handleResponseAsyncThunk<
   { switchOffErrorMessage: true }
 );
 
-export const fetchPolicySchema = handleResponseAsyncThunk<Record<string, unknown>, void>(
+export const fetchPolicySchema = handleResponseAsyncThunk<Record<string, unknown>>(
   actions.fetchPolicySchemaActType,
   async () => {
-    const schema = await policyApi.getPolicySchema();
     try {
-      return JSON.parse(schema);
+      return (await policyApi.getPolicySchema()) as unknown as Record<string, unknown>;
     } catch (e) {
       throw new Error(e?.toString());
     }

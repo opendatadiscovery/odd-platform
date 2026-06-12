@@ -1,12 +1,12 @@
 package org.opendatadiscovery.oddplatform.service.metric.extractors;
 
-import io.opentelemetry.sdk.common.InstrumentationLibraryInfo;
-import io.opentelemetry.sdk.metrics.data.DoubleGaugeData;
+import io.opentelemetry.sdk.common.InstrumentationScopeInfo;
 import io.opentelemetry.sdk.metrics.data.DoublePointData;
-import io.opentelemetry.sdk.metrics.data.LongGaugeData;
 import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.data.PointData;
+import io.opentelemetry.sdk.metrics.internal.data.ImmutableGaugeData;
+import io.opentelemetry.sdk.metrics.internal.data.ImmutableMetricData;
 import io.opentelemetry.sdk.resources.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,23 +31,23 @@ public interface MetricExtractor {
     @SuppressWarnings("unchecked")
     default MetricData gauge(final MetricDataTriplet metricDataTriplet, final List<? extends PointData> points) {
         if (metricDataTriplet.equals(MetricDataTriplet.DF_AVG_LENGTH)) {
-            return MetricData.createDoubleGauge(
+            return ImmutableMetricData.createDoubleGauge(
                 Resource.getDefault(),
-                InstrumentationLibraryInfo.empty(),
+                InstrumentationScopeInfo.empty(),
                 metricDataTriplet.getName(),
                 metricDataTriplet.getDescription(),
                 metricDataTriplet.getUnit(),
-                DoubleGaugeData.create((List<DoublePointData>) points)
+                ImmutableGaugeData.create((List<DoublePointData>) points)
             );
         }
 
-        return MetricData.createLongGauge(
+        return ImmutableMetricData.createLongGauge(
             Resource.getDefault(),
-            InstrumentationLibraryInfo.empty(),
+            InstrumentationScopeInfo.empty(),
             metricDataTriplet.getName(),
             metricDataTriplet.getDescription(),
             metricDataTriplet.getUnit(),
-            LongGaugeData.create((List<LongPointData>) points)
+            ImmutableGaugeData.create((List<LongPointData>) points)
         );
     }
 }

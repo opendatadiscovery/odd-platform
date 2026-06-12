@@ -31,5 +31,6 @@ export const ContentWrapper = styled('div')(
 export const ContentContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexWrap: 'nowrap',
+  width: '100%',
   marginRight: theme.spacing(1),
 }));

@@ -243,15 +243,20 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
             .collectList()
             .block();
         final OwnerAssociationRequestPojo pendingPojo =
-            createAssociationPojo(savedOwners.get(0).getId(), OwnerAssociationRequestStatus.PENDING);
+            createAssociationPojo(savedOwners.get(0).getId(), OwnerAssociationRequestStatus.PENDING,
+                LocalDateTime.of(2022, 12, 24, 12, 34));
         final OwnerAssociationRequestPojo approvedPojo =
-            createAssociationPojo(savedOwners.get(1).getId(), OwnerAssociationRequestStatus.APPROVED);
+            createAssociationPojo(savedOwners.get(1).getId(), OwnerAssociationRequestStatus.APPROVED,
+                LocalDateTime.of(2022, 12, 24, 13, 35));
         final OwnerAssociationRequestPojo declinedPojo =
-            createAssociationPojo(savedOwners.get(2).getId(), OwnerAssociationRequestStatus.DECLINED);
+            createAssociationPojo(savedOwners.get(2).getId(), OwnerAssociationRequestStatus.DECLINED,
+                LocalDateTime.of(2022, 12, 24, 14, 36));
         final OwnerAssociationRequestPojo secondPending =
-            createAssociationPojo(savedOwners.get(2).getId(), OwnerAssociationRequestStatus.PENDING);
+            createAssociationPojo(savedOwners.get(2).getId(), OwnerAssociationRequestStatus.PENDING,
+                LocalDateTime.of(2022, 12, 24, 15, 37));
         final OwnerAssociationRequestPojo secondDeclined =
-            createAssociationPojo(savedOwners.get(3).getId(), OwnerAssociationRequestStatus.DECLINED);
+            createAssociationPojo(savedOwners.get(3).getId(), OwnerAssociationRequestStatus.DECLINED,
+                LocalDateTime.of(2022, 12, 24, 16, 38));
         associationRequestRepository.bulkCreate(
             List.of(pendingPojo, approvedPojo, declinedPojo, secondPending, secondDeclined)).collectList().block();
 
@@ -300,12 +305,13 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
     }
 
     private OwnerAssociationRequestPojo createAssociationPojo(final Long ownerId,
-                                                              final OwnerAssociationRequestStatus status) {
+                                                              final OwnerAssociationRequestStatus status,
+                                                              final LocalDateTime createdAt) {
         final OwnerAssociationRequestPojo pojo = new OwnerAssociationRequestPojo()
             .setOwnerId(ownerId)
             .setUsername(UUID.randomUUID().toString())
             .setStatus(status.getValue())
-            .setCreatedAt(LocalDateTime.now());
+            .setCreatedAt(createdAt);
         if (status != OwnerAssociationRequestStatus.PENDING) {
             pojo.setStatusUpdatedBy(UUID.randomUUID().toString());
             pojo.setStatusUpdatedAt(LocalDateTime.now());

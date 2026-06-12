@@ -14,8 +14,8 @@ interface ActivityData {
 }
 
 interface ArrayActivityFieldProps {
-  oldState: Array<ActivityData> | undefined;
-  newState: Array<ActivityData> | undefined;
+  oldState: ActivityData[] | undefined;
+  newState: ActivityData[] | undefined;
   hideAllDetails: boolean;
   startText?: string;
   activityName?: string;

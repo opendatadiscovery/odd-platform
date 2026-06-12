@@ -57,6 +57,8 @@ export const getSearchResultsError = createErrorSelector(
   actions.fetchDataEntitySearchResultsActionType
 );
 
+export const getSearchError = createErrorSelector(actions.getDataEntitySearchActionType);
+
 export const getSearchFacetsSynced = createSelector(
   searchState,
   search => search.isFacetsStateSynced
@@ -68,23 +70,19 @@ export const getSearchIsFetching = createSelector(
   getSearchUpdateStatuses,
   getSearchResultsFetchStatuses,
   getSearchFacetsSynced,
-  searchState,
   (
     { isLoading: isSearchCreating },
     { isLoading: isSearchFetching },
     { isLoading: isSearchUpdating },
     { isLoading: isSearchResultsFetching },
-    isSynced,
-    search
+    isSynced
   ) =>
     compact([
       isSearchCreating,
       isSearchFetching,
       isSearchUpdating,
       isSearchResultsFetching,
-    ]).length > 0 ||
-    !isSynced ||
-    (!!search.results.pageInfo.total && !search.results.items.length)
+    ]).length > 0 || !isSynced
 );
 
 export const getSearchIsCreatingAndFetching = createSelector(

@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTermList;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.Term;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
@@ -55,6 +56,12 @@ public interface TermMapper {
 
     List<Term> mapToList(final List<TermDto> dtos);
 
+    List<LinkedTerm> mapListToLinkedTermList(final List<LinkedTermDto> dtos);
+
+    default LinkedTermList mapToLinkedTermList(final List<LinkedTermDto> dtos) {
+        return new LinkedTermList().items(mapListToLinkedTermList(dtos));
+    }
+
     default TermList mapToPage(final Page<TermDto> page) {
         return new TermList()
             .items(mapToList(page.getData()))
@@ -68,6 +75,8 @@ public interface TermMapper {
     @Mapping(source = "dto.termDto.ownerships", target = "ownership")
     @Mapping(source = "dto.termDto.entitiesUsingCount", target = "entitiesUsingCount")
     @Mapping(source = "dto.termDto.columnsUsingCount", target = "columnsUsingCount")
+    @Mapping(source = "dto.termDto.linkedTermsUsingCount", target = "linkedTermsUsingCount")
+    @Mapping(source = "dto.termDto.queryExampleUsingCount", target = "queryExampleUsingCount")
     TermDetails mapToDetails(final TermDetailsDto dto);
 
     @Mapping(source = "dto.termRefDto.term", target = ".")

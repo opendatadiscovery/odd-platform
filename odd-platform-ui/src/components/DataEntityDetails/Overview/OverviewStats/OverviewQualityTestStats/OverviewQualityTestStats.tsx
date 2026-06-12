@@ -52,17 +52,15 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             {datasetsList?.length || 0}{' '}
             {`dataset${datasetsList?.length === 1 ? '' : 's'}`}
           </Typography>
-          {datasetsList
-            ?.slice(0, displayedEntitiesNumber)
-            .map(dataset => (
-              <Button
-                text={dataset.internalName || dataset.externalName}
-                to={dataEntityDetailsPath(dataset.id)}
-                key={dataset.id}
-                sx={{ my: 0.25, maxWidth: '100%' }}
-                buttonType='link-m'
-              />
-            ))}
+          {datasetsList?.slice(0, displayedEntitiesNumber).map(dataset => (
+            <Button
+              text={dataset.internalName || dataset.externalName}
+              to={dataEntityDetailsPath(dataset.id)}
+              key={dataset.id}
+              sx={{ my: 0.25, maxWidth: '100%' }}
+              buttonType='link-m'
+            />
+          ))}
           {datasetsList && datasetsList.length > displayedEntitiesNumber ? (
             <EntitiesListModal
               entities={datasetsList}

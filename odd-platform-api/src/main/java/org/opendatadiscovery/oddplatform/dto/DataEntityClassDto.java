@@ -19,9 +19,11 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DAG;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DASHBOARD;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DATABASE_SERVICE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DOMAIN;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ENTITY_RELATIONSHIP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.FEATURE_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.FILE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.GRAPH_NODE;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.GRAPH_RELATIONSHIP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.JOB;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.JOB_RUN;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.KAFKA_SERVICE;
@@ -45,7 +47,8 @@ public enum DataEntityClassDto {
     DATA_QUALITY_TEST_RUN(5, JOB_RUN),
     DATA_CONSUMER(6, Set.of(ML_MODEL_ARTIFACT, DASHBOARD)),
     DATA_INPUT(7, API_CALL),
-    DATA_ENTITY_GROUP(8, Set.of(ML_EXPERIMENT, DAG, DATABASE_SERVICE, API_SERVICE, KAFKA_SERVICE, DOMAIN));
+    DATA_ENTITY_GROUP(8, Set.of(ML_EXPERIMENT, DAG, DATABASE_SERVICE, API_SERVICE, KAFKA_SERVICE, DOMAIN)),
+    DATA_RELATIONSHIP(9, Set.of(ENTITY_RELATIONSHIP, GRAPH_RELATIONSHIP));
 
     private static final Map<Integer, DataEntityClassDto> MAP = Arrays.stream(DataEntityClassDto.values())
         .collect(Collectors.toMap(DataEntityClassDto::getId, identity()));

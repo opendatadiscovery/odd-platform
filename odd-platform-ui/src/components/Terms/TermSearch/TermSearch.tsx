@@ -3,11 +3,17 @@ import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
 import { useNavigate } from 'react-router-dom';
-import { PageWithLeftSidebar } from 'components/shared/elements';
+import {
+  AppErrorPage,
+  PageWithLeftSidebar,
+  SearchSessionExpired,
+} from 'components/shared/elements';
 import {
   getTermSearchCreateStatuses,
+  getTermSearchError,
   getTermSearchFacetsParams,
   getTermSearchFacetsSynced,
+  getTermSearchFetchStatuses,
   getTermSearchId,
   getTermSearchQuery,
 } from 'redux/selectors';
@@ -15,9 +21,11 @@ import { createTermSearch, getTermsSearch, updateTermSearch } from 'redux/thunks
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
-import { useTermsRouteParams } from 'routes';
+import { termsSearchPath, useTermsRouteParams } from 'routes';
+import { resetLoaderByAction } from 'redux/slices/loader.slice';
+import * as actions from 'redux/actions';
 import TermSearchFilters from './TermSearchFilters/TermSearchFilters';
-import TermsSearchResults from './TermSearchResults/TermSearchResults';
+import TermSearchResults from './TermSearchResults/TermSearchResults';
 import TermSearchHeader from './TermSearchHeader/TermSearchHeader';
 
 const TermSearch: React.FC = () => {
@@ -30,6 +38,26 @@ const TermSearch: React.FC = () => {
   const termSearchFacetParams = useAppSelector(getTermSearchFacetsParams);
   const termSearchFacetsSynced = useAppSelector(getTermSearchFacetsSynced);
   const { isLoading: isTermSearchCreating } = useAppSelector(getTermSearchCreateStatuses);
+  const { isNotLoaded: isTermSearchNotLoaded } = useAppSelector(
+    getTermSearchFetchStatuses
+  );
+  const termSearchError = useAppSelector(getTermSearchError);
+
+  // Mirror of the catalog search dead-link handling (#1760): a deep-linked term-search
+  // session that 404s is an expired link, not a platform fault.
+  const isDeepLinkNotLoaded =
+    !termSearchId && !!routerTermSearchId && isTermSearchNotLoaded;
+  const isTermSearchSessionExpired =
+    isDeepLinkNotLoaded && termSearchError?.status === 404;
+
+  const handleStartNewTermSearch = React.useCallback(() => {
+    dispatch(resetLoaderByAction(actions.getTermsSearchActType));
+    dispatch(createTermSearch({ termSearchFormData: { query: '', filters: {} } }))
+      .unwrap()
+      .then(termSearch => {
+        navigate(termsSearchPath(termSearch.searchId));
+      });
+  }, [dispatch, navigate]);
 
   React.useEffect(() => {
     if (!routerTermSearchId && !isTermSearchCreating && !termSearchId) {
@@ -37,7 +65,7 @@ const TermSearch: React.FC = () => {
       dispatch(createTermSearch({ termSearchFormData }))
         .unwrap()
         .then(termSearch => {
-          navigate(`${termSearch.searchId}`);
+          navigate(termSearch.searchId);
         });
     }
   }, [routerTermSearchId, createTermSearch, isTermSearchCreating]);
@@ -67,6 +95,14 @@ const TermSearch: React.FC = () => {
     if (!termSearchFacetsSynced) updateSearchFacets();
   }, [termSearchFacetParams]);
 
+  if (isTermSearchSessionExpired) {
+    return <SearchSessionExpired onStartNewSearch={handleStartNewTermSearch} />;
+  }
+
+  if (isDeepLinkNotLoaded) {
+    return <AppErrorPage showError error={termSearchError} />;
+  }
+
   return (
     <PageWithLeftSidebar.MainContainer>
       <PageWithLeftSidebar.ContentContainer container spacing={2}>
@@ -80,7 +116,7 @@ const TermSearch: React.FC = () => {
           >
             <TermSearchHeader />
           </WithPermissionsProvider>
-          <TermsSearchResults />
+          <TermSearchResults />
         </PageWithLeftSidebar.ListContainer>
       </PageWithLeftSidebar.ContentContainer>
     </PageWithLeftSidebar.MainContainer>

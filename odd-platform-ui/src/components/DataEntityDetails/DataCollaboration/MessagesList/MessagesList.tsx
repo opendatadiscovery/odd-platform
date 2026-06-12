@@ -49,7 +49,6 @@ const MessagesList: React.FC<MessagesListProps> = ({
           scrollableTarget='messages-list'
         >
           {Object.entries(messagesByDate).map(([messageDate, messages], index) => (
-            // eslint-disable-next-line react/no-array-index-key
             <Grid key={`${messageDate}-${index}`} container>
               <Typography variant='h5' color='texts.secondary' sx={{ py: 1 }}>
                 {messageDate}

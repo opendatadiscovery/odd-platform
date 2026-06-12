@@ -14,7 +14,7 @@ import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 
 interface SingleFilterProps<OptionType> {
   name: string;
-  filterOptions: Array<OptionType>;
+  filterOptions: OptionType[];
   filterName: ActivitySingleFilterNames;
   dataQA?: string;
 }

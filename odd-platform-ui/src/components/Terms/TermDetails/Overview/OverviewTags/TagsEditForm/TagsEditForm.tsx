@@ -110,9 +110,9 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   }, [autocompleteOpen, searchText]);
 
   // Tags list
-  type TermDetailsTagsFormType = {
+  interface TermDetailsTagsFormType {
     tagNameList: { name: string; important?: boolean }[];
-  };
+  }
   const methods = useForm<TermDetailsTagsFormType>({
     defaultValues: { tagNameList: [{ name: '', important: false }] },
   });

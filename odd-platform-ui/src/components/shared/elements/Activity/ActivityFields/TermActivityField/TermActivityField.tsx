@@ -14,8 +14,8 @@ interface ActivityData extends TermActivityState {
 }
 
 interface TermActivityFieldProps {
-  oldState: Array<ActivityData> | undefined;
-  newState: Array<ActivityData> | undefined;
+  oldState: ActivityData[] | undefined;
+  newState: ActivityData[] | undefined;
   hideAllDetails: boolean;
   eventType: EventType;
   stateDirection?: CSSProperties['flexDirection'];
@@ -64,7 +64,7 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
   }, [oldState, newState]);
 
   const groupTermsByNamespace = (state: ActivityData[]) =>
-    state.reduce<{ [key: string]: ActivityData[] }>(
+    state.reduce<Record<string, ActivityData[]>>(
       (memo, activity) =>
         activity.namespace
           ? {

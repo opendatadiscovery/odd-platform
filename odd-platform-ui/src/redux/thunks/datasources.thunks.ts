@@ -12,7 +12,7 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { dataSourceApi } from 'lib/api';
 
 export const fetchDataSourcesList = handleResponseAsyncThunk<
-  { datasourceList: Array<DataSource>; pageInfo: CurrentPageInfo },
+  { datasourceList: DataSource[]; pageInfo: CurrentPageInfo },
   DataSourceApiGetDataSourceListRequest
 >(
   actions.fetchDatasorcesActionType,

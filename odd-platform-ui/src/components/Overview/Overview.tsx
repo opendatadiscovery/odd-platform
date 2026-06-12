@@ -5,6 +5,7 @@ import { MainSearch, SkeletonWrapper } from 'components/shared/elements';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
+import { useAppInfo } from 'lib/hooks/api';
 import Domains from 'components/Overview/Domains/Domains';
 import { useGetPopularTags } from 'lib/hooks/api/tags';
 import DataEntitiesUsageInfo from './DataEntitiesUsageInfo/DataEntitiesUsageInfo';
@@ -20,6 +21,10 @@ const Overview: React.FC = () => {
     page: 1,
     size: 30,
   });
+  const { data: appInfo } = useAppInfo();
+  const isShowOwnerAssociation = Boolean(
+    appInfo?.authType && appInfo.authType !== 'DISABLED'
+  );
 
   const isLoading = React.useMemo(
     () => isIdentityFetching || isTagsFetching,
@@ -41,17 +46,17 @@ const Overview: React.FC = () => {
       <Grid container justifyContent='center' sx={{ pt: 4, pb: 5 }}>
         <MainSearch mainSearch />
       </Grid>
-      <S.TagsContainer container>
-        {tags ? <TopTagsList tags={tags} /> : null}
-      </S.TagsContainer>
+      <S.TagsContainer container>{tags && <TopTagsList tags={tags} />}</S.TagsContainer>
       <Domains />
       <DataEntitiesUsageInfo />
       <Directory />
-      <WithPermissionsProvider
-        allowedPermissions={[Permission.DIRECT_OWNER_SYNC]}
-        resourcePermissions={[]}
-        Component={OwnerAssociation}
-      />
+      {isShowOwnerAssociation && (
+        <WithPermissionsProvider
+          allowedPermissions={[Permission.DIRECT_OWNER_SYNC]}
+          resourcePermissions={[]}
+          Component={OwnerAssociation}
+        />
+      )}
     </S.Container>
   );
 };

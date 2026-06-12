@@ -5,7 +5,10 @@ plugins {
 repositories {
     mavenCentral()
 }
-
+configurations.all {
+    resolutionStrategy.force("org.apache.commons:commons-compress:1.27.1")
+    resolutionStrategy.force("com.fasterxml.jackson.core:jackson-annotations:2.18.4")
+}
 dependencies {
     implementation libs.bundles.jooq.codegen
 }

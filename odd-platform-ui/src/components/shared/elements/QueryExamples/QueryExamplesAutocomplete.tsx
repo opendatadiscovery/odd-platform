@@ -57,6 +57,16 @@ const QueryExamplesAutocomplete: React.FC<QueryExamplesAutocompleteProps> = ({
     return '';
   }, []);
 
+  const handleInput = (input: string) => {
+    setQuery(input);
+    setAutocompleteOpen(!!input);
+  };
+
+  const handleSelection = () => {
+    setQuery(''); // Clear input on select
+    setAutocompleteOpen(false);
+  };
+
   const searchInputChange = useCallback(
     (
       _: React.ChangeEvent<unknown>,
@@ -64,9 +74,9 @@ const QueryExamplesAutocomplete: React.FC<QueryExamplesAutocompleteProps> = ({
       reason: AutocompleteInputChangeReason
     ) => {
       if (reason === 'input') {
-        setQuery(input);
+        handleInput(input);
       } else {
-        setQuery(''); // Clear input on select
+        handleSelection();
       }
     },
     [setQuery]
@@ -106,7 +116,7 @@ const QueryExamplesAutocomplete: React.FC<QueryExamplesAutocompleteProps> = ({
       fullWidth
       id='query-examples-autocomplete'
       open={autocompleteOpen}
-      onOpen={() => setAutocompleteOpen(true)}
+      onOpen={() => query && setAutocompleteOpen(true)}
       onClose={() => setAutocompleteOpen(false)}
       onChange={handleAutocompleteSelect}
       options={options}

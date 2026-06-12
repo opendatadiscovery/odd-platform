@@ -25,14 +25,12 @@ import * as actions from 'redux/actions';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { dataEntityApi } from 'lib/api';
 
-export const fetchDataEntitiesClassesAndTypes = handleResponseAsyncThunk<
-  DataEntityClassAndTypeDictionary,
-  void
->(
-  actions.fetchDataEntitiesClassesAndTypesActionType,
-  async () => await dataEntityApi.getDataEntityClasses(),
-  {}
-);
+export const fetchDataEntitiesClassesAndTypes =
+  handleResponseAsyncThunk<DataEntityClassAndTypeDictionary>(
+    actions.fetchDataEntitiesClassesAndTypesActionType,
+    async () => await dataEntityApi.getDataEntityClasses(),
+    {}
+  );
 
 export const fetchDataEntityDetails = handleResponseAsyncThunk<
   DataEntityDetails,
@@ -44,7 +42,7 @@ export const fetchDataEntityDetails = handleResponseAsyncThunk<
 );
 
 export const updateDataEntityTags = handleResponseAsyncThunk<
-  { dataEntityId: number; tags: Array<Tag> },
+  { dataEntityId: number; tags: Tag[] },
   DataEntityApiCreateDataEntityTagsRelationsRequest
 >(
   actions.updateDataEntityTagsActionType,

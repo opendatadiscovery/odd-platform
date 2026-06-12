@@ -39,23 +39,23 @@ export const resetLocalState = (localState: LocalLineageState) => {
   localState.excludedIds = new Set();
 };
 
-type UpstreamQueue = Array<{ targetId: number; depth: number }>;
-type DownstreamQueue = Array<{ sourceId: number; depth: number }>;
+type UpstreamQueue = { targetId: number; depth: number }[];
+type DownstreamQueue = { sourceId: number; depth: number }[];
 
 interface DownstreamFilteringStructure {
   downstreamQueue: DownstreamQueue;
   targetIdsMapByDepth: Map<number, number[]>;
   allAddedIds: Set<number>;
-  filteredEdges: Array<DataEntityLineageEdge>;
-  crossEdges: Array<DataEntityLineageEdge>;
+  filteredEdges: DataEntityLineageEdge[];
+  crossEdges: DataEntityLineageEdge[];
 }
 
 interface UpstreamFilteringStructure {
   upstreamQueue: UpstreamQueue;
   sourceIdsMapByDepth: Map<number, number[]>;
   allAddedIds: Set<number>;
-  filteredEdges: Array<DataEntityLineageEdge>;
-  crossEdges: Array<DataEntityLineageEdge>;
+  filteredEdges: DataEntityLineageEdge[];
+  crossEdges: DataEntityLineageEdge[];
 }
 
 const getDefaultFilteringStructures = (rootNodeId: number, type: StreamType) => {
@@ -213,7 +213,7 @@ export const filterUpstreamEdges = (
 // grouping nodes
 // function generate map sourceId -> groupIds (for upstream) | targetId -> groupIds (for downstream)
 export const generateGroupIdsMap = (
-  nodes: Array<DataEntityLineageNode | GroupedDataEntityLineageNode>
+  nodes: (DataEntityLineageNode | GroupedDataEntityLineageNode)[]
 ) =>
   Array.from(nodes).reduce((map, node) => {
     if (node.groupIdList && node.groupIdList?.length > 0 && !map.has(node.id)) {
@@ -253,7 +253,6 @@ export const groupingUpstreamNodes = (
   const startId = 2 ** 30;
   let increment = 0;
 
-  // eslint-disable-next-line no-plusplus
   const generateNumberId = () => startId + increment++;
 
   const groupedNodes: GroupingUpstreamNodes[] = [];
@@ -346,7 +345,6 @@ export const groupingDownstreamNodes = (
   const startId = 2 ** 30;
   let increment = 0;
 
-  // eslint-disable-next-line no-plusplus
   const generateNumberId = () => startId + increment++;
 
   const groupedNodes: GroupingDownstreamNodes[] = [];

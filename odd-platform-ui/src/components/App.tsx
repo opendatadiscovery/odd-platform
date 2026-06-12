@@ -58,9 +58,15 @@ const App: React.FC = () => {
         <AppSuspenseWrapper>
           <Routes>
             <Route path='/' element={<Overview />} />
-            <Route path={`${searchPath()}/*`} element={<Search />} />
+            <Route path={searchPath()}>
+              <Route index element={<Search />} />
+              <Route path=':searchId' element={<Search />} />
+            </Route>
             <Route path={`${managementPath()}/*`} element={<Management />} />
-            <Route path={`${termsSearchPath()}/*`} element={<TermSearch />} />
+            <Route path={termsSearchPath()}>
+              <Route index element={<TermSearch />} />
+              <Route path=':termSearchId' element={<TermSearch />} />
+            </Route>
             <Route path={`${alertsPath()}/*`} element={<Alerts />} />
             <Route path={activityPath()} element={<Activity />} />
             <Route path={termsPath()}>
@@ -73,7 +79,7 @@ const App: React.FC = () => {
             <Route path={dataQualityPath()} element={<DataQuality />} />
             <Route path={`${dataModellingPath()}/*`} element={<DataModeling />} />
             <Route
-              path={`${lookupTablesPath()}`}
+              path={lookupTablesPath()}
               element={
                 <WithPermissionsProvider
                   allowedPermissions={[

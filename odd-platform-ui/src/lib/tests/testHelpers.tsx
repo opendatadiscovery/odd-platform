@@ -9,7 +9,7 @@ import {
   type UseQueryResult,
 } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
-import type { AnyAction, Store } from '@reduxjs/toolkit';
+import type { Store } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 import theme from 'theme/mui.theme';
 import type { RootState } from 'redux/interfaces';
@@ -83,7 +83,7 @@ export const getByTextContent = (text: string) =>
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
-  store?: Store<Partial<RootState>, AnyAction>;
+  store?: Store<Partial<RootState>>;
   initialEntries?: MemoryRouterProps['initialEntries'];
 }
 
@@ -98,9 +98,7 @@ export const WithRoute: React.FC<WithRouteProps> = ({ children, path }) => (
   </Routes>
 );
 
-export const TestQueryClientProvider: React.FC<PropsWithChildren<unknown>> = ({
-  children,
-}) => {
+export const TestQueryClientProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
@@ -119,7 +117,7 @@ const customRender = (
     ...renderOptions
   }: CustomRenderOptions = {}
 ) => {
-  const AllProviders: React.FC<PropsWithChildren<unknown>> = ({ children }) => (
+  const AllProviders: React.FC<PropsWithChildren> = ({ children }) => (
     <TestQueryClientProvider>
       <ThemeProvider theme={theme}>
         <Provider store={store}>

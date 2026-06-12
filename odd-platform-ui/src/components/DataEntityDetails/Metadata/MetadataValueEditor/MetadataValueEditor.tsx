@@ -13,7 +13,7 @@ import {
 } from 'components/shared/elements';
 import { useAppDateTime } from 'lib/hooks';
 
-interface MetadataValueEditFieldProps {
+interface MetadataValueEditorProps {
   metadataType: MetadataFieldType | '';
   metadataValue?: string;
   fieldName?: string;
@@ -21,7 +21,7 @@ interface MetadataValueEditFieldProps {
   size?: TextFieldProps['size'];
 }
 
-const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
+const MetadataValueEditor: React.FC<MetadataValueEditorProps> = ({
   metadataType,
   metadataValue,
   fieldName = 'value',
@@ -33,6 +33,11 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
 
   const defaultText =
     metadataType === MetadataFieldType.ARRAY ? 'item1,item2,...' : 'Value';
+
+  const inputTypes: MetadataFieldType[] = [
+    MetadataFieldType.INTEGER,
+    MetadataFieldType.FLOAT,
+  ];
 
   if (metadataType === MetadataFieldType.DATETIME) {
     return (
@@ -112,12 +117,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
           variant='main-m'
           label={labeled ? t('Value') : undefined}
           placeholder={labeled ? '' : defaultText}
-          type={
-            metadataType &&
-            [MetadataFieldType.INTEGER, MetadataFieldType.FLOAT].includes(metadataType)
-              ? 'number'
-              : 'text'
-          }
+          type={metadataType && inputTypes.includes(metadataType) ? 'number' : 'text'}
           step={metadataType === MetadataFieldType.FLOAT ? 'any' : '1'}
         />
       )}
@@ -125,4 +125,4 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   );
 };
 
-export default MetadataValueEditField;
+export default MetadataValueEditor;

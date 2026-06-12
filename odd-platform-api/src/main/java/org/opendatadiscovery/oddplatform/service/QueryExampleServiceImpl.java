@@ -7,11 +7,11 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExample;
-import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDatasetFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleList;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleRefList;
+import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleTermFormData;
 import org.opendatadiscovery.oddplatform.dto.QueryExampleDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -21,6 +21,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityQueryExampleRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermQueryExampleRelationRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -31,6 +32,7 @@ public class QueryExampleServiceImpl implements QueryExampleService {
     private final ReactiveQueryExampleRepository queryExampleRepository;
     private final ReactiveQueryExampleSearchEntrypointRepository queryExampleSearchEntrypointRepository;
     private final ReactiveDataEntityQueryExampleRelationRepository dataEntityToQueryExampleRepository;
+    private final ReactiveTermQueryExampleRelationRepository termQueryExampleRelationRepository;
     private final DataEntityService dataEntityService;
     private final QueryExampleMapper queryExampleMapper;
 
@@ -39,7 +41,8 @@ public class QueryExampleServiceImpl implements QueryExampleService {
     public Mono<QueryExampleDetails> createQueryExample(final QueryExampleFormData queryExampleFormData) {
         final QueryExamplePojo pojo = queryExampleMapper.mapToPojo(queryExampleFormData);
         return queryExampleRepository.create(pojo)
-            .map(queryExamplePojo -> queryExampleMapper.mapToQueryExampleDetails(queryExamplePojo, List.of()))
+            .map(
+                queryExamplePojo -> queryExampleMapper.mapToQueryExampleDetails(queryExamplePojo, List.of(), List.of()))
             .flatMap(this::updateSearchVectors);
     }
 
@@ -55,15 +58,15 @@ public class QueryExampleServiceImpl implements QueryExampleService {
     @Override
     @ReactiveTransactional
     public Mono<QueryExample> createQueryExampleToDatasetRelationship(
-        final Long queryExampleId,
-        final QueryExampleDatasetFormData queryExampleDatasetFormData) {
+        final Long queryExampleId, final Long datasetId) {
         return dataEntityToQueryExampleRepository
-            .createRelationWithDataEntity(queryExampleDatasetFormData.getDatasetId(), queryExampleId)
+            .createRelationWithDataEntity(datasetId, queryExampleId)
             .switchIfEmpty(Mono.error(() -> new BadUserRequestException("Dataset assigned to Query Example")))
             .then(dataEntityToQueryExampleRepository.getQueryExampleDatasetRelations(queryExampleId))
             .map(dto -> queryExampleMapper.mapToQueryExample(
                 dto.queryExamplePojo(),
-                dto.linkedEntities()))
+                dto.linkedEntities(),
+                dto.linkedTerms()))
             .zipWith(queryExampleSearchEntrypointRepository.updateQueryExampleVectorsForDataEntity(queryExampleId))
             .map(Tuple2::getT1);
     }
@@ -83,6 +86,7 @@ public class QueryExampleServiceImpl implements QueryExampleService {
         return queryExampleRepository.get(exampleId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("QueryExample", exampleId)))
             .thenMany(dataEntityToQueryExampleRepository.removeRelationWithDataEntityByQueryId(exampleId))
+            .thenMany(termQueryExampleRelationRepository.removeRelationWithTermByQueryId(exampleId))
             .then(queryExampleRepository.delete(exampleId).map(QueryExamplePojo::getId))
             .then();
     }
@@ -103,8 +107,7 @@ public class QueryExampleServiceImpl implements QueryExampleService {
             .map(dto -> dataEntityService
                 .getDimensionsByIds(getRelatedDataEntitiesIds(dto))
                 .map(items -> queryExampleMapper.mapToQueryExampleDetails(
-                    dto.queryExamplePojo(),
-                    items)))
+                    dto.queryExamplePojo(), items, dto.linkedTerms())))
             .flatMap(Function.identity());
     }
 
@@ -114,14 +117,41 @@ public class QueryExampleServiceImpl implements QueryExampleService {
             .map(queryExampleMapper::mapToRefPage);
     }
 
+    @Override
+    @ReactiveTransactional
+    public Mono<QueryExample> linkTermWithQueryExample(final Long termId, final QueryExampleTermFormData item) {
+        return termQueryExampleRelationRepository.createRelationWithQueryExample(item.getQueryExampleId(), termId)
+            .switchIfEmpty(Mono.error(() -> new BadUserRequestException("Term is assigned to Query Example")))
+            .then(dataEntityToQueryExampleRepository.getQueryExampleDatasetRelations(item.getQueryExampleId()))
+            .map(dto -> queryExampleMapper.mapToQueryExample(dto.queryExamplePojo(), dto.linkedEntities(),
+                dto.linkedTerms()))
+            .zipWith(
+                queryExampleSearchEntrypointRepository.updateQueryExampleVectorsForDataEntity(item.getQueryExampleId()))
+            .map(Tuple2::getT1);
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<Void> removeTermFromQueryExample(final Long termId, final Long exampleId) {
+        return termQueryExampleRelationRepository.deleteRelationWithQueryExample(exampleId, termId)
+            .then();
+    }
+
+    @Override
+    public Mono<QueryExampleList> getQueryExampleByTermId(final Long termId) {
+        return termQueryExampleRelationRepository
+            .getQueryExampleDatasetRelationsByTerm(termId)
+            .collectList()
+            .map(queryExampleMapper::mapListToQueryExampleList);
+    }
+
     private Mono<QueryExampleDetails> update(final QueryExamplePojo pojo) {
         return queryExampleRepository.update(pojo)
             .flatMap(item -> dataEntityToQueryExampleRepository.getQueryExampleDatasetRelations(item.getId()))
             .map(dto -> dataEntityService
                 .getDimensionsByIds(getRelatedDataEntitiesIds(dto))
                 .map(items -> queryExampleMapper.mapToQueryExampleDetails(
-                    dto.queryExamplePojo(),
-                    items)))
+                    dto.queryExamplePojo(), items, dto.linkedTerms())))
             .flatMap(Function.identity());
     }
 

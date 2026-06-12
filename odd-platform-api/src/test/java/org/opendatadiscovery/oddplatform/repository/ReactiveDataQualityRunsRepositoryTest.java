@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityCategoryR
 import org.opendatadiscovery.oddplatform.api.contract.model.TablesDashboard;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataQualityCategory;
+import org.opendatadiscovery.oddplatform.dto.DataQualityTestFiltersDto;
 import org.opendatadiscovery.oddplatform.mapper.DataQualityCategoryMapper;
 import org.opendatadiscovery.oddplatform.mapper.TablesDashboardMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -90,7 +91,7 @@ public class ReactiveDataQualityRunsRepositoryTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Test get Latest Data Quality Runs")
     public void testGetLatestDataQualityRunsResults() {
-        repository.getLatestDataQualityRunsResults()
+        repository.getLatestDataQualityRunsResults(DataQualityTestFiltersDto.builder().build())
             .collectList()
             .as(StepVerifier::create)
             .assertNext(records -> dataQualityTestAssertion(testsMapper.mapToDto(records)))
@@ -104,7 +105,7 @@ public class ReactiveDataQualityRunsRepositoryTest extends BaseIntegrationTest {
         IntStream.range(0, 5)
             .forEach(i -> createHollowDataSentEntityTable());
 
-        repository.getMonitoredTables()
+        repository.getMonitoredTables(DataQualityTestFiltersDto.builder().build())
             .collectList()
             .as(StepVerifier::create)
             .assertNext(records -> {

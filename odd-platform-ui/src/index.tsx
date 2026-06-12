@@ -23,7 +23,7 @@ import App from './components/App';
 import 'locales/i18n';
 
 declare module 'styled-components' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface DefaultTheme extends Theme {}
 }
 
@@ -42,7 +42,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
     mutations: {
-      onError: async (e: unknown) => await showServerErrorToast(e as Response),
+      onError: async (err: unknown) => await showServerErrorToast(err as Response),
     },
   },
 });

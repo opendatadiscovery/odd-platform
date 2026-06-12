@@ -33,7 +33,9 @@ public enum DataEntityTypeDto {
     KAFKA_SERVICE(21),
     DOMAIN(22),
     VECTOR_STORE(23),
-    LOOKUP_TABLE(24);
+    LOOKUP_TABLE(24),
+    ENTITY_RELATIONSHIP(25),
+    GRAPH_RELATIONSHIP(26);
 
     private static final Map<Integer, DataEntityTypeDto> MAP = Arrays
         .stream(DataEntityTypeDto.values())

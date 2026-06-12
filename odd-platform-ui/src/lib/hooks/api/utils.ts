@@ -1,9 +1,9 @@
 import type { PageInfo } from 'generated-sources';
 
-type ResponseWithPageInfo = {
-  items: Array<unknown>;
+interface ResponseWithPageInfo {
+  items: unknown[];
   pageInfo: PageInfo & { nextPage?: number };
-};
+}
 
 export function addNextPage<R extends ResponseWithPageInfo>(
   response: R,

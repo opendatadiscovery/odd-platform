@@ -25,6 +25,9 @@ const DataEntityDetailsQueryExamples = lazy(
   () => import('../DataEntityQueryExamples/DataEntityDetailsQueryExamples')
 );
 const DatasetData = lazy(() => import('../DatasetData/DatasetData'));
+const DataEntityRelationships = lazy(
+  () => import('../DataEntityRelationships/DataEntityRelationships')
+);
 
 const DataEntityDetailsRoutes = () => {
   const { dataEntityId } = useDataEntityRouteParams();
@@ -120,7 +123,7 @@ const DataEntityDetailsRoutes = () => {
                 Permission.QUERY_EXAMPLE_DATASET_CREATE,
                 Permission.QUERY_EXAMPLE_DATASET_DELETE,
               ]}
-              resourcePermissions={[]}
+              resourcePermissions={resourcePermissions}
               Component={DataEntityDetailsQueryExamples}
             />
           }
@@ -132,6 +135,16 @@ const DataEntityDetailsRoutes = () => {
               isAllowedTo={!isStatusDeleted}
               redirectTo='../overview'
               component={DatasetData}
+            />
+          }
+        />
+        <Route
+          path='relationships'
+          element={
+            <RestrictedRoute
+              isAllowedTo={!isStatusDeleted}
+              redirectTo='../overview'
+              component={DataEntityRelationships}
             />
           }
         />

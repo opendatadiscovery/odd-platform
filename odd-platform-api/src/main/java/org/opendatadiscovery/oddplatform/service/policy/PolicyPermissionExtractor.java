@@ -8,10 +8,12 @@ import org.opendatadiscovery.oddplatform.dto.policy.DataEntityPolicyResolverCont
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyStatementDto;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto;
+import org.opendatadiscovery.oddplatform.dto.policy.QueryExamplePolicyResolverContext;
 import org.opendatadiscovery.oddplatform.dto.policy.TermPolicyResolverContext;
 import org.opendatadiscovery.oddplatform.service.policy.resolver.ConditionResolver;
 import org.opendatadiscovery.oddplatform.service.policy.resolver.DataEntityConditionResolver;
 import org.opendatadiscovery.oddplatform.service.policy.resolver.NoContextConditionResolver;
+import org.opendatadiscovery.oddplatform.service.policy.resolver.QueryExampleConditionResolver;
 import org.opendatadiscovery.oddplatform.service.policy.resolver.TermConditionResolver;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 public class PolicyPermissionExtractor {
     private final DataEntityConditionResolver dataEntityResolver;
     private final TermConditionResolver termResolver;
+    private final QueryExampleConditionResolver queryExampleResolver;
     private final NoContextConditionResolver noContextConditionResolver;
 
     public Collection<PolicyPermissionDto> extractDataEntityPermissions(final List<PolicyStatementDto> statements,
@@ -30,6 +33,12 @@ public class PolicyPermissionExtractor {
     public Collection<PolicyPermissionDto> extractTermPermissions(final List<PolicyStatementDto> statements,
                                                                   final TermPolicyResolverContext context) {
         return permissions(statements, termResolver, PolicyTypeDto.TERM, context);
+    }
+
+    public Collection<PolicyPermissionDto>
+        extractQueryExamplePermissions(final List<PolicyStatementDto> statements,
+                                       final QueryExamplePolicyResolverContext context) {
+        return permissions(statements, queryExampleResolver, PolicyTypeDto.QUERY_EXAMPLE, context);
     }
 
     public Collection<PolicyPermissionDto> extractManagementPermissions(final List<PolicyStatementDto> statements) {

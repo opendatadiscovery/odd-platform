@@ -71,7 +71,7 @@ export type DatasourceName = (typeof DatasourceNames)[number];
 
 export interface Integration extends Omit<GeneratedIntegration, 'contentBlocks' | 'id'> {
   id: DatasourceName;
-  contentByTitle: { [title: string]: IntegrationContent };
+  contentByTitle: Record<string, IntegrationContent>;
 }
 
 export interface IntegrationPreview extends Omit<GeneratedIntegrationPreview, 'id'> {

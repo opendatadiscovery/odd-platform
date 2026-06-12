@@ -4,6 +4,4 @@ export interface Message extends Omit<GeneratedMessage, 'createdAt'> {
   createdAt: number;
 }
 
-export interface MessagesByDate {
-  [date: string]: Message[];
-}
+export type MessagesByDate = Record<string, Message[]>;

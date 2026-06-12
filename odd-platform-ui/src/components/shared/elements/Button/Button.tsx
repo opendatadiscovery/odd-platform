@@ -4,8 +4,10 @@ import type { SxProps, Theme } from '@mui/system';
 import { StyledButton, Loader, Icon, StyledLink, Text } from './Button.styles';
 import type { ButtonColor, ButtonSize, Button as ButtonType } from './interfaces';
 
-export interface Props
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
+export interface Props extends Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  'color'
+> {
   buttonType: ButtonType;
   to?: string | object;
   sx?: SxProps<Theme>;

@@ -2,17 +2,12 @@ interface UseLocalStorage {
   showAssociationAcceptedMessage: boolean;
 }
 
-export const setLocalStorageValue = (
-  key: keyof UseLocalStorage,
-  value: boolean
-  // eslint-disable-next-line consistent-return
-) => {
+export const setLocalStorageValue = (key: keyof UseLocalStorage, value: boolean) => {
   localStorage.setItem(key, String(value));
 };
 
 export const getLocalStorageValue = (
   key: keyof UseLocalStorage
-  // eslint-disable-next-line consistent-return
 ): UseLocalStorage[typeof key] | undefined => {
   const saved = localStorage.getItem(key);
 

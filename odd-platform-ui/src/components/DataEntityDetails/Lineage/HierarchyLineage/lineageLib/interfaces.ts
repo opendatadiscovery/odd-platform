@@ -61,18 +61,18 @@ export interface GenerateGraphProps {
 export interface LineageParsedData {
   root: TreeNodeDatum;
   upstream: {
-    nodesById: { [nodeId: number]: TreeNodeDatum };
-    edgesById: { [entityId: number]: DataEntityLineageEdge[] };
+    nodesById: Record<number, TreeNodeDatum>;
+    edgesById: Record<number, DataEntityLineageEdge[]>;
     crossEdges: DataEntityLineageEdge[];
   };
   downstream: {
-    nodesById: { [nodeId: number]: TreeNodeDatum };
-    edgesById: { [entityId: number]: DataEntityLineageEdge[] };
+    nodesById: Record<number, TreeNodeDatum>;
+    edgesById: Record<number, DataEntityLineageEdge[]>;
     crossEdges: DataEntityLineageEdge[];
   };
 }
 
-export type LineageQueryParams = {
+export interface LineageQueryParams {
   full: boolean; // full or compact view
   fn: boolean; // full names
   d: number; // depth
@@ -82,4 +82,4 @@ export type LineageQueryParams = {
   exug: number[]; // upstream's ids to expand from group
   exu: number[]; // upstream's ids to load more
   exd: number[]; // downstream's ids to load more
-};
+}

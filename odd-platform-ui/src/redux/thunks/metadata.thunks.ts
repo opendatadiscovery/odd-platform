@@ -11,7 +11,7 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { dataEntityApi, metadataApi } from 'lib/api';
 
 export const createDataEntityCustomMetadata = handleResponseAsyncThunk<
-  { dataEntityId: number; metadataList: Array<MetadataFieldValue> },
+  { dataEntityId: number; metadataList: MetadataFieldValue[] },
   DataEntityApiCreateDataEntityMetadataFieldValueRequest
 >(
   actions.createDataEntityMetadataAction,
@@ -76,7 +76,7 @@ export const deleteDataEntityCustomMetadata = handleResponseAsyncThunk<
 );
 
 export const searchMetadata = handleResponseAsyncThunk<
-  { metadataFields: Array<MetadataField> },
+  { metadataFields: MetadataField[] },
   MetadataApiGetMetadataFieldListRequest
 >(
   actions.searchMetadataAction,

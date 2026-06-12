@@ -79,7 +79,9 @@ interface Border {
   light: string;
 }
 
-type ButtonAnimationParams = { loaderBg?: { start: string; end: string } };
+interface ButtonAnimationParams {
+  loaderBg?: { start: string; end: string };
+}
 
 type Button = Record<ButtonColor, ItemCondition & ButtonAnimationParams>;
 

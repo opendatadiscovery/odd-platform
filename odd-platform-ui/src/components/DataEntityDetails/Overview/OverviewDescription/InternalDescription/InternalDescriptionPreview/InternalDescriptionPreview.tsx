@@ -16,32 +16,29 @@ const InternalDescriptionPreview: FC<InternalDescriptionPreviewProps> = ({
   isStatusDeleted,
   toggleEditMode,
   value,
-}) => (
-  <div>
-    {!isDescriptionEmpty ? (
-      <Markdown value={value} />
-    ) : (
-      <Grid
-        item
-        xs={12}
-        container
-        alignItems='center'
-        justifyContent='flex-start'
-        wrap='nowrap'
-      >
-        <Typography variant='subtitle2'>Not created.</Typography>
-        <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
-          {!isStatusDeleted && (
-            <Button
-              text='Add Description'
-              onClick={toggleEditMode}
-              buttonType='tertiary-sm'
-            />
-          )}
-        </WithPermissions>
-      </Grid>
-    )}
-  </div>
-);
+}) =>
+  !isDescriptionEmpty ? (
+    <Markdown value={value} />
+  ) : (
+    <Grid
+      item
+      xs={12}
+      container
+      alignItems='center'
+      justifyContent='flex-start'
+      wrap='nowrap'
+    >
+      <Typography variant='subtitle2'>Not created.</Typography>
+      <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
+        {!isStatusDeleted && (
+          <Button
+            text='Add Description'
+            onClick={toggleEditMode}
+            buttonType='tertiary-sm'
+          />
+        )}
+      </WithPermissions>
+    </Grid>
+  );
 
 export default memo(InternalDescriptionPreview);

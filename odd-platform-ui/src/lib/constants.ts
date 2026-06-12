@@ -73,6 +73,10 @@ export const DataEntityClassLabelMap: Map<
     ClassNameEnum.TRANSFORMER_RUN,
     { short: 'TSR', normal: 'Transformer Run', plural: 'Transformer Runs' },
   ],
+  [
+    ClassNameEnum.RELATIONSHIP,
+    { short: 'REL', normal: 'Relationship', plural: 'Relationships' },
+  ],
 ]);
 
 export const DataEntityClassTypeLabelMap: Map<
@@ -111,10 +115,20 @@ export const DataEntityClassTypeLabelMap: Map<
   [TypeNameEnum.API_SERVICE, { normal: 'API service', plural: 'API services' }],
   [TypeNameEnum.KAFKA_SERVICE, { normal: 'Kafka service', plural: 'Kafka services' }],
   [TypeNameEnum.DOMAIN, { normal: 'Domain', plural: 'Domains' }],
+  [
+    TypeNameEnum.ENTITY_RELATIONSHIP,
+    { normal: 'Entity-Relationships', plural: 'Entity-Relationships' },
+  ],
+  [
+    TypeNameEnum.GRAPH_RELATIONSHIP,
+    { normal: 'Graph Relationship', plural: 'Graph Relationships' },
+  ],
+  [TypeNameEnum.VECTOR_STORE, { normal: 'Vector store', plural: 'Vector stores' }],
+  [TypeNameEnum.LOOKUP_TABLE, { normal: 'Lookup table', plural: 'Lookup tables' }],
 ]);
 
 // content width constants
-export const toolbarHeight = 49;
+export const toolbarHeight = 48;
 export const maxSidebarWidth = 240;
 export const maxChannelsWidth = 200;
 export const activitySidebarWidth = 192;

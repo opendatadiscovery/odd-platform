@@ -8,7 +8,7 @@ export const NODE_HEIGHT = 300;
 export const MIN_ZOOM = 0.01;
 export const MAX_ZOOM = 2;
 
-export const layoutOptions: { [key: string]: string } = {
+export const layoutOptions: Record<string, string> = {
   'elk.algorithm': 'layered',
   'elk.direction': 'RIGHT',
   'elk.layered.spacing.edgeNodeBetweenLayers': '20',

@@ -5,14 +5,19 @@ spring:
     url: jdbc:postgresql://127.0.0.1:5432/odd-platform
     username: odd-platform
     password: odd-platform-password
-  custom-datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/odd-platform?schema=lookup_tables_schema
-    username: odd-platform
-    password: odd-platform-password
+#  custom-datasource:
+#    url: jdbc:postgresql://127.0.0.1:5432/odd-platform
+#    username: odd-platform
+#    password: odd-platform-password
   jooq:
     sql-dialect: postgres
   codec:
     max-in-memory-size: 20MB
+
+genai:
+  enabled: false
+#  url: http://localhost:5000
+#  request_timeout: 2
 
 springdoc:
   api-docs:
@@ -31,6 +36,11 @@ auth:
   # For dev/demo purposes only -- username1:password1,username2:password2,etc
   login-form-credentials: admin:admin,root:root
 
+  # Server-To-Server token. Header 'X-API-Key: token'
+  s2s:
+    enabled: false
+#    token:
+
   # For dev purposes only -- successful auth redirect URI
   login-form-redirect:
   ingestion:
@@ -42,6 +52,7 @@ auth:
 #    username:
 #    password:
 #    dn-pattern:
+#    base:
 #    user-filter:
 #      search-base:
 #      filter:
@@ -113,6 +124,7 @@ auth:
 #        user-name-attribute:
 #        admin-attribute:
 #        admin-principals:
+#        pkce:
 #      azure:
 #        provider: 'azure'
 #        client-id:
@@ -173,8 +185,12 @@ notifications:
 #    email:
 #      sender:
 #      password:
-#      smtp:
+#      host:
 #      port:
+#      protocol:
+#      smtp:
+#        auth:
+#        starttls:
 #      notification:
 #        emails: "yourFirst@gmail.com,yourSecond@gmail.com"
 

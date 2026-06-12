@@ -21,4 +21,6 @@ public interface OwnerService {
     Mono<Owner> update(final long id, final OwnerFormData updateEntityForm);
 
     Mono<Void> delete(final long id);
+
+    Mono<Owner> getOwnerDtoById(final long ownerId);
 }

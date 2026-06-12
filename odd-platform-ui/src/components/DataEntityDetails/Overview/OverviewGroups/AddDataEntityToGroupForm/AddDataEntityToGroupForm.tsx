@@ -34,9 +34,9 @@ const AddDataEntityToGroupForm: React.FC<AddDataEntityToGroupFormProps> = ({
   const { isLoading: isDataEntityAddingToGroup, isLoaded: isDataEntityAddedToGroup } =
     useAppSelector(getDataEntityAddToGroupStatuses);
 
-  const dataEntityGroupClassId = useAppSelector(getDataEntityClassesList).filter(
+  const dataEntityGroupClassId = useAppSelector(getDataEntityClassesList).find(
     entityClass => entityClass.name === 'DATA_ENTITY_GROUP'
-  )[0]?.id;
+  )?.id;
 
   const { handleSubmit, control, reset, formState } =
     useForm<AddDataEntityToGroupFormData>({
