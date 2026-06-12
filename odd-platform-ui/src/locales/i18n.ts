@@ -6,6 +6,7 @@ import ch from './translations/ch.json';
 import fr from './translations/fr.json';
 import ua from './translations/ua.json';
 import hy from './translations/hy.json';
+import br from './translations/br.json';
 
 const resources = {
   en: { translation: en },
@@ -14,6 +15,7 @@ const resources = {
   fr: { translation: fr },
   ua: { translation: ua },
   hy: { translation: hy },
+  br: { translation: br },
 };
 
 const languages = Object.keys(resources);
@@ -27,7 +29,7 @@ const savedLanguage = languages.includes(storedLanguage)
 i18n.use(initReactI18next).init({
   resources,
   lng: savedLanguage,
-  fallbackLng: ['en', 'es', 'ch', 'fr', 'ua', 'hy'],
+  fallbackLng: ['en', 'es', 'br', 'ch', 'fr', 'ua', 'hy'],
 });
 
 export default i18n;
