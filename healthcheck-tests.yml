@@ -1,0 +1,36 @@
+name: Health Check CLI — Tests
+
+on:
+  push:
+    paths:
+      - "tools/healthcheck/**"
+  pull_request:
+    paths:
+      - "tools/healthcheck/**"
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install test dependencies
+        run: pip install pytest
+
+      - name: Run tests
+        working-directory: tools/healthcheck
+        run: python -m pytest tests/ -v
+
+      - name: Smoke-test CLI help
+        working-directory: tools/healthcheck
+        run: python odd_healthcheck.py --help
