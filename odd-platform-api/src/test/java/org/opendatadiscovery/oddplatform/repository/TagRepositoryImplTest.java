@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
@@ -267,6 +268,73 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
     }
 
     /**
+     * The PLT-026 / LSN-019 regression: the directory exceeds the page size and the most-used
+     * tags are the YOUNGEST (highest ids). A correct "most popular" page 1 must contain them,
+     * ordered by usage; the broken implementation windowed by {@code TAG.ID ASC} BEFORE
+     * aggregating usage, so the youngest tags could never reach page 1 however used they were.
+     */
+    @Test
+    @DisplayName("Lists the globally most-used tags first, not the oldest-by-id window re-ranked")
+    void testListMostPopularReturnsGloballyMostUsedTags() {
+        final String namePrefix = UUID.randomUUID().toString();
+        final int oldTagsCount = 5;
+        final int popularTagsCount = 3;
+        final int usagesPerPopularTag = 3;
+        final int pageSize = oldTagsCount;
+
+        final List<DataEntityPojo> entities = dataEntityRepository
+            .bulkCreate(Stream.generate(DataEntityPojo::new).limit(usagesPerPopularTag).toList())
+            .collectList()
+            .blockOptional()
+            .orElseThrow();
+
+        // low-use tags created FIRST (lowest ids): one usage each
+        final List<TagPojo> oldTags = reactiveTagRepository
+            .bulkCreate(createNamedTagList(namePrefix + "-old", oldTagsCount))
+            .collectList()
+            .blockOptional()
+            .orElseThrow();
+        reactiveTagRepository.createDataEntityRelations(oldTags.stream()
+                .map(tag -> new TagToDataEntityPojo()
+                    .setTagId(tag.getId())
+                    .setDataEntityId(entities.get(0).getId()))
+                .toList())
+            .blockLast();
+
+        // most-used tags created LAST (highest ids = the youngest): one usage per entity
+        final List<TagPojo> popularTags = reactiveTagRepository
+            .bulkCreate(createNamedTagList(namePrefix + "-popular", popularTagsCount))
+            .collectList()
+            .blockOptional()
+            .orElseThrow();
+        reactiveTagRepository.createDataEntityRelations(popularTags.stream()
+                .flatMap(tag -> entities.stream()
+                    .map(entity -> new TagToDataEntityPojo()
+                        .setTagId(tag.getId())
+                        .setDataEntityId(entity.getId())))
+                .toList())
+            .blockLast();
+
+        // page 1 = every most-used tag (usage DESC), then the oldest low-use fill — id ASC ties
+        final Long[] expectedPageIds = Stream.concat(
+                popularTags.stream().map(TagPojo::getId).sorted(),
+                oldTags.stream().map(TagPojo::getId).sorted().limit(pageSize - popularTagsCount))
+            .toArray(Long[]::new);
+
+        reactiveTagRepository.listMostPopular(namePrefix, List.of(), 1, pageSize)
+            .as(StepVerifier::create)
+            .assertNext(page -> {
+                assertThat(page.getTotal()).isEqualTo(oldTagsCount + popularTagsCount);
+                assertThat(page.isHasNext()).isTrue();
+                assertThat(page.getData())
+                    .extracting(TagDto::tagPojo).extracting(TagPojo::getId)
+                    .containsExactly(expectedPageIds);
+                assertThat(page.getData().get(0).usedCount()).isEqualTo((long) usagesPerPopularTag);
+            })
+            .verifyComplete();
+    }
+
+    /**
      * Method for the test purpose. Creates list of exact number of {@link TagPojo}
      *
      * @param numberOfTestTags - number of tags inside the list
@@ -280,5 +348,15 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
                 .setImportant(true));
         }
         return testTagPojo;
+    }
+
+    private List<TagPojo> createNamedTagList(final String namePrefix, final int numberOfTags) {
+        final List<TagPojo> tags = new ArrayList<>();
+        for (int i = 0; i < numberOfTags; i++) {
+            tags.add(new TagPojo()
+                .setName(namePrefix + "-" + i)
+                .setImportant(false));
+        }
+        return tags;
     }
 }
