@@ -95,7 +95,10 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             entity.setStats(mapStats(dto.getDataSetDetailsDto()));
         }
 
-        if (entityClasses.contains(DataEntityClassDto.DATA_TRANSFORMER)) {
+        // Class-specific details DTOs can legitimately be null: hydration populates them from the
+        // specific_attributes keys, while entity_class_ids drives these branches — the two disagree on
+        // partially-ingested rows. Mapping must skip, not NPE the whole response (#1755).
+        if (entityClasses.contains(DataEntityClassDto.DATA_TRANSFORMER) && dto.getDataTransformerDetailsDto() != null) {
             entity.setSourceList(dto.getDataTransformerDetailsDto().sourceList()
                 .stream()
                 .distinct()
@@ -110,7 +113,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .collect(Collectors.toList()));
         }
 
-        if (entityClasses.contains(DataEntityClassDto.DATA_QUALITY_TEST)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_QUALITY_TEST)
+            && dto.getDataQualityTestDetailsDto() != null) {
             entity.setLinkedUrlList(mapLinkedUrlList(dto.getDataQualityTestDetailsDto().linkedUrlList()));
 
             entity.setDatasetsList(dto.getDataQualityTestDetailsDto()
@@ -121,7 +125,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .collect(Collectors.toList()));
         }
 
-        if (entityClasses.contains(DataEntityClassDto.DATA_CONSUMER)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_CONSUMER) && dto.getDataConsumerDetailsDto() != null) {
             entity.setInputList(dto.getDataConsumerDetailsDto()
                 .inputList()
                 .stream()
@@ -129,7 +133,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .map(this::mapReference).collect(Collectors.toList()));
         }
 
-        if (entityClasses.contains(DataEntityClassDto.DATA_INPUT)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_INPUT) && dto.getDataInputDetailsDto() != null) {
             entity.setOutputList(dto.getDataInputDetailsDto()
                 .outputList()
                 .stream()
@@ -294,7 +298,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             details.setStats(mapStats(dto.getDataSetDetailsDto()));
         }
 
-        if (entityClasses.contains(DataEntityClassDto.DATA_TRANSFORMER)) {
+        // Same null-tolerance as mapPojo above: a class id with no hydrated details DTO must map to
+        // absent fields, not 500 the whole detail page (#1755).
+        if (entityClasses.contains(DataEntityClassDto.DATA_TRANSFORMER) && dto.getDataTransformerDetailsDto() != null) {
             details.setSourceList(dto.getDataTransformerDetailsDto().sourceList()
                 .stream()
                 .distinct()
@@ -309,7 +315,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .collect(Collectors.toList()));
         }
 
-        if (entityClasses.contains(DataEntityClassDto.DATA_QUALITY_TEST)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_QUALITY_TEST)
+            && dto.getDataQualityTestDetailsDto() != null) {
             final DataQualityTestExpectation expectation = new DataQualityTestExpectation()
                 .type(dto.getDataQualityTestDetailsDto().expectationType());
 
@@ -331,7 +338,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .suiteUrl(dto.getDataQualityTestDetailsDto().suiteUrl());
         }
 
-        if (entityClasses.contains(DataEntityClassDto.DATA_CONSUMER)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_CONSUMER) && dto.getDataConsumerDetailsDto() != null) {
             details.setInputList(dto.getDataConsumerDetailsDto()
                 .inputList()
                 .stream()
@@ -340,15 +347,17 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         }
 
         if (entityClasses.contains(DataEntityClassDto.DATA_ENTITY_GROUP)) {
-            final List<DataEntityRef> dataEntityRefs = dto.getGroupsDto().entities().stream()
-                .map(this::mapReference)
-                .toList();
-            details.setEntities(dataEntityRefs);
-            details.setHasChildren(dto.getGroupsDto().hasChildren());
+            if (dto.getGroupsDto() != null) {
+                final List<DataEntityRef> dataEntityRefs = dto.getGroupsDto().entities().stream()
+                    .map(this::mapReference)
+                    .toList();
+                details.setEntities(dataEntityRefs);
+                details.setHasChildren(dto.getGroupsDto().hasChildren());
+            }
             details.setManuallyCreated(dto.getDataEntity().getManuallyCreated());
         }
 
-        if (entityClasses.contains(DataEntityClassDto.DATA_INPUT)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_INPUT) && dto.getDataInputDetailsDto() != null) {
             details.setOutputList(dto.getDataInputDetailsDto()
                 .outputList()
                 .stream()
