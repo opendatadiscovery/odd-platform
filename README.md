@@ -9,7 +9,7 @@
 
 <div align="center">
     <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/license-Apache2-green.svg?style=for-the-badge" alt="Apache2"></a>
-    <img src="https://img.shields.io/maintenance/yes/2024?style=for-the-badge" alt="Maintenance">
+    <img src="https://img.shields.io/maintenance/yes/2026?style=for-the-badge" alt="Maintenance">
     <a href="https://github.com/opendatadiscovery/odd-platform/graphs/contributors"><img src="https://img.shields.io/github/contributors/opendatadiscovery/odd-platform?style=for-the-badge" alt="GitHub contributors"></a>
     <a href="https://github.com/opendatadiscovery/odd-platform/contribute"><img src="https://img.shields.io/github/issues/opendatadiscovery/odd-platform/good%20first%20issue?style=for-the-badge" alt="GitHub issues by-label"></a>
 </div>
