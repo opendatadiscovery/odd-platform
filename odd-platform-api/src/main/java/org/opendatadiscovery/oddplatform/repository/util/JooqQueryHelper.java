@@ -25,7 +25,6 @@ import static java.util.Collections.singletonList;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.rowNumber;
-import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 
 @Component
 @RequiredArgsConstructor
@@ -140,7 +139,9 @@ public class JooqQueryHelper {
         String tableName = null;
 
         for (final Field<?> field : fields) {
-            if (field.equals(RANK_FIELD_ALIAS)) {
+            if (!field.getQualifiedName().qualified()) {
+                // computed alias fields (the FTS rank, aggregations like count) are not table
+                // columns and cannot break the one-table invariant this check guards
                 continue;
             }
             final String fieldTableName = field.getQualifiedName().first();

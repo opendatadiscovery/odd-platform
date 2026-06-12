@@ -144,20 +144,24 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         final Select<TagRecord> homogeneousQuery = DSL.selectFrom(TAG)
             .where(conditions);
 
-        final Select<? extends Record> select =
-            paginate(homogeneousQuery, List.of(new OrderByField(TAG.ID, SortOrder.ASC)), (page - 1) * size, size);
+        // aggregate usage over the FULL filtered directory FIRST, then order by usage and
+        // paginate — paginating the raw tag select windowed by id BEFORE counting returned
+        // the oldest tags re-ranked among themselves instead of the most popular
+        final Table<? extends Record> tagCte = homogeneousQuery.asTable("tag_cte");
+        final Table<Record> unionUsages = getDataEntityWithDatasetFields(tagCte, homogeneousQuery);
 
-        final Table<? extends Record> tagCte = select.asTable("tag_cte");
-        final Table<Record> unionUsages = getDataEntityWithDatasetFields(tagCte, select);
-
-        final var cteSelect = DSL.select(unionUsages.fields(tagCte.fields()))
+        final var aggregatedSelect = DSL.select(unionUsages.fields(tagCte.fields()))
             .select(DSL.boolOr(unionUsages.field(EXTERNAL_FIELD, Boolean.class)).as(EXTERNAL_FIELD))
             .select(DSL.sum(unionUsages.field(COUNT_FIELD, Integer.class)).as(COUNT_FIELD))
             .from(unionUsages)
-            .groupBy(unionUsages.fields(tagCte.fields()))
-            .orderBy(field(COUNT_FIELD).desc());
+            .groupBy(unionUsages.fields(tagCte.fields()));
 
-        return jooqReactiveOperations.flux(cteSelect)
+        final Select<? extends Record> select = paginate(aggregatedSelect,
+            List.of(new OrderByField(field(COUNT_FIELD), SortOrder.DESC),
+                new OrderByField(TAG.ID, SortOrder.ASC)),
+            (page - 1) * size, size);
+
+        return jooqReactiveOperations.flux(select)
             .collectList()
             .flatMap(records -> jooqQueryHelper.pageifyResult(
                 records,
