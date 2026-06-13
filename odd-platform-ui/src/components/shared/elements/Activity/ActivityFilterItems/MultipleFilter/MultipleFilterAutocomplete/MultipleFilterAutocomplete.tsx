@@ -44,8 +44,9 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
       setLoading(true);
       const params = { page: 1, size: 100, query: searchText };
 
-      // The User filter lists the recorded actor usernames (activity.created_by), each shown with
-      // its current owner name when one exists; tag/owner filters list the directory entities (#1657).
+      // The "Made by (user)" filter lists the RAW recorded usernames (activity.created_by) — exactly the
+      // values it filters on, with no owner decoration (a composite "Owner (User)" label is artificial
+      // and re-introduces the very User/Owner confusion this work removes). #1657.
       if (filterName === 'usernames') {
         dispatch(fetchActivityUsersList(params))
           .unwrap()
@@ -54,9 +55,7 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
             setOptions(
               response.items.map(user => ({
                 id: user.identity.username,
-                name: user.owner?.name
-                  ? `${user.owner.name} (${user.identity.username})`
-                  : user.identity.username,
+                name: user.identity.username,
               }))
             );
           });

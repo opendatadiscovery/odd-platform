@@ -435,5 +435,6 @@
   "Filters to changes on data entities that the selected owner owns - the owner of the affected asset, not the person who made the change.": "Filters to changes on data entities that the selected owner owns - the owner of the affected asset, not the person who made the change.",
   "Filters to changes made by users currently associated with the selected owner. ODD maps each user to an owner, and this filter uses that current association - re-associating an owner changes which past changes match.": "Filters to changes made by users currently associated with the selected owner. ODD maps each user to an owner, and this filter uses that current association - re-associating an owner changes which past changes match.",
   "Filters to changes made by the selected user, identified by their external username. This is stable over time and works even for users who have no owner association.": "Filters to changes made by the selected user, identified by their external username. This is stable over time and works even for users who have no owner association.",
-  "as Owner": "as Owner"
+  "current owner": "current owner",
+  "The owner shown is the user's current association (as of now) - it may differ from the user's owner at the time the change was made.": "The owner shown is the user's current association (as of now) - it may differ from the user's owner at the time the change was made."
 }
