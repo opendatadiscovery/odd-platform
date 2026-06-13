@@ -13,6 +13,11 @@ import {
   CalendarFilter,
 } from 'components/shared/elements/Activity';
 import {
+  MadeByOwnerFilterHint,
+  MadeByUserFilterHint,
+  OwnerFilterHint,
+} from 'components/shared/elements/Activity/ActivityFilterHints';
+import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
@@ -89,12 +94,21 @@ const Filters: React.FC = () => {
           filterName='ownerIds'
           name={t('Owner')}
           dataQA='owner_filter'
+          hint={<OwnerFilterHint />}
         />
         <MultipleFilter
-          key='us'
+          key='mbo'
           filterName='userIds'
-          name={t('User')}
-          dataQA='user_filter'
+          name={t('Made by (owner)')}
+          dataQA='made_by_owner_filter'
+          hint={<MadeByOwnerFilterHint />}
+        />
+        <MultipleFilter
+          key='mbu'
+          filterName='usernames'
+          name={t('Made by (user)')}
+          dataQA='made_by_user_filter'
+          hint={<MadeByUserFilterHint />}
         />
       </S.ListContainer>
     </S.Container>

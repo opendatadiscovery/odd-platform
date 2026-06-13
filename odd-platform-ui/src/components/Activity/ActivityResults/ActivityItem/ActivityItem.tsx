@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { EntityClassItem, TagItem } from 'components/shared/elements';
-import { GearIcon, UserIcon } from 'components/shared/icons';
+import { GearIcon } from 'components/shared/icons';
 import { ActivityEventType } from 'generated-sources';
 import {
   ActivityFieldHeader,
@@ -15,6 +15,7 @@ import {
   TermActivityField,
   DatasetTermActivityField,
   EntityStatusActivityField,
+  ActivityActorLabel,
 } from 'components/shared/elements/Activity';
 import { useAppDateTime } from 'lib/hooks';
 import type { Activity } from 'redux/interfaces';
@@ -71,12 +72,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           {activity.systemEvent ? (
             <GearIcon />
           ) : (
-            <Grid display='flex' flexWrap='nowrap' alignItems='center'>
-              <UserIcon stroke='black' />
-              <Typography variant='body1' sx={{ ml: 0.5 }}>
-                {activity.createdBy?.owner?.name || activity.createdBy?.identity.username}
-              </Typography>
-            </Grid>
+            <ActivityActorLabel createdBy={activity.createdBy} />
           )}
           <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
             at {activityFormattedDateTime(activity.createdAt)}

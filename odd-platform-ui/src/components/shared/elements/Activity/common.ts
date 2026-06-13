@@ -15,11 +15,13 @@ export type ActivitySingleFilterNames = keyof Pick<
 >;
 export type ActivityMultipleFilterNames = keyof Pick<
   ActivityQuery,
-  'tagIds' | 'ownerIds' | 'userIds'
+  'tagIds' | 'ownerIds' | 'userIds' | 'usernames'
 >;
 
 export interface ActivityFilterOption {
-  id: number;
+  // tagIds/ownerIds carry numeric ids; the usernames filter (#1657) carries the
+  // recorded actor username (a string), so an option id spans both.
+  id: number | string;
   name: string;
   important?: boolean;
 }

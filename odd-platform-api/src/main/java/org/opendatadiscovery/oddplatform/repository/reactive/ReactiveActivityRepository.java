@@ -2,9 +2,11 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
+import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -21,6 +23,7 @@ public interface ReactiveActivityRepository {
                                         final List<Long> tagIds,
                                         final List<Long> ownerIds,
                                         final List<Long> userIds,
+                                        final List<String> usernames,
                                         final ActivityEventTypeDto eventType,
                                         final Long lastEventId,
                                         final OffsetDateTime lastEventDateTime);
@@ -32,6 +35,7 @@ public interface ReactiveActivityRepository {
                                        final Long namespaceId,
                                        final List<Long> tagIds,
                                        final List<Long> userIds,
+                                       final List<String> usernames,
                                        final ActivityEventTypeDto eventType,
                                        final Long currentOwnerId,
                                        final Long lastEventId,
@@ -44,6 +48,7 @@ public interface ReactiveActivityRepository {
                                               final Long namespaceId,
                                               final List<Long> tagIds,
                                               final List<Long> userIds,
+                                              final List<String> usernames,
                                               final ActivityEventTypeDto eventType,
                                               final List<String> oddrns,
                                               final Long lastEventId,
@@ -54,6 +59,7 @@ public interface ReactiveActivityRepository {
                                                final Integer size,
                                                final Long dataEntityId,
                                                final List<Long> userIds,
+                                               final List<String> usernames,
                                                final ActivityEventTypeDto eventType,
                                                final Long lastEventId,
                                                final OffsetDateTime lastEventDateTime);
@@ -65,6 +71,7 @@ public interface ReactiveActivityRepository {
                                        final List<Long> tagIds,
                                        final List<Long> ownerIds,
                                        final List<Long> userIds,
+                                       final List<String> usernames,
                                        final ActivityEventTypeDto eventType);
 
     Mono<Long> getMyObjectsActivitiesCount(final OffsetDateTime beginDate,
@@ -73,6 +80,7 @@ public interface ReactiveActivityRepository {
                                            final Long namespaceId,
                                            final List<Long> tagIds,
                                            final List<Long> userIds,
+                                           final List<String> usernames,
                                            final ActivityEventTypeDto eventType,
                                            final Long currentOwnerId);
 
@@ -82,6 +90,15 @@ public interface ReactiveActivityRepository {
                                            final Long namespaceId,
                                            final List<Long> tagIds,
                                            final List<Long> userIds,
+                                           final List<String> usernames,
                                            final ActivityEventTypeDto eventType,
                                            final List<String> oddrns);
+
+    /**
+     * Lists the distinct actor usernames recorded on the activity feed (activity.created_by),
+     * paginated and optionally filtered by a username substring, each enriched with the actor's
+     * CURRENT owner binding (left join) for display only. Feeds the activity "User" filter; the
+     * returned usernames are the values passed back as the {@code usernames} filter (#1657).
+     */
+    Mono<Page<AssociatedOwnerDto>> getActivityUsers(final Integer page, final Integer size, final String query);
 }

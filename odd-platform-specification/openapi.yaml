@@ -1405,11 +1405,19 @@ paths:
             format: date-time
         - name: user_ids
           in: query
+          description: Filters activity by the actor's current owner association (owner id) - the owner currently associated with whoever performed each event. This is mutable - re-associating an owner changes which events match. For the immutable external identity, use usernames.
           schema:
             type: array
             items:
               type: integer
               format: int64
+        - name: usernames
+          in: query
+          description: Filters activity by the recorded external username(s) of the actor (activity.created_by) - immutable and independent of any owner association (works for actors with no association). Complements user_ids, which filters by the actor's current owner.
+          schema:
+            type: array
+            items:
+              type: string
         - name: event_type
           in: query
           schema:
@@ -3247,11 +3255,19 @@ paths:
               format: int64
         - name: user_ids
           in: query
+          description: Filters activity by the actor's current owner association (owner id) - the owner currently associated with whoever performed each event. This is mutable - re-associating an owner changes which events match. For the immutable external identity, use usernames.
           schema:
             type: array
             items:
               type: integer
               format: int64
+        - name: usernames
+          in: query
+          description: Filters activity by the recorded external username(s) of the actor (activity.created_by) - immutable and independent of any owner association (works for actors with no association). Complements user_ids, which filters by the actor's current owner.
+          schema:
+            type: array
+            items:
+              type: string
         - name: type
           in: query
           schema:
@@ -3327,11 +3343,19 @@ paths:
               format: int64
         - name: user_ids
           in: query
+          description: Filters activity by the actor's current owner association (owner id) - the owner currently associated with whoever performed each event. This is mutable - re-associating an owner changes which events match. For the immutable external identity, use usernames.
           schema:
             type: array
             items:
               type: integer
               format: int64
+        - name: usernames
+          in: query
+          description: Filters activity by the recorded external username(s) of the actor (activity.created_by) - immutable and independent of any owner association (works for actors with no association). Complements user_ids, which filters by the actor's current owner.
+          schema:
+            type: array
+            items:
+              type: string
         - name: event_type
           in: query
           schema:
@@ -3343,6 +3367,25 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/ActivityCountInfo'
+      tags:
+        - activity
+
+  /api/activity/users:
+    get:
+      summary: List activity actor usernames
+      description: Lists the distinct usernames recorded as activity actors (activity.created_by), each enriched with the actor's current owner binding for display. Feeds the activity User filter; the returned usernames are passed back as the usernames filter on the activity endpoints.
+      operationId: getActivityUsers
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ActivityUserList'
       tags:
         - activity
 

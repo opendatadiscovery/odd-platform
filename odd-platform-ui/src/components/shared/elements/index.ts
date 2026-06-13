@@ -16,6 +16,10 @@ export { default as EntityStatus } from './EntityStatus/EntityStatus';
 export { default as AppLoadingPage } from './AppLoadingPage/AppLoadingPage';
 export { default as EntityTypeItem } from './EntityTypeItem/EntityTypeItem';
 export { default as AppPopover } from './AppPopover/AppPopover';
+export {
+  default as InformationHint,
+  type InformationHintLink,
+} from './InformationHint/InformationHint';
 export { default as DialogWrapper } from './DialogWrapper/DialogWrapper';
 export { default as AppSelect } from './AppSelect/AppSelect';
 export { default as TagItem } from './TagItem/TagItem';

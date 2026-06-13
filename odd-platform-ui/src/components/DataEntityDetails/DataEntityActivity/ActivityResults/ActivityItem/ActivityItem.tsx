@@ -1,7 +1,7 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { GearIcon, UserIcon } from 'components/shared/icons';
+import { GearIcon } from 'components/shared/icons';
 import { ActivityEventType } from 'generated-sources';
 import { TagItem } from 'components/shared/elements';
 import {
@@ -15,6 +15,7 @@ import {
   TermActivityField,
   DatasetTermActivityField,
   EntityStatusActivityField,
+  ActivityActorLabel,
 } from 'components/shared/elements/Activity';
 import { useAppDateTime } from 'lib/hooks';
 import { type ActivityItemProps } from 'components/shared/elements/Activity/common';
@@ -178,12 +179,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           {activity.systemEvent ? (
             <GearIcon />
           ) : (
-            <Grid display='flex' flexWrap='nowrap' alignItems='center'>
-              <UserIcon stroke='black' />
-              <Typography variant='body1' sx={{ ml: 0.5 }}>
-                {activity.createdBy?.owner?.name || activity.createdBy?.identity.username}
-              </Typography>
-            </Grid>
+            <ActivityActorLabel createdBy={activity.createdBy} />
           )}
           <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
             at {activityFormattedDateTime(activity.createdAt)}

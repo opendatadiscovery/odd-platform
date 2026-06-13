@@ -92,7 +92,7 @@ class ReactiveActivityRepositoryFanOutTest extends BaseIntegrationTest {
 
         // list: ONE row for the single event, not 2 tags x 2 owners = 4
         activityRepository.findAllActivities(begin, end, 100, null, null, tagIds, ownerIds, List.of(),
-                null, null, null)
+                List.of(), null, null, null)
             .collectList()
             .as(StepVerifier::create)
             .assertNext(rows -> assertThat(rows)
@@ -101,7 +101,7 @@ class ReactiveActivityRepositoryFanOutTest extends BaseIntegrationTest {
             .verifyComplete();
 
         // count: ONE, not 4 (the count endpoint shares the same fan-out)
-        activityRepository.getTotalActivitiesCount(begin, end, null, null, tagIds, ownerIds, List.of(), null)
+        activityRepository.getTotalActivitiesCount(begin, end, null, null, tagIds, ownerIds, List.of(), List.of(), null)
             .as(StepVerifier::create)
             .assertNext(count -> assertThat(count)
                 .as("getTotalActivitiesCount must equal the distinct event count, not the fanned-out count")

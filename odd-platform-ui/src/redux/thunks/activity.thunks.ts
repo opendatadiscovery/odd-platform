@@ -1,7 +1,9 @@
 import type {
   ActivityApiGetActivityCountsRequest,
   ActivityApiGetActivityRequest,
+  ActivityApiGetActivityUsersRequest,
   ActivityCountInfo,
+  ActivityUserList,
   DataEntityApiGetDataEntityActivityRequest,
 } from 'generated-sources';
 import { ActivityType } from 'generated-sources';
@@ -101,4 +103,16 @@ export const fetchActivityCounts = handleResponseAsyncThunk<
       endDate: toDate(endDate),
     }),
   {}
+);
+
+// Lists the distinct actor usernames recorded on the activity feed (created_by), enriched
+// with the actor's current owner binding for display. Feeds the activity User filter (#1657).
+// switchOffErrorMessage: a failed autocomplete lookup must not raise a global toast.
+export const fetchActivityUsersList = handleResponseAsyncThunk<
+  ActivityUserList,
+  ActivityApiGetActivityUsersRequest
+>(
+  actions.fetchActivityUsersListActionType,
+  async params => activityApi.getActivityUsers(params),
+  { switchOffErrorMessage: true }
 );

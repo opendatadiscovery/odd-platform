@@ -8,6 +8,10 @@ import {
   MultipleFilter,
   SingleFilter,
 } from 'components/shared/elements/Activity';
+import {
+  MadeByOwnerFilterHint,
+  MadeByUserFilterHint,
+} from 'components/shared/elements/Activity/ActivityFilterHints';
 import { useQueryParams } from 'lib/hooks';
 import {
   type ActivityQuery,
@@ -55,7 +59,20 @@ const Filters: React.FC = () => {
           name={t('Event type')}
           filterOptions={activityEventTypes}
         />
-        <MultipleFilter key='us' filterName='userIds' name={t('User')} />
+        <MultipleFilter
+          key='mbo'
+          filterName='userIds'
+          name={t('Made by (owner)')}
+          dataQA='made_by_owner_filter'
+          hint={<MadeByOwnerFilterHint />}
+        />
+        <MultipleFilter
+          key='mbu'
+          filterName='usernames'
+          name={t('Made by (user)')}
+          dataQA='made_by_user_filter'
+          hint={<MadeByUserFilterHint />}
+        />
       </>
     </S.Container>
   );

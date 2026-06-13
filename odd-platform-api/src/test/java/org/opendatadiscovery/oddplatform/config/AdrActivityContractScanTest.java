@@ -55,9 +55,16 @@ class AdrActivityContractScanTest {
                 + "cursor through to the repository.")
             .contains("lastEventId")
             .contains("lastEventDateTime");
-        Assertions.assertThat(controller)
-            .as("ADR-0021: the activity feed must NOT use offset pagination — there is no `Integer page` param "
-                + "(alerts/data-entity list keep page+size; the activity feed is the cursor exception).")
+        // Scope the no-offset assertion to the FEED method itself: the actor-username enumeration endpoint
+        // (getActivityUsers, added for the activity User-filter fix #1657) is an ordinary paginated LIST and
+        // legitimately takes page+size — exactly like alerts and the data-entity list. ADR-0021's cursor rule
+        // is about the activity feed stream, not every method on the controller.
+        final int feedStart = controller.indexOf("getActivity(");
+        final String getActivitySignature = controller.substring(feedStart, controller.indexOf(") {", feedStart));
+        Assertions.assertThat(getActivitySignature)
+            .as("ADR-0021: the activity FEED must NOT use offset pagination — getActivity has no `Integer page` "
+                + "param (alerts/data-entity list keep page+size; the feed is the cursor exception). The "
+                + "getActivityUsers enumeration endpoint is offset-paginated by design and is excluded here.")
             .doesNotContain("Integer page");
     }
 

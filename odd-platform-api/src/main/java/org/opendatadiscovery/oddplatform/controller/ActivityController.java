@@ -8,6 +8,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityCountInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityType;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityUserList;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,7 @@ public class ActivityController implements ActivityApi {
                                                             final List<Long> tagIds,
                                                             final List<Long> ownerIds,
                                                             final List<Long> userIds,
+                                                            final List<String> usernames,
                                                             final ActivityType type,
                                                             final ActivityEventType eventType,
                                                             final Long lasEventId,
@@ -36,7 +38,7 @@ public class ActivityController implements ActivityApi {
                                                             final ServerWebExchange exchange) {
         return Mono.just(
                 activityService.getActivityList(beginDate, endDate, size, datasourceId, namespaceId, tagIds, ownerIds,
-                    userIds, type, eventType, lasEventId, lastEventDateTime))
+                    userIds, usernames, type, eventType, lasEventId, lastEventDateTime))
             .map(ResponseEntity::ok);
     }
 
@@ -48,10 +50,20 @@ public class ActivityController implements ActivityApi {
                                                                      final List<Long> tagIds,
                                                                      final List<Long> ownerIds,
                                                                      final List<Long> userIds,
+                                                                     final List<String> usernames,
                                                                      final ActivityEventType eventType,
                                                                      final ServerWebExchange exchange) {
         return activityService.getActivityCounts(beginDate, endDate, datasourceId, namespaceId,
-                tagIds, ownerIds, userIds, eventType)
+                tagIds, ownerIds, userIds, usernames, eventType)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<ActivityUserList>> getActivityUsers(final Integer page,
+                                                                   final Integer size,
+                                                                   final String query,
+                                                                   final ServerWebExchange exchange) {
+        return activityService.getActivityUsers(page, size, query)
             .map(ResponseEntity::ok);
     }
 }
