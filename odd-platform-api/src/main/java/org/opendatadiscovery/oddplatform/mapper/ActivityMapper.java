@@ -12,6 +12,7 @@ import org.mapstruct.Named;
 import org.mapstruct.NullValueCheckStrategy;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityUserList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertHaltConfigActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertReceivedActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatusUpdatedActivityState;
@@ -31,6 +32,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTermsAct
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldValuesActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DescriptionActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermActivityState;
 import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
@@ -57,6 +59,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
+import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(config = MapperConfig.class, uses = {DateTimeMapper.class})
@@ -308,5 +311,11 @@ public abstract class ActivityMapper {
     AssociatedOwner mapUser(final ActivityDto activityDto) {
         return associatedOwnerMapper.mapAssociatedOwner(
             new AssociatedOwnerDto(activityDto.activity().getCreatedBy(), activityDto.user(), null));
+    }
+
+    public ActivityUserList mapToActivityUserList(final Page<AssociatedOwnerDto> page) {
+        return new ActivityUserList()
+            .items(page.getData().stream().map(associatedOwnerMapper::mapAssociatedOwner).toList())
+            .pageInfo(new PageInfo().total(page.getTotal()).hasNext(page.isHasNext()));
     }
 }

@@ -10,6 +10,7 @@ import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
 import org.jooq.JSONB;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -17,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityUserList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
@@ -53,11 +55,13 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.service.DataEntityStaleDetector;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
+import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.RecordFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ActivityMapperTest {
@@ -323,5 +327,30 @@ public class ActivityMapperTest {
             GENERATOR.objects(TermActivityStateDto.class, 5).toList()
         );
         return JSONSerDeUtils.serializeJson(state);
+    }
+
+    @Test
+    @DisplayName("mapToActivityUserList maps a page of actor DTOs to ActivityUserList with page info")
+    void testMapToActivityUserList() {
+        final AssociatedOwnerDto aliceDto =
+            new AssociatedOwnerDto("alice", new OwnerPojo().setId(1L).setName("alpha"), null);
+        final AssociatedOwnerDto bobDto = new AssociatedOwnerDto("bob", null, null);
+        final Page<AssociatedOwnerDto> page = Page.<AssociatedOwnerDto>builder()
+            .data(List.of(aliceDto, bobDto)).total(2L).hasNext(false).build();
+        when(associatedOwnerMapper.mapAssociatedOwner(aliceDto)).thenReturn(new AssociatedOwner()
+            .identity(new Identity().username("alice")).owner(new Owner().id(1L).name("alpha")));
+        when(associatedOwnerMapper.mapAssociatedOwner(bobDto)).thenReturn(new AssociatedOwner()
+            .identity(new Identity().username("bob")));
+
+        final ActivityUserList result = activityMapper.mapToActivityUserList(page);
+
+        assertThat(result.getItems()).hasSize(2);
+        assertThat(result.getItems().get(0).getIdentity().getUsername()).isEqualTo("alice");
+        assertThat(result.getItems().get(0).getOwner().getName()).isEqualTo("alpha");
+        // an actor with no owner association maps to a user with no owner
+        assertThat(result.getItems().get(1).getIdentity().getUsername()).isEqualTo("bob");
+        assertThat(result.getItems().get(1).getOwner()).isNull();
+        assertThat(result.getPageInfo().getTotal()).isEqualTo(2L);
+        assertThat(result.getPageInfo().getHasNext()).isFalse();
     }
 }

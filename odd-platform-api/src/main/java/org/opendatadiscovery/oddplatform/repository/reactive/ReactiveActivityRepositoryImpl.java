@@ -9,22 +9,32 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DatePart;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.SortOrder;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.ActivityRecord;
+import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
+import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -45,6 +55,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
     private final JooqRecordHelper jooqRecordHelper;
+    private final JooqQueryHelper jooqQueryHelper;
 
     @Override
     public Mono<ActivityPojo> saveReturning(final ActivityPojo pojo) {
@@ -79,12 +90,13 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                final List<Long> tagIds,
                                                final List<Long> ownerIds,
                                                final List<Long> userIds,
+                                               final List<String> usernames,
                                                final ActivityEventTypeDto eventType,
                                                final Long lastEventId,
                                                final OffsetDateTime lastEventDateTime) {
         final var baseQuery = buildBaseQuery(datasourceId, namespaceId);
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
-            ownerIds, userIds, eventType);
+            ownerIds, userIds, usernames, eventType);
         return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
     }
 
@@ -96,13 +108,14 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                               final Long namespaceId,
                                               final List<Long> tagIds,
                                               final List<Long> userIds,
+                                              final List<String> usernames,
                                               final ActivityEventTypeDto eventType,
                                               final Long currentOwnerId,
                                               final Long lastEventId,
                                               final OffsetDateTime lastEventDateTime) {
         final var baseQuery = buildBaseQuery(datasourceId, namespaceId);
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
-            List.of(currentOwnerId), userIds, eventType);
+            List.of(currentOwnerId), userIds, usernames, eventType);
         return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
     }
 
@@ -114,13 +127,14 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                      final Long namespaceId,
                                                      final List<Long> tagIds,
                                                      final List<Long> userIds,
+                                                     final List<String> usernames,
                                                      final ActivityEventTypeDto eventType,
                                                      final List<String> oddrns,
                                                      final Long lastEventId,
                                                      final OffsetDateTime lastEventDateTime) {
         final var baseQuery = buildBaseQuery(datasourceId, namespaceId);
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
-            List.of(), userIds, eventType);
+            List.of(), userIds, usernames, eventType);
         conditions.add(DATA_ENTITY.ODDRN.in(oddrns));
         return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
     }
@@ -131,12 +145,13 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                       final Integer size,
                                                       final Long dataEntityId,
                                                       final List<Long> userIds,
+                                                      final List<String> usernames,
                                                       final ActivityEventTypeDto eventType,
                                                       final Long lastEventId,
                                                       final OffsetDateTime lastEventDateTime) {
         final var baseQuery = buildBaseQuery(null, null);
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, null, null, List.of(),
-            List.of(), userIds, eventType);
+            List.of(), userIds, usernames, eventType);
         conditions.add(DATA_ENTITY.ID.eq(dataEntityId));
         return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
     }
@@ -149,6 +164,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                               final List<Long> tagIds,
                                               final List<Long> ownerIds,
                                               final List<Long> userIds,
+                                              final List<String> usernames,
                                               final ActivityEventTypeDto eventType) {
         final var countQuery = DSL.selectCount()
             .from(ACTIVITY)
@@ -158,7 +174,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                 .and(USER_OWNER_MAPPING.DELETED_AT.isNull()));
         addJoins(countQuery, datasourceId, namespaceId);
         final List<Condition> conditions =
-            getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, userIds, eventType);
+            getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, userIds, usernames,
+                eventType);
         return getActivityCount(countQuery, conditions);
     }
 
@@ -169,6 +186,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                   final Long namespaceId,
                                                   final List<Long> tagIds,
                                                   final List<Long> userIds,
+                                                  final List<String> usernames,
                                                   final ActivityEventTypeDto eventType,
                                                   final Long currentOwnerId) {
         final var countQuery = DSL.selectCount()
@@ -179,7 +197,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                 .and(USER_OWNER_MAPPING.DELETED_AT.isNull()));
         addJoins(countQuery, datasourceId, namespaceId);
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
-            List.of(currentOwnerId), userIds, eventType);
+            List.of(currentOwnerId), userIds, usernames, eventType);
         return getActivityCount(countQuery, conditions);
     }
 
@@ -190,6 +208,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                   final Long namespaceId,
                                                   final List<Long> tagIds,
                                                   final List<Long> userIds,
+                                                  final List<String> usernames,
                                                   final ActivityEventTypeDto eventType,
                                                   final List<String> oddrns) {
         final var countQuery = DSL.selectCount()
@@ -200,9 +219,48 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                 .and(USER_OWNER_MAPPING.DELETED_AT.isNull()));
         addJoins(countQuery, datasourceId, namespaceId);
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
-            List.of(), userIds, eventType);
+            List.of(), userIds, usernames, eventType);
         conditions.add(DATA_ENTITY.ODDRN.in(oddrns));
         return getActivityCount(countQuery, conditions);
+    }
+
+    @Override
+    public Mono<Page<AssociatedOwnerDto>> getActivityUsers(final Integer page, final Integer size,
+                                                           final String query) {
+        // The filterable identities are the DISTINCT actor usernames recorded on the activity rows
+        // (ACTIVITY.CREATED_BY) — NOT the owner directory. We paginate the distinct usernames first, then
+        // left-join the CURRENT owner binding for a friendly display label only. The filter itself keys on
+        // the username (getCommonConditions usernames branch), so an actor with no owner mapping is still
+        // listable and selectable (#1657).
+        final Select<? extends Record> distinctUsers = jooqQueryHelper.paginate(
+            DSL.selectDistinct(ACTIVITY.CREATED_BY)
+                .from(ACTIVITY)
+                .where(ACTIVITY.CREATED_BY.isNotNull())
+                .and(StringUtils.isBlank(query)
+                    ? DSL.noCondition()
+                    : ACTIVITY.CREATED_BY.containsIgnoreCase(query)),
+            List.of(new OrderByField(ACTIVITY.CREATED_BY, SortOrder.ASC)),
+            (page - 1) * size,
+            size);
+
+        final Table<? extends Record> usersCte = distinctUsers.asTable("activity_users");
+
+        final var resultQuery = DSL.with(usersCte.getName())
+            .as(distinctUsers)
+            .select(usersCte.fields())
+            .select(OWNER.fields())
+            .from(usersCte)
+            .leftJoin(USER_OWNER_MAPPING)
+            .on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(usersCte.field(ACTIVITY.CREATED_BY))
+                .and(USER_OWNER_MAPPING.DELETED_AT.isNull()))
+            .leftJoin(OWNER).on(OWNER.ID.eq(USER_OWNER_MAPPING.OWNER_ID));
+
+        return jooqReactiveOperations.flux(resultQuery)
+            .collectList()
+            .flatMap(records -> jooqQueryHelper.pageifyResult(
+                records,
+                this::mapRecordToAssociatedOwnerDto,
+                fetchActivityUsersCount(query)));
     }
 
     private SelectJoinStep<?> buildBaseQuery(final Long datasourceId, final Long namespaceId) {
@@ -246,6 +304,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                 final List<Long> tagIds,
                                                 final List<Long> ownerIds,
                                                 final List<Long> userIds,
+                                                final List<String> usernames,
                                                 final ActivityEventTypeDto eventType) {
         final List<Condition> conditions = new ArrayList<>();
         conditions.add(ACTIVITY.CREATED_AT.greaterOrEqual(DateTimeUtil.mapUTCDateTime(beginDate)));
@@ -271,9 +330,17 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                 .where(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
                 .and(OWNERSHIP.OWNER_ID.in(ownerIds))));
         }
+        // DEPRECATED (#1657): the user_ids filter resolves the actor through the present-time
+        // USER_OWNER_MAPPING, so it misses actors with no mapping and re-attributes history whenever an
+        // association changes. Retained for backward compatibility (the parameter is marked deprecated in
+        // the OpenAPI spec) and slated for removal on a later release train. The usernames branch below is
+        // the correct actor filter — it keys on the immutable identity recorded on the activity row.
         if (CollectionUtils.isNotEmpty(userIds)) {
             conditions.add(USER_OWNER_MAPPING.OWNER_ID.in(userIds));
             conditions.add(USER_OWNER_MAPPING.DELETED_AT.isNull());
+        }
+        if (CollectionUtils.isNotEmpty(usernames)) {
+            conditions.add(ACTIVITY.CREATED_BY.in(usernames));
         }
         return conditions;
     }
@@ -308,5 +375,25 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class);
         final OwnerPojo user = jooqRecordHelper.extractRelation(r, OWNER, OwnerPojo.class);
         return new ActivityDto(activity, user, dataEntity);
+    }
+
+    private AssociatedOwnerDto mapRecordToAssociatedOwnerDto(final Record r) {
+        return new AssociatedOwnerDto(
+            r.get(ACTIVITY.CREATED_BY, String.class),
+            jooqRecordHelper.extractRelation(r, OWNER, OwnerPojo.class),
+            null);
+    }
+
+    private Mono<Long> fetchActivityUsersCount(final String query) {
+        final SelectConditionStep<Record1<Integer>> count = DSL
+            .select(DSL.countDistinct(ACTIVITY.CREATED_BY))
+            .from(ACTIVITY)
+            .where(ACTIVITY.CREATED_BY.isNotNull())
+            .and(StringUtils.isBlank(query)
+                ? DSL.noCondition()
+                : ACTIVITY.CREATED_BY.containsIgnoreCase(query));
+
+        return jooqReactiveOperations.mono(count)
+            .map(r -> r.component1().longValue());
     }
 }

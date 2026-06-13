@@ -9,7 +9,8 @@ import * as S from './Input.styles';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant: InputVariant | undefined;
-  label?: string;
+  // ReactNode (not just string) so a label can carry an inline affordance, e.g. an InformationHint.
+  label?: React.ReactNode;
   hint?: string;
   maxWidth?: number;
   error?: string;

@@ -24,10 +24,17 @@ const SelectedFilterOption: React.FC<SelectedFilterOptionProps> = ({
   const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
   const onRemoveClick = () => {
-    setQueryParams(prev => ({
-      ...prev,
-      [filterName]: prev[filterName]?.filter(id => id !== selectedOption.id),
-    }));
+    // filterName spans number[] (tagIds/ownerIds) and string[] (usernames, #1657); the heterogeneous
+    // union defeats inference on the computed key, so assert the pruned query is well-formed.
+    setQueryParams(
+      prev =>
+        ({
+          ...prev,
+          [filterName]: (prev[filterName] as Array<number | string> | undefined)?.filter(
+            id => id !== selectedOption.id
+          ),
+        }) as ActivityQuery
+    );
   };
 
   return (

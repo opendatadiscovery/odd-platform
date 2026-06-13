@@ -150,6 +150,19 @@ components:
       required:
         - identity
 
+    ActivityUserList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedOwner'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
     PermissionList:
       type: array
       items:

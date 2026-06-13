@@ -1,12 +1,12 @@
 import React, { type HTMLAttributes } from 'react';
-import { type AutocompleteRenderOptionState } from '@mui/material';
+import { Box, type AutocompleteRenderOptionState } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import uniq from 'lodash/uniq';
 import { type AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
+import { fetchActivityUsersList, fetchOwnersList, fetchTagsList } from 'redux/thunks';
 import { useQueryParams } from 'lib/hooks';
 import {
   type ActivityMultipleFilterNames,
@@ -20,11 +20,14 @@ import * as S from './MultipleFilterAutocompleteStyles';
 interface MultipleFilterAutocompleteProps {
   filterName: ActivityMultipleFilterNames;
   name: string;
+  // Optional inline affordance rendered next to the field label (e.g. an InformationHint).
+  hint?: React.ReactNode;
 }
 
 const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
   name,
   filterName,
+  hint,
 }) => {
   type FilterOption = ActivityFilterOption;
 
@@ -41,6 +44,24 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
       setLoading(true);
       const params = { page: 1, size: 100, query: searchText };
 
+      // The "Made by (user)" filter lists the RAW recorded usernames (activity.created_by) — exactly the
+      // values it filters on, with no owner decoration (a composite "Owner (User)" label is artificial
+      // and re-introduces the very User/Owner confusion this work removes). #1657.
+      if (filterName === 'usernames') {
+        dispatch(fetchActivityUsersList(params))
+          .unwrap()
+          .then(response => {
+            setLoading(false);
+            setOptions(
+              response.items.map(user => ({
+                id: user.identity.username,
+                name: user.identity.username,
+              }))
+            );
+          });
+        return;
+      }
+
       (filterName === 'tagIds'
         ? dispatch(fetchTagsList(params))
         : dispatch(fetchOwnersList(params))
@@ -51,7 +72,7 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
           setOptions(response.items);
         });
     }, 500),
-    [setLoading, setOptions, searchText]
+    [setLoading, setOptions, searchText, filterName, dispatch]
   );
 
   const getOptionLabel = (option: FilterOption | string) => {
@@ -78,10 +99,19 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
     setSearchText(''); // Clear input on select
 
     if (value.id) {
-      setQueryParams(prev => ({
-        ...prev,
-        [filterName]: uniq([...(prev[filterName] || []), value.id]),
-      }));
+      // The filter element type is number[] (tagIds/ownerIds) or string[] (usernames); the
+      // runtime id matches its own filter, but the heterogeneous union defeats inference on the
+      // computed key, so we assert the rebuilt query is well-formed.
+      setQueryParams(
+        prev =>
+          ({
+            ...prev,
+            [filterName]: uniq([
+              ...((prev[filterName] ?? []) as Array<number | string>),
+              value.id,
+            ]),
+          }) as ActivityQuery
+      );
     }
   };
 
@@ -153,7 +183,16 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
           variant='main-m'
           inputContainerRef={params.InputProps.ref}
           inputProps={params.inputProps}
-          label={name}
+          label={
+            hint ? (
+              <Box component='span' sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.25 }}>
+                {name}
+                {hint}
+              </Box>
+            ) : (
+              name
+            )
+          }
           placeholder='Search by name…'
           isLoading={loading}
         />

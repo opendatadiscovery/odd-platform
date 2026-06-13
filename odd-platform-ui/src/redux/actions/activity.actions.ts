@@ -16,3 +16,8 @@ export const fetchDataEntityActivityListActionType = createActionType(
   activitiesActionTypePrefix,
   'fetchDataEntityActivityList'
 );
+
+export const fetchActivityUsersListActionType = createActionType(
+  activitiesActionTypePrefix,
+  'fetchActivityUsersList'
+);

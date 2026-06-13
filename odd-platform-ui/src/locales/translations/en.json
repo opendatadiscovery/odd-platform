@@ -422,5 +422,15 @@
   "will be rejected": "will be rejected",
   "Select language": "Select language",
   "Statuses": "Statuses",
-  "No attachments yet. You can add attachments via the button on the right": "No attachments yet. You can add attachments via the button on the right"
+  "No attachments yet. You can add attachments via the button on the right": "No attachments yet. You can add attachments via the button on the right",
+  "Made by (owner)": "Made by (owner)",
+  "Made by (user)": "Made by (user)",
+  "Owner of the asset": "Owner of the asset",
+  "The editor's current owner": "The editor's current owner",
+  "The user who made the change": "The user who made the change",
+  "Filters to changes on data entities that the selected owner owns - the owner of the affected asset, not the person who made the change.": "Filters to changes on data entities that the selected owner owns - the owner of the affected asset, not the person who made the change.",
+  "Filters to changes made by users currently associated with the selected owner. ODD maps each user to an owner, and this filter uses that current association - re-associating an owner changes which past changes match.": "Filters to changes made by users currently associated with the selected owner. ODD maps each user to an owner, and this filter uses that current association - re-associating an owner changes which past changes match.",
+  "Filters to changes made by the selected user, identified by their external username. This is stable over time and works even for users who have no owner association.": "Filters to changes made by the selected user, identified by their external username. This is stable over time and works even for users who have no owner association.",
+  "current owner": "current owner",
+  "The owner shown is the user's current association (as of now) - it may differ from the user's owner at the time the change was made.": "The owner shown is the user's current association (as of now) - it may differ from the user's owner at the time the change was made."
 }
