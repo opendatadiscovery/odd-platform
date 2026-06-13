@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import AppTooltip from 'components/shared/elements/AppTooltip/AppTooltip';
 import { InformationIcon } from 'components/shared/icons';
+import * as S from './Activity.styles';
 
 // Inline "(i)" help for the three activity actor/asset filters. ODD distinguishes the external USER
 // (immutable, recorded on each event) from the internal OWNER (reached via a mutable user<->owner
@@ -10,9 +11,11 @@ import { InformationIcon } from 'components/shared/icons';
 //
 // Reuses the platform's established inline-help affordance (ADR-0076): an InformationIcon wrapped in an
 // AppTooltip — the same pattern as the Data Entity overview "About" block (InternalDescriptionHeader),
-// Term definitions, and the DQ SLA report. Do NOT introduce a parallel popover for this.
+// Term definitions, and the DQ SLA report. The hint text is wrapped in `S.TooltipBody` (the established
+// styled tooltip body), NOT passed as a bare string — the "light" popper has no padding / max width of
+// its own, so an unwrapped string renders as one unreadable, background-less row (LSN-035).
 const FilterHint: React.FC<{ content: string }> = ({ content }) => (
-  <AppTooltip title={content} checkForOverflow={false}>
+  <AppTooltip title={<S.TooltipBody>{content}</S.TooltipBody>} checkForOverflow={false}>
     <InformationIcon width={14} height={14} />
   </AppTooltip>
 );

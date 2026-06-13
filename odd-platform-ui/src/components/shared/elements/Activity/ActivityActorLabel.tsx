@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { UserIcon } from 'components/shared/icons';
 import AppTooltip from 'components/shared/elements/AppTooltip/AppTooltip';
 import type { Activity } from 'redux/interfaces';
+import * as S from './Activity.styles';
 
 interface ActivityActorLabelProps {
   createdBy?: Activity['createdBy'];
@@ -29,9 +30,13 @@ const ActivityActorLabel: React.FC<ActivityActorLabelProps> = ({ createdBy }) =>
       {showOwner && (
         <AppTooltip
           checkForOverflow={false}
-          title={t(
-            "The owner shown is the user's current association (as of now) - it may differ from the user's owner at the time the change was made."
-          )}
+          title={
+            <S.TooltipBody>
+              {t(
+                "The owner shown is the user's current association (as of now) - it may differ from the user's owner at the time the change was made."
+              )}
+            </S.TooltipBody>
+          }
         >
           <Typography
             component='span'
