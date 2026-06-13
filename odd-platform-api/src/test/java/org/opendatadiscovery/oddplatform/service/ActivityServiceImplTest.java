@@ -25,6 +25,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -133,5 +134,45 @@ class ActivityServiceImplTest {
 
         verify(activityRepository).getActivityUsers(1, 30, "al");
         verify(activityMapper).mapToActivityUserList(page);
+    }
+
+    @Test
+    void getDataEntityActivityList_threadsUsernamesToTheRepository() {
+        when(activityRepository.findDataEntityActivities(any(), any(), any(), any(), any(), any(), any(), any(),
+            any())).thenReturn(Flux.just(new ActivityDto(null, null, null)));
+        when(activityMapper.mapToActivity(any())).thenReturn(new Activity());
+
+        StepVerifier.create(service.getDataEntityActivityList(BEGIN, END, 10, 42L, List.of(), List.of("alice"),
+                null, null, null))
+            .expectNextCount(1).verifyComplete();
+
+        verify(activityRepository).findDataEntityActivities(eq(BEGIN), eq(END), eq(10), eq(42L), any(),
+            eq(List.of("alice")), any(), any(), any());
+    }
+
+    @Test
+    void getActivityCounts_zipsTotalMyObjectsAndDependentCounts() {
+        when(activityRepository.getTotalActivitiesCount(any(), any(), any(), any(), any(), any(), any(), any(),
+            any())).thenReturn(Mono.just(10L));
+        when(authIdentityProvider.fetchAssociatedOwner()).thenReturn(Mono.just(new OwnerPojo().setId(7L)));
+        when(activityRepository.getMyObjectsActivitiesCount(any(), any(), any(), any(), any(), any(), any(), any(),
+            any())).thenReturn(Mono.just(3L));
+        when(dataEntityRelationsService.getDependentDataEntityOddrns(any()))
+            .thenReturn(Mono.just(List.of("oddrn://x")));
+        when(activityRepository.getDependentActivitiesCount(any(), any(), any(), any(), any(), any(), any(), any(),
+            any())).thenReturn(Mono.just(2L));
+
+        StepVerifier.create(service.getActivityCounts(BEGIN, END, null, null, List.of(), List.of(),
+                List.of(), List.of("alice"), null))
+            .assertNext(info -> {
+                assertThat(info.getTotalCount()).isEqualTo(10L);
+                assertThat(info.getMyObjectsCount()).isEqualTo(3L);
+                assertThat(info.getDownstreamCount()).isEqualTo(2L);
+                assertThat(info.getUpstreamCount()).isEqualTo(2L);
+            })
+            .verifyComplete();
+
+        verify(activityRepository).getTotalActivitiesCount(any(), any(), any(), any(), any(), any(), any(),
+            eq(List.of("alice")), any());
     }
 }
