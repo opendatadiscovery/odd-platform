@@ -29,7 +29,11 @@ const savedLanguage = languages.includes(storedLanguage)
 i18n.use(initReactI18next).init({
   resources,
   lng: savedLanguage,
-  fallbackLng: ['en', 'es', 'br', 'ch', 'fr', 'ua', 'hy'],
+  // fallbackLng MUST stay 'en' only. A fallback chain through other locales makes a key
+  // missing from en.json resolve to whichever catalog has it next -- e.g. 'br' -> Portuguese
+  // ("Buscar por nome") for every non-Brazilian user. Supported-locale validation is separate
+  // (savedLanguage above); the CI key-parity guard keeps en.json complete. See #1751.
+  fallbackLng: 'en',
 });
 
 export default i18n;
