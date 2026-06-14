@@ -6,41 +6,42 @@ import java.util.Arrays;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
- * Regression pin for LSN-002 (MinIO region unset).
+ * Config-key contract guard for the MinIO / S3 region — LSN-002.
  *
- * <p>{@link MinioConfig#minioClient()} builds the {@code MinioAsyncClient} with
- * {@code .endpoint(url).credentials(...).build()} and NO {@code .region(...)},
- * and the config exposes no region property — so a REMOTE attachment backend
- * only works against AWS {@code us-east-1} (the 2026-04 incident where operators
- * following our guide hit a region that silently failed).
- *
- * <p>This pins the ABSENCE of any region knob: the only configurable inputs are
- * the endpoint URL and credentials. When region support is added (a {@code region}
- * field / {@code attachment.remote.region} property), this test fails — forcing
- * the LSN-002 caveat and the builder fix to be confronted together rather than
- * one drifting from the other.
- *
- * <p>This is a deterministic gate, not a free-floating test:
+ * <p><b>FLIPPED 2026-06-14 (#1741).</b> This pin used to assert the ABSENCE of a region knob (the
+ * LSN-002 bug: the only configurable inputs were the endpoint URL + credentials). The fix added
+ * one, so per LSN-029 the pin is RE-GROUNDED (not deleted) to assert its PRESENCE and the public
+ * contract — a distinct angle from {@link MinioConfigRegionTest} (which asserts the runtime
+ * behaviour): here we pin that the {@code region} field exists and binds the OPTIONAL
+ * {@code attachment.remote.region} key with an EMPTY default. Removing the knob, renaming the key,
+ * or dropping the empty default (which is what keeps existing deployments on the
+ * backwards-compatible us-east-1 default — no migration) breaks this.
  *
  * @regresses LSN-002
  */
 class MinioRegionUnsetRegressionPinTest {
 
     @Test
-    void minioConfig_exposesNoRegionKnob() {
+    void minioConfig_exposesConfigurableRegionKnob() throws NoSuchFieldException {
         final List<String> instanceFields = Arrays.stream(MinioConfig.class.getDeclaredFields())
             .filter(f -> !Modifier.isStatic(f.getModifiers()))
             .map(Field::getName)
             .toList();
 
-        // LSN-002: endpoint + credentials are the only configurable inputs; there
-        // is deliberately (and dangerously) NO region. Adding one must break this
-        // pin so the region caveat cannot silently disappear or silently appear.
         Assertions.assertThat(instanceFields)
-            .as("MinioConfig configurable inputs — LSN-002 pins the absence of a region knob")
-            .containsExactlyInAnyOrder("url", "accessKey", "secretKey")
-            .doesNotContain("region");
+            .as("LSN-002: MinioConfig exposes a configurable region knob alongside endpoint + credentials")
+            .containsExactlyInAnyOrder("url", "accessKey", "secretKey", "region");
+
+        final Value value = MinioConfig.class.getDeclaredField("region").getAnnotation(Value.class);
+        Assertions.assertThat(value)
+            .as("LSN-002: the region field must be a bindable @Value")
+            .isNotNull();
+        Assertions.assertThat(value.value())
+            .as("LSN-002: region must bind the OPTIONAL attachment.remote.region key with an EMPTY default — "
+                + "blank keeps the backwards-compatible us-east-1 default (no migration)")
+            .isEqualTo("${attachment.remote.region:}");
     }
 }
