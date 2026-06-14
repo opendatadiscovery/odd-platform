@@ -2017,6 +2017,7 @@ paths:
         - name: titleIds
           in: query
           required: false
+          description: "Filter by the ownership Title (the role assigned to an owner of an entity, for example Data Steward) - NOT the data entity's name. Selected ids match OWNERSHIP.TITLE_ID."
           schema:
             type: array
             items:
@@ -2067,6 +2068,7 @@ paths:
         - name: deTitleIds
           in: query
           required: false
+          description: "Filter by the ownership Title (the role assigned to an owner of an entity, for example Data Steward) - NOT the data entity's name. Selected ids match OWNERSHIP.TITLE_ID."
           schema:
             type: array
             items:

@@ -26,7 +26,7 @@ export const TitleFilter: React.FC<TitleFilterProps> = ({ filterKey }) => {
     <MultipleFilterItem
       autocomplete={
         <MultipleFilterItemAutocomplete
-          name={t('Title')}
+          name={t('Owner title')}
           hookResult={hookResult}
           searchText={searchText}
           setSearchText={setSearchText}
