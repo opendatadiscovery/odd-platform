@@ -45,10 +45,11 @@ const SelectLanguage: FC<SelectLanguageProps> = ({ openBtn, handleMenuClose }) =
         handleCleanUp={() => setQuery('')}
         sx={{ mb: 1.5 }}
       />
-      {i18n.languages
-        .filter(lang =>
-          LANGUAGES_MAP[lang as Lang].toLowerCase().includes(query.toLowerCase())
-        )
+      {/* List the SUPPORTED locales (the resource keys), NOT i18n.languages — the latter is the
+          runtime fallback chain, which collapses to just ['en'] under fallbackLng:'en' (i18n.ts),
+          so using it here hid every non-English option from the picker. See odd-platform#1751. */}
+      {(Object.keys(LANGUAGES_MAP) as Lang[])
+        .filter(lang => LANGUAGES_MAP[lang].toLowerCase().includes(query.toLowerCase()))
         .map(lang => (
           <AppMenuItem
             key={lang}
@@ -57,10 +58,10 @@ const SelectLanguage: FC<SelectLanguageProps> = ({ openBtn, handleMenuClose }) =
           >
             <Box display='flex' alignItems='center'>
               <ReactCountryFlag
-                countryCode={LANG_TO_COUNTRY_CODE_MAP[lang as Lang]}
+                countryCode={LANG_TO_COUNTRY_CODE_MAP[lang]}
                 style={{ fontSize: '1.25em' }}
               />
-              <Box sx={{ ml: 1 }}>{LANGUAGES_MAP[lang as Lang]}</Box>
+              <Box sx={{ ml: 1 }}>{LANGUAGES_MAP[lang]}</Box>
             </Box>
           </AppMenuItem>
         ))}
