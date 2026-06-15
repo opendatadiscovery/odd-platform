@@ -11,13 +11,13 @@ import SelectableSeverity from '../SelectableSeverity';
  * CTRIB-015 / odd-platform#1750 — the severity control must (1) display the CURRENT test's severity
  * (controlled from the prop/store — the fix for the sibling-test render bleed) and (2) gate persistence
  * behind an explicit confirmation instead of the old instant fire-and-forget save. Conforms to the
- * entity-Status edit pattern (adrs/drafts/confirm-and-store-reduce-field-edits.md).
+ * entity-Status edit pattern (SelectableEntityStatus / StatusSettingsForm).
  *
  * ConfirmationDialog is stubbed (it composes the MUI-styled DialogWrapper/Button, which the shared
  * test harness's styled-components-only ThemeProvider can't theme). The stub preserves the real
  * two-step gate — click the option to arm, click the action to confirm — so the persistence gate and
  * the dispatch wiring (this component's responsibility) are what's exercised. AppMenu/AppMenuItem stay
- * real. The full dialog interaction is covered live by integration test IT-081.
+ * real. The full dialog interaction is covered by the end-to-end integration suite.
  */
 vi.mock('components/shared/elements', async importOriginal => {
   const actual = await importOriginal<typeof import('components/shared/elements')>();
