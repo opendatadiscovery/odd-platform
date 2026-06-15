@@ -1,4 +1,6 @@
 {
+  "Change severity": "更改严重性",
+  "Change the severity from {{from}} to {{to}}?": "将严重性从 {{from}} 更改为 {{to}}？",
   "About": "关于",
   "Accept": "接受",
   "Activity": "活动",

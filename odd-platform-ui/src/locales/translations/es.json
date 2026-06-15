@@ -1,4 +1,6 @@
 {
+  "Change severity": "Cambiar severidad",
+  "Change the severity from {{from}} to {{to}}?": "¿Cambiar la severidad de {{from}} a {{to}}?",
   "About": "Acerca de",
   "Accept": "Aceptar",
   "Activity": "Actividad",

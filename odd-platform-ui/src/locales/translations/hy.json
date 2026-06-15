@@ -1,4 +1,6 @@
 {
+  "Change severity": "Փոխել կարևորությունը",
+  "Change the severity from {{from}} to {{to}}?": "Փոխեցնել կարևորությունը {{from}}-ից {{to}}",
   "About": "Ծրագրի մասին",
   "Accept": "Ընդունել",
   "Activity": "Ակտիվությունը",

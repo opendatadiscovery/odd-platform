@@ -1,4 +1,6 @@
 {
+  "Change severity": "Змінити серйозність",
+  "Change the severity from {{from}} to {{to}}?": "Змінити серйозність з {{from}} на {{to}}?",
   "About": "Про",
   "Accept": "Прийняти",
   "Activity": "Активність",
