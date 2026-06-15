@@ -21,7 +21,7 @@ interface SelectableSeverityProps {
 // (SelectableEntityStatus -> StatusSettingsForm -> store reduce): the current severity is shown
 // (controlled, from the store), and choosing a new value opens the shared ConfirmationDialog
 // previewing the change before the awaited mutation persists it and reduces into the store.
-// See adrs/drafts/confirm-and-store-reduce-field-edits.md (CTRIB-015 / odd-platform#1750).
+// See odd-platform#1750.
 const SelectableSeverity: FC<SelectableSeverityProps> = ({
   currentSeverity,
   dataEntityId,
