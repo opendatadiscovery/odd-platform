@@ -1,5 +1,6 @@
 import React, { type FC, memo } from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Button, Markdown } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
@@ -16,8 +17,10 @@ const InternalDescriptionPreview: FC<InternalDescriptionPreviewProps> = ({
   isStatusDeleted,
   toggleEditMode,
   value,
-}) =>
-  !isDescriptionEmpty ? (
+}) => {
+  const { t } = useTranslation();
+
+  return !isDescriptionEmpty ? (
     <Markdown value={value} />
   ) : (
     <Grid
@@ -28,11 +31,11 @@ const InternalDescriptionPreview: FC<InternalDescriptionPreviewProps> = ({
       justifyContent='flex-start'
       wrap='nowrap'
     >
-      <Typography variant='subtitle2'>Not created.</Typography>
+      <Typography variant='subtitle2'>{t('Not created.')}</Typography>
       <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
         {!isStatusDeleted && (
           <Button
-            text='Add Description'
+            text={t('Add Description')}
             onClick={toggleEditMode}
             buttonType='tertiary-sm'
           />
@@ -40,5 +43,6 @@ const InternalDescriptionPreview: FC<InternalDescriptionPreviewProps> = ({
       </WithPermissions>
     </Grid>
   );
+};
 
 export default memo(InternalDescriptionPreview);

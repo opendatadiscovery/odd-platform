@@ -184,7 +184,7 @@ const MultipleFilterItemAutocomplete: React.FC<MultipleFilterItemAutocompletePro
       componentsProps={{ popper: { sx: S.popperStyles, placement: 'bottom-start' } }}
       blurOnSelect
       value={{ name: searchText }}
-      noOptionsText={facetOptionsLoading ? '' : 'No options'}
+      noOptionsText={facetOptionsLoading ? '' : t('No options')}
       renderOption={fillOptionMatches}
       popupIcon={<DropdownIcon />}
       clearIcon={<ClearIcon />}

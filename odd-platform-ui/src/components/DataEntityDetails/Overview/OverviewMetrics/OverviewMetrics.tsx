@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useDataEntityMetrics } from 'lib/hooks/api';
 import { AppCircularProgress, MetricFamily } from 'components/shared/elements';
 import { useDataEntityRouteParams } from 'routes';
@@ -10,6 +11,7 @@ interface OverviewMetricsProps {
 }
 
 const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ showOverview }) => {
+  const { t } = useTranslation();
   const { dataEntityId } = useDataEntityRouteParams();
   const { data, isError, isLoading } = useDataEntityMetrics({
     dataEntityId,
@@ -51,7 +53,7 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ showOverview }) => {
   return (
     <>
       <Typography variant='h2' sx={{ mt: 3, mb: 1 }}>
-        Metrics
+        {t('Metrics')}
       </Typography>
       <S.Container
         ref={containerRef}
@@ -72,7 +74,7 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ showOverview }) => {
             ))}
             {showBtn && (
               <S.ViewButton
-                text={open ? 'Hide' : `View All`}
+                text={open ? t('Hide') : t('View All')}
                 buttonType='tertiary-m'
                 onClick={handleOnClick}
               />

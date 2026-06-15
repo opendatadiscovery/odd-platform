@@ -2,6 +2,7 @@ import React, { type FC, useCallback } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, FormControlLabel, Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAtom } from 'jotai';
 import { Button, Checkbox, AppMenuItem, AppSelect } from 'components/shared/elements';
 import { useAppDateTime, useQueryParams } from 'lib/hooks';
@@ -18,6 +19,7 @@ interface DatasetStructureCompareHeaderProps {
 const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
   datasetVersions,
 }) => {
+  const { t } = useTranslation();
   const { dataEntityId } = useDataEntityRouteParams();
   const { datasetStructureVersionFormattedDateTime } = useAppDateTime();
   const navigate = useNavigate();
@@ -61,7 +63,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
     <Grid container flexDirection='column' mt={1}>
       <Grid container justifyContent='space-between' alignItems='center' sx={{ py: 0.5 }}>
         <Box display='flex' flexWrap='nowrap'>
-          <Typography variant='h1'>Revision compare</Typography>
+          <Typography variant='h1'>{t('Revision compare')}</Typography>
           <FormControlLabel
             sx={{ ml: 1 }}
             control={
@@ -74,17 +76,17 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
             }
             label={
               <Typography variant='body1' color='texts.info'>
-                Show changes only
+                {t('Show changes only')}
               </Typography>
             }
           />
         </Box>
-        <Button text='Close' buttonType='secondary-m' onClick={handleCloseClick} />
+        <Button text={t('Close')} buttonType='secondary-m' onClick={handleCloseClick} />
       </Grid>
       <Grid container mt={2}>
         <Grid item container xs={6} alignItems='center'>
           <Typography variant='body1' mr={1}>
-            From
+            {t('From')}
           </Typography>
           <AppSelect
             defaultValue={firstVersionId}
@@ -114,7 +116,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
         </Grid>
         <Grid item container xs={6} alignItems='center'>
           <Typography variant='body1' mr={1}>
-            To
+            {t('To')}
           </Typography>
           <AppSelect
             defaultValue={secondVersionId}

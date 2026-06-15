@@ -1,6 +1,7 @@
 import React, { cloneElement, type ReactElement } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useUpdateDatasetFieldInternalName } from 'lib/hooks';
 import { getDatasetFieldInternalName } from 'redux/selectors';
@@ -17,6 +18,7 @@ const DatasetFieldInternalNameForm = ({
   openBtnEl,
   datasetFieldId,
 }: DatasetFieldInternalNameFormProps) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const formId = 'datasetField-internal-name';
   const {
@@ -50,8 +52,7 @@ const DatasetFieldInternalNameForm = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {dataSetFieldInternalName ? 'Edit ' : 'Add '}
-      business name
+      {t(dataSetFieldInternalName ? 'Edit business name' : 'Add business name')}
     </Typography>
   );
 
@@ -75,7 +76,7 @@ const DatasetFieldInternalNameForm = ({
   );
 
   const formActionButtons = () => (
-    <Button text='Save' buttonType='main-lg' type='submit' form={formId} fullWidth />
+    <Button text={t('Save')} buttonType='main-lg' type='submit' form={formId} fullWidth />
   );
 
   return (

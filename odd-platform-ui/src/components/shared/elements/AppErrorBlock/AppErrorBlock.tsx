@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { AppError } from 'lib/errorHandling';
 import { getErrorResponse } from 'lib/errorHandling';
 import { AlertIcon } from 'components/shared/icons';
@@ -9,6 +10,7 @@ interface AppErrorBlockProps {
 }
 
 const AppErrorBlock: React.FC<AppErrorBlockProps> = ({ errResponse }) => {
+  const { t } = useTranslation();
   const [error, setError] = React.useState<AppError | undefined>(undefined);
 
   React.useEffect(() => {
@@ -22,7 +24,7 @@ const AppErrorBlock: React.FC<AppErrorBlockProps> = ({ errResponse }) => {
       <Grid display='flex' flexWrap='nowrap' alignItems='center' justifyContent='center'>
         <AlertIcon fill='#A8B0BD' width='8%' height='auto' />
         <Grid ml={1} display='flex' flexDirection='column'>
-          <Typography variant='subtitle1'>Error loading data block</Typography>
+          <Typography variant='subtitle1'>{t('Error loading data block')}</Typography>
           {error && (
             <Grid display='flex' flexWrap='nowrap'>
               <Typography variant='subtitle1' sx={{ mr: 0.5 }}>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { type DataEntityApiUpdateAlertConfigRequest } from 'generated-sources';
@@ -23,6 +24,7 @@ export type FormData = SerializeDateToNumber<
 >;
 
 const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityId } = useDataEntityRouteParams();
 
@@ -54,7 +56,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Notification settings
+      {t('Notification settings')}
     </Typography>
   );
 
@@ -74,8 +76,9 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
       >
         <Grid>
           <Typography variant='body2' color='texts.info'>
-            Select the type of notifications and the period for which you want to disable
-            notifications
+            {t(
+              'Select the type of notifications and the period for which you want to disable notifications'
+            )}
           </Typography>
         </Grid>
         <AlertTypeRange
@@ -100,7 +103,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
         />
         <Grid sx={{ mt: 1.5 }}>
           <Typography variant='caption' letterSpacing='0.01em'>
-            When the time is up, disabled alert types will turn on automatically.
+            {t('When the time is up, disabled alert types will turn on automatically.')}
           </Typography>
         </Grid>
       </form>
@@ -108,7 +111,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
 
   const formActionButtons = () => (
     <Button
-      text='Apply'
+      text={t('Apply')}
       buttonType='main-lg'
       type='submit'
       form='notification-settings-update-form'

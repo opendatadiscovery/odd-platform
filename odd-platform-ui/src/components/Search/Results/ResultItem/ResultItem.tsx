@@ -193,7 +193,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             {searchResult.dataSource.namespace?.name}
           </Typography>
         ) : (
-          <Typography variant='subtitle2'>not in any namespace</Typography>
+          <Typography variant='subtitle2'>{t('not in any namespace')}</Typography>
         )}
         {searchResult.dataSource?.name ? (
           <Grid container alignItems='center' flexWrap='nowrap'>

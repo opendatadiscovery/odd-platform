@@ -86,7 +86,7 @@ const LinkedEntitiesList: FC = () => {
         <Grid item xs={2}>
           <AppSelect defaultValue='All entities' onChange={handleOnClickSearch}>
             <AppMenuItem value='All entities' onClick={() => setEntityClassId(undefined)}>
-              All entities
+              {t('All entities')}
             </AppMenuItem>
             {entityClasses?.map(entityClass => (
               <AppMenuItem

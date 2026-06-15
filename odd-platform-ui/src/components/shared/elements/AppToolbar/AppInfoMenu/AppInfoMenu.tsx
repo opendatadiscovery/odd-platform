@@ -1,5 +1,6 @@
 import React, { type MouseEvent } from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
   FeedbackIcon,
@@ -14,6 +15,7 @@ import * as S from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMen
 import Button from 'components/shared/elements/Button/Button';
 
 const AppInfoMenu: React.FC = () => {
+  const { t } = useTranslation();
   const { data: appInfo } = useAppInfo();
   const { data: links } = useAppLinks();
 
@@ -45,12 +47,12 @@ const AppInfoMenu: React.FC = () => {
           </S.Icon>
           <Grid container flexDirection='column'>
             <Typography variant='h4'>{appInfo.projectVersion}</Typography>
-            <Typography variant='subtitle1'>ODD Platform version</Typography>
+            <Typography variant='subtitle1'>{t('ODD Platform version')}</Typography>
           </Grid>
         </S.MenuItem>
       </Link>
     );
-  }, [appInfo?.projectVersion]);
+  }, [appInfo?.projectVersion, t]);
 
   const projectLinks = React.useMemo(() => {
     if (!links || links.length === 0) return null;
@@ -97,7 +99,7 @@ const AppInfoMenu: React.FC = () => {
             <S.Icon>
               <GitBookIcon />
             </S.Icon>
-            <Typography variant='h4'>Documentation</Typography>
+            <Typography variant='h4'>{t('Documentation')}</Typography>
           </S.MenuItem>
         </Link>
         <Link to={slackLink} target='_blank'>
@@ -105,7 +107,7 @@ const AppInfoMenu: React.FC = () => {
             <S.Icon>
               <SlackIcon />
             </S.Icon>
-            <Typography variant='h4'>Slack</Typography>
+            <Typography variant='h4'>{t('Slack')}</Typography>
           </S.MenuItem>
         </Link>
         {projectVersion}
@@ -114,7 +116,7 @@ const AppInfoMenu: React.FC = () => {
             <S.Icon>
               <FeedbackIcon />
             </S.Icon>
-            <Typography variant='h4'>Leave a feedback</Typography>
+            <Typography variant='h4'>{t('Leave a feedback')}</Typography>
           </S.MenuItem>
         </Link>
         {projectLinks}

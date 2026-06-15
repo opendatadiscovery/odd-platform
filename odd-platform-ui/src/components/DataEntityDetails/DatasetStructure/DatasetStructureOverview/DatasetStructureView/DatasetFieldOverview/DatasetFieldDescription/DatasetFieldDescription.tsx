@@ -1,5 +1,6 @@
 import React, { type FC } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { WithPermissions } from 'components/shared/contexts';
 import type { TermRef } from 'generated-sources';
 import { Permission } from 'generated-sources';
@@ -24,6 +25,7 @@ const DatasetFieldDescription: FC<DatasetFieldDescriptionProps> = ({
   terms,
   isStatusDeleted,
 }) => {
+  const { t } = useTranslation();
   const {
     error,
     internalDescription,
@@ -42,11 +44,12 @@ const DatasetFieldDescription: FC<DatasetFieldDescriptionProps> = ({
 
   const tooltipInfoContent = (
     <S.Tooltip>
-      You can link an existing term by entering information about the term according to
-      the pattern [[NamespaceName:TermName]]
+      {t(
+        'You can link an existing term by entering information about the term according to the pattern [[NamespaceName:TermName]]'
+      )}
       <br />
       <br />
-      <b>Example: This entity describes [[Finance:User]]</b>
+      <b>{t('Example: This entity describes [[Finance:User]]')}</b>
     </S.Tooltip>
   );
 
@@ -55,7 +58,7 @@ const DatasetFieldDescription: FC<DatasetFieldDescriptionProps> = ({
       <Grid container justifyContent='space-between' mb={0.5}>
         <Box display='flex' flexWrap='nowrap'>
           <Typography variant='h5' color='texts.hint' mr={1}>
-            INTERNAL DESCRIPTION
+            {t('INTERNAL DESCRIPTION')}
           </Typography>
           <AppTooltip title={tooltipInfoContent} checkForOverflow={false}>
             <StrokedInfoIcon />

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { Alert } from 'redux/interfaces';
 import { AlertStatus, Permission, PermissionResourceType } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -30,6 +31,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { alertFormattedDateTime } = useAppDateTime();
+  const { t } = useTranslation();
 
   const [showHistory, setShowHistory] = React.useState(false);
   const [disableResolve, setDisableResolve] = React.useState(false);
@@ -100,7 +102,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
             <GearIcon stroke='black' />
           </Grid>
           <Typography variant='body1' color='texts.hint' sx={{ mx: 0.5 }}>
-            Automatically
+            {t('Automatically')}
           </Typography>
           {updatedAt}
         </S.Wrapper>
@@ -108,7 +110,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
     }
 
     return null;
-  }, [alertStatus, statusUpdatedAt, statusUpdatedBy]);
+  }, [alertStatus, statusUpdatedAt, statusUpdatedBy, t]);
 
   return (
     <S.Container container>
@@ -142,7 +144,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
               )}
               {alertChunkList && alertChunkList?.length > 0 && (
                 <Button
-                  text={`${showHistory ? 'Hide' : 'Show'} history`}
+                  text={showHistory ? t('Hide history') : t('Show history')}
                   sx={{ ml: 1 }}
                   buttonType='link-m'
                   onClick={() => setShowHistory(prev => !prev)}
@@ -156,14 +158,16 @@ const AlertItem: React.FC<AlertItemProps> = ({
           <AlertStatusItem status={alertStatus} />
           <Grid display='flex' flexDirection='column' alignItems='center' sx={{ ml: 2 }}>
             <Button
-              text={alertStatus === 'OPEN' ? 'Resolve' : 'Reopen'}
+              text={alertStatus === 'OPEN' ? t('Resolve') : t('Reopen')}
               sx={{ minWidth: '72px !important', minHeight: '24px' }}
               buttonType='secondary-m'
               onClick={handleResolve}
               disabled={disableResolve}
               isLoading={isUpdating}
             />
-            {disableResolve && <Typography variant='caption'>No access!</Typography>}
+            {disableResolve && (
+              <Typography variant='caption'>{t('No access!')}</Typography>
+            )}
           </Grid>
         </S.Wrapper>
       </Grid>

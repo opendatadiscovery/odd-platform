@@ -28,7 +28,7 @@ const QueryExamples: React.FC = () => {
         <Box display='flex' justifyContent='space-between' alignItems='center'>
           <SearchInput
             id='query-examples-search'
-            placeholder='Search query examples'
+            placeholder={t('Search query examples')}
             value={facets?.query}
             isLoading={isLoading}
             onSearch={handleSearch}

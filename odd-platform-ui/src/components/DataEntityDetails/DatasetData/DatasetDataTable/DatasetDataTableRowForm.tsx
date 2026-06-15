@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { LookupTable } from 'generated-sources';
 import { LookupTableFieldType } from 'generated-sources';
 import type { ControllerRenderProps } from 'react-hook-form';
@@ -17,6 +18,7 @@ const DatasetDataTableRowForm = ({
   lookupTable,
   onCancel,
 }: DatasetDataTableRowFormProps) => {
+  const { t } = useTranslation();
   const { control } = useFormContext();
 
   const inputFields = lookupTable.fields.filter(({ isPrimaryKey }) => !isPrimaryKey);
@@ -83,12 +85,12 @@ const DatasetDataTableRowForm = ({
       <S.Td>
         <Box display='flex' justifyContent='flex-end' gap={1}>
           <Button
-            text='Save'
+            text={t('Save')}
             buttonType='main-m'
             form='reference-data-row-form'
             type='submit'
           />
-          <Button text='Cancel' onClick={onCancel} buttonType='secondary-m' />
+          <Button text={t('Cancel')} onClick={onCancel} buttonType='secondary-m' />
         </Box>
       </S.Td>
     </S.Tr>

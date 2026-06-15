@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AppDatePicker } from 'components/shared/elements';
 import { format, isValid } from 'date-fns';
 import type { RowCellProps } from './interfaces';
@@ -15,6 +16,7 @@ const DatasetDataTableRowCellDate: React.FC<Props> = ({
   isEditing,
   onChange,
 }) => {
+  const { t } = useTranslation();
   const [date, setDate] = useState(initialValue);
   const handleChange = useCallback((v: typeof initialValue) => {
     setDate(v);
@@ -41,7 +43,7 @@ const DatasetDataTableRowCellDate: React.FC<Props> = ({
     />
   ) : (
     <Box>
-      <Typography variant='body1'>{defaultDate ?? 'N/A'}</Typography>
+      <Typography variant='body1'>{defaultDate ?? t('N/A')}</Typography>
     </Box>
   );
 };

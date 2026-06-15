@@ -1,5 +1,6 @@
 import React, { type ChangeEvent, type FC, useCallback, useMemo, useState } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import debounce from 'lodash/debounce';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
@@ -15,6 +16,7 @@ import EntityGroupItem from './EntityGroupItem/EntityGroupItem';
 import * as S from './OverviewEntityGroupItems.styles';
 
 const OverviewEntityGroupItems: FC = () => {
+  const { t } = useTranslation();
   const { dataEntityId } = useDataEntityRouteParams();
 
   const [inputValue, setInputValue] = useState('');
@@ -88,13 +90,13 @@ const OverviewEntityGroupItems: FC = () => {
               </Typography>
             </S.HeaderContent>
             <Table.HeaderContainer>
-              <Table.Cell $flex={flexMap.name}>{columnName('Name')}</Table.Cell>
-              <Table.Cell $flex={flexMap.owner}>{columnName('Owner')}</Table.Cell>
+              <Table.Cell $flex={flexMap.name}>{columnName(t('Name'))}</Table.Cell>
+              <Table.Cell $flex={flexMap.owner}>{columnName(t('Owner'))}</Table.Cell>
               <Table.Cell $flex={flexMap.createdAt}>
-                {columnName('Created at')}
+                {columnName(t('Created at'))}
               </Table.Cell>
               <Table.Cell $flex={flexMap.updatedAt}>
-                {columnName('Updated at')}
+                {columnName(t('Updated at'))}
               </Table.Cell>
             </Table.HeaderContainer>
           </S.Header>

@@ -1,6 +1,7 @@
 import React, { type FC, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useTranslation } from 'react-i18next';
 import { AppErrorPage, EmptyContentPlaceholder, Input } from 'components/shared/elements';
 import { useTermsRouteParams } from 'routes';
 import { useGetTermLinkedTerms } from 'lib/hooks';
@@ -13,6 +14,7 @@ import {
 import LinkedTermsListSkeleton from './LinkedTermsListSkeleton/LinkedTermsListSkeleton';
 
 const LinkedTermsList: FC = () => {
+  const { t } = useTranslation();
   const { termId } = useTermsRouteParams();
 
   const [query, setQuery] = useState('');
@@ -39,7 +41,7 @@ const LinkedTermsList: FC = () => {
         <Grid item xs={3} sx={{ mr: 1 }}>
           <Input
             variant='search-m'
-            placeholder='Search'
+            placeholder={t('Search')}
             maxWidth={640}
             onChange={e => {
               setQuery(e.target.value);
@@ -51,10 +53,10 @@ const LinkedTermsList: FC = () => {
       </Grid>
       <TermLinkedTermsResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
         <TermLinkedTermsColContainer item $colType='colmd'>
-          <Typography variant='caption'>Name</Typography>
+          <Typography variant='caption'>{t('Name')}</Typography>
         </TermLinkedTermsColContainer>
         <TermLinkedTermsColContainer item $colType='collg'>
-          <Typography variant='caption'>Namespace</Typography>
+          <Typography variant='caption'>{t('Namespace')}</Typography>
         </TermLinkedTermsColContainer>
       </TermLinkedTermsResultsTableHeader>
       {isLinkedListFetching && <LinkedTermsListSkeleton />}
@@ -78,7 +80,7 @@ const LinkedTermsList: FC = () => {
         )}
       </TermLinkedTermsListContainer>
       <EmptyContentPlaceholder
-        text='No linked entities'
+        text={t('No linked entities')}
         isContentLoaded={isLinkedListFetched}
         isContentEmpty={!total}
       />

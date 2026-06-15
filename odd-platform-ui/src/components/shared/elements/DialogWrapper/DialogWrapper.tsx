@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { type DialogProps, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import ClearIcon from 'components/shared/icons/ClearIcon';
 import * as S from 'components/shared/elements/DialogWrapper/DialogWrapperStyles';
 import Button from 'components/shared/elements/Button/Button';
@@ -44,6 +45,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
   formSubmitHandler,
   confirmOnClose,
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
@@ -132,19 +134,19 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
         <S.MainDialog open={showConfirmDialog} maxWidth='sm'>
           <S.Title>
             <Typography variant='h4' component='span'>
-              Are you sure you want to close this form?
+              {t('Are you sure you want to close this form?')}
             </Typography>
           </S.Title>
           <S.Actions disableSpacing>
             <Button
               buttonType='main-m'
-              text='Close form'
+              text={t('Close form')}
               onClick={handleConfirmationWindowClose}
             />
             <Button
               sx={{ ml: 1 }}
               buttonType='secondary-m'
-              text='Cancel'
+              text={t('Cancel')}
               onClick={() => setShowConfirmDialog(false)}
             />
           </S.Actions>

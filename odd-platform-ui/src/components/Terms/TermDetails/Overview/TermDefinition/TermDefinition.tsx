@@ -1,5 +1,6 @@
 import React, { type FC } from 'react';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { TermRef } from 'generated-sources';
 import { AppTooltip, Markdown } from 'components/shared/elements';
 import { useTermWiki } from 'lib/hooks';
@@ -14,6 +15,7 @@ interface TermDefinitionProps {
 }
 
 const TermDefinition: FC<TermDefinitionProps> = ({ definition, termId, terms }) => {
+  const { t } = useTranslation();
   const { transformDescriptionToMarkdown } = useTermWiki({
     terms,
     description: definition,
@@ -24,11 +26,12 @@ const TermDefinition: FC<TermDefinitionProps> = ({ definition, termId, terms }) 
 
   const tooltipInfoContent = (
     <S.Tooltip>
-      You can link an existing term by entering information about the term according to
-      the pattern [[NamespaceName:TermName]]
+      {t(
+        'You can link an existing term by entering information about the term according to the pattern [[NamespaceName:TermName]]'
+      )}
       <br />
       <br />
-      <b>Example: This entity describes [[Finance:User]]</b>
+      <b>{t('Example: This entity describes [[Finance:User]]')}</b>
     </S.Tooltip>
   );
 
@@ -36,7 +39,7 @@ const TermDefinition: FC<TermDefinitionProps> = ({ definition, termId, terms }) 
     <>
       <S.Definition>
         <Typography variant='h2' mr={1}>
-          Definition
+          {t('Definition')}
         </Typography>
         <AppTooltip title={tooltipInfoContent} checkForOverflow={false}>
           <InformationIcon width={14} height={14} />

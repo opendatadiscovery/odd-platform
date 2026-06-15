@@ -34,6 +34,12 @@ i18n.use(initReactI18next).init({
   // ("Buscar por nome") for every non-Brazilian user. Supported-locale validation is separate
   // (savedLanguage above); the CI key-parity guard keeps en.json complete. See #1751.
   fallbackLng: 'en',
+  // The keys ARE the English phrases ("natural keys"), and phrases contain `:` and `.` as
+  // literal text (e.g. `Source:`, `No result.`). i18next's defaults treat `:` as a namespace
+  // separator and `.` as a key separator, so `t('Source:')` would parse as ns `Source` + empty
+  // key and render nothing. Disable both so every key is looked up verbatim. See #1751 / PLT-205.
+  keySeparator: false,
+  nsSeparator: false,
 });
 
 export default i18n;

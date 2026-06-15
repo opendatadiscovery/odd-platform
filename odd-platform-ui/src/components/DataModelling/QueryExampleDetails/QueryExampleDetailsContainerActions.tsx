@@ -69,7 +69,8 @@ export const QueryExampleDetailsContainerActions: React.FC<
             actionName={t('Delete query example')}
             actionText={
               <>
-                Query Example #{queryExampleDetails.id} {t('will be deleted permanently')}
+                {t('Query Example #')}
+                {queryExampleDetails.id} {t('will be deleted permanently')}
               </>
             }
             onConfirm={() => handleDelete(queryExampleDetails.id)}

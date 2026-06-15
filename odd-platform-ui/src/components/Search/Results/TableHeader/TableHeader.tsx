@@ -69,7 +69,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ grid, isCurrentSearchClass })
         <Typography variant='caption'>{t('Groups')}</Typography>
       </S.SearchCol>
       <S.SearchCol item lg={grid.lg.st} md={grid.md.st}>
-        <Typography variant='caption'>Status</Typography>
+        <Typography variant='caption'>{t('Status')}</Typography>
       </S.SearchCol>
       <S.SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
         <Typography variant='caption'>{t('Created')}</Typography>

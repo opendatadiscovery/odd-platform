@@ -75,8 +75,8 @@ const ActiveAssociationRequest: React.FC<ActiveAssociationRequestProps> = ({
       </Grid>
       <S.AssociationsItemActionsContainer container item lg={1.5}>
         <ConfirmationDialog
-          actionTitle='Are you sure you want to remove the association?'
-          actionName='Remove'
+          actionTitle={t('Are you sure you want to remove the association?')}
+          actionName={t('Remove')}
           actionText={
             <>{`${t('User')} "${username}" ${t(
               'will stop being associated with owner'
@@ -85,7 +85,7 @@ const ActiveAssociationRequest: React.FC<ActiveAssociationRequestProps> = ({
           onConfirm={handleDelete}
           actionBtn={
             <Button
-              text='Remove'
+              text={t('Remove')}
               buttonType='secondaryWarning-m'
               startIcon={<RejectIcon />}
               disabled={!hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}

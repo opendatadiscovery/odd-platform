@@ -117,7 +117,7 @@ const OwnerIdAutocomplete: React.FC<OwnerIdAutocompleteProps> = ({ field }) => {
       clearIcon={<ClearIcon />}
       renderInput={renderInput}
       renderOption={renderOption}
-      noOptionsText='No results'
+      noOptionsText={t('No results')}
     />
   );
 };

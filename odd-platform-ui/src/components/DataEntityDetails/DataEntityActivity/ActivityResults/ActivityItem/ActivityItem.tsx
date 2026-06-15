@@ -182,7 +182,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             <ActivityActorLabel createdBy={activity.createdBy} />
           )}
           <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
-            at {activityFormattedDateTime(activity.createdAt)}
+            {t('at')} {activityFormattedDateTime(activity.createdAt)}
           </Typography>
         </S.InfoContainer>
       </S.ContentContainer>

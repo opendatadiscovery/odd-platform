@@ -2,6 +2,7 @@ import type { DataEntityRelationship, DataSourceSafe } from 'generated-sources';
 import * as Table from 'components/shared/elements/StyledComponents/Table';
 import { Typography } from '@mui/material';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'routes/dataEntitiesRoutes';
 import { DatasourceLogo, EntityTypeItem } from 'components/shared/elements';
@@ -17,6 +18,7 @@ interface DataSourceInfoProps {
 }
 
 const DataSourceInfo = ({ dataSource }: DataSourceInfoProps) => {
+  const { t } = useTranslation();
   const { namespace, oddrn, name } = dataSource;
   return (
     <S.Section $flexDirection='column' $gap={0}>
@@ -25,7 +27,7 @@ const DataSourceInfo = ({ dataSource }: DataSourceInfoProps) => {
           {namespace.name}
         </Typography>
       ) : (
-        <Typography variant='subtitle2'>not in any namespace</Typography>
+        <Typography variant='subtitle2'>{t('not in any namespace')}</Typography>
       )}
       {name ? (
         <S.Section>
@@ -40,7 +42,7 @@ const DataSourceInfo = ({ dataSource }: DataSourceInfoProps) => {
           </Typography>
         </S.Section>
       ) : (
-        <Typography variant='subtitle2'>manually created</Typography>
+        <Typography variant='subtitle2'>{t('manually created')}</Typography>
       )}
     </S.Section>
   );

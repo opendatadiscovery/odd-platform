@@ -50,8 +50,8 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {dataEntityInternalName ? 'Edit ' : 'Add '}
-      business name
+      {dataEntityInternalName ? t('Edit ') : t('Add ')}
+      {t('business name')}
     </Typography>
   );
 
@@ -76,7 +76,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
 
   const formActionButtons = () => (
     <Button
-      text='Save'
+      text={t('Save')}
       buttonType='main-lg'
       type='submit'
       form='dataentity-internal-name'

@@ -40,7 +40,7 @@ const LookupTablesListItem = ({ item }: LookupTablesListItemProps) => {
             {item.namespace.name}
           </Typography>
         ) : (
-          <Typography variant='subtitle2'>not in any namespace</Typography>
+          <Typography variant='subtitle2'>{t('not in any namespace')}</Typography>
         )}
       </Table.Cell>
       <Table.HiddenCell $flex='0 0 15%' $justifyContent='right'>

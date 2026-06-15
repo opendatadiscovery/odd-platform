@@ -1,5 +1,6 @@
 import React, { type FC, useMemo } from 'react';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import startCase from 'lodash/startCase';
 import uniq from 'lodash/uniq';
 import keys from 'lodash/keys';
@@ -24,6 +25,7 @@ import type { Cell, FlexCell, Row } from './DataSourceTable/interfaces';
 import * as Table from './DataSourceTable/Table';
 
 const DataSourceList: FC = () => {
+  const { t } = useTranslation();
   const { dataSourceTypePrefix: prefix } = useDirectoryRouteParams();
   const {
     data: dataSourceList,
@@ -123,7 +125,7 @@ const DataSourceList: FC = () => {
               </Typography>
             </S.LogoContainer>
             <Typography variant='body1' color='texts.hint'>
-              {pluralize(dataSourceList.entitiesCount, 'entity', 'entities')}
+              {pluralize(dataSourceList.entitiesCount, t('entity'), t('entities'))}
             </Typography>
           </S.Header>
           <Table.Header cells={flexedHeaderCells} sx={{ mt: 1 }} />

@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronIcon } from 'components/shared/icons';
 import { Button } from 'components/shared/elements';
 import { useCollapse } from 'lib/hooks';
@@ -13,6 +14,7 @@ interface InternalDescriptionProps {
 }
 
 const OverviewDescription: FC<InternalDescriptionProps> = ({ termRefs }) => {
+  const { t } = useTranslation();
   const { contentRef, containerStyle, controlsStyle, toggleCollapse, isCollapsed } =
     useCollapse({ initialMaxHeight: 304 });
 
@@ -24,7 +26,7 @@ const OverviewDescription: FC<InternalDescriptionProps> = ({ termRefs }) => {
       </div>
       <S.CollapseControls style={controlsStyle}>
         <Button
-          text={isCollapsed ? 'Show hidden' : 'Hide'}
+          text={isCollapsed ? t('Show hidden') : t('Hide')}
           endIcon={
             <ChevronIcon
               width={10}

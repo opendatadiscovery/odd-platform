@@ -1,5 +1,6 @@
 import React, { type PropsWithChildren } from 'react';
 import { Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { ActivityEventType, DataSource, Namespace } from 'generated-sources';
 import { stringFormatted } from 'lib/helpers';
 import { useQueryParams } from 'lib/hooks';
@@ -25,6 +26,7 @@ const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventT
   filterName,
   dataQA,
 }: PropsWithChildren<SingleFilterProps<OptionType>>) => {
+  const { t } = useTranslation();
   const defaultOption = 'All';
   const { setQueryParams, queryParams } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
@@ -57,7 +59,7 @@ const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventT
           dataQAId={dataQA}
         >
           <AppMenuItem value='All' onClick={handleFilterSelect(defaultOption)}>
-            All
+            {t('All')}
           </AppMenuItem>
           {filterOptions.map(option =>
             typeof option === 'object' ? (

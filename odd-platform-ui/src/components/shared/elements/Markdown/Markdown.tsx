@@ -5,6 +5,7 @@ import type { Position } from 'unist';
 import type { Element } from 'hast';
 import type { TypographyVariant } from '@mui/material/styles';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import AppTooltip from 'components/shared/elements/AppTooltip/AppTooltip';
 import CopyButton from 'components/shared/elements/CopyButton/CopyButton';
 import * as S from './Markdown.styles';
@@ -38,11 +39,15 @@ type MarkdownElementProps<HTMLElement> = Omit<
 
 type MarkdownCopyButtonProps = MarkdownElementProps<HTMLDivElement>;
 
-const MarkdownCopyButton = ({ node, ...props }: MarkdownCopyButtonProps) => (
-  <div {...props} style={{ backgroundColor: 'transparent' }}>
-    <CopyButton stringToCopy={node.properties?.dataCode as string} text='Copy' />
-  </div>
-);
+const MarkdownCopyButton = ({ node, ...props }: MarkdownCopyButtonProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <div {...props} style={{ backgroundColor: 'transparent' }}>
+      <CopyButton stringToCopy={node.properties?.dataCode as string} text={t('Copy')} />
+    </div>
+  );
+};
 
 type MarkdownTermLinkProps = MarkdownElementProps<HTMLAnchorElement>;
 

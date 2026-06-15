@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import * as S from 'components/shared/styled-components';
 import { Typography } from '@mui/material';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as Table from 'components/shared/elements/StyledComponents/Table';
@@ -14,6 +15,7 @@ import RelationshipsListItem from './Relationships/RelationshipsListItem';
 import { parseRelationshipsType } from './Relationships/parseRelationshipsType';
 
 const Relationships = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') ?? '';
   const type = parseRelationshipsType(searchParams.get('type'));
@@ -45,19 +47,19 @@ const Relationships = () => {
       <S.Section $flexDirection='column' $gap={0}>
         <Table.HeaderContainer>
           <Table.Cell $flex='1 0 33%'>
-            <Typography variant='caption'>Name</Typography>
+            <Typography variant='caption'>{t('Name')}</Typography>
           </Table.Cell>
           <Table.Cell $flex='1 0 16%'>
-            <Typography variant='caption'>Type</Typography>
+            <Typography variant='caption'>{t('Type')}</Typography>
           </Table.Cell>
           <Table.Cell $flex='1 0 19%'>
-            <Typography variant='caption'>Namespace, Datasource</Typography>
+            <Typography variant='caption'>{t('Namespace, Datasource')}</Typography>
           </Table.Cell>
           <Table.Cell $flex='1 0 16%'>
-            <Typography variant='caption'>Source</Typography>
+            <Typography variant='caption'>{t('Source')}</Typography>
           </Table.Cell>
           <Table.Cell $flex='1 0 16%'>
-            <Typography variant='caption'>Target</Typography>
+            <Typography variant='caption'>{t('Target')}</Typography>
           </Table.Cell>
         </Table.HeaderContainer>
         <S.ScrollableContainer id='relationships-list' $offsetY={215}>

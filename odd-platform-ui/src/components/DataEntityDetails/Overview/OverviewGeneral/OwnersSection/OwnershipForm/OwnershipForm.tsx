@@ -129,7 +129,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const ownerEditDialogActions = () => (
     <Button
-      text={`${dataEntityOwnership?.id ? 'Edit' : 'Add'} owner`}
+      text={dataEntityOwnership?.id ? t('Edit owner') : t('Add owner')}
       buttonType='main-lg'
       type='submit'
       form='owner-add-form'

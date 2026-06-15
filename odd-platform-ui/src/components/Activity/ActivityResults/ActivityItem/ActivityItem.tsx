@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { EntityClassItem, TagItem } from 'components/shared/elements';
 import { GearIcon } from 'components/shared/icons';
 import { ActivityEventType } from 'generated-sources';
@@ -34,6 +35,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
   dataQA,
 }) => {
   const { activityFormattedDateTime } = useAppDateTime();
+  const { t } = useTranslation();
 
   const tagStateItem = React.useCallback(
     (name: string, important: boolean | undefined) => (
@@ -75,7 +77,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
             <ActivityActorLabel createdBy={activity.createdBy} />
           )}
           <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
-            at {activityFormattedDateTime(activity.createdAt)}
+            {t('at')} {activityFormattedDateTime(activity.createdAt)}
           </Typography>
         </Grid>
       </Grid>

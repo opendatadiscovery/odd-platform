@@ -1,4 +1,5 @@
 import React, { type HTMLAttributes } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   Autocomplete,
@@ -25,6 +26,7 @@ interface PolicyAutocompleteProps {
 }
 
 const PolicyAutocomplete: React.FC<PolicyAutocompleteProps> = ({ append, sx }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const searchPolicies = fetchPolicyList;
 
@@ -103,8 +105,8 @@ const PolicyAutocomplete: React.FC<PolicyAutocompleteProps> = ({ append, sx }) =
       variant='main-m'
       inputContainerRef={params.InputProps.ref}
       inputProps={params.inputProps}
-      label='Policy'
-      placeholder='Search by name…'
+      label={t('Policy')}
+      placeholder={t('Search by name…')}
       isLoading={policiesLoading}
     />
   );

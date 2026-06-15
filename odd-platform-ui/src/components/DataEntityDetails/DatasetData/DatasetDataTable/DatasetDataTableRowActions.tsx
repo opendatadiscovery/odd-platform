@@ -75,9 +75,9 @@ const DatasetDataTableRowActions = ({
     <HiddenBox>
       {row.getIsSelected() ? (
         <Box display='flex' justifyContent='flex-end' gap={1}>
-          <Button text='Save' buttonType='main-m' type='button' onClick={onSave} />
+          <Button text={t('Save')} buttonType='main-m' type='button' onClick={onSave} />
           <Button
-            text='Cancel'
+            text={t('Cancel')}
             buttonType='secondary-m'
             type='button'
             onClick={onCancel}
@@ -98,7 +98,7 @@ const DatasetDataTableRowActions = ({
           </WithPermissions>
           <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DATA_UPDATE}>
             <Button
-              text='Edit'
+              text={t('Edit')}
               onClick={onEdit}
               buttonType='tertiary-m'
               icon={<EditIcon />}

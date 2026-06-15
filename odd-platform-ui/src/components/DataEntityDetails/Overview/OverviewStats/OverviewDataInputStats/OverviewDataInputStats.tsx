@@ -43,8 +43,9 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
           ))}
           {unknownOutputsCount ? (
             <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
-              {unknownOutputsCount} {t('more output')}
-              {unknownOutputsCount === 1 ? '' : 's'} {t('unknown')}
+              {unknownOutputsCount}{' '}
+              {unknownOutputsCount === 1 ? t('more output') : t('more outputs')}{' '}
+              {t('unknown')}
             </Typography>
           ) : null}
           {outputs && outputs?.length > displayedEntitiesNumber ? (

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import compact from 'lodash/compact';
+import { useTranslation } from 'react-i18next';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { Button, DialogWrapper, TagItem } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -20,6 +21,7 @@ interface DatasetFieldTagsFormType {
 }
 
 const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl, datasetFieldId }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const datasetFieldTags = useAppSelector(getDatasetFieldTags(datasetFieldId));
   const { isLoading: isTagsUpdating, isLoaded: isTagsUpdated } = useAppSelector(
@@ -71,7 +73,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl, datasetFieldId }) =>
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Edit Tags
+      {t('Edit Tags')}
     </Typography>
   );
 
@@ -100,7 +102,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl, datasetFieldId }) =>
 
   const formActionButtons = () => (
     <Button
-      text='Save'
+      text={t('Save')}
       buttonType='main-lg'
       type='submit'
       form='tags-create-form'

@@ -12,6 +12,7 @@ import {
 } from '@mui/material/useAutocomplete';
 import { type SxProps } from '@mui/system';
 import { type ControllerRenderProps } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import type { MessageChannel, MessageRequest } from 'generated-sources';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -29,6 +30,7 @@ const SlackChannelsAutocomplete: React.FC<SlackChannelsAutocompleteProps> = ({
   sx,
   field,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const searchSlackChannels = fetchSlackChannels;
 
@@ -107,8 +109,8 @@ const SlackChannelsAutocomplete: React.FC<SlackChannelsAutocompleteProps> = ({
       variant='main-m'
       inputContainerRef={params.InputProps.ref}
       inputProps={params.inputProps}
-      label='Channel'
-      placeholder='Search by name…'
+      label={t('Channel')}
+      placeholder={t('Search by name…')}
       isLoading={channelsLoading}
     />
   );

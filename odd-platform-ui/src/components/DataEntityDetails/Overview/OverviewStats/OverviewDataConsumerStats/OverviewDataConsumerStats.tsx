@@ -46,8 +46,9 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
           ))}
           {unknownInputsCount ? (
             <Typography sx={{ ml: 0.5 }} variant='subtitle1'>
-              {unknownInputsCount} {t('more source')}
-              {unknownInputsCount === 1 ? '' : 's'} {t('unknown')}
+              {unknownInputsCount}{' '}
+              {t(unknownInputsCount === 1 ? 'more source' : 'more sources')}{' '}
+              {t('unknown')}
             </Typography>
           ) : null}
           {inputs && inputs?.length > displayedEntitiesNumber ? (

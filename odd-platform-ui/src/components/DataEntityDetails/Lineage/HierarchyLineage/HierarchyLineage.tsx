@@ -1,6 +1,7 @@
 import React from 'react';
 import { Zoom } from '@visx/zoom';
 import type { TransformMatrix } from '@visx/zoom/lib/types';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityLineage,
@@ -32,11 +33,12 @@ import LineageProvider from './lineageLib/LineageContext/LineageProvider';
 import * as S from './HierarchyLineage.styles';
 
 const HierarchyLineage: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityId } = useDataEntityRouteParams();
 
   const {
-    queryParams: { d, t, eag, exdg, exug, exd, exu },
+    queryParams: { d, t: transformParam, eag, exdg, exug, exd, exu },
   } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const [isLineageFetching, setIsLineageFetching] = React.useState(true);
@@ -82,10 +84,10 @@ const HierarchyLineage: React.FC = () => {
   );
 
   const setInitialTransform = React.useMemo<TransformMatrix>(() => {
-    if (t) return JSON.parse(t) as TransformMatrix;
+    if (transformParam) return JSON.parse(transformParam) as TransformMatrix;
 
     return initialTransformMatrix;
-  }, [t, initialTransformMatrix]);
+  }, [transformParam, initialTransformMatrix]);
 
   const handleWheelDelta = React.useCallback(
     (e: React.WheelEvent | WheelEvent) =>
@@ -97,7 +99,7 @@ const HierarchyLineage: React.FC = () => {
     <S.Container>
       {isLineageFetching ? (
         <S.LoaderContainer>
-          <AppCircularProgress size={16} text='Loading lineage' />
+          <AppCircularProgress size={16} text={t('Loading lineage')} />
         </S.LoaderContainer>
       ) : null}
 

@@ -34,7 +34,7 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ openBtn, linkId, name, url }) => 
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Edit link
+      {t('Edit link')}
     </Typography>
   );
 
@@ -72,7 +72,7 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ openBtn, linkId, name, url }) => 
 
   const formActionButtons = () => (
     <Button
-      text='Save changes'
+      text={t('Save changes')}
       buttonType='main-lg'
       type='submit'
       form={formId}

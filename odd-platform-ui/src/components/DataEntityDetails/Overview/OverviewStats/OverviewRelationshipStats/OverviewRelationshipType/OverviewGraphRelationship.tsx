@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import { EntityClassItem, GraphRelationship } from 'components/shared/elements';
 import { useGetGraphRelationshipById } from 'lib/hooks/api/dataModelling/relatioships';
@@ -11,6 +12,7 @@ interface OverviewGraphRelationshipProps {
 const OverviewGraphRelationship: React.FC<OverviewGraphRelationshipProps> = ({
   dataEntityDetails,
 }) => {
+  const { t } = useTranslation();
   const { data: relationshipDetails } = useGetGraphRelationshipById(dataEntityDetails.id);
 
   return (
@@ -38,7 +40,7 @@ const OverviewGraphRelationship: React.FC<OverviewGraphRelationshipProps> = ({
           alignContent='flex-start'
         >
           <Typography variant='h4' sx={{ mb: 1.25 }}>
-            Attributes:
+            {t('Attributes:')}
           </Typography>
           {relationshipDetails?.graphRelationship?.attributes?.map(attribute => (
             <Grid container key={attribute.name} alignItems='center'>

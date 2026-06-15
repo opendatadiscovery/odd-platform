@@ -71,7 +71,7 @@ const ProviderAutocomplete: React.FC<ProviderAutocompleteProps> = ({ field }) =>
       variant='main-m'
       inputContainerRef={params.InputProps.ref}
       inputProps={params.inputProps}
-      label='Provider name'
+      label={t('Provider name')}
       placeholder={t('Search name')}
       isLoading={providersLoading}
     />
@@ -103,7 +103,7 @@ const ProviderAutocomplete: React.FC<ProviderAutocompleteProps> = ({ field }) =>
       clearIcon={<ClearIcon />}
       renderInput={renderInput}
       renderOption={renderOption}
-      noOptionsText='No active providers'
+      noOptionsText={t('No active providers')}
     />
   );
 };

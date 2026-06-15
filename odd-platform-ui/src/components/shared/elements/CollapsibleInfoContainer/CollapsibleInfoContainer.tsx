@@ -1,5 +1,6 @@
 import type { FC, ReactElement, CSSProperties } from 'react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCollapse } from 'lib/hooks';
 import { ChevronIcon } from 'components/shared/icons';
 import Button from 'components/shared/elements/Button/Button';
@@ -18,6 +19,7 @@ const CollapsibleInfoContainer: FC<CollapsibleInfoContainerProps> = ({
   content,
   style,
 }) => {
+  const { t } = useTranslation();
   const { contentRef, containerStyle, toggleCollapse, isCollapsed, controlsStyle } =
     useCollapse({ initialMaxHeight });
 
@@ -30,7 +32,7 @@ const CollapsibleInfoContainer: FC<CollapsibleInfoContainerProps> = ({
       <div style={controlsStyle}>
         <Button
           sx={{ mt: 0.75 }}
-          text={isCollapsed ? 'See all' : `Hide`}
+          text={isCollapsed ? t('See all') : t('Hide')}
           endIcon={
             <ChevronIcon
               width={10}

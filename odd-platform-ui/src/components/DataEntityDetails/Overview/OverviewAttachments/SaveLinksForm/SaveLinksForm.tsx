@@ -1,5 +1,6 @@
 import React, { type FC } from 'react';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { Typography } from '@mui/material';
 import { Button, DialogWrapper } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
@@ -13,6 +14,7 @@ interface SaveLinksFormProps {
 }
 
 const SaveLinksForm: FC<SaveLinksFormProps> = ({ openBtn }) => {
+  const { t } = useTranslation();
   const formId = 'save-links-form';
   const { dataEntityId } = useDataEntityRouteParams();
 
@@ -42,7 +44,7 @@ const SaveLinksForm: FC<SaveLinksFormProps> = ({ openBtn }) => {
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Add links
+      {t('Add links')}
     </Typography>
   );
 
@@ -58,7 +60,7 @@ const SaveLinksForm: FC<SaveLinksFormProps> = ({ openBtn }) => {
           />
         ))}
         <Button
-          text='Add link'
+          text={t('Add link')}
           buttonType='secondary-m'
           startIcon={<AddIcon />}
           onClick={handleAppend}
@@ -69,7 +71,7 @@ const SaveLinksForm: FC<SaveLinksFormProps> = ({ openBtn }) => {
 
   const formActionButtons = () => (
     <Button
-      text='Save links'
+      text={t('Save links')}
       buttonType='main-lg'
       type='submit'
       form={formId}

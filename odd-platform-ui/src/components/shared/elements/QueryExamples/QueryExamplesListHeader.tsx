@@ -21,7 +21,7 @@ const QueryExamplesListHeader = () => {
         <Typography variant='caption'>{t('Linked entities')}</Typography>
       </Table.Cell>
       <Table.Cell $flex='1 0 5%'>
-        <Typography variant='caption'>Linked terms</Typography>
+        <Typography variant='caption'>{t('Linked terms')}</Typography>
       </Table.Cell>
       <Table.Cell $flex='0 0 15%' />
     </Table.HeaderContainer>

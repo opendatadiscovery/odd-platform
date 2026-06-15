@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormControlLabel, Grid, RadioGroup, Typography } from '@mui/material';
 import { useController, type UseControllerProps } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { Button, AppRadio, AppSwitch } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityAlertConfig } from 'redux/selectors';
@@ -17,6 +18,7 @@ interface AlertTypeRangeProps {
 }
 
 const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
+  const { t } = useTranslation();
   const { dataEntityId } = useDataEntityRouteParams();
   const { formatDuration, intervalToDuration, minutesToMilliseconds } = useAppDateTime();
   const config = useAppSelector(state => getDataEntityAlertConfig(state, dataEntityId));
@@ -119,7 +121,7 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
             <Grid container flexWrap='nowrap' alignItems='center'>
               <Typography variant='caption'>{`${rangeToEnableNotification} to turn on`}</Typography>
               <Button
-                text='Edit'
+                text={t('Edit')}
                 sx={{ ml: 0.5 }}
                 buttonType='tertiary-m'
                 onClick={() => setIsValueUpdated(prev => !prev)}
@@ -139,27 +141,27 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
           <FormControlLabel
             value={defaultRangesMap.get('Half an hour')}
             control={<AppRadio />}
-            label='Half an hour'
+            label={t('Half an hour')}
           />
           <FormControlLabel
             value={defaultRangesMap.get('Hour')}
             control={<AppRadio />}
-            label='Hour'
+            label={t('Hour')}
           />
           <FormControlLabel
             value={defaultRangesMap.get('3 hours')}
             control={<AppRadio />}
-            label='3 hours'
+            label={t('3 hours')}
           />
           <FormControlLabel
             value={defaultRangesMap.get('1 day')}
             control={<AppRadio />}
-            label='1 day'
+            label={t('1 day')}
           />
           <FormControlLabel
             value={defaultRangesMap.get('Week')}
             control={<AppRadio />}
-            label='Week'
+            label={t('Week')}
           />
         </RadioGroup>
       )}

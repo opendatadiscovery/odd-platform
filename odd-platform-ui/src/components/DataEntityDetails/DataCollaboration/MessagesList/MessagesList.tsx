@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { type MessagesByDate } from 'redux/interfaces';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
@@ -29,6 +30,7 @@ const MessagesList: React.FC<MessagesListProps> = ({
   handleSetMessageDate,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { dataEntityId, messageId: routerMessageId } = useDataEntityRouteParams();
   const handleMessageOnClick = React.useCallback(
     (messageId: string) => () => {
@@ -67,7 +69,7 @@ const MessagesList: React.FC<MessagesListProps> = ({
         </InfiniteScroll>
       </S.MessagesContainer>
       {isMessagesLoaded && !messagesLength && (
-        <EmptyContentPlaceholder text='No messages' />
+        <EmptyContentPlaceholder text={t('No messages')} />
       )}
     </S.Container>
   );

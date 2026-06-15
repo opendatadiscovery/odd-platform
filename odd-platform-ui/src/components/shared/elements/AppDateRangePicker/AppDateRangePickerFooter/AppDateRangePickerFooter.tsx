@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import Button from 'components/shared/elements/Button/Button';
 
 interface AppDateRangePickerFooterProps {
@@ -15,33 +16,37 @@ const AppDateRangePickerFooter: React.FC<AppDateRangePickerFooterProps> = ({
   ranges,
   setRange,
   isRangeCorrect,
-}) => (
-  <Grid
-    sx={{ p: 2, pt: 1 }}
-    container
-    justifyContent='space-between'
-    alignItems='center'
-    flexWrap='nowrap'
-  >
-    <Box display='flex' flexWrap='nowrap'>
-      {ranges.map(range => (
-        <Box key={range.label} sx={{ mr: 0.5, px: 1.5, py: 0.25 }}>
-          <Button
-            text={range.label}
-            key={range.label}
-            buttonType='link-m'
-            onClick={() => setRange(range.value)}
-          />
-        </Box>
-      ))}
-    </Box>
-    <Button
-      text='Done'
-      buttonType='main-lg'
-      onClick={onClickDoneBtn}
-      disabled={!isRangeCorrect}
-    />
-  </Grid>
-);
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Grid
+      sx={{ p: 2, pt: 1 }}
+      container
+      justifyContent='space-between'
+      alignItems='center'
+      flexWrap='nowrap'
+    >
+      <Box display='flex' flexWrap='nowrap'>
+        {ranges.map(range => (
+          <Box key={range.label} sx={{ mr: 0.5, px: 1.5, py: 0.25 }}>
+            <Button
+              text={range.label}
+              key={range.label}
+              buttonType='link-m'
+              onClick={() => setRange(range.value)}
+            />
+          </Box>
+        ))}
+      </Box>
+      <Button
+        text={t('Done')}
+        buttonType='main-lg'
+        onClick={onClickDoneBtn}
+        disabled={!isRangeCorrect}
+      />
+    </Grid>
+  );
+};
 
 export default AppDateRangePickerFooter;

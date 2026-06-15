@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { SearchFilter } from 'generated-sources';
 import type { OptionalFacetNames } from 'redux/interfaces';
 import { AppMenuItem, AppSelect } from 'components/shared/elements';
@@ -18,6 +19,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
   facetName,
   facetOptions,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const selectedOptions = useAppSelector(getSelectedSearchFacetOptions(facetName));
 
@@ -50,7 +52,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
             value='All'
             onClick={() => handleFilterSelect({ id: 'All', name: 'All' })}
           >
-            All
+            {t('All')}
           </AppMenuItem>
           {facetOptions?.map(option => (
             <AppMenuItem

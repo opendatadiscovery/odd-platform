@@ -1,5 +1,6 @@
 import React, { type FC, useState } from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useQueryParams } from 'lib/hooks';
 import { Button, LabelItem } from 'components/shared/elements';
 import { ChevronIcon } from 'components/shared/icons';
@@ -24,6 +25,7 @@ const DatasetStructureCompareListItem: FC<DatasetStructureCompareListItemProps> 
   nesting,
   renderCompareItem,
 }) => {
+  const { t } = useTranslation();
   const {
     queryParams: { firstVersionId, secondVersionId },
   } = useQueryParams<StructureCompareQueryParams>(defaultStructureCompareQuery);
@@ -62,8 +64,8 @@ const DatasetStructureCompareListItem: FC<DatasetStructureCompareListItemProps> 
           <S.FieldNameWrapper>
             {collapseBlock}
             <Typography variant='h4' title={state.name} noWrap>
-              {(state.isKey && 'Key') ||
-                (state.isValue && 'Value') ||
+              {(state.isKey && t('Key')) ||
+                (state.isValue && t('Value')) ||
                 state.internalName ||
                 state.name}
             </Typography>

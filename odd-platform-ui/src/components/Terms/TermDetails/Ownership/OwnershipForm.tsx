@@ -72,7 +72,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   const formContent = () => (
     <form id='term-owner-add-form' onSubmit={methods.handleSubmit(ownershipUpdate)}>
       {termDetailsOwnership ? (
-        <LabeledInfoItem inline label='Owner:' labelWidth={1.7}>
+        <LabeledInfoItem inline label={t('Owner:')} labelWidth={1.7}>
           {termDetailsOwnership.owner.name}
         </LabeledInfoItem>
       ) : (

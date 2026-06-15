@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useAtom } from 'jotai';
+import { useTranslation } from 'react-i18next';
 import { useDataEntityGroupLineage } from 'lib/hooks/api';
 import { AppCircularProgress, EmptyContentPlaceholder } from 'components/shared/elements';
 import { useDataEntityRouteParams } from 'routes';
@@ -10,6 +11,7 @@ import ZoomableDEGLineage from './ZoomableDEGLineage/ZoomableDEGLineage';
 import * as S from './DEGLineage.styles';
 
 const DEGLineage: React.FC = () => {
+  const { t } = useTranslation();
   const { dataEntityId } = useDataEntityRouteParams();
 
   const { data, isLoading, isSuccess, isFetching } = useDataEntityGroupLineage({
@@ -29,7 +31,7 @@ const DEGLineage: React.FC = () => {
       {(!isLayouted || isFetching || isLoading) && rawNodes.length !== 0 && (
         <>
           <S.LoaderContainer>
-            <AppCircularProgress size={16} text='Loading lineage' />
+            <AppCircularProgress size={16} text={t('Loading lineage')} />
           </S.LoaderContainer>
           <DEGLineageLayouter nodes={rawNodes} edges={rawEdges} />
         </>

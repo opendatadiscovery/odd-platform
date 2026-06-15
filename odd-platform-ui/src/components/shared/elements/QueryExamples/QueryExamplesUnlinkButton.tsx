@@ -20,7 +20,8 @@ const QueryExamplesUnlinkButton = ({ dataEntityId, queryExampleId }: Props) => {
       actionName={t('Unlink')}
       actionText={
         <>
-          Query example #{queryExampleId} {t('will be unlinked')}.
+          {t('Query example #')}
+          {queryExampleId} {t('will be unlinked')}.
         </>
       }
       onConfirm={() =>

@@ -18,11 +18,7 @@ const QueryExamplesTermUnlinkButton = ({ termId, queryExampleId }: Props) => {
     <ConfirmationDialog
       actionTitle={t('Are you sure you want to unlink this query example?')}
       actionName={t('Unlink')}
-      actionText={
-        <>
-          Query example #{queryExampleId} {t('will be unlinked')}.
-        </>
-      }
+      actionText={t('Query example #{{id}} will be unlinked.', { id: queryExampleId })}
       onConfirm={() =>
         unlink({
           exampleId: queryExampleId,

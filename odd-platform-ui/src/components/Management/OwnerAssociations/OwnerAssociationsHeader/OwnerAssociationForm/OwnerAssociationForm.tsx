@@ -47,7 +47,7 @@ const OwnerAssociationForm: React.FC<OwnerAssociationFormProps> = ({ btnCreateEl
 
   const ownerAssociationFormTitle = (
     <Typography variant='h4' component='span'>
-      Create association
+      {t('Create association')}
     </Typography>
   );
 

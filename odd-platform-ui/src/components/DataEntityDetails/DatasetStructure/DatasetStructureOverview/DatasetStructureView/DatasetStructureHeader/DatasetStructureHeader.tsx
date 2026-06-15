@@ -90,7 +90,7 @@ const DatasetStructureHeader: FC = () => {
           <ColumnsIcon />
           <NumberFormatted sx={{ mx: 0.5 }} value={datasetFieldFieldsCount} />
           <Typography variant='body2' color='texts.hint'>
-            columns
+            {t('columns')}
           </Typography>
         </Typography>
       </Grid>
@@ -142,7 +142,7 @@ const DatasetStructureHeader: FC = () => {
           ))}
         </AppSelect>
         <Button
-          text='Revision compare'
+          text={t('Revision compare')}
           buttonType='secondary-m'
           sx={{ ml: 1 }}
           onClick={handleCompareClick}

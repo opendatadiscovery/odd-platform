@@ -1,5 +1,6 @@
 import React, { type FC, useCallback, useRef } from 'react';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import Button from 'components/shared/elements/Button/Button';
 import { bytesToMb } from 'lib/helpers';
 import * as S from './FileInput.styles';
@@ -19,6 +20,7 @@ const FileInput: FC<FileInputProps> = ({
   hint = `The maximum file size should not exceed ${bytesToMb(maxFileSizeInBytes)} Mb`,
   multiple = false,
 }) => {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDragEnter = useCallback((event: React.DragEvent<HTMLDivElement>) => {
@@ -70,9 +72,9 @@ const FileInput: FC<FileInputProps> = ({
       >
         <S.InputContent>
           <Typography variant='subtitle1' mr={0.5}>
-            Drag & drop or
+            {t('Drag & drop or')}
           </Typography>
-          <Button text='browse' buttonType='link-m' onClick={handleClick} />
+          <Button text={t('browse')} buttonType='link-m' onClick={handleClick} />
         </S.InputContent>
         <input
           ref={inputRef}

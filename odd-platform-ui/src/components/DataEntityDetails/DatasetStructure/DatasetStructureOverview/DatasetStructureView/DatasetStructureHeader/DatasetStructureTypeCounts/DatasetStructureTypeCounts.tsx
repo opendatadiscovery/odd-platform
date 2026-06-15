@@ -1,6 +1,7 @@
 import React from 'react';
 import TruncateMarkup from 'react-truncate-markup';
 import { Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import { Button } from 'components/shared/elements';
@@ -19,6 +20,7 @@ const DatasetStructureTypeCounts: React.FC<DatasetStructureTypeCountsProps> = ({
   expanded,
   setExpanded,
 }) => {
+  const { t } = useTranslation();
   const typesCountList = Object.entries(typesCount);
 
   const getTruncateMarkupAtom = ([type, count]: [string, number]) => (
@@ -40,8 +42,8 @@ const DatasetStructureTypeCounts: React.FC<DatasetStructureTypeCountsProps> = ({
     <Button
       text={
         !showOrHide && listLength && renderedListLength
-          ? `Show ${listLength - renderedListLength} hidden`
-          : 'Hide'
+          ? t('Show {{count}} hidden', { count: listLength - renderedListLength })
+          : t('Hide')
       }
       buttonType='tertiary-m'
       onClick={() => setExpanded(prev => !prev)}

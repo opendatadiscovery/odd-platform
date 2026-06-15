@@ -11,6 +11,7 @@ import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 import prettierConfig from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
 import lodashPlugin from 'eslint-plugin-lodash';
+import i18nextPlugin from 'eslint-plugin-i18next';
 
 const gitignorePath = path.resolve('.', '.gitignore');
 
@@ -185,6 +186,47 @@ export default tseslint.config(
     files: ['**/*.tsx'],
     rules: {
       'react/prop-types': 'off',
+    },
+  },
+
+  // i18n guard — every user-facing string must go through t() so it is translatable
+  // (odd-platform#1751 / PLT-205). `jsx-only` checks JSX text nodes + JSX attribute values;
+  // code-only attributes are excluded so only user-facing text is flagged. A string that must
+  // not be translated can be marked with `{/* i18next-extract-disable-line */}` or moved out of JSX.
+  {
+    name: 'i18next/no-literal-string',
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/generated-sources/**', 'src/**/__tests__/**', 'src/**/*.test.{ts,tsx}'],
+    plugins: { i18next: i18nextPlugin },
+    rules: {
+      'i18next/no-literal-string': [
+        'error',
+        {
+          mode: 'jsx-only',
+          // String arguments to these helpers are code (format-mode enums, DTO property keys),
+          // not user-facing text. (Re-lists the plugin defaults — options are not deep-merged.)
+          callees: {
+            exclude: [
+              'i18n(ext)?', 't', 'require', 'addEventListener', 'removeEventListener',
+              'postMessage', 'getElementById', 'dispatch', 'commit', 'includes', 'indexOf',
+              'endsWith', 'startsWith',
+              'stringFormatted', 'getHighlights', 'getListedHighlights',
+            ],
+          },
+          // Allowlist: validate JSX text nodes + ONLY these user-facing text attributes.
+          // Every other attribute (layout/style/route/CSS props: variant, color, sx, to, path,
+          // flex, width, ...) is code, not translatable text, so it is not checked. Add a new
+          // text attribute here if a component introduces one.
+          'jsx-attributes': {
+            include: [
+              'placeholder', 'label', 'title', 'text', 'actionTitle', 'actionName',
+              'actionText', 'confirmCheckboxLabel', 'caption', 'header', 'subHeader',
+              'description', 'helperText', 'confirmText', 'btnText', 'tooltip', 'hint',
+              'message', 'emptyText', 'noOptionsText', 'errorText', 'heading',
+            ],
+          },
+        },
+      ],
     },
   }
 );

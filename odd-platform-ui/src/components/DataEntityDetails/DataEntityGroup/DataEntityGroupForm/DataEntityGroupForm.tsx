@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import {
@@ -36,6 +37,7 @@ interface DataEntityGroupFormProps {
 }
 
 const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityId } = useDataEntityRouteParams();
   const navigate = useNavigate();
@@ -102,7 +104,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {dataEntityGroupDetails.id ? 'Edit' : 'Add'} Group
+      {dataEntityGroupDetails.id ? t('Edit group') : t('Add group')}
     </Typography>
   );
 
@@ -169,7 +171,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
 
   const formActionButtons = () => (
     <Button
-      text={dataEntityGroupDetails.id ? 'Save changes' : 'Create group'}
+      text={dataEntityGroupDetails.id ? t('Save changes') : t('Create group')}
       buttonType='main-lg'
       type='submit'
       form='dataentitygroup-create-form'

@@ -50,7 +50,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
         <Grid item lg={4} container flexDirection='column' alignItems='flex-start'>
           <Typography variant='h4' sx={{ mb: 1 }}>
             {datasetsList?.length || 0}{' '}
-            {`dataset${datasetsList?.length === 1 ? '' : 's'}`}
+            {t(datasetsList?.length === 1 ? 'dataset' : 'datasets')}
           </Typography>
           {datasetsList?.slice(0, displayedEntitiesNumber).map(dataset => (
             <Button

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import { UpstreamIcon, DownstreamIcon } from 'components/shared/icons';
 import { EntityClassItem, EntityRelationship } from 'components/shared/elements';
@@ -14,6 +15,7 @@ interface OverviewEntityRelationshipProps {
 const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
   dataEntityDetails,
 }) => {
+  const { t } = useTranslation();
   const displayedEntitiesNumber = 10;
   const { data: relationshipDetails } = useGetEDRRelationshipById(dataEntityDetails.id);
 
@@ -58,7 +60,7 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
                 <Typography variant='h2' sx={{ mr: 0.5 }}>
                   {sources?.length || 0}
                 </Typography>
-                <Typography variant='h4'>Referenced Key</Typography>
+                <Typography variant='h4'>{t('Referenced Key')}</Typography>
               </Grid>
               <Grid
                 item
@@ -87,7 +89,7 @@ const OverviewEntityRelationship: React.FC<OverviewEntityRelationshipProps> = ({
                 <Typography variant='h2' sx={{ mr: 0.5 }}>
                   {targets?.length || 0}
                 </Typography>
-                <Typography variant='h4'>Foreign Key</Typography>
+                <Typography variant='h4'>{t('Foreign Key')}</Typography>
               </Grid>
               <Grid
                 item

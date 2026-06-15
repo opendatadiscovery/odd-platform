@@ -60,8 +60,9 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             ))}
             {unknownSourcesCount ? (
               <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
-                {unknownSourcesCount} {t('more source')}
-                {unknownSourcesCount === 1 ? '' : 's'} {t('unknown')}
+                {unknownSourcesCount}{' '}
+                {unknownSourcesCount === 1 ? t('more source') : t('more sources')}{' '}
+                {t('unknown')}
               </Typography>
             ) : null}
             {sources && sources?.length > displayedEntitiesNumber ? (
@@ -105,8 +106,9 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             ))}
             {unknownTargetsCount ? (
               <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
-                {unknownTargetsCount} {t('more target')}
-                {unknownTargetsCount === 1 ? '' : 's'} {t('unknown')}
+                {unknownTargetsCount}{' '}
+                {unknownTargetsCount === 1 ? t('more target') : t('more targets')}{' '}
+                {t('unknown')}
               </Typography>
             ) : null}
             {targets && targets?.length > displayedEntitiesNumber ? (

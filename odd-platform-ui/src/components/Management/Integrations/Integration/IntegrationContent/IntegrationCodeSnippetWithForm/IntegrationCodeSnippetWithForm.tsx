@@ -110,7 +110,7 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
           })}
         </form>
         <Button
-          text='Configure'
+          text={t('Configure')}
           type='submit'
           form='parameters-form'
           buttonType='main-lg'

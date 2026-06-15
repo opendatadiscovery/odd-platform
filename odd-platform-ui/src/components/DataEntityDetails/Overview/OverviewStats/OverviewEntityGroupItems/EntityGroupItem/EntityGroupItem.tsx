@@ -1,5 +1,6 @@
 import React, { type FC, useCallback } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import type { DataEntity, DataEntityBaseObject } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
@@ -41,17 +42,18 @@ const EntityGroupItem: FC<EntityGroupItemProps> = ({
   lastIngestedAt,
   isStale,
 }) => {
+  const { t } = useTranslation();
   const { dataEntityFormattedDateTime } = useAppDateTime();
 
   const ownersEllipsis = useCallback(
     (isExpanded: boolean) => (
       <Button
         buttonType='link-m'
-        text={isExpanded ? 'Hide' : 'Show more'}
+        text={isExpanded ? t('Hide') : t('Show more')}
         onClick={e => e.preventDefault()}
       />
     ),
-    []
+    [t]
   );
 
   return (

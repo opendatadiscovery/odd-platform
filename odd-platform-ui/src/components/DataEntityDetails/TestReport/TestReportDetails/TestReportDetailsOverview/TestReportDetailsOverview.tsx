@@ -96,7 +96,7 @@ const TestReportDetailsOverview: React.FC = () => {
 
           <S.LatestRunInfoContainer container>
             <Typography variant='h4'>{t('Last execution')}</Typography>
-            <LabeledInfoItem label='Date' inline labelWidth={2.4}>
+            <LabeledInfoItem label={t('Date')} inline labelWidth={2.4}>
               {qualityTest?.latestRun?.startTime &&
                 qualityTestRunFormattedDateTime(
                   qualityTest?.latestRun?.startTime.getTime()

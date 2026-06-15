@@ -100,8 +100,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               <Grid container minWidth={0} flexDirection='column'>
                 <Grid container flexWrap='nowrap' alignItems='center'>
                   <Typography variant='h4' noWrap title={datasetField.name}>
-                    {(datasetField.isKey && 'Key') ||
-                      (datasetField.isValue && 'Value') ||
+                    {(datasetField.isKey && t('Key')) ||
+                      (datasetField.isValue && t('Value')) ||
                       datasetField.internalName ||
                       datasetField.name}
                   </Typography>

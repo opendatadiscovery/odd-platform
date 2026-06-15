@@ -1,6 +1,7 @@
 import React, { type FC, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useSaveDataEntityFile } from 'lib/hooks';
 import { Button, DialogWrapper, FileInput } from 'components/shared/elements';
 import { useDataEntityRouteParams } from 'routes';
@@ -16,6 +17,7 @@ interface FormData {
 }
 
 const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
+  const { t } = useTranslation();
   const formId = 'save-files-form';
   const { dataEntityId } = useDataEntityRouteParams();
 
@@ -44,7 +46,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Add file
+      {t('Add file')}
     </Typography>
   );
 
@@ -88,7 +90,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
 
   const formActionButtons = () => (
     <Button
-      text='Save files'
+      text={t('Save files')}
       buttonType='main-lg'
       type='submit'
       form={formId}

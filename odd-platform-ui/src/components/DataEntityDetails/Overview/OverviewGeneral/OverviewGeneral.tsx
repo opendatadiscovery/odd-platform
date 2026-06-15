@@ -39,7 +39,7 @@ const OverviewGeneral: React.FC = () => {
         </Grid>
         {!dataEntityDetails.manuallyCreated && dataEntityDetails.dataSource?.oddrn && (
           <Grid item sm={12}>
-            <LabeledInfoItem inline label='Datasource' labelWidth={4}>
+            <LabeledInfoItem inline label={t('Datasource')} labelWidth={4}>
               <Grid container flexWrap='nowrap' alignItems='center'>
                 <DatasourceLogo
                   width={24}
@@ -82,7 +82,7 @@ const OverviewGeneral: React.FC = () => {
               <Grid container justifyContent='space-between'>
                 <Grid item>ODDRN</Grid>
                 <Grid item>
-                  <CopyButton text='Copy' stringToCopy={dataEntityDetails.oddrn} />
+                  <CopyButton text={t('Copy')} stringToCopy={dataEntityDetails.oddrn} />
                 </Grid>
               </Grid>
             }

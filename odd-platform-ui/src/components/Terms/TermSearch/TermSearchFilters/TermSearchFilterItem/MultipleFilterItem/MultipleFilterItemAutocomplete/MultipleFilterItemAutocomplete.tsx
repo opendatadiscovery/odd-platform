@@ -179,7 +179,7 @@ const MultipleFilterItemAutocomplete: FC<Props> = ({ name, facetName }) => {
       selectOnFocus
       blurOnSelect
       value={{ name: searchText }}
-      noOptionsText={facetOptionsLoading ? '' : 'No options'}
+      noOptionsText={facetOptionsLoading ? '' : t('No options')}
       renderOption={fillOptionMatches}
       popupIcon={<DropdownIcon />}
       clearIcon={<ClearIcon />}

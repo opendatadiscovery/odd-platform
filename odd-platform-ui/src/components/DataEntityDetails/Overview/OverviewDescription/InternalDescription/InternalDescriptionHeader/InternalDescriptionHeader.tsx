@@ -1,5 +1,6 @@
 import React, { type FC, memo } from 'react';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { AppTooltip, Button } from 'components/shared/elements';
@@ -17,13 +18,16 @@ const InternalDescriptionHeader: FC<InternalDescriptionHeaderProps> = ({
   isDescriptionEmpty,
   isStatusDeleted,
 }) => {
+  const { t } = useTranslation();
+
   const tooltipInfoContent = (
     <S.Tooltip>
-      You can link an existing term by entering information about the term according to
-      the pattern [[NamespaceName:TermName]]
+      {t(
+        'You can link an existing term by entering information about the term according to the pattern [[NamespaceName:TermName]]'
+      )}
       <br />
       <br />
-      <b>Example: This entity describes [[Finance:User]]</b>
+      <b>{t('Example: This entity describes [[Finance:User]]')}</b>
     </S.Tooltip>
   );
 
@@ -31,7 +35,7 @@ const InternalDescriptionHeader: FC<InternalDescriptionHeaderProps> = ({
     <S.CaptionContainer>
       <S.About>
         <Typography variant='h2' mr={1}>
-          About
+          {t('About')}
         </Typography>
         <AppTooltip title={tooltipInfoContent} checkForOverflow={false}>
           <InformationIcon width={14} height={14} />
@@ -40,7 +44,7 @@ const InternalDescriptionHeader: FC<InternalDescriptionHeaderProps> = ({
       <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
         {!isStatusDeleted && (
           <Button
-            text={isDescriptionEmpty ? 'Add info' : 'Edit info'}
+            text={isDescriptionEmpty ? t('Add info') : t('Edit info')}
             data-qa='add_description'
             onClick={toggleEditMode}
             buttonType='secondary-lg'

@@ -73,7 +73,7 @@ const LinkItem: FC<LinkItemProps> = ({ idx, onItemRemove, fieldsCount }) => {
       {fieldsCount > 1 && (
         <Button
           sx={{ mb: 2 }}
-          text='Delete link'
+          text={t('Delete link')}
           buttonType='link-m'
           onClick={() => onItemRemove(idx)}
         />

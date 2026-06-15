@@ -163,7 +163,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Edit Tags
+      {t('Edit Tags')}
     </Typography>
   );
 

@@ -1,4 +1,5 @@
 import React, { cloneElement, type FC, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Controller, useForm } from 'react-hook-form';
 import { Box, FormControlLabel, Typography } from '@mui/material';
 import { useAppDateTime, useUpdateDataEntityStatus } from 'lib/hooks';
@@ -39,6 +40,7 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
   isPropagatable,
   isTimeSensitive,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityId } = useDataEntityRouteParams();
   const { add } = useAppDateTime();
@@ -117,14 +119,14 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Status change settings
+      {t('Status change settings')}
     </Typography>
   );
 
   const formContent = () => (
     <form id={formId} onSubmit={handleSubmit(onSubmit)}>
       <Typography variant='body1' color='texts.info'>
-        You are changing your status from
+        {t('You are changing your status from')}
       </Typography>
       <Box display='flex' flexWrap='nowrap' alignItems='center' mt={0.5}>
         <DefaultEntityStatus entityStatus={{ status: oldStatus }} />
@@ -134,7 +136,7 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
       {isTimeSensitive && (
         <>
           <Typography variant='body1' color='texts.info' mt={1.5} mb={0.5}>
-            Change to status “Deleted” after
+            {t('Change to status “Deleted” after')}
           </Typography>
           <Controller
             name='switchTime'
@@ -152,7 +154,7 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
             )}
           />
           <Typography variant='body1' color='texts.info' my={1.5}>
-            Or select time interval
+            {t('Or select time interval')}
           </Typography>
           <Controller
             name='switchTime'
@@ -202,7 +204,13 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
   );
 
   const formActionButtons = () => (
-    <Button text='Apply' buttonType='main-lg' type='submit' form={formId} fullWidth />
+    <Button
+      text={t('Apply')}
+      buttonType='main-lg'
+      type='submit'
+      form={formId}
+      fullWidth
+    />
   );
 
   return (

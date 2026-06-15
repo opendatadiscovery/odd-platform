@@ -55,7 +55,7 @@ const AppToolbar: FC = () => {
             <S.Title to='/'>
               <S.Logo />
               <Typography variant='h4' noWrap>
-                Platform
+                {t('Platform')}
               </Typography>
             </S.Title>
           </S.LogoContainer>

@@ -57,7 +57,7 @@ const OwnerAssociationsActive: React.FC<OwnerAssociationsActiveProps> = ({ size 
           {tableCellText(t('Owner name'))}
         </Grid>
         <Grid item lg={2}>
-          {tableCellText('Role')}
+          {tableCellText(t('Role'))}
         </Grid>
         <Grid item lg={1.5}>
           {tableCellText(t('Provider'))}
