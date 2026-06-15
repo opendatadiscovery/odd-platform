@@ -166,7 +166,7 @@ const ColumnForm = ({ btnEl, lookupTableId, lookupTableField }: ColumnFormProps)
         render={({ field }) => (
           <AppSelect
             {...field}
-            label='Data type'
+            label={t('Data type')}
             sx={{ mt: 1.5, maxWidth: '400px' }}
             renderValue={value => value as LookupTableFieldType}
           >

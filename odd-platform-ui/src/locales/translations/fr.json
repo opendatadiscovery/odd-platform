@@ -598,5 +598,17 @@
   "more sources": "sources supplémentaires",
   "more targets": "cibles supplémentaires",
   "not in any namespace": "dans aucun espace de noms",
-  "relationships overall": "relations au total"
+  "relationships overall": "relations au total",
+  "Data Entity Group Name": "Nom du groupe d'entités de données",
+  "Search items...": "Rechercher des éléments...",
+  "Enter username": "Entrez le nom d'utilisateur",
+  "Search lookup tables...": "Rechercher des tables de référence...",
+  "Search terms...": "Rechercher des termes...",
+  "Search ...": "Rechercher ...",
+  "Propagate status to the whole group": "Propager le statut à tout le groupe",
+  "Data type": "Type de données",
+  "expand row": "développer la ligne",
+  "app info menu": "menu d'informations de l'application",
+  "account of current user": "compte de l'utilisateur actuel",
+  "breadcrumb": "fil d'Ariane"
 }

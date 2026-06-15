@@ -598,5 +598,17 @@
   "more sources": "more sources",
   "more targets": "more targets",
   "not in any namespace": "not in any namespace",
-  "relationships overall": "relationships overall"
+  "relationships overall": "relationships overall",
+  "Data Entity Group Name": "Data Entity Group Name",
+  "Search items...": "Search items...",
+  "Enter username": "Enter username",
+  "Search lookup tables...": "Search lookup tables...",
+  "Search terms...": "Search terms...",
+  "Search ...": "Search ...",
+  "Propagate status to the whole group": "Propagate status to the whole group",
+  "Data type": "Data type",
+  "expand row": "expand row",
+  "app info menu": "app info menu",
+  "account of current user": "account of current user",
+  "breadcrumb": "breadcrumb"
 }

@@ -66,8 +66,8 @@ const DatasetFieldInternalNameForm = ({
           <Input
             {...field}
             variant='main-m'
-            label='Business name'
-            placeholder='Enter business name'
+            label={t('Business name')}
+            placeholder={t('Enter business name')}
             onKeyDown={handleKeyDown}
           />
         )}

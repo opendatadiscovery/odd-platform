@@ -77,7 +77,7 @@ const AppInfoMenu: React.FC = () => {
           sx={{ mr: 1 }}
           icon={<InformationIcon width={16} height={16} />}
           buttonType='linkGray-m'
-          aria-label='app info menu'
+          aria-label={t('app info menu')}
           aria-controls={menuId}
           aria-haspopup='true'
           onMouseEnter={handleAppMenuOpen}

@@ -598,5 +598,17 @@
   "more sources": "ավելի շատ աղբյուրներ",
   "more targets": "ավելի շատ թիրախներ",
   "not in any namespace": "ոչ մի անվանատարածքում",
-  "relationships overall": "կապերն ընդհանուր առմամբ"
+  "relationships overall": "կապերն ընդհանուր առմամբ",
+  "Data Entity Group Name": "Տվյալների միավորի խմբի անուն",
+  "Search items...": "Փնտրել տարրեր...",
+  "Enter username": "Մուտքագրել օգտանունը",
+  "Search lookup tables...": "Փնտրել որոնման աղյուսակներ...",
+  "Search terms...": "Փնտրել տերմիններ...",
+  "Search ...": "Փնտրել ...",
+  "Propagate status to the whole group": "Տարածել կարգավիճակն ամբողջ խմբի վրա",
+  "Data type": "Տվյալների տեսակ",
+  "expand row": "ընդլայնել տողը",
+  "app info menu": "ծրագրի տեղեկությունների ընտրացանկ",
+  "account of current user": "ընթացիկ օգտվողի հաշիվ",
+  "breadcrumb": "նավիգացիոն շղթա"
 }

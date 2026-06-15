@@ -81,7 +81,7 @@ const OverviewEntityGroupItems: FC = () => {
               <Input
                 variant='search-m'
                 maxWidth={320}
-                placeholder='Search items...'
+                placeholder={t('Search items...')}
                 value={inputValue}
                 onChange={handleChange}
               />

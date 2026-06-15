@@ -1,5 +1,6 @@
 import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import type { DataEntityRunStatus, DataQualityTest } from 'generated-sources';
 import { TestRunStatusItem, Button } from 'components/shared/elements';
@@ -24,6 +25,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
   dataQATestList,
   dataQATestReport,
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState<boolean>(false);
   React.useEffect(() => {
     if (dataQATestList.length < 5) setOpen(true);
@@ -38,7 +40,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
       }}
       buttonType='secondary-sm'
       icon={open ? <MinusIcon width={6} height={6} /> : <PlusIcon width={6} height={6} />}
-      aria-label='expand row'
+      aria-label={t('expand row')}
       onClick={() => setOpen(!open)}
     />
   );

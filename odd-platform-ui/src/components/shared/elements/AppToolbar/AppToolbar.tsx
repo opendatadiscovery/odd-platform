@@ -75,7 +75,7 @@ const AppToolbar: FC = () => {
                 <Button
                   buttonType='linkGray-m'
                   icon={<DropdownIcon />}
-                  aria-label='account of current user'
+                  aria-label={t('account of current user')}
                   aria-controls={menuId}
                   aria-haspopup='true'
                 />

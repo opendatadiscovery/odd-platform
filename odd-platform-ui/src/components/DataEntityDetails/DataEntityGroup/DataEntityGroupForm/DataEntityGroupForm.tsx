@@ -118,8 +118,8 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
           <Input
             {...field}
             variant='main-m'
-            placeholder='Data Entity Group Name'
-            label='Name'
+            placeholder={t('Data Entity Group Name')}
+            label={t('Name')}
           />
         )}
       />
@@ -135,7 +135,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
         render={({ field }) => (
           <AppSelect
             {...field}
-            label='Type'
+            label={t('Type')}
             sx={{ mt: 1.5 }}
             renderValue={value => (value as DataEntityType).name}
           >

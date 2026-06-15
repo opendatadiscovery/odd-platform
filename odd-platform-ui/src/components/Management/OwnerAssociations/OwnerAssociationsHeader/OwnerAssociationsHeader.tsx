@@ -30,7 +30,7 @@ const OwnerAssociationsHeader: React.FC = () => {
           <OwnerAssociationForm
             btnCreateEl={
               <Button
-                text='Create association'
+                text={t('Create association')}
                 buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />

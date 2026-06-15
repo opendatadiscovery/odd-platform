@@ -1,6 +1,7 @@
 import React, { type HTMLAttributes } from 'react';
 import { Box, type AutocompleteRenderOptionState } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
+import { useTranslation } from 'react-i18next';
 import { useDebouncedCallback } from 'use-debounce';
 import uniq from 'lodash/uniq';
 import { type AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
@@ -31,6 +32,7 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
 }) => {
   type FilterOption = ActivityFilterOption;
 
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
@@ -193,7 +195,7 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
               name
             )
           }
-          placeholder='Search by name…'
+          placeholder={t('Search by name…')}
           isLoading={loading}
         />
       )}

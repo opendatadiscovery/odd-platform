@@ -194,7 +194,7 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
                 sx={{ ml: -0.25, my: 1.5 }}
                 checked={field.value}
                 control={<Checkbox sx={{ mr: 1 }} />}
-                label='Propagate status to the whole group'
+                label={t('Propagate status to the whole group')}
               />
             )}
           />

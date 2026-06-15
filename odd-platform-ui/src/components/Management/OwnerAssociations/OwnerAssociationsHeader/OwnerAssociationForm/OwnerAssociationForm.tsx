@@ -69,8 +69,8 @@ const OwnerAssociationForm: React.FC<OwnerAssociationFormProps> = ({ btnCreateEl
             {...field}
             variant='main-m'
             sx={{ my: 1.5 }}
-            label='User'
-            placeholder='Enter username'
+            label={t('User')}
+            placeholder={t('Enter username')}
           />
         )}
       />

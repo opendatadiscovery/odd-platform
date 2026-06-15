@@ -39,7 +39,7 @@ const SelectLanguage: FC<SelectLanguageProps> = ({ openBtn, handleMenuClose }) =
     <div>
       <Input
         variant='main-m'
-        placeholder='Search ...'
+        placeholder={t('Search ...')}
         value={query}
         onChange={handleInputChange}
         handleCleanUp={() => setQuery('')}

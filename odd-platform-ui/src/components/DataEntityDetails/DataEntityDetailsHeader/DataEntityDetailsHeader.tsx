@@ -124,7 +124,11 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
             <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_UPDATE}>
               <DataEntityGroupForm
                 btnCreateEl={
-                  <Button buttonType='secondary-lg' text='Edit group' sx={{ ml: 2 }} />
+                  <Button
+                    buttonType='secondary-lg'
+                    text={t('Edit group')}
+                    sx={{ ml: 2 }}
+                  />
                 }
               />
             </WithPermissions>

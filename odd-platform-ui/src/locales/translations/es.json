@@ -598,5 +598,17 @@
   "more sources": "más fuentes",
   "more targets": "más objetivos",
   "not in any namespace": "sin namespace",
-  "relationships overall": "todo sobre relaciones"
+  "relationships overall": "todo sobre relaciones",
+  "Data Entity Group Name": "Nombre del grupo de entidades de datos",
+  "Search items...": "Buscar elementos...",
+  "Enter username": "Introduce el nombre de usuario",
+  "Search lookup tables...": "Buscar tablas de búsqueda...",
+  "Search terms...": "Buscar términos...",
+  "Search ...": "Buscar ...",
+  "Propagate status to the whole group": "Propagar el estado a todo el grupo",
+  "Data type": "Tipo de dato",
+  "expand row": "expandir fila",
+  "app info menu": "menú de información de la aplicación",
+  "account of current user": "cuenta del usuario actual",
+  "breadcrumb": "ruta de navegación"
 }

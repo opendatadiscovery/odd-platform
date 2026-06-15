@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input } from 'components/shared/elements';
 import { getTermSearchId, getTermSearchQuery } from 'redux/selectors';
 import { updateTermSearch } from 'redux/thunks';
@@ -6,6 +7,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateTermSearchQuery } from 'redux/slices/termSearch.slice';
 
 const TermSearchInput: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const searchId = useAppSelector(getTermSearchId);
@@ -37,7 +39,7 @@ const TermSearchInput: React.FC = () => {
   return (
     <Input
       variant='search-lg'
-      placeholder='Search terms...'
+      placeholder={t('Search terms...')}
       maxWidth={640}
       onKeyDown={handleKeyDown}
       onChange={handleInputChange}

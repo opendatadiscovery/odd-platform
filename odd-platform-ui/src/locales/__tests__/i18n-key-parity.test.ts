@@ -120,3 +120,52 @@ describe('i18n catalog parity (#1751 — every locale carries en.json, no orphan
     });
   }
 });
+
+// THE INVARIANT: no user-facing JSX *attribute* carries a raw string literal — it must be {t('...')}.
+//
+// WHY A SECOND GUARD (beside the eslint `no-literal-string` rule in eslint.config.mjs): the eslint
+// rule reliably flags unwrapped JSX *text nodes*, but in practice silently MISSES string literals in
+// JSX *attributes* (placeholder / label / title / text / …) on this codebase's custom form & search
+// components — so `placeholder='Search lookup tables...'`, `label='Name'`, `aria-label='expand row'`
+// etc. shipped untranslated under a green "0 violations" lint pass (the odd-platform#1751 / PLT-205
+// review, 2026-06-15: ~18 user-visible strings slipped the lint and rendered English under every
+// locale). This deterministic scan closes that hole: every translatable attribute value must be a
+// `{t(...)}` expression, never a raw quoted string. Acronyms / proper nouns (e.g. ODDRN) and code
+// tokens (variant='main-m', size='small') are not translatable and are excluded.
+const USER_FACING_ATTRS = [
+  'placeholder', 'label', 'title', 'text', 'actionTitle', 'actionName', 'actionText',
+  'confirmCheckboxLabel', 'caption', 'header', 'subHeader', 'description', 'helperText',
+  'confirmText', 'btnText', 'tooltip', 'hint', 'message', 'emptyText', 'noOptionsText',
+  'errorText', 'heading',
+];
+// Values that are code, not user-facing copy: ALL-CAPS acronyms/proper-nouns (ODDRN, URL), MUI
+// variant/size enums, route fragments, single lowercase-hyphenated tokens. These are not translatable.
+const CODE_VALUE =
+  /^(?:[A-Z0-9_]+|main-.*|primary|secondary|small|medium|large|h[1-6]|body[12]|subtitle\d?|true|false|button|submit|reset|none|left|right|center|row|column|outlined|contained|standard|filled|normal|short|dense|\d+|[a-z]+-[a-z0-9-]+)$/;
+// `attr='literal'` / `attr="literal"` — a quoted value with no `{`/`}`, so `attr={t('x')}` does NOT match.
+const ATTR_LITERAL = new RegExp(
+  `\\b(${USER_FACING_ATTRS.join('|')})\\s*=\\s*('[^'{}]*'|"[^"{}]*")`,
+  'g'
+);
+
+describe('i18n no unwrapped user-facing attribute literal (#1751 / PLT-205)', () => {
+  it('every translatable JSX attribute uses {t(...)}, never a raw string literal', () => {
+    const offenders: string[] = [];
+    for (const file of walk(SRC_ROOT)) {
+      fs.readFileSync(file, 'utf-8')
+        .split('\n')
+        .forEach((line, idx) => {
+          for (const m of line.matchAll(ATTR_LITERAL)) {
+            const value = m[2].slice(1, -1);
+            if (!value || !/[A-Za-z]/.test(value)) continue; // empty / punctuation-only
+            if (CODE_VALUE.test(value.trim())) continue; // acronym / proper-noun / code token
+            offenders.push(`${path.relative(SRC_ROOT, file)}:${idx + 1}  ${m[1]}='${value}'`);
+          }
+        });
+    }
+    expect(
+      offenders,
+      `Unwrapped user-facing string literal(s) in a translatable JSX attribute — wrap each in {t('...')}:\n${offenders.join('\n')}`
+    ).toEqual([]);
+  });
+});

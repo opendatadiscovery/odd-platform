@@ -64,7 +64,7 @@ const LookupTables: React.FC = () => {
           <Grid container alignItems='center' justifyContent='space-between'>
             <SearchInput
               id='lookup-tables-search'
-              placeholder='Search lookup tables...'
+              placeholder={t('Search lookup tables...')}
               value={facets?.query}
               isLoading={isLoading}
               onSearch={handleSearch}

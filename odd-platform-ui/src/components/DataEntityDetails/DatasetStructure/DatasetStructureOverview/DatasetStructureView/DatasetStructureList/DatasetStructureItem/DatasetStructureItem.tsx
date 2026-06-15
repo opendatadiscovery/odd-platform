@@ -62,7 +62,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
             transform={open ? 'rotate(0)' : 'rotate(-90)'}
           />
         }
-        aria-label='expand row'
+        aria-label={t('expand row')}
         onClick={() => setOpen(!open)}
       />
     </S.CollapseContainer>

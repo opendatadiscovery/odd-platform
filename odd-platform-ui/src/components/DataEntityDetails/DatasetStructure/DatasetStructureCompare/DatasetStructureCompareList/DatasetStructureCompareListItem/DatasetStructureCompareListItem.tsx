@@ -42,7 +42,7 @@ const DatasetStructureCompareListItem: FC<DatasetStructureCompareListItemProps> 
   const collapseBlock = isNested ? (
     <S.CollapseContainer $visibility={!!fieldDiff.childFields?.length}>
       <Button
-        aria-label='expand row'
+        aria-label={t('expand row')}
         buttonType='tertiary-m'
         sx={{ width: '20px' }}
         icon={

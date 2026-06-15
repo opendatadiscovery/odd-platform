@@ -598,5 +598,17 @@
   "more sources": "更多来源",
   "more targets": "更多目标",
   "not in any namespace": "不在任何命名空间中",
-  "relationships overall": "总关系数"
+  "relationships overall": "总关系数",
+  "Data Entity Group Name": "数据实体组名称",
+  "Search items...": "搜索项...",
+  "Enter username": "输入用户名",
+  "Search lookup tables...": "搜索查找表...",
+  "Search terms...": "搜索术语...",
+  "Search ...": "搜索 ...",
+  "Propagate status to the whole group": "将状态传播到整个组",
+  "Data type": "数据类型",
+  "expand row": "展开行",
+  "app info menu": "应用信息菜单",
+  "account of current user": "当前用户的账户",
+  "breadcrumb": "面包屑导航"
 }
