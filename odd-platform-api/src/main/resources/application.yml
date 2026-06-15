@@ -222,6 +222,7 @@ attachment:
     access-key:
     secret-key:
     bucket: odd
+    region: # optional AWS S3 region, e.g. eu-central-1. Empty => SDK default us-east-1 (MinIO ignores it)
 
 management:
   endpoints:

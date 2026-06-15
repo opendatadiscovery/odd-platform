@@ -1,90 +1,75 @@
 package org.opendatadiscovery.oddplatform.config;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import io.minio.MinioAsyncClient;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
- * KNOWN-BUG PIN (characterization tripwire) — PLT-086 Defect 2 / LSN-002.
+ * Regression guard for the configurable MinIO / S3 region — PLT-086 Defect 2 / LSN-002.
  *
- * <p><b>This test asserts behaviour that is WRONG, on purpose.</b> It pins the CURRENT,
- * deliberately-unfixed state of {@code MinioConfig}: the S3 client is built as
- * {@code MinioAsyncClient.builder().endpoint(...).credentials(...).build()} with NO
- * {@code .region(...)} call, and there is no {@code attachment.remote.region} config key.
- * The AWS/MinIO SDK defaults an unset region to {@code us-east-1}, so REMOTE S3 storage
- * silently only works against us-east-1 — an operator pointing REMOTE at any other region
- * gets opaque failures (the 2026-04 incident: retrospectives/LSN-002).
+ * <p><b>FLIPPED 2026-06-14 (#1741).</b> This class used to be a {@code @Tag("known-bug")}
+ * characterization pin asserting MinioConfig had NO {@code .region(...)} call and no
+ * {@code attachment.remote.region} key — GREEN while the bug existed. The bug is now fixed, so
+ * per the flip protocol (retrospectives/LSN-029) the pin is RE-GROUNDED (not deleted) to assert
+ * the CORRECT behaviour and {@code @pins}&nbsp;->&nbsp;{@code @regresses}.
  *
- * <p><b>Why a GREEN characterization pin, not {@code @Disabled} and not a RED aspiration
- * test.</b> We are choosing not to fix this bug right now — but we must not go blind to it.
- * A {@code @Disabled} test runs nothing: if the behaviour later changes (someone adds
- * {@code .region(...)} as a side effect, or refactors the builder), nothing fires and the
- * change ships undocumented and unplanned. A RED aspiration test (asserting the fix is
- * present) breaks the build. So instead this test asserts the bug IS present: it is GREEN
- * while the bug exists, and goes RED the instant {@code MinioConfig}'s region handling
- * changes — a live tripwire, not a dead annotation. The general rule: retrospectives/LSN-029.
+ * <p><b>Behavioural, not a source scan.</b> The prior pin scanned the source text for
+ * {@code .region(}; this builds the real {@link MinioAsyncClient} through {@link MinioConfig} and
+ * reads back the region the SDK will sign with — a stronger, meaningful guard. The contract:
+ * <ul>
+ *   <li>a configured {@code attachment.remote.region} must reach the client (so AWS S3 buckets
+ *       outside us-east-1 work — the LSN-002 failure);</li>
+ *   <li>a blank region must leave the SDK default in place — the backwards-compatible behaviour
+ *       existing MinIO / us-east-1 deployments depend on (no migration).</li>
+ * </ul>
  *
- * <p><b>When this test goes RED — the flip protocol.</b> RED means MinioConfig's region
- * handling changed. Decide which:
- * <ol>
- *   <li><b>Intentional, planned fix</b> (PLT-086 Defect 2 done): INVERT this test to assert
- *       the CORRECT behaviour — {@code src.contains(".region(")} and
- *       {@code src.contains("attachment.remote.region")} — rename it to
- *       {@code minioClient_setsRegionFromConfiguration}, change {@code @pins} to
- *       {@code @regresses} (it now guards the fix from regressing), and move PLT-086 from
- *       {@code pins:} to {@code regresses:} in lineage/odd-platform/test-gates.yaml. Then
- *       close PLT-086 Defect 2.</li>
- *   <li><b>Unplanned change</b>: you just caught an undocumented behaviour change — stop and
- *       investigate before it ships.</li>
- * </ol>
+ * <p>Why a local store cannot test the end-to-end failure: minio-java auto-discovers the bucket
+ * region via {@code GetBucketLocation} and adapts, so a vanilla MinIO upload succeeds regardless
+ * (verified by IT-008). The real failure is AWS S3 under least-privilege IAM (no
+ * {@code s3:GetBucketLocation} -> the SDK falls back to us-east-1). The deterministic unit-level
+ * guard is therefore "the configured region reaches the client"; the REMOTE round-trip is
+ * covered by IT-008 in the odd-team workspace.
  *
- * <p>Why a STRUCTURAL (source-scan) pin rather than a runtime/integration test: a vanilla
- * MinIO cannot reproduce the bug — minio-java auto-discovers the bucket region via
- * {@code GetBucketLocation} and adapts (verified by IT-008 in the odd-team workspace). The
- * real failure is against AWS S3 under least-privilege IAM (no {@code s3:GetBucketLocation}
- * permission → the SDK falls back to us-east-1 → cross-region requests rejected), which a
- * local store cannot faithfully reproduce. So the deterministic, faithful pin is the code
- * fact: today the region is not set from configuration. Idiom: source scan (sibling of
- * {@link DependencyPostureTest}'s classpath scan), no Spring context; gradle runs tests with
- * the module root as the working directory.
- *
- * @pins PLT-086
+ * @regresses PLT-086
  */
-@Tag("known-bug")
 class MinioConfigRegionTest {
 
-    private static final Path MINIO_CONFIG = Path.of(
-        "src/main/java/org/opendatadiscovery/oddplatform/config/MinioConfig.java");
-
-    /**
-     * Characterizes the OPEN bug: MinioConfig builds the S3 client without a configurable
-     * region. GREEN asserts the bug is still present; RED means the behaviour changed —
-     * follow the flip protocol in the class javadoc. Named for the buggy state it pins.
-     */
     @Test
-    void minioClient_doesNotSetRegion_knownBug_PLT086() throws IOException {
-        Assertions.assertThat(Files.exists(MINIO_CONFIG))
-            .as("MinioConfig source must be readable for this structural pin; looked at %s "
-                + "(gradle test working dir should be the module root)", MINIO_CONFIG.toAbsolutePath())
-            .isTrue();
+    void minioClient_setsRegionFromConfiguration() {
+        Assertions.assertThat(regionOf(buildClient("eu-central-1")))
+            .as("attachment.remote.region must reach the S3 client so AWS S3 buckets outside "
+                + "us-east-1 work (PLT-086 Defect 2 / LSN-002)")
+            .isEqualTo("eu-central-1");
+    }
 
-        final String src = Files.readString(MINIO_CONFIG);
+    @Test
+    void minioClient_withBlankRegion_keepsSdkDefault() {
+        final MinioAsyncClient baseline = MinioAsyncClient.builder()
+            .endpoint("http://localhost:9000")
+            .credentials("access", "secret")
+            .build();
+        // A blank region leaves the builder exactly as it was before the fix, so the SDK default
+        // (us-east-1) governs. Asserted against a baseline built the pre-fix way so the
+        // backwards-compatible default is pinned without hard-coding an SDK internal.
+        Assertions.assertThat(regionOf(buildClient("")))
+            .as("a blank attachment.remote.region must not change the pre-fix SDK default "
+                + "(backwards compatible — no migration for existing MinIO / us-east-1 deployments)")
+            .isEqualTo(regionOf(baseline));
+    }
 
-        Assertions.assertThat(src)
-            .as("KNOWN-BUG PIN (PLT-086 Defect 2 / LSN-002): MinioConfig is expected to STILL "
-                + "lack a .region(...) call — REMOTE S3 silently defaults to us-east-1. If this is "
-                + "RED, .region(...) appeared: follow the flip protocol in the class javadoc — if "
-                + "it is the intentional fix, invert this pin to assert .region(...) IS present and "
-                + "move PLT-086 from pins: to regresses:.")
-            .doesNotContain(".region(");
+    private static MinioAsyncClient buildClient(final String region) {
+        final MinioConfig config = new MinioConfig();
+        ReflectionTestUtils.setField(config, "url", "http://localhost:9000");
+        ReflectionTestUtils.setField(config, "accessKey", "access");
+        ReflectionTestUtils.setField(config, "secretKey", "secret");
+        ReflectionTestUtils.setField(config, "region", region);
+        return config.minioClient();
+    }
 
-        Assertions.assertThat(src)
-            .as("KNOWN-BUG PIN (PLT-086 Defect 2 / LSN-002): MinioConfig is expected to STILL have "
-                + "no attachment.remote.region config key. If this is RED, the key appeared: follow "
-                + "the flip protocol in the class javadoc.")
-            .doesNotContain("attachment.remote.region");
+    private static String regionOf(final MinioAsyncClient client) {
+        // io.minio.S3Base#region holds the region the SDK signs with when it is explicitly set.
+        final Object value = ReflectionTestUtils.getField(client, "region");
+        return value == null ? null : value.toString();
     }
 }
