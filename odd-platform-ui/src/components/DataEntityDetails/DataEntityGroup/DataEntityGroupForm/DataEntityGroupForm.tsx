@@ -155,7 +155,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
       <SearchSuggestionsAutocomplete
         append={append}
         addEntities
-        inputParams={{ label: 'Entities', variant: 'main-m' }}
+        inputParams={{ label: t('Entities'), variant: 'main-m' }}
       />
       <EntityItemsContainer sx={{ mt: 1.25 }}>
         {fields?.map((entity, index) => (

@@ -1,14 +1,16 @@
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { RelationshipsType } from 'generated-sources';
 import React, { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { parseRelationshipsType } from './parseRelationshipsType';
 
 const RelationshipsTabs = () => {
+  const { t } = useTranslation();
   const tabs = useMemo<AppTabItem<RelationshipsType>[]>(
     () => [
       {
-        name: 'All',
+        name: t('All'),
         value: RelationshipsType.ALL,
       },
       {
@@ -16,11 +18,11 @@ const RelationshipsTabs = () => {
         value: RelationshipsType.ERD,
       },
       {
-        name: 'Graph',
+        name: t('Graph'),
         value: RelationshipsType.GRAPH,
       },
     ],
-    []
+    [t]
   );
 
   const [searchParams, setSearchParams] = useSearchParams();

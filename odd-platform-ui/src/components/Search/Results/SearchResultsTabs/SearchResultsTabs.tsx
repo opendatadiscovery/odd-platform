@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import type { SearchClass, SearchTotalsByName } from 'redux/interfaces';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
@@ -19,49 +20,50 @@ const SearchResultsTabs: React.FC<SearchResultsTabsProps> = ({
   searchClass,
   onSearchClassChange,
 }) => {
+  const { t } = useTranslation();
   const [tabs, setTabs] = React.useState<AppTabItem<SearchClass>[]>([]);
 
   React.useEffect(() => {
     setTabs([
-      { name: 'All', hint: totals.all, value: 'all' },
-      { name: 'My Objects', hint: totals.myObjectsTotal, value: 'my' },
+      { name: t('All'), hint: totals.all, value: 'all' },
+      { name: t('My Objects'), hint: totals.myObjectsTotal, value: 'my' },
       {
-        name: 'Datasets',
+        name: t('Datasets'),
         hint: totals[DataEntityClassNameEnum.SET]?.count || 0,
         value: totals[DataEntityClassNameEnum.SET]?.id,
       },
       {
-        name: 'Transformers',
+        name: t('Transformers'),
         hint: totals[DataEntityClassNameEnum.TRANSFORMER]?.count || 0,
         value: totals[DataEntityClassNameEnum.TRANSFORMER]?.id,
       },
       {
-        name: 'Data Consumers',
+        name: t('Data Consumers'),
         hint: totals[DataEntityClassNameEnum.CONSUMER]?.count || 0,
         value: totals[DataEntityClassNameEnum.CONSUMER]?.id,
       },
       {
-        name: 'Data Inputs',
+        name: t('Data Inputs'),
         hint: totals[DataEntityClassNameEnum.INPUT]?.count || 0,
         value: totals[DataEntityClassNameEnum.INPUT]?.id,
       },
       {
-        name: 'Quality Tests',
+        name: t('Quality Tests'),
         hint: totals[DataEntityClassNameEnum.QUALITY_TEST]?.count || 0,
         value: totals[DataEntityClassNameEnum.QUALITY_TEST]?.id,
       },
       {
-        name: 'Groups',
+        name: t('Groups'),
         hint: totals[DataEntityClassNameEnum.ENTITY_GROUP]?.count || 0,
         value: totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id,
       },
       {
-        name: 'Relationships',
+        name: t('Relationships'),
         hint: totals[DataEntityClassNameEnum.RELATIONSHIP]?.count || 0,
         value: totals[DataEntityClassNameEnum.RELATIONSHIP]?.id,
       },
     ]);
-  }, [totals]);
+  }, [totals, t]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 

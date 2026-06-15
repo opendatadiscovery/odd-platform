@@ -1,5 +1,6 @@
 import React, { type FC } from 'react';
 import { Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { DataEntityType } from 'generated-sources';
 import { AppTabs, type AppTabItem } from 'components/shared/elements';
 import { DataEntityClassTypeLabelMap } from 'lib/constants';
@@ -10,6 +11,7 @@ interface EntitiesListTabsProps {
 }
 
 const EntitiesTabs: FC<EntitiesListTabsProps> = ({ types }) => {
+  const { t } = useTranslation();
   const { typeId, dataSourceTypePrefix, dataSourceId } = useDirectoryRouteParams();
   const [selectedTab, setSelectedTab] = React.useState(0);
 
@@ -22,13 +24,13 @@ const EntitiesTabs: FC<EntitiesListTabsProps> = ({ types }) => {
 
     return [
       {
-        name: 'All',
+        name: t('All'),
         link: directoryDataSourcePath(dataSourceTypePrefix, dataSourceId, 'all'),
         value: 'all',
       },
       ...dynamicTabs,
     ];
-  }, [types, dataSourceTypePrefix, dataSourceId]);
+  }, [types, dataSourceTypePrefix, dataSourceId, t]);
 
   React.useEffect(() => {
     setSelectedTab(

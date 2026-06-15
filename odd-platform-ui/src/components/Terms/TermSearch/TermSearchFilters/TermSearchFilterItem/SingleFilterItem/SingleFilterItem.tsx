@@ -50,7 +50,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
           <AppMenuItem
             value='All'
             maxWidth={190}
-            onClick={() => handleFilterSelect({ id: 'All', name: 'All' })}
+            onClick={() => handleFilterSelect({ id: 'All', name: t('All') })}
           >
             {t('All')}
           </AppMenuItem>

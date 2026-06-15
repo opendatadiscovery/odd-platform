@@ -4,6 +4,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import type {
   OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest,
   OwnerAssociationRequestApiCreateUserOwnerMappingRequest,
@@ -65,6 +66,7 @@ export function useGetOwnerAssociationActivityList({
 }
 
 export function useCreateUserOwnerMapping() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -72,7 +74,7 @@ export function useCreateUserOwnerMapping() {
     mutationFn: (params: OwnerAssociationRequestApiCreateUserOwnerMappingRequest) =>
       ownerAssociationRequestApi.createUserOwnerMapping(params),
     onSuccess: async () => {
-      showSuccessToast({ message: 'Owner association created successfully' });
+      showSuccessToast({ message: t('Owner association created successfully') });
       await queryClient.invalidateQueries({
         queryKey: ['ownerAssociationRequestList'],
       });
@@ -84,6 +86,7 @@ export function useCreateUserOwnerMapping() {
 }
 
 export function useRemoveUserOwnerMapping() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -91,7 +94,7 @@ export function useRemoveUserOwnerMapping() {
     mutationFn: (params: OwnerAssociationRequestApiDeleteActiveUserOwnerMappingRequest) =>
       ownerAssociationRequestApi.deleteActiveUserOwnerMapping(params),
     onSuccess: async () => {
-      showSuccessToast({ message: 'Association removed successfully' });
+      showSuccessToast({ message: t('Association removed successfully') });
       await queryClient.invalidateQueries({
         queryKey: ['ownerAssociationRequestList'],
       });
@@ -100,6 +103,7 @@ export function useRemoveUserOwnerMapping() {
 }
 
 export function useUpdateAssociationRequest() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -108,7 +112,7 @@ export function useUpdateAssociationRequest() {
       params: OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest
     ) => ownerAssociationRequestApi.updateOwnerAssociationRequest(params),
     onSuccess: async () => {
-      showSuccessToast({ message: 'Association request updated successfully' });
+      showSuccessToast({ message: t('Association request updated successfully') });
       await queryClient.invalidateQueries({
         queryKey: ['ownerAssociationRequestList'],
       });
@@ -117,6 +121,7 @@ export function useUpdateAssociationRequest() {
 }
 
 export function useCreateOwnerAssociationRequest() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -125,7 +130,7 @@ export function useCreateOwnerAssociationRequest() {
       params: OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest
     ) => ownerAssociationRequestApi.createOwnerAssociationRequest(params),
     onSuccess: async () => {
-      showSuccessToast({ message: 'Association request created successfully' });
+      showSuccessToast({ message: t('Association request created successfully') });
       await queryClient.invalidateQueries({
         queryKey: ['ownerAssociationRequestList'],
       });

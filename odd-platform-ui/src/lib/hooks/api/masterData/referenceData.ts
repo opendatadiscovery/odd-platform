@@ -1,4 +1,5 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import type {
   LookupTable,
   ReferenceDataApiAddDataToLookupTableRequest,
@@ -35,13 +36,14 @@ export function useGetReferenceData({ lookupTableId, size }: GetReferenceDataPar
 }
 
 export function useCreateReferenceData() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['createReferenceData'],
     mutationFn: async (params: ReferenceDataApiAddDataToLookupTableRequest) =>
       referenceDataApi.addDataToLookupTable(params),
     onSuccess: async () => {
-      showSuccessToast({ message: 'Reference data successfully created' });
+      showSuccessToast({ message: t('Reference data successfully created') });
       await queryClient.invalidateQueries({
         queryKey: referenceDataQueryKeys.referenceData(),
       });

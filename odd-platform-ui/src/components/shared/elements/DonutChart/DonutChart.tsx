@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, Text, Label } from 'recharts';
 import type { LabelProps, PieLabelRenderProps } from 'recharts';
+import { useTranslation } from 'react-i18next';
 import { typography } from 'theme/typography';
 import type { PolarViewBox } from 'recharts/types/util/types';
 import { palette } from 'theme/palette';
@@ -83,6 +84,7 @@ const CustomPieLabel = ({ viewBox, value, label }: LabelProps & { label?: string
 };
 
 const DonutChart: React.FC<DonutChartProps> = props => {
+  const { t } = useTranslation();
   const { data: rawData, label, title, ...pieChartProps } = props;
   const { width, height, innerRadius, outerRadius } = pieChartProps;
   const totalValue = useMemo(
@@ -92,10 +94,10 @@ const DonutChart: React.FC<DonutChartProps> = props => {
 
   const data = useMemo(() => {
     if (totalValue === 0)
-      return [{ title: 'No data', value: 1, color: palette.runStatus.UNKNOWN.color }];
+      return [{ title: t('No data'), value: 1, color: palette.runStatus.UNKNOWN.color }];
 
     return rawData;
-  }, [rawData, totalValue]);
+  }, [rawData, totalValue, t]);
 
   return (
     <>

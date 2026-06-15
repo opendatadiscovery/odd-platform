@@ -56,21 +56,21 @@ export const DataQualityContent: React.FC = () => {
       data.tablesDashboard.tablesHealth;
     const { healthy, warning, error } = palette.dataQualityDashboard;
     return [
-      { title: 'Healthy', value: healthyTables, color: healthy },
-      { title: 'Warning', value: warningTables, color: warning },
-      { title: 'Error', value: errorTables, color: error },
+      { title: t('Healthy'), value: healthyTables, color: healthy },
+      { title: t('Warning'), value: warningTables, color: warning },
+      { title: t('Error'), value: errorTables, color: error },
     ];
-  }, [data?.tablesDashboard.tablesHealth]);
+  }, [data?.tablesDashboard.tablesHealth, t]);
 
   const tableMonitoredTables = useMemo(() => {
     if (!data) return [];
     const { monitoredTables, notMonitoredTables } = data.tablesDashboard.monitoredTables;
     const { monitored, nonMonitored } = palette.dataQualityDashboard;
     return [
-      { title: 'Monitored', value: monitoredTables, color: monitored },
-      { title: 'Non-Monitored', value: notMonitoredTables, color: nonMonitored },
+      { title: t('Monitored'), value: monitoredTables, color: monitored },
+      { title: t('Non-Monitored'), value: notMonitoredTables, color: nonMonitored },
     ];
-  }, [data?.tablesDashboard.monitoredTables]);
+  }, [data?.tablesDashboard.monitoredTables, t]);
 
   const testResults = isSuccess
     ? data.testResults.toSorted(({ category: a }, { category: b }) => a.localeCompare(b))

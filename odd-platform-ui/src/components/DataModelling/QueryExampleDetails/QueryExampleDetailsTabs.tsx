@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { AppTabItem } from 'components/shared/elements';
 import { AppTabs } from 'components/shared/elements';
 import { useSearchParams } from 'react-router-dom';
@@ -12,24 +13,25 @@ const QueryExampleDetailsTabs = ({
   linkedEntitiesHint,
   linkedTermsHint,
 }: QueryExampleDetailsTabsProps) => {
+  const { t } = useTranslation();
   const tabs = useMemo<AppTabItem<string>[]>(
     () => [
       {
-        name: 'Overview',
+        name: t('Overview'),
         value: 'overview',
       },
       {
-        name: 'Linked Entities',
+        name: t('Linked Entities'),
         value: 'linked-entities',
         hint: linkedEntitiesHint,
       },
       {
-        name: 'Linked Terms',
+        name: t('Linked Terms'),
         value: 'linked-terms',
         hint: linkedTermsHint,
       },
     ],
-    [linkedEntitiesHint, linkedTermsHint]
+    [linkedEntitiesHint, linkedTermsHint, t]
   );
 
   const [searchParams, setSearchParams] = useSearchParams();

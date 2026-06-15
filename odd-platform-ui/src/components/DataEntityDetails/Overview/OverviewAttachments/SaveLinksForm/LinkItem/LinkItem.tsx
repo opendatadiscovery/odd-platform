@@ -33,7 +33,7 @@ const LinkItem: FC<LinkItemProps> = ({ idx, onItemRemove, fieldsCount }) => {
           required: true,
           pattern: {
             value: /^(https?|ftp|mailto|tel|file|data):\/\//,
-            message: 'URL should include protocol',
+            message: t('URL should include protocol'),
           },
         }}
         render={({ field }) => (

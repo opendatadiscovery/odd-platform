@@ -24,17 +24,17 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
   const tabs = React.useMemo<AppTabItem<boolean>[]>(
     () => [
       {
-        name: 'New requests',
+        name: t('New requests'),
         hint: newRequestsTabHint,
         link: associationsPath('new'),
       },
       {
-        name: 'Active associations',
+        name: t('Active associations'),
         hint: activeAssociationsTabHint,
         link: associationsPath('active'),
       },
       {
-        name: 'History',
+        name: t('History'),
         link: associationsPath('history'),
       },
     ],

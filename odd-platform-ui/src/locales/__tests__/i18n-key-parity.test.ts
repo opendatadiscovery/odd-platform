@@ -169,3 +169,49 @@ describe('i18n no unwrapped user-facing attribute literal (#1751 / PLT-205)', ()
     ).toEqual([]);
   });
 });
+
+// THE INVARIANT: no user-facing tab / menu / option / status LABEL is a raw string literal in a TS object
+// property — it must be `t('...')`. Example: `{ name: 'My Objects', value: 'my' }` rendered via
+// `<AppTabs items={tabs}>`.
+//
+// WHY A THIRD GUARD: these labels live in TS object literals, NOT in JSX, so BOTH the eslint
+// `no-literal-string` rule (JSX-only) AND the attribute guard above miss them entirely — the search-page
+// result tabs ("All", "My Objects", "Datasets", …), the relationship/term/owner-association tabs, and the
+// Data-Quality status labels rendered English under every locale even after the JSX sweeps (odd-platform#1751
+// review wave 3, 2026-06-15: the maintainer drove `/search/...` under `ua` and saw English tabs). This scan
+// flags a label-like property whose value is a human phrase. Code values are NOT flagged: ALL-CAPS enums
+// (`SET`, `URL`, `ODDRN`), PascalCase identifiers (`DataQualityTest`), and lowercase/kebab tokens (`main-m`).
+const LABEL_PROPS = [
+  'name', 'label', 'title', 'text', 'header', 'subHeader', 'caption', 'hint', 'description',
+  'placeholder', 'tooltip', 'message', 'actionTitle', 'actionName', 'actionText', 'btnText',
+  'confirmText', 'emptyText', 'noOptionsText', 'errorText', 'heading',
+]; // NB: `content` deliberately excluded — it collides with CSS `content:` in styled/sx blocks.
+const OBJ_PROP_LITERAL = new RegExp(`\\b(${LABEL_PROPS.join('|')})\\s*:\\s*'([^'{}]*)'`, 'g');
+function isUserFacingPhrase(v: string): boolean {
+  if (!/^[A-Z][\w ./'%-]*$/.test(v)) return false; // must start uppercase, simple text charset
+  if (v === v.toUpperCase()) return false; // ALL-CAPS enum / acronym (SET, URL, ODDRN)
+  if (!/[a-z]/.test(v) && !v.includes(' ')) return false; // neither lowercase nor a space → not a phrase
+  if (!v.includes(' ') && /^[A-Z][a-z]*([A-Z][a-z]*)+$/.test(v)) return false; // PascalCase identifier
+  return true;
+}
+
+describe('i18n no unwrapped object-property label literal (#1751 / PLT-205 wave 3)', () => {
+  it('every user-facing tab/menu/status label uses t(...), never a raw object-property string', () => {
+    const offenders: string[] = [];
+    for (const file of walk(SRC_ROOT)) {
+      fs.readFileSync(file, 'utf-8')
+        .split('\n')
+        .forEach((line, idx) => {
+          for (const m of line.matchAll(OBJ_PROP_LITERAL)) {
+            if (isUserFacingPhrase(m[2])) {
+              offenders.push(`${path.relative(SRC_ROOT, file)}:${idx + 1}  ${m[1]}: '${m[2]}'`);
+            }
+          }
+        });
+    }
+    expect(
+      offenders,
+      `Unwrapped user-facing label literal(s) in a TS object property — wrap each value in t('...'):\n${offenders.join('\n')}`
+    ).toEqual([]);
+  });
+});
