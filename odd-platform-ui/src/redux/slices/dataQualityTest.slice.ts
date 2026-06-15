@@ -130,6 +130,24 @@ export const dataQualityTestSlice = createSlice({
     builder.addCase(thunks.fetchDataSetQualityTestList.fulfilled, (state, { payload }) =>
       createDataSetQualityTestList(state, payload.value, payload.entityId)
     );
+
+    // Reduce the severity mutation's result into the store so the rendered value derives from the
+    // persisted record without a full test-list refetch (mirrors dataentities.slice updateEntityStatus).
+    // Only `severity` changed; merging it in keeps the rest of the cached test entity intact.
+    builder.addCase(
+      thunks.setDataQATestSeverity.fulfilled,
+      (state, { payload }): DataQualityTestState => {
+        const existing = state.qualityTestsById[payload.id];
+        if (!existing) return state;
+        return {
+          ...state,
+          qualityTestsById: {
+            ...state.qualityTestsById,
+            [payload.id]: { ...existing, severity: payload.severity },
+          },
+        };
+      }
+    );
   },
 });
 export default dataQualityTestSlice.reducer;

@@ -92,6 +92,7 @@ const TestReportDetails: React.FC = () => {
                 path='overview'
                 element={
                   <WithPermissionsProvider
+                    key={dataQATestId}
                     allowedPermissions={[Permission.DATASET_TEST_RUN_SET_SEVERITY]}
                     resourcePermissions={resourcePermissions}
                     Component={TestReportDetailsOverview}

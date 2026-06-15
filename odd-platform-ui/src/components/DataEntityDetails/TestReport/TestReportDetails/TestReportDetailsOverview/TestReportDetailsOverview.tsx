@@ -1,11 +1,8 @@
 import React from 'react';
-import type { SelectChangeEvent } from '@mui/material';
 import { Box, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
-  AppMenuItem,
-  AppSelect,
   LabeledInfoItem,
   TestRunStatusItem,
   TestRunStatusReasonModal,
@@ -16,20 +13,18 @@ import {
   getDatasetTestListFetchingStatuses,
   getQualityTestByTestId,
 } from 'redux/selectors';
-import { setDataQATestSeverity } from 'redux/thunks';
 import { useAppDateTime } from 'lib/hooks';
-import { ORDERED_SEVERITY } from 'lib/constants';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { useDataEntityRouteParams } from 'routes';
 import TestReportDetailsOverviewSkeleton from './TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 import TestReportDetailsOverviewParametersModal from './TestReportDetailsOverviewParametersModal/TestReportDetailsOverviewParametersModal';
+import SelectableSeverity from './SelectableSeverity/SelectableSeverity';
 import * as S from './TestReportDetailsOverviewStyles';
 
 const TestReportDetailsOverview: React.FC = () => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useDataEntityRouteParams();
   const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
@@ -38,18 +33,6 @@ const TestReportDetailsOverview: React.FC = () => {
   const { isLoading: isDatasetTestListFetching } = useAppSelector(
     getDatasetTestListFetchingStatuses
   );
-
-  const handleSeverityChange = (e: SelectChangeEvent<unknown>) => {
-    const severity = e.target.value as DataQualityTestSeverity;
-
-    dispatch(
-      setDataQATestSeverity({
-        dataEntityId,
-        dataqaTestId: dataQATestId,
-        dataQualityTestSeverityForm: { severity },
-      })
-    );
-  };
 
   const stringifyParams = JSON.stringify(qualityTest?.expectation, null, 2);
   const [showSeeMore, setShowSeeMore] = React.useState(false);
@@ -78,18 +61,12 @@ const TestReportDetailsOverview: React.FC = () => {
             <WithPermissions
               permissionTo={Permission.DATASET_TEST_RUN_SET_SEVERITY}
               renderContent={({ isAllowedTo }) => (
-                <AppSelect
+                <SelectableSeverity
+                  currentSeverity={qualityTest?.severity || DataQualityTestSeverity.MAJOR}
+                  dataEntityId={dataEntityId}
+                  dataQATestId={dataQATestId}
                   disabled={!isAllowedTo}
-                  size='small'
-                  defaultValue={qualityTest?.severity || DataQualityTestSeverity.MAJOR}
-                  onChange={handleSeverityChange}
-                >
-                  {ORDERED_SEVERITY.map(severity => (
-                    <AppMenuItem key={severity} value={severity}>
-                      {severity}
-                    </AppMenuItem>
-                  ))}
-                </AppSelect>
+                />
               )}
             />
           </LabeledInfoItem>
