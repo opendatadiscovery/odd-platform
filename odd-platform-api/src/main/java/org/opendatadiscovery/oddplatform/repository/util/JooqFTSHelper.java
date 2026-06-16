@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,13 @@ import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DAT
 @RequiredArgsConstructor
 @Slf4j
 public class JooqFTSHelper {
+
+    // to_tsquery parses its argument as a tsquery expression, so any tsquery operator reaching it
+    // unescaped raises Postgres 42601 (syntax error in tsquery) -> HTTP 500; and because the query is
+    // persisted in the search-session row, every later read of that session fails again until the row
+    // changes or is evicted. The characters that can raise 42601 (postgres 13) are  ! & ' ( ) : < |  ;
+    // strip the full tsquery operator set (also * > \) so only word tokens reach to_tsquery. See #1756.
+    private static final Pattern TSQUERY_SPECIAL_CHARS = Pattern.compile("[!&'()*:<>|\\\\]");
 
     public Insert<? extends Record> buildVectorUpsert(
         final Select<? extends Record> vectorSelect,
@@ -162,7 +170,11 @@ public class JooqFTSHelper {
     }
 
     public String tsQuery(final String plainQuery) {
-        return Arrays.stream(plainQuery.split(" "))
+        if (plainQuery == null) {
+            return "";
+        }
+        return Arrays.stream(TSQUERY_SPECIAL_CHARS.matcher(plainQuery).replaceAll(" ").split(" "))
+            .filter(queryPart -> !queryPart.isEmpty())
             .map(queryPart -> queryPart + ":*")
             .collect(Collectors.joining("&"));
     }
