@@ -67,6 +67,10 @@ class JooqGenerateTask extends DefaultTask {
         Flyway.configure()
             .dataSource(container.getJdbcUrl(), container.getUsername(), container.getPassword())
             .locations(locations)
+            // Schema-only codegen: do not substitute runtime Flyway placeholders (e.g. ${authtype}
+            // in V0_0_92) -- they are resolved by the application at runtime, not when generating
+            // jOOQ classes. Without this, codegen fails parsing a migration that uses a placeholder.
+            .placeholderReplacement(false)
             .load()
             .migrate()
     }

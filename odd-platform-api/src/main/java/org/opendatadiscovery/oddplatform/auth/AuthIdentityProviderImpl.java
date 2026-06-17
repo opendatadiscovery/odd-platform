@@ -1,12 +1,12 @@
 package org.opendatadiscovery.oddplatform.auth;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.dto.security.UserDto;
 import org.opendatadiscovery.oddplatform.dto.security.UserProviderRole;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMappingRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -15,10 +15,16 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class AuthIdentityProviderImpl implements AuthIdentityProvider {
     private final ReactiveUserOwnerMappingRepository userOwnerMappingRepository;
+    private final String authType;
+
+    public AuthIdentityProviderImpl(final ReactiveUserOwnerMappingRepository userOwnerMappingRepository,
+                                    @Value("${auth.type}") final String authType) {
+        this.userOwnerMappingRepository = userOwnerMappingRepository;
+        this.authType = authType;
+    }
 
     @Override
     public Mono<UserDto> getCurrentUser() {
@@ -29,7 +35,7 @@ public class AuthIdentityProviderImpl implements AuthIdentityProvider {
                 if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
                     return new UserDto(username, oauthToken.getAuthorizedClientRegistrationId());
                 } else {
-                    return new UserDto(username, null);
+                    return new UserDto(username, authType);
                 }
             });
     }

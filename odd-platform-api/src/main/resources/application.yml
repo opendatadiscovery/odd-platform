@@ -13,6 +13,11 @@ spring:
     sql-dialect: postgres
   codec:
     max-in-memory-size: 20MB
+  flyway:
+    placeholders:
+      # GHSA-8wf2-7c5g-h59v / PLT-120: bind auth.type into V0_0_92's provider backfill so it runs
+      # only for LOGIN_FORM/LDAP (a strict no-op under OAUTH2/DISABLED).
+      authtype: ${auth.type}
 
 genai:
   enabled: false
