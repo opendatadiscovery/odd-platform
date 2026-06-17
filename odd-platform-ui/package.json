@@ -39,6 +39,7 @@
     ]
   },
   "dependencies": {
+    "@braintree/sanitize-url": "7.1.2",
     "@hookform/error-message": "^2.0.1",
     "@mui/lab": "5.0.0-alpha.139",
     "@mui/material": "^5.14.19",

@@ -1,5 +1,6 @@
 import React, { type FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 import type { DataEntityLink } from 'generated-sources';
 import { Permission } from 'generated-sources';
 import { DeleteIcon, EditIcon, LinkIcon } from 'components/shared/icons';
@@ -22,7 +23,9 @@ const LinkAttachment: FC<LinkAttachmentProps> = ({ name, linkId, url }) => {
   const { mutateAsync: deleteLink } = useDeleteDataEntityLink();
 
   return (
-    <a href={url} target='_blank' rel='noreferrer'>
+    // Sanitize so only safe (http/https) schemes are followed; javascript:/data: -> about:blank.
+    // Defense-in-depth alongside the server-side scheme allow-list.
+    <a href={sanitizeUrl(url)} target='_blank' rel='noreferrer'>
       <S.Container>
         <S.ActionsContainer>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_MANAGE}>

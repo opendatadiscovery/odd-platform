@@ -32,7 +32,9 @@ const LinkItem: FC<LinkItemProps> = ({ idx, onItemRemove, fieldsCount }) => {
         rules={{
           required: true,
           pattern: {
-            value: /^(https?|ftp|mailto|tel|file|data):\/\//,
+            // Match the server-side scheme allow-list (http/https only) so the user gets inline feedback
+            // instead of a 400; the authoritative guard is LinkServiceImpl, the render guard is sanitizeUrl.
+            value: /^https?:\/\//,
             message: t('URL should include protocol'),
           },
         }}
