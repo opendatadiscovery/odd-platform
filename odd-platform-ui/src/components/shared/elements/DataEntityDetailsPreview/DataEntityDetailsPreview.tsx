@@ -1,6 +1,5 @@
 import React, { type FC, useCallback, useMemo, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
-import MDEditor from '@uiw/react-md-editor';
 import { useTranslation } from 'react-i18next';
 import { useDataEntityDetails } from 'lib/hooks';
 import { InformationIcon } from 'components/shared/icons';
@@ -11,6 +10,7 @@ import AppTooltip from '../AppTooltip/AppTooltip';
 import MetadataItem from '../MetadataItem/MetadataItem';
 import TruncatedList from '../TruncatedList/TruncatedList';
 import TagItem from '../TagItem/TagItem';
+import Markdown from '../Markdown/Markdown';
 
 interface DataEntityDetailsPreviewProps {
   dataEntityId: number;
@@ -153,7 +153,10 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
               </Grid>
               <S.AboutText variant='body1' color='texts.secondary'>
                 {dataEntityDetails?.internalDescription ? (
-                  <MDEditor.Markdown source={dataEntityDetails?.internalDescription} />
+                  // Route through the shared <Markdown> wrapper so internalDescription is
+                  // rehype-sanitized like every other render sink (GHSA-mf43-2636-9289), instead
+                  // of the previous direct <MDEditor.Markdown> which bypassed sanitization.
+                  <Markdown value={dataEntityDetails?.internalDescription ?? ''} />
                 ) : (
                   t('Not created')
                 )}

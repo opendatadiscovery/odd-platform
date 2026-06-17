@@ -83,6 +83,7 @@
     "react-router-dom": "^7.12.0",
     "react-truncate-markup": "^5.1.2",
     "recharts": "^2.12.0",
+    "rehype-sanitize": "5.0.1",
     "styled-components": "^6.1.8",
     "use-debounce": "^10.0.0",
     "uuid": "^9.0.1",
