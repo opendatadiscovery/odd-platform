@@ -360,7 +360,9 @@ public class DataEntityHighlightConverter {
     }
 
     private String searchableString(final String value) {
-        return StringUtils.defaultIfEmpty(value, "")
-            .replace("'", "''");
+        // No manual quote-doubling: the assembled highlight text is bound as a SQL parameter in
+        // ReactiveDataEntityRepository.getHighlightedResult, so escaping here would render the
+        // doubled quotes literally in the highlighted output.
+        return StringUtils.defaultIfEmpty(value, "");
     }
 }

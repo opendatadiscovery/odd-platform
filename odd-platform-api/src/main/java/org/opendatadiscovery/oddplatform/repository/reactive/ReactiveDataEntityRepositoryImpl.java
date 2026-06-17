@@ -798,9 +798,12 @@ public class ReactiveDataEntityRepositoryImpl
     @Override
     public Mono<String> getHighlightedResult(final String text, final String query) {
         final String tsQuery = jooqFTSHelper.tsQuery(query);
-        final String sql = "ts_headline('english', '%s', to_tsquery('%s'), 'HighlightAll=true')"
-            .formatted(text, tsQuery);
-        final var select = DSL.select(field(sql, String.class));
+        // Bind text + tsQuery as parameters (never interpolate) so a crafted search query cannot
+        // break out of the ts_headline / to_tsquery literal - mirrors the safe ftsCondition /
+        // ftsRankField sinks in JooqFTSHelper which already use field("... to_tsquery(?) ...", ...).
+        final var select = DSL.select(field(
+            "ts_headline('english', ?, to_tsquery(?), 'HighlightAll=true')",
+            String.class, text, tsQuery));
         return jooqReactiveOperations.mono(select)
             .map(Record1::value1);
     }

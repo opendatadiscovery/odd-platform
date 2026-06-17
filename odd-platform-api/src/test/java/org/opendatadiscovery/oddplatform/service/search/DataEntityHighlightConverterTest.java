@@ -83,4 +83,25 @@ class DataEntityHighlightConverterTest {
         // nothing was highlighted, so the per-field data-entity highlight is absent
         assertThat(highlight.getDataEntity()).isNull();
     }
+
+    @Test
+    void convert_fieldWithSingleQuote_isNotQuoteDoubled() {
+        final DataEntityDetailsDto details = DataEntityDetailsDto.detailsBuilder()
+            .dataEntity(new DataEntityPojo()
+                .setExternalName("O'Brien's orders")
+                .setInternalName("")
+                .setExternalDescription("")
+                .setInternalDescription(""))
+            .build();
+
+        final String result = converter.convert(details, emptyStructure());
+
+        // The assembled highlight text is bound as a SQL parameter downstream
+        // (ReactiveDataEntityRepository.getHighlightedResult), so searchableString must pass single
+        // quotes through verbatim. Doubling them here (the old behaviour) would render the doubled
+        // quotes literally in the highlighted output.
+        assertThat(result)
+            .contains("O'Brien's orders")
+            .doesNotContain("O''Brien''s orders");
+    }
 }
