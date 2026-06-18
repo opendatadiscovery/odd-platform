@@ -90,6 +90,7 @@ export const DataEntityClassTypeLabelMap: Map<
   [TypeNameEnum.JOB, { normal: 'Job', plural: 'Jobs' }],
   [TypeNameEnum.JOB_RUN, { normal: 'Job run', plural: 'Job runs' }],
   [TypeNameEnum.ML_EXPERIMENT, { normal: 'ML experiment', plural: 'ML experiments' }],
+  [TypeNameEnum.ML_MODEL, { normal: 'ML model', plural: 'ML models' }],
   [
     TypeNameEnum.ML_MODEL_TRAINING,
     { normal: 'ML model training', plural: 'ML models training' },

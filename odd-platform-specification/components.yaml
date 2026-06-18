@@ -791,6 +791,7 @@ components:
             - JOB
             - JOB_RUN
             - ML_EXPERIMENT
+            - ML_MODEL
             - ML_MODEL_TRAINING
             - ML_MODEL_INSTANCE
             - DASHBOARD
