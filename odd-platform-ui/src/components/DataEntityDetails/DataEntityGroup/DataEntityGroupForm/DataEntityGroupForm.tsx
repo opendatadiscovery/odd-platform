@@ -141,8 +141,11 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
           >
             {types
               ?.filter(
-                // filtration needs to avoid user create ml_experiment from ui
-                type => type.name !== DataEntityTypeNameEnum.ML_EXPERIMENT
+                // ml_experiment and ml_model are ingestion-derived group identities,
+                // not user-created custom groups from the ui
+                type =>
+                  type.name !== DataEntityTypeNameEnum.ML_EXPERIMENT &&
+                  type.name !== DataEntityTypeNameEnum.ML_MODEL
               )
               .map(type => (
                 <AppMenuItem key={type.id} value={type as never}>

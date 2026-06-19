@@ -31,6 +31,7 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.KAFKA_TOPI
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.LOOKUP_TABLE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.MICROSERVICE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_EXPERIMENT;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL_ARTIFACT;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL_INSTANCE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL_TRAINING;
@@ -47,7 +48,7 @@ public enum DataEntityClassDto {
     DATA_QUALITY_TEST_RUN(5, JOB_RUN),
     DATA_CONSUMER(6, Set.of(ML_MODEL_ARTIFACT, DASHBOARD)),
     DATA_INPUT(7, API_CALL),
-    DATA_ENTITY_GROUP(8, Set.of(ML_EXPERIMENT, DAG, DATABASE_SERVICE, API_SERVICE, KAFKA_SERVICE, DOMAIN)),
+    DATA_ENTITY_GROUP(8, Set.of(ML_EXPERIMENT, ML_MODEL, DAG, DATABASE_SERVICE, API_SERVICE, KAFKA_SERVICE, DOMAIN)),
     DATA_RELATIONSHIP(9, Set.of(ENTITY_RELATIONSHIP, GRAPH_RELATIONSHIP));
 
     private static final Map<Integer, DataEntityClassDto> MAP = Arrays.stream(DataEntityClassDto.values())
