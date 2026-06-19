@@ -13,7 +13,7 @@ public class S2sTokenProvider {
     private boolean s2sEnabled;
 
     public boolean isValidToken(final String token) {
-        if (StringUtils.isBlank(token)) {
+        if (StringUtils.isBlank(token) || StringUtils.isBlank(s2sToken)) {
             return false;
         }
 
