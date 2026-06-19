@@ -46,6 +46,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldTagActivitySta
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldTermsActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DescriptionActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.LookupTableNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.OwnershipActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.TagActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.TermActivityStateDto;
@@ -231,6 +232,7 @@ public class ActivityMapperTest {
             case OPEN_ALERT_RECEIVED, RESOLVED_ALERT_RECEIVED -> generateAlertReceivedState();
             case DATASET_FIELD_TERM_ASSIGNMENT_UPDATED -> generateDatasetFieldTermsState();
             case DATA_ENTITY_STATUS_UPDATED -> generateDataEntityStatusState();
+            case LOOKUP_TABLE_RENAMED -> generateLookupTableNameState();
             default -> "";
         };
     }
@@ -288,6 +290,11 @@ public class ActivityMapperTest {
 
     private String generateBusinessNameState() {
         final BusinessNameActivityStateDto state = GENERATOR.nextObject(BusinessNameActivityStateDto.class);
+        return JSONSerDeUtils.serializeJson(state);
+    }
+
+    private String generateLookupTableNameState() {
+        final LookupTableNameActivityStateDto state = GENERATOR.nextObject(LookupTableNameActivityStateDto.class);
         return JSONSerDeUtils.serializeJson(state);
     }
 

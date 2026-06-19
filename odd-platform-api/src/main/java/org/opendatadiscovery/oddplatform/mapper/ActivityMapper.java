@@ -31,6 +31,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldInformat
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTermsActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldValuesActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DescriptionActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableNameActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagActivityState;
@@ -52,6 +53,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationAct
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldTermsActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DescriptionActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.LookupTableNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.OwnershipActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.TagActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.TermActivityStateDto;
@@ -131,6 +133,7 @@ public abstract class ActivityMapper {
             case ALERT_STATUS_UPDATED -> mapAlertUpdatedStatus(jsonb);
             case OPEN_ALERT_RECEIVED -> mapOpenAlertReceived(jsonb);
             case RESOLVED_ALERT_RECEIVED -> mapResolvedAlertReceived(jsonb);
+            case LOOKUP_TABLE_RENAMED -> mapLookupTableNameState(jsonb);
             default -> new ActivityState();
         };
     }
@@ -197,6 +200,13 @@ public abstract class ActivityMapper {
     }
 
     abstract BusinessNameActivityState mapInternalNameActivityState(final BusinessNameActivityStateDto dto);
+
+    ActivityState mapLookupTableNameState(final JSONB jsonb) {
+        final LookupTableNameActivityStateDto stateDto =
+            JSONSerDeUtils.deserializeJson(jsonb.data(), LookupTableNameActivityStateDto.class);
+        return new ActivityState()
+            .lookupTableName(new LookupTableNameActivityState().name(stateDto.name()));
+    }
 
     ActivityState mapDataEntityStatusState(final JSONB jsonb) {
         final DataEntityStatusUpdatedDto stateDto =
