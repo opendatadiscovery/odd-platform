@@ -2945,6 +2945,8 @@ components:
           $ref: '#/components/schemas/AlertReceivedActivityState'
         resolved_alert_received:
           $ref: '#/components/schemas/AlertReceivedActivityState'
+        lookup_table_name:
+          $ref: '#/components/schemas/LookupTableNameActivityState'
 
     OwnershipActivityState:
       type: object
@@ -3007,6 +3009,12 @@ components:
       type: object
       properties:
         internal_name:
+          type: string
+
+    LookupTableNameActivityState:
+      type: object
+      properties:
+        name:
           type: string
 
     DataEntityStatusActivityState:
@@ -3208,6 +3216,7 @@ components:
         - ALERT_STATUS_UPDATED
         - OPEN_ALERT_RECEIVED
         - RESOLVED_ALERT_RECEIVED
+        - LOOKUP_TABLE_RENAMED
 
     OwnerAssociationRequestList:
       type: object

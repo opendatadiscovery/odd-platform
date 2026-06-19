@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableUpdateFor
 import org.opendatadiscovery.oddplatform.dto.LookupTableColumnTypes;
 import org.opendatadiscovery.oddplatform.dto.ReferenceTableColumnDto;
 import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.LookupTableDefinitionMapper;
@@ -25,6 +26,9 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLookupTableRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReferenceDataRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.LookupTableRenamed;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -104,8 +108,10 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     }
 
     @Override
-    public Mono<LookupTable> updateLookupTable(final Long lookupTableId,
-                                               final LookupTableUpdateFormData formData) {
+    @ActivityLog(event = ActivityEventTypeDto.LOOKUP_TABLE_RENAMED)
+    public Mono<LookupTable> updateLookupTable(
+        @ActivityParameter(LookupTableRenamed.LOOKUP_TABLE_ID) final Long lookupTableId,
+        final LookupTableUpdateFormData formData) {
         return lookupDataService.getLookupTableById(lookupTableId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
             .flatMap(table -> {

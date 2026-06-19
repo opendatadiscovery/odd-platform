@@ -56,4 +56,8 @@ public interface ActivityParameterNames {
     interface AlertStatusUpdated {
         String ALERT_ID = "alertId";
     }
+
+    interface LookupTableRenamed {
+        String LOOKUP_TABLE_ID = "lookupTableId";
+    }
 }

@@ -118,6 +118,14 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           hideAllDetails={hideAllDetails}
         />
       )}
+      {isTypeRelatedTo([ActivityEventType.LOOKUP_TABLE_RENAMED]) && (
+        <StringActivityField
+          activityName='Table name'
+          oldState={activity.oldState.lookupTableName?.name}
+          newState={activity.newState.lookupTableName?.name}
+          hideAllDetails={hideAllDetails}
+        />
+      )}
       {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_INTERNAL_NAME_UPDATED]) && (
         <StringActivityField
           startText={`The dataset field's "${
