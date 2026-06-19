@@ -1426,6 +1426,7 @@ components:
         - SKIPPED
         - BROKEN
         - ABORTED
+        - RUNNING
         - UNKNOWN
 
     MultipleFacetType:
