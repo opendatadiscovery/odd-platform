@@ -93,6 +93,55 @@ class DataEntityRunRepositoryImplTest extends BaseIntegrationTest {
             .verifyComplete();
     }
 
+    @Test
+    public void getDataEntityRuns_inFlightRunsAtTop_deterministicTotalOrder() {
+        final DataEntityPojo de = dataEntityRepository
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
+
+        final LocalDateTime t = LocalDateTime.of(2026, 6, 1, 10, 0);
+        // Two in-flight (RUNNING, end_time = null) runs with different start_times. Insert the older-start one FIRST
+        // so a tiebreaker-less "ORDER BY end_time DESC" would leave them in insertion order (older first) — the
+        // start_time DESC tiebreaker must reorder them newest-in-flight-first.
+        final DataEntityTaskRunPojo runningOld =
+            createTaskRun(de.getOddrn(), IngestionTaskRunStatus.RUNNING, t, null);
+        final DataEntityTaskRunPojo runningNew =
+            createTaskRun(de.getOddrn(), IngestionTaskRunStatus.RUNNING, t.plusHours(1), null);
+        // Completed runs. midA and midB share an identical (end_time, start_time); midA is inserted first (lower id),
+        // so the id DESC final tiebreaker must place midB before midA — a total order, no dup/skip under paging.
+        final DataEntityTaskRunPojo late =
+            createTaskRun(de.getOddrn(), IngestionTaskRunStatus.SUCCESS, t, t.plusDays(3));
+        final DataEntityTaskRunPojo midA =
+            createTaskRun(de.getOddrn(), IngestionTaskRunStatus.SUCCESS, t, t.plusDays(2));
+        final DataEntityTaskRunPojo midB =
+            createTaskRun(de.getOddrn(), IngestionTaskRunStatus.SUCCESS, t, t.plusDays(2));
+        final DataEntityTaskRunPojo early =
+            createTaskRun(de.getOddrn(), IngestionTaskRunStatus.FAILED, t, t.plusDays(1));
+
+        reactiveDataEntityTaskRunRepository
+            .bulkCreate(List.of(runningOld, runningNew, late, midA, midB, early))
+            .block();
+
+        dataEntityRunRepository.getDataEntityRuns(de.getId(), null, 1, 30)
+            .as(StepVerifier::create)
+            .assertNext(page -> {
+                assertThat(page.getData())
+                    .extracting(DataEntityTaskRunPojo::getOddrn)
+                    .containsExactly(
+                        runningNew.getOddrn(),   // in-flight, newest start -> top
+                        runningOld.getOddrn(),   // in-flight, older start
+                        late.getOddrn(),         // completed, end +3d
+                        midB.getOddrn(),         // completed, end +2d; id DESC breaks the (end, start) tie
+                        midA.getOddrn(),         // completed, end +2d
+                        early.getOddrn());       // completed, end +1d
+                assertThat(page.getTotal()).isEqualTo(6);
+                assertThat(page.isHasNext()).isFalse();
+            })
+            .verifyComplete();
+    }
+
     private DataEntityTaskRunPojo createTaskRun(final String deOddrn,
                                                 final IngestionTaskRunStatus status) {
         return new DataEntityTaskRunPojo()
@@ -100,6 +149,18 @@ class DataEntityRunRepositoryImplTest extends BaseIntegrationTest {
             .setTaskOddrn(deOddrn)
             .setStartTime(LocalDateTime.now())
             .setEndTime(IngestionTaskRunStatus.RUNNING.equals(status) ? null : LocalDateTime.now())
+            .setStatus(status.toString());
+    }
+
+    private DataEntityTaskRunPojo createTaskRun(final String deOddrn,
+                                                final IngestionTaskRunStatus status,
+                                                final LocalDateTime startTime,
+                                                final LocalDateTime endTime) {
+        return new DataEntityTaskRunPojo()
+            .setOddrn(UUID.randomUUID().toString())
+            .setTaskOddrn(deOddrn)
+            .setStartTime(startTime)
+            .setEndTime(endTime)
             .setStatus(status.toString());
     }
 }

@@ -25,6 +25,7 @@ import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityTaskLast
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityTaskRunRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
@@ -173,10 +174,17 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATA_ENTITY_TASK_RUN.TASK_ODDRN))
             .where(conditions);
 
+        // Order: in-flight runs (end_time IS NULL) at the TOP — Postgres sorts NULLs first for DESC, and an
+        // in-flight run is the freshest, most diagnostic row — then completed runs newest-end-time first.
+        // start_time DESC orders multiple in-flight runs newest-first; id DESC is the final unique key, so the
+        // ordering is a total order and the infinite-scroll page cannot duplicate or skip a row.
         final Select<? extends Record> query = jooqQueryHelper.paginate(
             baseQuery,
-            DATA_ENTITY_TASK_RUN.END_TIME,
-            SortOrder.DESC,
+            List.of(
+                new OrderByField(DATA_ENTITY_TASK_RUN.END_TIME, SortOrder.DESC),
+                new OrderByField(DATA_ENTITY_TASK_RUN.START_TIME, SortOrder.DESC),
+                new OrderByField(DATA_ENTITY_TASK_RUN.ID, SortOrder.DESC)
+            ),
             (page - 1) * size,
             size
         );

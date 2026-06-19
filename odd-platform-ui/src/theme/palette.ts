@@ -62,6 +62,12 @@ const colors = {
   purple20: '#AA99FF',
   purple10: '#D4CCFF',
   purple5: '#EAE5FF',
+
+  cyan60: '#0892A0',
+  cyan50: '#0AB8CC',
+  cyan20: '#80DCE6',
+  cyan10: '#B3ECF2',
+  cyan5: '#E5F8FA',
 } as const;
 
 export const palette = createPalette({
@@ -125,6 +131,7 @@ export const palette = createPalette({
     BROKEN: { color: colors.orange50, background: colors.orange5 },
     SKIPPED: { color: colors.blue50, background: colors.blue5 },
     ABORTED: { color: colors.purple30, background: colors.purple5 },
+    RUNNING: { color: colors.cyan50, background: colors.cyan5 },
     UNKNOWN: { color: colors.black30, background: colors.black5 },
   },
   reportStatus: {
@@ -133,6 +140,7 @@ export const palette = createPalette({
     BROKEN: { background: colors.orange10, border: colors.orange20 },
     SKIPPED: { background: colors.blue10, border: colors.blue20 },
     ABORTED: { background: colors.purple10, border: colors.purple30 },
+    RUNNING: { background: colors.cyan10, border: colors.cyan20 },
     UNKNOWN: { background: colors.black10, border: colors.black20 },
   },
   slaStatus: {
