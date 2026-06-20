@@ -1,7 +1,7 @@
 import type { EntityState } from '@reduxjs/toolkit';
 import type {
   ActivityCountInfo,
-  AlertTotals,
+  AlertCountInfo,
   AssociatedOwner,
   Collector,
   DataEntity as GeneratedDataEntity,
@@ -157,7 +157,7 @@ export interface DataEntitySearchState {
 }
 
 export interface AlertsState {
-  alerts: PaginatedResponse<Alert[]> & { totals: AlertTotals };
+  alerts: PaginatedResponse<Alert[]> & { counts: AlertCountInfo };
   dataEntityAlerts: Record<number, PaginatedResponse<Alert[]> & { alertCount: number }>;
   configs: EntityState<AlertsConfig>;
 }

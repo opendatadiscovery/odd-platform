@@ -1,84 +1,46 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Grid } from '@mui/material';
-import { type AsyncThunk } from '@reduxjs/toolkit';
-import {
-  type AlertApiGetAllAlertsRequest,
-  type AlertApiGetAssociatedUserAlertsRequest,
-  type AlertApiGetDependentEntitiesAlertsRequest,
-} from 'generated-sources';
 import {
   getAlertListFetchingError,
   getAlertListFetchingStatus,
   getAlertsPageInfo,
-  getMyAlertListFetchingError,
-  getMyAlertListFetchingStatus,
-  getMyDependentsAlertListFetchingError,
-  getMyDependentsAlertListFetchingStatus,
   getAlerts,
 } from 'redux/selectors';
 import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import type { AlertsResponse } from 'redux/interfaces';
+import { fetchAlerts } from 'redux/thunks';
+import { useQueryParams } from 'lib/hooks';
+import { type AlertsQuery, defaultAlertsQuery } from 'components/Alerts/common';
 import DataEntityAlertsSkeleton from '../../DataEntityDetails/DataEntityAlerts/DataEntityAlertItem/DataEntityAlertsSkeleton';
 import * as S from './AlertsListStyles';
 import AlertItem from './AlertItem/AlertItem';
 
-interface AlertsListProps {
-  fetchAlerts: AsyncThunk<
-    AlertsResponse,
-    | AlertApiGetAllAlertsRequest
-    | AlertApiGetAssociatedUserAlertsRequest
-    | AlertApiGetDependentEntitiesAlertsRequest,
-    Record<string, unknown>
-  >;
-}
-
-const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
+// Reads the full AlertsQuery (tab + filters) off the URL and drives the new getAlertsList endpoint.
+// The endpoint returns a bare Alert[], so paging is length-based: keep fetching the next page while
+// the previous page came back full (pageInfo.hasNext, set in the thunk).
+const AlertsList: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { queryParams } = useQueryParams<AlertsQuery>(defaultAlertsQuery);
 
   const pageInfo = useAppSelector(getAlertsPageInfo);
   const alerts = useAppSelector(getAlerts);
 
   const {
-    isLoaded: isAlertListFetched,
-    isLoading: isAlertListFetching,
-    isNotLoaded: isAlertListNotLoaded,
+    isLoaded: isAlertsFetched,
+    isLoading: isAlertsFetching,
+    isNotLoaded: isAlertsNotLoaded,
   } = useAppSelector(getAlertListFetchingStatus);
-  const {
-    isLoaded: isMyAlertListFetched,
-    isLoading: isMyAlertListFetching,
-    isNotLoaded: isMyAlertListNotLoaded,
-  } = useAppSelector(getMyAlertListFetchingStatus);
-  const {
-    isLoaded: isMyDependentsAlertListFetched,
-    isLoading: isMyDependentsAlertListFetching,
-    isNotLoaded: isMyDependentsAlertListNotLoaded,
-  } = useAppSelector(getMyDependentsAlertListFetchingStatus);
-  const alertListError = useAppSelector(getAlertListFetchingError);
-  const myAlertListError = useAppSelector(getMyAlertListFetchingError);
-  const myDependentsAlertListError = useAppSelector(
-    getMyDependentsAlertListFetchingError
-  );
+  const alertsError = useAppSelector(getAlertListFetchingError);
 
-  const alertsError = alertListError || myAlertListError || myDependentsAlertListError;
-  const isAlertsFetched =
-    isAlertListFetched || isMyAlertListFetched || isMyDependentsAlertListFetched;
-  const isAlertsFetching =
-    isAlertListFetching || isMyAlertListFetching || isMyDependentsAlertListFetching;
-  const isAlertsNotLoaded =
-    isAlertListNotLoaded || isMyAlertListNotLoaded || isMyDependentsAlertListNotLoaded;
-
-  const size = 30;
+  React.useEffect(() => {
+    dispatch(fetchAlerts({ ...queryParams, page: 1 }));
+  }, [queryParams]);
 
   const fetchNextPage = () => {
     if (!pageInfo.hasNext) return;
-    dispatch(fetchAlerts({ page: pageInfo.page + 1, size }));
+    dispatch(fetchAlerts({ ...queryParams, page: pageInfo.page + 1 }));
   };
-
-  React.useEffect(() => {
-    dispatch(fetchAlerts({ page: 1, size }));
-  }, [fetchAlerts]);
 
   return (
     <Grid container sx={{ mt: 2 }}>

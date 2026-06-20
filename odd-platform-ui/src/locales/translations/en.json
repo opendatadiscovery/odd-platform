@@ -632,5 +632,7 @@
   "Reference data successfully created": "Reference data successfully created",
   "Transformers": "Transformers",
   "URL should include protocol": "URL should include protocol",
-  "Warning": "Warning"
+  "Warning": "Warning",
+  "Open": "Open",
+  "Resolved automatically": "Resolved automatically"
 }

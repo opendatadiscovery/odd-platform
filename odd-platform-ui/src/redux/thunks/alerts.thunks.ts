@@ -1,13 +1,12 @@
 import type {
   AlertApiChangeAlertStatusRequest,
-  AlertApiGetAllAlertsRequest,
-  AlertApiGetAssociatedUserAlertsRequest,
-  AlertApiGetDependentEntitiesAlertsRequest,
-  AlertTotals,
+  AlertApiGetAlertCountsRequest,
+  AlertApiGetAlertsListRequest,
+  AlertCountInfo,
   DataEntityAlertConfig,
   DataEntityApiGetAlertConfigRequest,
   DataEntityApiGetDataEntityAlertsCountsRequest,
-  DataEntityApiGetDataEntityAlertsRequest,
+  DataEntityApiGetDataEntityAlertsListRequest,
   DataEntityApiUpdateAlertConfigRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
@@ -24,49 +23,48 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { toDate } from 'lib/helpers';
 import { alertApi, dataEntityApi } from 'lib/api';
 
-export const fetchAlertsTotals = handleResponseAsyncThunk<AlertTotals>(
-  actions.fetchAlertsTotalsActionType,
-  async () => await alertApi.getAlertTotals(),
-  {}
-);
+export const alertsListSize = 30;
 
-export const fetchAllAlertList = handleResponseAsyncThunk<
+// The new alerts list endpoint returns a BARE Alert[] (no PageInfo envelope), so paging is
+// length-based: a full page (size items) means there may be more. `page` is echoed back so the
+// reducer can tell a first page (replace) from a continuation (append) the same way the legacy
+// PaginatedResponse flow did.
+export const fetchAlerts = handleResponseAsyncThunk<
   PaginatedResponse<Alert[]>,
-  AlertApiGetAllAlertsRequest
+  SerializeDateToNumber<AlertApiGetAlertsListRequest>
 >(
   actions.fetchAlertListActionType,
-  async ({ page, size }) => {
-    const { items, pageInfo } = await alertApi.getAllAlerts({ page, size });
+  async ({ beginDate, endDate, ...params }) => {
+    const items = await alertApi.getAlertsList({
+      ...params,
+      beginDate: beginDate ? toDate(beginDate) : undefined,
+      endDate: endDate ? toDate(endDate) : undefined,
+    });
 
-    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
+    return {
+      items: castDatesToTimestamp(items),
+      pageInfo: {
+        page: params.page,
+        hasNext: items.length === params.size,
+        total: items.length,
+      },
+    };
   },
-  {}
+  { switchOffErrorMessage: true }
 );
 
-export const fetchMyAlertList = handleResponseAsyncThunk<
-  PaginatedResponse<Alert[]>,
-  AlertApiGetAssociatedUserAlertsRequest
+export const fetchAlertCounts = handleResponseAsyncThunk<
+  AlertCountInfo,
+  SerializeDateToNumber<AlertApiGetAlertCountsRequest>
 >(
-  actions.fetchMyAlertListActionType,
-  async ({ page, size }) => {
-    const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({ page, size });
-
-    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
-  },
-  {}
-);
-
-export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
-  PaginatedResponse<Alert[]>,
-  AlertApiGetDependentEntitiesAlertsRequest
->(
-  actions.fetchMyDependentsAlertListActionType,
-  async ({ page, size }) => {
-    const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({ page, size });
-
-    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
-  },
-  {}
+  actions.fetchAlertCountsActionType,
+  async ({ beginDate, endDate, ...params }) =>
+    alertApi.getAlertCounts({
+      ...params,
+      beginDate: beginDate ? toDate(beginDate) : undefined,
+      endDate: endDate ? toDate(endDate) : undefined,
+    }),
+  { switchOffErrorMessage: true }
 );
 
 export const updateAlertStatus = handleResponseAsyncThunk<
@@ -87,18 +85,25 @@ export const updateAlertStatus = handleResponseAsyncThunk<
   }
 );
 
+// Per-entity alerts list. Mirrors the global list (bare Alert[], length-based paging) and carries the
+// optional period + status filters surfaced on the Data Entity > Alerts tab. The tab defaults to no
+// status (all-time, every status) so the entity's resolved history stays visible.
 export const fetchDataEntityAlerts = handleResponseAsyncThunk<
   RelatedToEntityId<PaginatedResponse<Alert[]>>,
-  DataEntityApiGetDataEntityAlertsRequest
+  SerializeDateToNumber<DataEntityApiGetDataEntityAlertsListRequest>
 >(
   actions.fetchDataEntityAlertsActionType,
-  async params => {
-    const { page, dataEntityId } = params;
-    const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts(params);
+  async ({ beginDate, endDate, ...params }) => {
+    const { page, size, dataEntityId } = params;
+    const items = await dataEntityApi.getDataEntityAlertsList({
+      ...params,
+      beginDate: beginDate ? toDate(beginDate) : undefined,
+      endDate: endDate ? toDate(endDate) : undefined,
+    });
 
     return {
       items: castDatesToTimestamp(items),
-      pageInfo: { ...pageInfo, page },
+      pageInfo: { page, hasNext: items.length === size, total: items.length },
       entityId: dataEntityId,
     };
   },

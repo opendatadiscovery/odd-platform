@@ -11,20 +11,12 @@ import { emptyArr, emptyObj } from 'lib/constants';
 export const getAlertListFetchingStatus = createStatusesSelector(
   actions.fetchAlertListActionType
 );
-export const getMyAlertListFetchingError = createErrorSelector(
-  actions.fetchMyAlertListActionType
-);
-export const getMyAlertListFetchingStatus = createStatusesSelector(
-  actions.fetchMyAlertListActionType
-);
-export const getMyDependentsAlertListFetchingError = createErrorSelector(
-  actions.fetchMyDependentsAlertListActionType
-);
-export const getMyDependentsAlertListFetchingStatus = createStatusesSelector(
-  actions.fetchMyDependentsAlertListActionType
-);
 export const getAlertListFetchingError = createErrorSelector(
   actions.fetchAlertListActionType
+);
+
+export const getAlertCountsFetchingStatus = createStatusesSelector(
+  actions.fetchAlertCountsActionType
 );
 
 export const getDataEntityAlertListFetchingStatus = createStatusesSelector(
@@ -49,9 +41,9 @@ const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
 export const { selectById: getDataEntityAlertConfig } =
   alertsConfigAdapter.getSelectors<RootState>(state => state.alerts.configs);
 
-export const getAlertsTotals = createSelector(
+export const getAlertCounts = createSelector(
   getAlertsState,
-  alertsState => alertsState.alerts.totals
+  alertsState => alertsState.alerts.counts
 );
 
 export const getAlerts = createSelector(

@@ -52,17 +52,19 @@ const Filters: React.FC = () => {
         <Button text={t('Clear All')} buttonType='tertiary-m' onClick={handleClearAll} />
       </Grid>
       <>
-        <CalendarFilter />
+        <CalendarFilter defaultQuery={defaultActivityQuery} />
         <SingleFilter
           key='at'
           filterName='eventType'
           name={t('Event type')}
+          defaultQuery={defaultActivityQuery}
           filterOptions={activityEventTypes}
         />
         <MultipleFilter
           key='mbo'
           filterName='userIds'
           name={t('Made by (owner)')}
+          defaultQuery={defaultActivityQuery}
           dataQA='made_by_owner_filter'
           hint={<MadeByOwnerFilterHint />}
         />
@@ -70,6 +72,7 @@ const Filters: React.FC = () => {
           key='mbu'
           filterName='usernames'
           name={t('Made by (user)')}
+          defaultQuery={defaultActivityQuery}
           dataQA='made_by_user_filter'
           hint={<MadeByUserFilterHint />}
         />

@@ -632,5 +632,7 @@
   "Reference data successfully created": "参考数据创建成功",
   "Transformers": "转换器",
   "URL should include protocol": "URL 应包含协议",
-  "Warning": "警告"
+  "Warning": "警告",
+  "Open": "打开",
+  "Resolved automatically": "已自动解决"
 }

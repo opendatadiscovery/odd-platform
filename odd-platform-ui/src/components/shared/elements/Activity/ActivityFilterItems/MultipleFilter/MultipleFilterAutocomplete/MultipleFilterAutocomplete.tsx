@@ -9,32 +9,31 @@ import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchActivityUsersList, fetchOwnersList, fetchTagsList } from 'redux/thunks';
 import { useQueryParams } from 'lib/hooks';
-import {
-  type ActivityMultipleFilterNames,
-  type ActivityQuery,
-  type ActivityFilterOption,
-  defaultActivityQuery,
-} from 'components/shared/elements/Activity/common';
+import { type ActivityFilterOption } from 'components/shared/elements/Activity/common';
 import Input from 'components/shared/elements/Input/Input';
 import * as S from './MultipleFilterAutocompleteStyles';
 
-interface MultipleFilterAutocompleteProps {
-  filterName: ActivityMultipleFilterNames;
+// Generic over the page's query shape so both Activity (tagIds / ownerIds / usernames) and Alerts
+// (tagIds / ownerIds) reuse it from their own default query.
+interface MultipleFilterAutocompleteProps<Q extends object> {
+  filterName: keyof Q & string;
   name: string;
+  defaultQuery: Q;
   // Optional inline affordance rendered next to the field label (e.g. an InformationHint).
   hint?: React.ReactNode;
 }
 
-const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
+const MultipleFilterAutocomplete = <Q extends object>({
   name,
   filterName,
+  defaultQuery,
   hint,
-}) => {
+}: MultipleFilterAutocompleteProps<Q>) => {
   type FilterOption = ActivityFilterOption;
 
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
+  const { setQueryParams } = useQueryParams<Q>(defaultQuery);
 
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
@@ -109,10 +108,12 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
           ({
             ...prev,
             [filterName]: uniq([
-              ...((prev[filterName] ?? []) as Array<number | string>),
+              ...(((prev as Record<string, unknown>)[filterName] ?? []) as Array<
+                number | string
+              >),
               value.id,
             ]),
-          }) as ActivityQuery
+          }) as Q
       );
     }
   };
@@ -187,7 +188,10 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
           inputProps={params.inputProps}
           label={
             hint ? (
-              <Box component='span' sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.25 }}>
+              <Box
+                component='span'
+                sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.25 }}
+              >
                 {name}
                 {hint}
               </Box>

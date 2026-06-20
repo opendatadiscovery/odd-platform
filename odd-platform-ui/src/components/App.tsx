@@ -67,7 +67,7 @@ const App: React.FC = () => {
               <Route index element={<TermSearch />} />
               <Route path=':termSearchId' element={<TermSearch />} />
             </Route>
-            <Route path={`${alertsPath()}/*`} element={<Alerts />} />
+            <Route path={alertsPath()} element={<Alerts />} />
             <Route path={activityPath()} element={<Activity />} />
             <Route path={termsPath()}>
               <Route path=':termId/*' element={<TermDetails />} />

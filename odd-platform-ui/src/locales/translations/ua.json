@@ -632,5 +632,7 @@
   "Reference data successfully created": "Довідкові дані успішно створено",
   "Transformers": "Трансформери",
   "URL should include protocol": "URL має містити протокол",
-  "Warning": "Попередження"
+  "Warning": "Попередження",
+  "Open": "Відкрито",
+  "Resolved automatically": "Вирішено автоматично"
 }
