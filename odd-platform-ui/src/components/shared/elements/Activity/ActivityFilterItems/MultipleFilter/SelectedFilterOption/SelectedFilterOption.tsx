@@ -1,27 +1,25 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { ClearIcon } from 'components/shared/icons';
-import {
-  type ActivityFilterOption,
-  type ActivityMultipleFilterNames,
-  type ActivityQuery,
-  defaultActivityQuery,
-} from 'components/shared/elements/Activity/common';
+import { type ActivityFilterOption } from 'components/shared/elements/Activity/common';
 import { useQueryParams } from 'lib/hooks';
 import TextFormatted from 'components/shared/elements/TextFormatted/TextFormatted';
 import { Container } from 'components/shared/elements/Activity/ActivityFilterItems/MultipleFilter/SelectedFilterOption/SelectedFilterOptionStyles';
 import Button from 'components/shared/elements/Button/Button';
 
-interface SelectedFilterOptionProps {
+// Generic over the page's query shape so the removable chip works for both Activity and Alerts.
+interface SelectedFilterOptionProps<Q extends object> {
   selectedOption: ActivityFilterOption;
-  filterName: ActivityMultipleFilterNames;
+  filterName: keyof Q & string;
+  defaultQuery: Q;
 }
 
-const SelectedFilterOption: React.FC<SelectedFilterOptionProps> = ({
+const SelectedFilterOption = <Q extends object>({
   selectedOption,
   filterName,
-}) => {
-  const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
+  defaultQuery,
+}: SelectedFilterOptionProps<Q>) => {
+  const { setQueryParams } = useQueryParams<Q>(defaultQuery);
 
   const onRemoveClick = () => {
     // filterName spans number[] (tagIds/ownerIds) and string[] (usernames, #1657); the heterogeneous
@@ -30,10 +28,12 @@ const SelectedFilterOption: React.FC<SelectedFilterOptionProps> = ({
       prev =>
         ({
           ...prev,
-          [filterName]: (prev[filterName] as Array<number | string> | undefined)?.filter(
-            id => id !== selectedOption.id
-          ),
-        }) as ActivityQuery
+          [filterName]: (
+            (prev as Record<string, unknown>)[filterName] as
+              | Array<number | string>
+              | undefined
+          )?.filter(id => id !== selectedOption.id),
+        }) as Q
     );
   };
 

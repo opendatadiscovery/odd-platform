@@ -16,7 +16,12 @@ export const initialState: AlertsState = {
   alerts: {
     items: [],
     pageInfo: { total: 0, page: 0, hasNext: true },
-    totals: {},
+    counts: {
+      totalCount: 0,
+      myObjectsCount: 0,
+      downstreamCount: 0,
+      upstreamCount: 0,
+    },
   },
   dataEntityAlerts: {},
   configs: { ...alertsConfigAdapter.getInitialState() },
@@ -34,19 +39,12 @@ const updateAlerts = (
 export const alertsSlice = createSlice({
   name: alertsActionPrefix,
   initialState,
-  reducers: {
-    changeAlertsFilterAction: state => {
-      state.alerts.items = [];
-    },
-  },
+  reducers: {},
   extraReducers: builder => {
-    builder.addCase(thunks.fetchAlertsTotals.fulfilled, (state, { payload }) => {
-      state.alerts.totals = payload;
+    builder.addCase(thunks.fetchAlerts.fulfilled, updateAlerts);
+    builder.addCase(thunks.fetchAlertCounts.fulfilled, (state, { payload }) => {
+      state.alerts.counts = payload;
     });
-
-    builder.addCase(thunks.fetchAllAlertList.fulfilled, updateAlerts);
-    builder.addCase(thunks.fetchMyAlertList.fulfilled, updateAlerts);
-    builder.addCase(thunks.fetchMyDependentsAlertList.fulfilled, updateAlerts);
 
     builder.addCase(thunks.fetchDataEntityAlerts.fulfilled, (state, { payload }) => {
       const { items, pageInfo, entityId: dataEntityId } = payload;
@@ -116,5 +114,4 @@ export const alertsSlice = createSlice({
     );
   },
 });
-export const { changeAlertsFilterAction } = alertsSlice.actions;
 export default alertsSlice.reducer;

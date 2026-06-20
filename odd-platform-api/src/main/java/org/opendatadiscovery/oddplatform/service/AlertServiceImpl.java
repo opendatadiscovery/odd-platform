@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.service;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,9 +22,11 @@ import org.apache.commons.collections4.SetValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertCountInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertViewType;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.AlertReceivedActivityStateDto;
@@ -32,6 +35,7 @@ import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.ExternalAlert;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.AlertMapper;
@@ -67,11 +71,15 @@ public class AlertServiceImpl implements AlertService {
     private static final DateTimeFormatter ALERT_MANAGER_TIME_FORMATTER =
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    private static final int DEFAULT_PAGE = 1;
+    private static final int DEFAULT_SIZE = 30;
+
     private final ReactiveAlertRepository alertRepository;
     private final ReactiveDataEntityRepository dataEntityRepository;
     private final AlertMapper alertMapper;
     private final AuthIdentityProvider authIdentityProvider;
     private final ActivityService activityService;
+    private final DataEntityRelationsService dataEntityRelationsService;
 
     @Override
     public Mono<AlertList> listAll(final int page, final int size) {
@@ -236,6 +244,116 @@ public class AlertServiceImpl implements AlertService {
             .flatMap(owner -> alertRepository.getObjectsOddrnsByOwner(owner.getId()))
             .flatMap(oddrns -> alertRepository.listDependentObjectsAlerts(page, size, oddrns))
             .map(alertMapper::mapAlerts);
+    }
+
+    // --- Filterable alert listing + counts (the capable API behind the new Activity-style Alerts view, #1763).
+    // ---  Additive; the legacy listAll / listByOwner / getTotals / getDataEntityAlerts above are kept as-is.
+
+    @Override
+    public Flux<Alert> getAlertList(final AlertViewType type,
+                                    final OffsetDateTime beginDate,
+                                    final OffsetDateTime endDate,
+                                    final Long datasourceId,
+                                    final Long namespaceId,
+                                    final List<Long> tagIds,
+                                    final List<Long> ownerIds,
+                                    final AlertStatus status,
+                                    final Integer page,
+                                    final Integer size) {
+        final AlertStatusEnum statusEnum = mapStatus(status);
+        final int p = page != null ? page : DEFAULT_PAGE;
+        final int s = size != null ? size : DEFAULT_SIZE;
+        final AlertViewType viewType = type != null ? type : AlertViewType.ALL;
+        return switch (viewType) {
+            case ALL -> alertRepository
+                .listAllAlerts(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, statusEnum, p, s)
+                .map(alertMapper::mapAlert);
+            case MY_OBJECTS -> authIdentityProvider.fetchAssociatedOwner()
+                .flatMapMany(owner -> alertRepository.listMyAlerts(beginDate, endDate, datasourceId, namespaceId,
+                    tagIds, ownerIds, statusEnum, owner.getId(), p, s))
+                .map(alertMapper::mapAlert);
+            case DOWNSTREAM -> listDependentAlerts(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds,
+                statusEnum, p, s, LineageStreamKind.DOWNSTREAM);
+            case UPSTREAM -> listDependentAlerts(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds,
+                statusEnum, p, s, LineageStreamKind.UPSTREAM);
+        };
+    }
+
+    @Override
+    public Mono<AlertCountInfo> getAlertCounts(final OffsetDateTime beginDate,
+                                               final OffsetDateTime endDate,
+                                               final Long datasourceId,
+                                               final Long namespaceId,
+                                               final List<Long> tagIds,
+                                               final List<Long> ownerIds,
+                                               final AlertStatus status) {
+        final AlertStatusEnum statusEnum = mapStatus(status);
+        final Mono<Long> totalCount = alertRepository
+            .countAllAlerts(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, statusEnum)
+            .defaultIfEmpty(0L);
+        final Mono<Long> myObjectsCount = authIdentityProvider.fetchAssociatedOwner()
+            .flatMap(owner -> alertRepository.countMyAlerts(beginDate, endDate, datasourceId, namespaceId, tagIds,
+                ownerIds, statusEnum, owner.getId()))
+            .defaultIfEmpty(0L);
+        final Mono<Long> downstreamCount = dependentCount(beginDate, endDate, datasourceId, namespaceId, tagIds,
+            ownerIds, statusEnum, LineageStreamKind.DOWNSTREAM);
+        final Mono<Long> upstreamCount = dependentCount(beginDate, endDate, datasourceId, namespaceId, tagIds,
+            ownerIds, statusEnum, LineageStreamKind.UPSTREAM);
+        return Mono.zip(totalCount, myObjectsCount, downstreamCount, upstreamCount)
+            .map(t -> new AlertCountInfo()
+                .totalCount(t.getT1())
+                .myObjectsCount(t.getT2())
+                .downstreamCount(t.getT3())
+                .upstreamCount(t.getT4()));
+    }
+
+    @Override
+    public Flux<Alert> getDataEntityAlertsList(final long dataEntityId,
+                                               final OffsetDateTime beginDate,
+                                               final OffsetDateTime endDate,
+                                               final AlertStatus status,
+                                               final Integer page,
+                                               final Integer size) {
+        final AlertStatusEnum statusEnum = mapStatus(status);
+        final int p = page != null ? page : DEFAULT_PAGE;
+        final int s = size != null ? size : DEFAULT_SIZE;
+        return checkDataEntityExistence(dataEntityId)
+            .flatMapMany(id -> alertRepository.getAlertsByDataEntityId(id, beginDate, endDate, statusEnum, p, s))
+            .map(alertMapper::mapAlert);
+    }
+
+    private Flux<Alert> listDependentAlerts(final OffsetDateTime beginDate,
+                                            final OffsetDateTime endDate,
+                                            final Long datasourceId,
+                                            final Long namespaceId,
+                                            final List<Long> tagIds,
+                                            final List<Long> ownerIds,
+                                            final AlertStatusEnum status,
+                                            final int page,
+                                            final int size,
+                                            final LineageStreamKind streamKind) {
+        return dataEntityRelationsService.getDependentDataEntityOddrns(streamKind)
+            .flatMapMany(oddrns -> alertRepository.listDependentAlerts(beginDate, endDate, datasourceId, namespaceId,
+                tagIds, ownerIds, status, oddrns, page, size))
+            .map(alertMapper::mapAlert);
+    }
+
+    private Mono<Long> dependentCount(final OffsetDateTime beginDate,
+                                      final OffsetDateTime endDate,
+                                      final Long datasourceId,
+                                      final Long namespaceId,
+                                      final List<Long> tagIds,
+                                      final List<Long> ownerIds,
+                                      final AlertStatusEnum status,
+                                      final LineageStreamKind streamKind) {
+        return dataEntityRelationsService.getDependentDataEntityOddrns(streamKind)
+            .flatMap(oddrns -> alertRepository.countDependentAlerts(beginDate, endDate, datasourceId, namespaceId,
+                tagIds, ownerIds, status, oddrns))
+            .defaultIfEmpty(0L);
+    }
+
+    private AlertStatusEnum mapStatus(final AlertStatus status) {
+        return status != null ? AlertStatusEnum.valueOf(status.name()) : null;
     }
 
     private Mono<Void> automaticallyResolveAlerts(final List<Long> alertIds) {

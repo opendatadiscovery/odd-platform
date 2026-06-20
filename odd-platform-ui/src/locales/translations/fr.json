@@ -632,5 +632,7 @@
   "Reference data successfully created": "Données de référence créées avec succès",
   "Transformers": "Transformateurs",
   "URL should include protocol": "L'URL doit inclure le protocole",
-  "Warning": "Avertissement"
+  "Warning": "Avertissement",
+  "Open": "Ouvert",
+  "Resolved automatically": "Résolu automatiquement"
 }

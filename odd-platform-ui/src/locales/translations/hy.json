@@ -632,5 +632,7 @@
   "Reference data successfully created": "Հղման տվյալները հաջողությամբ ստեղծվեցին",
   "Transformers": "Փոխակերպիչներ",
   "URL should include protocol": "URL-ը պետք է ներառի արձանագրություն",
-  "Warning": "Զգուշացում"
+  "Warning": "Զգուշացում",
+  "Open": "Բաց",
+  "Resolved automatically": "Հանգուցալուծված ինքնաշխատ կերպով"
 }

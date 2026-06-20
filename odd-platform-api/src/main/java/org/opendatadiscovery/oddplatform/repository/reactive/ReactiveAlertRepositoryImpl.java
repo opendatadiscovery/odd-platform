@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,9 +56,12 @@ import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT_CHUNK;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
+import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 
 @Repository
@@ -196,6 +200,21 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
                 r -> mapRecordToDto(r, query.getRight()),
                 getAlertsCountByDataEntityId(dataEntityId))
             );
+    }
+
+    @Override
+    public Flux<AlertDto> getAlertsByDataEntityId(final long dataEntityId,
+                                                  final OffsetDateTime beginDate,
+                                                  final OffsetDateTime endDate,
+                                                  final AlertStatusEnum status,
+                                                  final int page,
+                                                  final int size) {
+        final List<Condition> conditions = commonAlertConditions(beginDate, endDate, null, null, null, null, status);
+        conditions.add(DSL.exists(DSL.selectOne()
+            .from(DATA_ENTITY)
+            .where(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+            .and(DATA_ENTITY.ID.eq(dataEntityId))));
+        return findAlerts(conditions, page, size);
     }
 
     @Override
@@ -504,6 +523,175 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .groupBy(groupByFields)
             .orderBy(orderByFields.stream().map(f -> alertCte.field(f.orderField()).sort(f.sortOrder())).toList());
         // @formatter:on
+    }
+
+    // ---------------------------------------------------------------------------------------------------------
+    // Filterable alert listing (the capable API behind the new Activity-style Alerts view, #1763). Additive: the
+    // legacy listAllWithStatusOpen / listByOwner / listDependentObjectsAlerts above stay unchanged for backward
+    // compatibility. Ordered by alert event datetime (last_created_at) desc, reusing createAlertJoinQuery.
+    // ---------------------------------------------------------------------------------------------------------
+
+    @Override
+    public Flux<AlertDto> listAllAlerts(final OffsetDateTime beginDate,
+                                        final OffsetDateTime endDate,
+                                        final Long datasourceId,
+                                        final Long namespaceId,
+                                        final List<Long> tagIds,
+                                        final List<Long> ownerIds,
+                                        final AlertStatusEnum status,
+                                        final int page,
+                                        final int size) {
+        return findAlerts(commonAlertConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds,
+            status), page, size);
+    }
+
+    @Override
+    public Flux<AlertDto> listMyAlerts(final OffsetDateTime beginDate,
+                                       final OffsetDateTime endDate,
+                                       final Long datasourceId,
+                                       final Long namespaceId,
+                                       final List<Long> tagIds,
+                                       final List<Long> ownerIds,
+                                       final AlertStatusEnum status,
+                                       final long currentOwnerId,
+                                       final int page,
+                                       final int size) {
+        final List<Condition> conditions =
+            commonAlertConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, status);
+        conditions.add(ownerExistsCondition(List.of(currentOwnerId)));
+        return findAlerts(conditions, page, size);
+    }
+
+    @Override
+    public Flux<AlertDto> listDependentAlerts(final OffsetDateTime beginDate,
+                                              final OffsetDateTime endDate,
+                                              final Long datasourceId,
+                                              final Long namespaceId,
+                                              final List<Long> tagIds,
+                                              final List<Long> ownerIds,
+                                              final AlertStatusEnum status,
+                                              final List<String> oddrns,
+                                              final int page,
+                                              final int size) {
+        final List<Condition> conditions =
+            commonAlertConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, status);
+        conditions.add(ALERT.DATA_ENTITY_ODDRN.in(oddrns));
+        return findAlerts(conditions, page, size);
+    }
+
+    @Override
+    public Mono<Long> countAllAlerts(final OffsetDateTime beginDate,
+                                     final OffsetDateTime endDate,
+                                     final Long datasourceId,
+                                     final Long namespaceId,
+                                     final List<Long> tagIds,
+                                     final List<Long> ownerIds,
+                                     final AlertStatusEnum status) {
+        return countAlerts(commonAlertConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds,
+            status));
+    }
+
+    @Override
+    public Mono<Long> countMyAlerts(final OffsetDateTime beginDate,
+                                    final OffsetDateTime endDate,
+                                    final Long datasourceId,
+                                    final Long namespaceId,
+                                    final List<Long> tagIds,
+                                    final List<Long> ownerIds,
+                                    final AlertStatusEnum status,
+                                    final long currentOwnerId) {
+        final List<Condition> conditions =
+            commonAlertConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, status);
+        conditions.add(ownerExistsCondition(List.of(currentOwnerId)));
+        return countAlerts(conditions);
+    }
+
+    @Override
+    public Mono<Long> countDependentAlerts(final OffsetDateTime beginDate,
+                                           final OffsetDateTime endDate,
+                                           final Long datasourceId,
+                                           final Long namespaceId,
+                                           final List<Long> tagIds,
+                                           final List<Long> ownerIds,
+                                           final AlertStatusEnum status,
+                                           final List<String> oddrns) {
+        final List<Condition> conditions =
+            commonAlertConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, status);
+        conditions.add(ALERT.DATA_ENTITY_ODDRN.in(oddrns));
+        return countAlerts(conditions);
+    }
+
+    /**
+     * Builds the filter conditions shared by every filterable alert list and count query. status / period
+     * (alert.last_created_at) are applied on the ALERT row; the datasource / namespace / tag / owner facets are
+     * EXISTS semi-joins keyed on ALERT.DATA_ENTITY_ODDRN so they never fan out the row count (PLT-176). A null
+     * status means no status filter (all statuses); null period bounds mean no time bound. Callers append the
+     * per-view scoping condition.
+     */
+    private List<Condition> commonAlertConditions(final OffsetDateTime beginDate,
+                                                  final OffsetDateTime endDate,
+                                                  final Long datasourceId,
+                                                  final Long namespaceId,
+                                                  final List<Long> tagIds,
+                                                  final List<Long> ownerIds,
+                                                  final AlertStatusEnum status) {
+        final List<Condition> conditions = new ArrayList<>();
+        if (status != null) {
+            conditions.add(ALERT.STATUS.eq(status.getCode()));
+        }
+        if (beginDate != null) {
+            conditions.add(ALERT.LAST_CREATED_AT.greaterOrEqual(DateTimeUtil.mapUTCDateTime(beginDate)));
+        }
+        if (endDate != null) {
+            conditions.add(ALERT.LAST_CREATED_AT.lessThan(DateTimeUtil.mapUTCDateTime(endDate)));
+        }
+        if (datasourceId != null) {
+            conditions.add(DSL.exists(DSL.selectOne()
+                .from(DATA_ENTITY)
+                .where(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+                .and(DATA_ENTITY.DATA_SOURCE_ID.eq(datasourceId))));
+        }
+        if (namespaceId != null) {
+            conditions.add(DSL.exists(DSL.selectOne()
+                .from(DATA_ENTITY)
+                .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+                .where(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+                .and(DATA_ENTITY.NAMESPACE_ID.eq(namespaceId).or(DATA_SOURCE.NAMESPACE_ID.eq(namespaceId)))));
+        }
+        if (CollectionUtils.isNotEmpty(tagIds)) {
+            conditions.add(DSL.exists(DSL.selectOne()
+                .from(TAG_TO_DATA_ENTITY)
+                .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
+                .where(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+                .and(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds))));
+        }
+        if (CollectionUtils.isNotEmpty(ownerIds)) {
+            conditions.add(ownerExistsCondition(ownerIds));
+        }
+        return conditions;
+    }
+
+    private Condition ownerExistsCondition(final List<Long> ownerIds) {
+        return DSL.exists(DSL.selectOne()
+            .from(OWNERSHIP)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
+            .where(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+            .and(OWNERSHIP.OWNER_ID.in(ownerIds)));
+    }
+
+    private Flux<AlertDto> findAlerts(final List<Condition> conditions, final int page, final int size) {
+        final SelectConditionStep<AlertRecord> baseQuery = DSL.selectFrom(ALERT).where(conditions);
+        final Pair<Select<?>, String> query = createAlertJoinQuery(baseQuery, (page - 1) * size, size);
+        return jooqReactiveOperations
+            .flux(query.getLeft())
+            .map(r -> mapRecordToDto(r, query.getRight()));
+    }
+
+    private Mono<Long> countAlerts(final List<Condition> conditions) {
+        return jooqReactiveOperations
+            .mono(DSL.selectCount().from(ALERT).where(conditions))
+            .map(r -> r.component1().longValue())
+            .defaultIfEmpty(0L);
     }
 
     private Map<String, SetValuedMap<Short, AlertPojo>> mapOpenAlerts(final List<AlertPojo> alerts) {

@@ -5,28 +5,22 @@ import { Button } from 'components/shared/elements';
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
-import { ActivityEventType } from 'generated-sources';
+import { AlertStatus } from 'generated-sources';
 import { useQueryParams } from 'lib/hooks';
 import {
   SingleFilter,
   MultipleFilter,
   CalendarFilter,
 } from 'components/shared/elements/Activity';
-import {
-  MadeByOwnerFilterHint,
-  MadeByUserFilterHint,
-  OwnerFilterHint,
-} from 'components/shared/elements/Activity/ActivityFilterHints';
-import {
-  type ActivityQuery,
-  defaultActivityQuery,
-} from 'components/shared/elements/Activity/common';
+import { type AlertsQuery, defaultAlertsQuery } from 'components/Alerts/common';
 import * as S from './FiltersStyles';
 
+// Mirrors the Activity Filters panel, reusing the shared ActivityFilterItems widgets. The alerts
+// surface drops the activity-specific Event-type / Made-by filters and adds a Status single-select.
 const Filters: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
+  const { setQueryParams } = useQueryParams<AlertsQuery>(defaultAlertsQuery);
 
   React.useEffect(() => {
     const params = { page: 1, size: 100 };
@@ -36,22 +30,27 @@ const Filters: React.FC = () => {
 
   const datasources = useAppSelector(getDataSourcesList);
   const namespaces = useAppSelector(getNamespaceList);
-  const excludedTypes = [
-    'DATA_ENTITY_OVERVIEW_UPDATED',
-    'DATA_ENTITY_METADATA_UPDATED',
-    'DATA_ENTITY_SCHEMA_UPDATED',
-    'DATA_ENTITY_RELATION_UPDATED',
-    'CUSTOM_METADATA_CREATED',
-    'CUSTOM_METADATA_UPDATED',
-    'CUSTOM_METADATA_DELETED',
-  ];
-  const activityEventTypes = Object.values(ActivityEventType).filter(
-    type => !excludedTypes.some(discardedType => discardedType === type)
+
+  const alertStatuses = React.useMemo(() => Object.values(AlertStatus), []);
+  const statusLabel = React.useCallback(
+    (status: string) => {
+      switch (status) {
+        case AlertStatus.OPEN:
+          return t('Open');
+        case AlertStatus.RESOLVED:
+          return t('Resolved');
+        case AlertStatus.RESOLVED_AUTOMATICALLY:
+          return t('Resolved automatically');
+        default:
+          return status;
+      }
+    },
+    [t]
   );
 
   const handleClearAll = React.useCallback(
-    () => setQueryParams(defaultActivityQuery),
-    [setQueryParams, defaultActivityQuery]
+    () => setQueryParams(defaultAlertsQuery),
+    [setQueryParams]
   );
 
   return (
@@ -61,12 +60,12 @@ const Filters: React.FC = () => {
         <Button text={t('Clear All')} buttonType='tertiary-m' onClick={handleClearAll} />
       </Grid>
       <S.ListContainer>
-        <CalendarFilter defaultQuery={defaultActivityQuery} />
+        <CalendarFilter defaultQuery={defaultAlertsQuery} />
         <SingleFilter
           key='ds'
           name={t('Datasource')}
           filterName='datasourceId'
-          defaultQuery={defaultActivityQuery}
+          defaultQuery={defaultAlertsQuery}
           filterOptions={datasources}
           dataQA='datasource_filter'
         />
@@ -74,48 +73,32 @@ const Filters: React.FC = () => {
           key='ns'
           filterName='namespaceId'
           name={t('Namespace')}
-          defaultQuery={defaultActivityQuery}
+          defaultQuery={defaultAlertsQuery}
           filterOptions={namespaces}
           dataQA='namespace_filter'
         />
         <SingleFilter
-          key='at'
-          filterName='eventType'
-          name={t('Event type')}
-          defaultQuery={defaultActivityQuery}
-          filterOptions={activityEventTypes}
-          dataQA='event_type_filter'
+          key='st'
+          filterName='status'
+          name={t('Status')}
+          defaultQuery={defaultAlertsQuery}
+          filterOptions={alertStatuses}
+          getOptionLabel={statusLabel}
+          dataQA='status_filter'
         />
         <MultipleFilter
           key='tg'
           filterName='tagIds'
           name={t('Tag')}
-          defaultQuery={defaultActivityQuery}
+          defaultQuery={defaultAlertsQuery}
           dataQA='tag_filter'
         />
         <MultipleFilter
           key='ow'
           filterName='ownerIds'
           name={t('Owner')}
-          defaultQuery={defaultActivityQuery}
+          defaultQuery={defaultAlertsQuery}
           dataQA='owner_filter'
-          hint={<OwnerFilterHint />}
-        />
-        <MultipleFilter
-          key='mbo'
-          filterName='userIds'
-          name={t('Made by (owner)')}
-          defaultQuery={defaultActivityQuery}
-          dataQA='made_by_owner_filter'
-          hint={<MadeByOwnerFilterHint />}
-        />
-        <MultipleFilter
-          key='mbu'
-          filterName='usernames'
-          name={t('Made by (user)')}
-          defaultQuery={defaultActivityQuery}
-          dataQA='made_by_user_filter'
-          hint={<MadeByUserFilterHint />}
         />
       </S.ListContainer>
     </S.Container>

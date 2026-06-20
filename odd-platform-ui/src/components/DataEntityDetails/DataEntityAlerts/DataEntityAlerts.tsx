@@ -17,22 +17,36 @@ import {
 } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { fetchDataEntityAlerts } from 'redux/thunks';
+import { useQueryParams } from 'lib/hooks';
 import { useDataEntityRouteParams } from 'routes';
 import DataEntityAlertsSkeleton from './DataEntityAlertItem/DataEntityAlertsSkeleton';
 import NotificationSettings from './NotificationSettings/NotificationSettings';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
+import Filters from './Filters/Filters';
+import { type DataEntityAlertsQuery, defaultDataEntityAlertsQuery } from './common';
 import * as S from './DataEntityAlertsStyles';
 
 const DataEntityAlerts: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityId } = useDataEntityRouteParams();
+  const { queryParams } = useQueryParams<DataEntityAlertsQuery>(
+    defaultDataEntityAlertsQuery
+  );
 
-  const size = 30;
-
+  // `size` (a required pagination param) is always sent explicitly so a partial / deep-linked URL
+  // (useQueryParams returns URL params without the defaults) still issues a valid request; `status` is
+  // not defaulted so the per-entity tab keeps showing all statuses (resolved history) by default.
   React.useEffect(() => {
-    dispatch(fetchDataEntityAlerts({ dataEntityId, page: 1, size }));
-  }, [dataEntityId]);
+    dispatch(
+      fetchDataEntityAlerts({
+        ...queryParams,
+        dataEntityId,
+        page: 1,
+        size: defaultDataEntityAlertsQuery.size,
+      })
+    );
+  }, [queryParams, dataEntityId]);
 
   const {
     isLoading: isAlertsFetching,
@@ -45,48 +59,58 @@ const DataEntityAlerts: React.FC = () => {
 
   const fetchNextPage = () => {
     if (!hasNext) return;
-    dispatch(fetchDataEntityAlerts({ dataEntityId, page: page + 1, size }));
+    dispatch(
+      fetchDataEntityAlerts({
+        ...queryParams,
+        dataEntityId,
+        page: page + 1,
+        size: defaultDataEntityAlertsQuery.size,
+      })
+    );
   };
 
   return (
-    <S.Container container>
-      <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}>
-        <Grid container justifyContent='flex-end' sx={{ py: 0.75 }}>
-          <NotificationSettings
-            btnCreateEl={
-              <Button text={t('Notification settings')} buttonType='tertiary-m' />
-            }
-          />
-        </Grid>
-      </WithPermissions>
+    <Grid container sx={{ mt: 2 }} flexWrap='nowrap'>
+      <Filters />
+      <S.Container container>
+        <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}>
+          <Grid container justifyContent='flex-end' sx={{ py: 0.75 }}>
+            <NotificationSettings
+              btnCreateEl={
+                <Button text={t('Notification settings')} buttonType='tertiary-m' />
+              }
+            />
+          </Grid>
+        </WithPermissions>
 
-      <S.AlertsContainer
-        $disableHeight={!!alertsList.length}
-        container
-        id='de-alerts-list'
-        rowGap={1}
-      >
-        <InfiniteScroll
-          style={{ rowGap: '8px', display: 'flex', flexDirection: 'column' }}
-          dataLength={alertsList?.length}
-          next={fetchNextPage}
-          hasMore={hasNext}
-          scrollThreshold='200px'
-          loader={isAlertsFetching && <DataEntityAlertsSkeleton length={5} />}
-          scrollableTarget='de-alerts-list'
+        <S.AlertsContainer
+          $disableHeight={!!alertsList.length}
+          container
+          id='de-alerts-list'
+          rowGap={1}
         >
-          {alertsList.map(alert => (
-            <DataEntityAlertItem key={alert.id} alert={alert} />
-          ))}
-        </InfiniteScroll>
-      </S.AlertsContainer>
+          <InfiniteScroll
+            style={{ rowGap: '8px', display: 'flex', flexDirection: 'column' }}
+            dataLength={alertsList?.length}
+            next={fetchNextPage}
+            hasMore={hasNext}
+            scrollThreshold='200px'
+            loader={isAlertsFetching && <DataEntityAlertsSkeleton length={5} />}
+            scrollableTarget='de-alerts-list'
+          >
+            {alertsList.map(alert => (
+              <DataEntityAlertItem key={alert.id} alert={alert} />
+            ))}
+          </InfiniteScroll>
+        </S.AlertsContainer>
 
-      <EmptyContentPlaceholder
-        isContentLoaded={isAlertsFetched}
-        isContentEmpty={!alertsList.length}
-      />
-      <AppErrorPage showError={isAlertsNotFetched} error={alertsListError} />
-    </S.Container>
+        <EmptyContentPlaceholder
+          isContentLoaded={isAlertsFetched}
+          isContentEmpty={!alertsList.length}
+        />
+        <AppErrorPage showError={isAlertsNotFetched} error={alertsListError} />
+      </S.Container>
+    </Grid>
   );
 };
 export default DataEntityAlerts;

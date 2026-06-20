@@ -1,38 +1,48 @@
 import React, { type PropsWithChildren } from 'react';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import type { ActivityEventType, DataSource, Namespace } from 'generated-sources';
 import { stringFormatted } from 'lib/helpers';
 import { useQueryParams } from 'lib/hooks';
-import {
-  type ActivityQuery,
-  type ActivitySingleFilterNames,
-  type ActivityFilterOption,
-  defaultActivityQuery,
-} from 'components/shared/elements/Activity/common';
 import AppSelect from 'components/shared/elements/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 
-interface SingleFilterProps<OptionType> {
+interface FilterOptionObject {
+  id: number | string;
+  name: string;
+}
+
+// Shared single-select filter. Generic over the page's query shape and the filter key so it serves
+// both the Activity surface (datasource / namespace / eventType) and the Alerts surface (datasource /
+// namespace / status). `filterOptions` are either reference objects ({id,name}) or raw enum strings;
+// an optional `getOptionLabel` lets a caller localise enum labels (e.g. translated AlertStatus) while
+// the default keeps the existing humanised-enum rendering for activity event types.
+interface SingleFilterProps<Q extends object, Name extends keyof Q, OptionType> {
   name: string;
   filterOptions: OptionType[];
-  filterName: ActivitySingleFilterNames;
+  filterName: Name;
+  defaultQuery: Q;
+  getOptionLabel?: (option: string) => string;
   dataQA?: string;
 }
 
-const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventType>({
+const SingleFilter = <
+  Q extends object,
+  Name extends keyof Q,
+  OptionType extends FilterOptionObject | string,
+>({
   name,
   filterOptions,
   filterName,
+  defaultQuery,
+  getOptionLabel,
   dataQA,
-}: PropsWithChildren<SingleFilterProps<OptionType>>) => {
+}: PropsWithChildren<SingleFilterProps<Q, Name, OptionType>>) => {
   const { t } = useTranslation();
   const defaultOption = 'All';
-  const { setQueryParams, queryParams } =
-    useQueryParams<ActivityQuery>(defaultActivityQuery);
+  const { setQueryParams, queryParams } = useQueryParams<Q>(defaultQuery);
 
   const handleFilterSelect = React.useCallback(
-    (option: ActivityFilterOption | string) => (_: React.MouseEvent<HTMLLIElement>) => {
+    (option: FilterOptionObject | string) => (_: React.MouseEvent<HTMLLIElement>) => {
       if (option === defaultOption) {
         setQueryParams(prev => ({ ...prev, [filterName]: null }));
         return;
@@ -47,6 +57,11 @@ const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventT
     [setQueryParams, filterName]
   );
 
+  const renderOptionLabel = (option: string) =>
+    getOptionLabel
+      ? getOptionLabel(option)
+      : stringFormatted(option, '_', 'firstLetterOfEveryWord');
+
   return (
     <Grid container>
       <Grid container item xs={12}>
@@ -54,8 +69,8 @@ const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventT
           defaultValue={defaultOption}
           sx={{ mt: 2 }}
           label={name}
-          id={`filter-${filterName}`}
-          value={queryParams[filterName] ?? defaultOption}
+          id={`filter-${String(filterName)}`}
+          value={(queryParams[filterName] as unknown as string) ?? defaultOption}
           dataQAId={dataQA}
         >
           <AppMenuItem value='All' onClick={handleFilterSelect(defaultOption)}>
@@ -76,7 +91,7 @@ const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventT
                 value={option}
                 onClick={handleFilterSelect(option)}
               >
-                {stringFormatted(option, '_', 'firstLetterOfEveryWord')}
+                {renderOptionLabel(option)}
               </AppMenuItem>
             )
           )}

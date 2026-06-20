@@ -1,56 +1,71 @@
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
-import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
-import { useAppDispatch } from 'redux/lib/hooks';
-import type { AlertTotals } from 'generated-sources';
-import { alertsPath } from 'routes';
-import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
+import { type AlertCountInfo, AlertViewType } from 'generated-sources';
+import { useQueryParams } from 'lib/hooks';
+import { type AlertsQuery, defaultAlertsQuery } from 'components/Alerts/common';
 
 interface AlertsTabsProps {
-  totals: AlertTotals;
-  showMyAndDepends: boolean;
+  counts: AlertCountInfo;
+  isCountsFetching: boolean;
 }
 
-const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => {
+// Mirrors Activity's ActivityTabs: the four alert views (All / My Objects / Downstream / Upstream)
+// are query-param tabs (?type=...), not sub-routes, with live hint counts from AlertCountInfo.
+const AlertsTabs: React.FC<AlertsTabsProps> = ({
+  counts: { totalCount, myObjectsCount, downstreamCount, upstreamCount },
+  isCountsFetching,
+}) => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
+  const {
+    queryParams: { type },
+    setQueryParams,
+  } = useQueryParams<AlertsQuery>(defaultAlertsQuery);
 
-  const tabs = useMemo<AppTabItem[]>(
-    () => [
+  const [tabs, setTabs] = React.useState<AppTabItem<AlertViewType>[]>([]);
+  const [selectedTab, setSelectedTab] = React.useState(-1);
+
+  React.useEffect(() => {
+    setTabs([
       {
         name: t('All'),
-        hint: totals?.total ?? 0,
-        link: alertsPath('all'),
+        hint: totalCount,
+        value: AlertViewType.ALL,
       },
       {
         name: t('My Objects'),
-        hint: totals?.myTotal ?? 0,
-        link: alertsPath('my'),
-        hidden: !showMyAndDepends,
+        hint: myObjectsCount,
+        value: AlertViewType.MY_OBJECTS,
       },
       {
-        name: t('Dependents'),
-        hint: totals?.dependentTotal ?? 0,
-        link: alertsPath('dependents'),
-        hidden: !showMyAndDepends,
+        name: t('Downstream'),
+        hint: downstreamCount,
+        value: AlertViewType.DOWNSTREAM,
       },
-    ],
-    [totals, showMyAndDepends, t]
-  );
+      {
+        name: t('Upstream'),
+        hint: upstreamCount,
+        value: AlertViewType.UPSTREAM,
+      },
+    ]);
+  }, [totalCount, myObjectsCount, downstreamCount, upstreamCount, t]);
 
-  const selectedTab = useSetSelectedTab(tabs);
+  React.useEffect(() => {
+    setSelectedTab(type ? tabs.findIndex(tab => tab.value === type) : 0);
+  }, [tabs, type]);
 
-  const alertsFilterUpdateAction = useCallback(() => {
-    dispatch(changeAlertsFilterAction());
-  }, []);
+  const onAlertViewTypeChange = (newTypeIndex: number) => {
+    const newAlertViewType = tabs[newTypeIndex].value ?? AlertViewType.ALL;
+    setQueryParams(prev => ({ ...prev, type: newAlertViewType }));
+  };
 
   return (
     <AppTabs
       type='primary'
       items={tabs}
       selectedTab={selectedTab}
-      handleTabChange={alertsFilterUpdateAction}
+      handleTabChange={onAlertViewTypeChange}
+      isHintUpdating={isCountsFetching}
     />
   );
 };

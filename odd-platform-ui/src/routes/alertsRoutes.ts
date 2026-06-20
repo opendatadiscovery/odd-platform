@@ -1,13 +1,7 @@
 const BASE_PATH = '/alerts';
-export const AlertsRoutes = {
-  ALL_PATH: `all`,
-  MY_PATH: `my`,
-  DEPENDENTS_PATH: `dependents`,
-} as const;
 
-type AlertsRoutesType = typeof AlertsRoutes;
-
-export function alertsPath(path?: AlertsRoutesType[keyof AlertsRoutesType]) {
-  if (!path) return BASE_PATH;
-  return `${BASE_PATH}/${path}`;
+// The alerts surface is a single query-param-tab page (mirrors Activity); the tab lives in
+// `?type=...`, not in the path, so there are no per-tab sub-routes.
+export function alertsPath() {
+  return BASE_PATH;
 }

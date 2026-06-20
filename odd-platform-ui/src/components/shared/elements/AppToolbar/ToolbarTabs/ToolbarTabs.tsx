@@ -69,7 +69,7 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Alerts'),
-        link: alertsPath('all'),
+        link: alertsPath(),
         value: 'alerts',
       },
       {
