@@ -178,6 +178,24 @@ class AlertServiceImplTest {
     }
 
     @Test
+    void getDataEntityAlertsList_existingEntity_appliesStatusFilterAndMaps() {
+        final AlertDto dto = mock(AlertDto.class);
+        final Alert mapped = new Alert();
+        when(dataEntityRepository.existsIncludingSoftDeleted(anyLong())).thenReturn(Mono.just(true));
+        when(alertRepository.getAlertsByDataEntityId(anyLong(), any(), any(), any(), anyInt(), anyInt()))
+            .thenReturn(Flux.just(dto));
+        when(alertMapper.mapAlert(dto)).thenReturn(mapped);
+
+        StepVerifier.create(service.getDataEntityAlertsList(DE_ID, null, null, AlertStatus.RESOLVED, 1, 10))
+            .expectNext(mapped)
+            .verifyComplete();
+
+        // the per-entity tab plumbs its status filter through (default null = all statuses; here RESOLVED)
+        verify(alertRepository).getAlertsByDataEntityId(eq(DE_ID), isNull(), isNull(),
+            eq(AlertStatusEnum.RESOLVED), eq(1), eq(10));
+    }
+
+    @Test
     void getDataEntityAlertsList_nonExistentEntity_errorsNotFound() {
         when(dataEntityRepository.existsIncludingSoftDeleted(anyLong())).thenReturn(Mono.just(false));
         StepVerifier.create(service.getDataEntityAlertsList(DE_ID, null, null, null, 1, 10))
