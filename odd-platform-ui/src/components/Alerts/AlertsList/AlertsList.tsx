@@ -33,13 +33,19 @@ const AlertsList: React.FC = () => {
   } = useAppSelector(getAlertListFetchingStatus);
   const alertsError = useAppSelector(getAlertListFetchingError);
 
+  // `size` is a structural pagination param the API requires; it is always sent explicitly so a partial /
+  // deep-linked alerts URL (e.g. /alerts?status=RESOLVED) — which useQueryParams returns without the
+  // defaults — still issues a valid request rather than throwing on the missing required param. `status`
+  // is deliberately NOT defaulted here so the "All statuses" filter option (status cleared) still works.
   React.useEffect(() => {
-    dispatch(fetchAlerts({ ...queryParams, page: 1 }));
+    dispatch(fetchAlerts({ ...queryParams, page: 1, size: defaultAlertsQuery.size }));
   }, [queryParams]);
 
   const fetchNextPage = () => {
     if (!pageInfo.hasNext) return;
-    dispatch(fetchAlerts({ ...queryParams, page: pageInfo.page + 1 }));
+    dispatch(
+      fetchAlerts({ ...queryParams, page: pageInfo.page + 1, size: defaultAlertsQuery.size })
+    );
   };
 
   return (

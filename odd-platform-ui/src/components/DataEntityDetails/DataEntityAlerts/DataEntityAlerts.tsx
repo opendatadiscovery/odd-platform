@@ -34,8 +34,18 @@ const DataEntityAlerts: React.FC = () => {
     defaultDataEntityAlertsQuery
   );
 
+  // `size` (a required pagination param) is always sent explicitly so a partial / deep-linked URL
+  // (useQueryParams returns URL params without the defaults) still issues a valid request; `status` is
+  // not defaulted so the per-entity tab keeps showing all statuses (resolved history) by default.
   React.useEffect(() => {
-    dispatch(fetchDataEntityAlerts({ ...queryParams, dataEntityId, page: 1 }));
+    dispatch(
+      fetchDataEntityAlerts({
+        ...queryParams,
+        dataEntityId,
+        page: 1,
+        size: defaultDataEntityAlertsQuery.size,
+      })
+    );
   }, [queryParams, dataEntityId]);
 
   const {
@@ -49,7 +59,14 @@ const DataEntityAlerts: React.FC = () => {
 
   const fetchNextPage = () => {
     if (!hasNext) return;
-    dispatch(fetchDataEntityAlerts({ ...queryParams, dataEntityId, page: page + 1 }));
+    dispatch(
+      fetchDataEntityAlerts({
+        ...queryParams,
+        dataEntityId,
+        page: page + 1,
+        size: defaultDataEntityAlertsQuery.size,
+      })
+    );
   };
 
   return (
