@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,13 @@ public interface ReactiveAlertRepository {
     Mono<Page<AlertDto>> listByOwner(final int page, final int size, final long ownerId);
 
     Mono<Page<AlertDto>> getAlertsByDataEntityId(final long dataEntityId, final int page, final int size);
+
+    Flux<AlertDto> getAlertsByDataEntityId(final long dataEntityId,
+                                           final OffsetDateTime beginDate,
+                                           final OffsetDateTime endDate,
+                                           final AlertStatusEnum status,
+                                           final int page,
+                                           final int size);
 
     Mono<Long> getAlertsCountByDataEntityId(final long dataEntityId, final AlertStatusEnum alertStatus);
 
@@ -116,4 +124,65 @@ public interface ReactiveAlertRepository {
     Mono<Long> getDataEntityIdByAlertId(final long alertId);
 
     Mono<Boolean> openAlertWithTheSameTypeExistsForDataEntity(final long alertId);
+
+    // --- Filterable alert listing (the capable API behind the new Activity-style Alerts view, #1763). Additive;
+    // ---  the legacy listAllWithStatusOpen / listByOwner / listDependentObjectsAlerts above are kept as-is.
+
+    Flux<AlertDto> listAllAlerts(final OffsetDateTime beginDate,
+                                 final OffsetDateTime endDate,
+                                 final Long datasourceId,
+                                 final Long namespaceId,
+                                 final List<Long> tagIds,
+                                 final List<Long> ownerIds,
+                                 final AlertStatusEnum status,
+                                 final int page,
+                                 final int size);
+
+    Flux<AlertDto> listMyAlerts(final OffsetDateTime beginDate,
+                                final OffsetDateTime endDate,
+                                final Long datasourceId,
+                                final Long namespaceId,
+                                final List<Long> tagIds,
+                                final List<Long> ownerIds,
+                                final AlertStatusEnum status,
+                                final long currentOwnerId,
+                                final int page,
+                                final int size);
+
+    Flux<AlertDto> listDependentAlerts(final OffsetDateTime beginDate,
+                                       final OffsetDateTime endDate,
+                                       final Long datasourceId,
+                                       final Long namespaceId,
+                                       final List<Long> tagIds,
+                                       final List<Long> ownerIds,
+                                       final AlertStatusEnum status,
+                                       final List<String> oddrns,
+                                       final int page,
+                                       final int size);
+
+    Mono<Long> countAllAlerts(final OffsetDateTime beginDate,
+                              final OffsetDateTime endDate,
+                              final Long datasourceId,
+                              final Long namespaceId,
+                              final List<Long> tagIds,
+                              final List<Long> ownerIds,
+                              final AlertStatusEnum status);
+
+    Mono<Long> countMyAlerts(final OffsetDateTime beginDate,
+                             final OffsetDateTime endDate,
+                             final Long datasourceId,
+                             final Long namespaceId,
+                             final List<Long> tagIds,
+                             final List<Long> ownerIds,
+                             final AlertStatusEnum status,
+                             final long currentOwnerId);
+
+    Mono<Long> countDependentAlerts(final OffsetDateTime beginDate,
+                                    final OffsetDateTime endDate,
+                                    final Long datasourceId,
+                                    final Long namespaceId,
+                                    final List<Long> tagIds,
+                                    final List<Long> ownerIds,
+                                    final AlertStatusEnum status,
+                                    final List<String> oddrns);
 }

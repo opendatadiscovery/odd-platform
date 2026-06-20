@@ -1323,6 +1323,7 @@ paths:
       summary: Get DataEntity's alerts
       description: Gets DataEntity's alerts
       operationId: getDataEntityAlerts
+      deprecated: true
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
         - $ref: './components.yaml/#/components/parameters/PageParam'
@@ -1334,6 +1335,43 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - dataEntity
+
+  /api/dataentities/{data_entity_id}/alerts/list:
+    get:
+      summary: Get DataEntity's alerts (filterable)
+      description: >-
+        Gets a data entity's alerts with optional period and status filters, ordered by event datetime
+        descending. Supersedes the deprecated getDataEntityAlerts endpoint.
+      operationId: getDataEntityAlertsList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: begin_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: status
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/AlertStatus'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/Alert'
       tags:
         - dataEntity
 
@@ -2624,6 +2662,7 @@ paths:
       summary: Get all alerts
       description: Gets all alerts
       operationId: getAllAlerts
+      deprecated: true
       parameters:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
@@ -2642,6 +2681,7 @@ paths:
       summary: Get authenticated user's alerts
       description: Gets authenticated user's alerts
       operationId: getAssociatedUserAlerts
+      deprecated: true
       parameters:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
@@ -2660,6 +2700,7 @@ paths:
       summary: Get dependent entities' alerts
       description: Gets dependent entities' alerts
       operationId: getDependentEntitiesAlerts
+      deprecated: true
       parameters:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
@@ -2678,6 +2719,7 @@ paths:
       summary: Get alerts' totals
       description: Gets alerts' totals
       operationId: getAlertTotals
+      deprecated: true
       responses:
         '200':
           description: OK
@@ -2685,6 +2727,128 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/AlertTotals'
+      tags:
+        - alert
+
+  /api/alerts/list:
+    get:
+      summary: Get alerts (filterable)
+      description: >-
+        Gets alerts for the chosen view type (all / my objects / downstream / upstream) with optional
+        period, datasource, namespace, tag, owner and status filters. When status is omitted no status
+        filter is applied. Ordered by event datetime descending. Supersedes the deprecated
+        getAllAlerts / getAssociatedUserAlerts / getDependentEntitiesAlerts endpoints.
+      operationId: getAlertsList
+      parameters:
+        - name: type
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/AlertViewType'
+        - name: begin_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: datasource_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: namespace_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: tag_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: owner_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: status
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/AlertStatus'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/Alert'
+      tags:
+        - alert
+
+  /api/alerts/counts:
+    get:
+      summary: Get alerts counts (filterable)
+      description: >-
+        Gets alert counts per view type (all / my objects / downstream / upstream) for the given filters.
+        Supersedes the deprecated getAlertTotals endpoint.
+      operationId: getAlertCounts
+      parameters:
+        - name: begin_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: datasource_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: namespace_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: tag_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: owner_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: status
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/AlertStatus'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertCountInfo'
       tags:
         - alert
 

@@ -2359,6 +2359,35 @@ components:
         - RESOLVED
         - RESOLVED_AUTOMATICALLY
 
+    AlertViewType:
+      type: string
+      enum:
+        - ALL
+        - MY_OBJECTS
+        - DOWNSTREAM
+        - UPSTREAM
+
+    AlertCountInfo:
+      type: object
+      properties:
+        total_count:
+          type: integer
+          format: int64
+        my_objects_count:
+          type: integer
+          format: int64
+        downstream_count:
+          type: integer
+          format: int64
+        upstream_count:
+          type: integer
+          format: int64
+      required:
+        - total_count
+        - my_objects_count
+        - downstream_count
+        - upstream_count
+
     AlertStatusFormData:
       type: object
       properties:
