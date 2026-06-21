@@ -634,5 +634,6 @@
   "URL should include protocol": "A URL deve incluir o protocolo",
   "Warning": "Aviso",
   "Open": "Aberto",
-  "Resolved automatically": "Resolvido automaticamente"
+  "Resolved automatically": "Resolvido automaticamente",
+  "Showing {{visible}} of {{total}}": "Mostrando {{visible}} de {{total}}"
 }

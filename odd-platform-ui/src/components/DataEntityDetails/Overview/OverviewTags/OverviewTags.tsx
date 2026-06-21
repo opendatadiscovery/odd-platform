@@ -31,6 +31,10 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
     return tag1.important ? -1 : 1;
   };
 
+  // Sort the whole set once (copy — .sort mutates the source), then slice, so importance
+  // ordering is computed across all tags rather than only the first `visibleLimit` (#1768).
+  const sortedTags = tags ? [...tags].sort(tagsCompare) : [];
+
   return (
     <div>
       <CaptionContainer>
@@ -51,25 +55,33 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
       </CaptionContainer>
       {tags?.length ? (
         <TagsContainer sx={{ mx: -0.5, my: 0 }}>
-          {tags
-            .slice(0, visibleLimit)
-            .sort(tagsCompare)
-            .map(tag => (
-              <TagItem
-                key={tag.id}
-                systemTag={tag.external}
-                label={tag.name}
-                important={tag.important}
-                sx={{ m: 0.5 }}
-              />
-            ))}
+          {!viewAll && tags.length > visibleLimit && (
+            <Typography
+              variant='caption'
+              color='texts.secondary'
+              sx={{ display: 'block', width: '100%', mb: 0.5, ml: 0.5 }}
+            >
+              {t('Showing {{visible}} of {{total}}', {
+                visible: visibleLimit,
+                total: tags.length,
+              })}
+            </Typography>
+          )}
+          {sortedTags.slice(0, visibleLimit).map(tag => (
+            <TagItem
+              key={tag.id}
+              systemTag={tag.external}
+              label={tag.name}
+              important={tag.important}
+              sx={{ m: 0.5 }}
+            />
+          ))}
           {tags?.length > visibleLimit ? (
             <Grid container flexDirection='column' alignItems='flex-start'>
               <Collapse in={viewAll} timeout='auto' unmountOnExit>
                 {viewAll
-                  ? tags
-                      ?.slice(visibleLimit)
-                      .sort(tagsCompare)
+                  ? sortedTags
+                      .slice(visibleLimit)
                       .map(tag => (
                         <TagItem
                           systemTag={tag.external}

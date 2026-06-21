@@ -634,5 +634,6 @@
   "URL should include protocol": "URL має містити протокол",
   "Warning": "Попередження",
   "Open": "Відкрито",
-  "Resolved automatically": "Вирішено автоматично"
+  "Resolved automatically": "Вирішено автоматично",
+  "Showing {{visible}} of {{total}}": "Показано {{visible}} з {{total}}"
 }

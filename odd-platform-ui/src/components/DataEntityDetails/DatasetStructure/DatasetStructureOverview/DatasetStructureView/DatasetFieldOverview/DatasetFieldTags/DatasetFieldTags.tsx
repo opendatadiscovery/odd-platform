@@ -32,6 +32,9 @@ const DatasetFieldTags: React.FC<DatasetFieldTagsProps> = ({
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
 
+  // Sort the whole set once, then slice (#1768 — slice-then-sort defeated the comparator).
+  const sortedTags = tags ? [...tags].sort(compareTags) : [];
+
   return (
     <S.SectionContainer container>
       <Grid container justifyContent='space-between'>
@@ -56,25 +59,21 @@ const DatasetFieldTags: React.FC<DatasetFieldTagsProps> = ({
       <Grid container flexDirection='column' alignItems='flex-start'>
         {tags?.length ? (
           <TagsContainer sx={{ mx: -0.5, my: 0 }}>
-            {tags
-              .slice(0, visibleLimit)
-              .sort(compareTags)
-              .map(tag => (
-                <TagItem
-                  key={tag.id}
-                  systemTag={tag.external}
-                  label={tag.name}
-                  important={tag.important}
-                  sx={{ m: 0.5 }}
-                />
-              ))}
+            {sortedTags.slice(0, visibleLimit).map(tag => (
+              <TagItem
+                key={tag.id}
+                systemTag={tag.external}
+                label={tag.name}
+                important={tag.important}
+                sx={{ m: 0.5 }}
+              />
+            ))}
             {tags?.length > visibleLimit ? (
               <Grid container flexDirection='column' alignItems='flex-start'>
                 <Collapse in={viewAll} timeout='auto' unmountOnExit>
                   {viewAll
-                    ? tags
-                        ?.slice(visibleLimit)
-                        .sort(compareTags)
+                    ? sortedTags
+                        .slice(visibleLimit)
                         .map(tag => (
                           <TagItem
                             systemTag={tag.external}
