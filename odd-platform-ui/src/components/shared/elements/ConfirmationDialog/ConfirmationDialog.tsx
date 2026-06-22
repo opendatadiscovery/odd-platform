@@ -3,6 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import * as S from 'components/shared/elements/ConfirmationDialog/ConfirmationDialogStyles';
 import Button from 'components/shared/elements/Button/Button';
+import { getErrorResponse } from 'lib/errorHandling';
 
 interface ConfirmationDialogProps {
   actionBtn: JSX.Element;
@@ -22,15 +23,25 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   additionalContent,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [errorText, setErrorText] = React.useState<string>();
   const onClose = (handleClose: () => void, action?: () => Promise<unknown>) => () => {
     if (action) {
+      setErrorText(undefined);
       setIsLoading(true);
       action()
         .then(() => {
           setIsLoading(false);
           handleClose();
         })
-        .catch(() => {});
+        .catch(async (err: unknown) => {
+          // A rejected confirm (e.g. a TanStack `mutateAsync` rejecting on a non-2xx) must NOT be
+          // swallowed: clear the loading state so the dialog is no longer mouse-dead (the
+          // DialogWrapper sets pointerEvents:none while loading), and surface the reason inline —
+          // leaving the dialog open so the user can read it and retry or cancel.
+          const { message } = await getErrorResponse(err);
+          setIsLoading(false);
+          setErrorText(message);
+        });
     }
   };
 
@@ -61,7 +72,13 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     </S.Actions>
   );
 
-  React.useEffect(() => () => setIsLoading(false), [setIsLoading]);
+  React.useEffect(
+    () => () => {
+      setIsLoading(false);
+      setErrorText(undefined);
+    },
+    [setIsLoading, setErrorText]
+  );
 
   return (
     <DialogWrapper
@@ -73,6 +90,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       isLoading={isLoading}
+      errorText={errorText}
       formSubmitHandler={onConfirm}
     />
   );
