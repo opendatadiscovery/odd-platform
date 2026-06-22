@@ -46,6 +46,17 @@ public class ReactiveDataSourceRepositoryImpl
     }
 
     @Override
+    public Mono<DataSourcePojo> getByToken(final String token) {
+        final SelectConditionStep<Record> query = DSL
+            .select(DATA_SOURCE.asterisk())
+            .from(DATA_SOURCE)
+            .join(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
+            .where(addSoftDeleteFilter(TOKEN.VALUE.eq(token)));
+
+        return jooqReactiveOperations.mono(query).map(r -> r.into(DataSourcePojo.class));
+    }
+
+    @Override
     public Mono<DataSourceDto> getDto(final long id) {
         final SelectConditionStep<Record> query = baseSelect()
             .where(DATA_SOURCE.ID.eq(id))
