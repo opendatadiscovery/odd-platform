@@ -20,4 +20,6 @@ public interface ReactiveDatasetFieldRepository extends ReactiveCRUDRepository<D
 
     Flux<DatasetFieldTermsDto> listByTerm(final long termId, final String query,
                                           final int page, final int size);
+
+    Mono<Long> countByTerm(final long termId, final String query);
 }
