@@ -1,8 +1,10 @@
 import React, { type FC, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDebouncedCallback } from 'use-debounce';
 import { useTranslation } from 'react-i18next';
 import { AppErrorPage, EmptyContentPlaceholder, Input } from 'components/shared/elements';
+import type { ErrorState } from 'redux/interfaces';
 import { useTermsRouteParams } from 'routes';
 import { useGetTermLinkedTerms } from 'lib/hooks';
 import LinkedTerm from './LinkedTerm/LinkedTerm';
@@ -17,16 +19,20 @@ const LinkedTermsList: FC = () => {
   const { t } = useTranslation();
   const { termId } = useTermsRouteParams();
 
+  // searchText drives the controlled input (immediate); query feeds the query key (debounced),
+  // so typing fires at most ~1 request / 500ms instead of one per keystroke.
+  const [searchText, setSearchText] = useState('');
   const [query, setQuery] = useState('');
+  const debouncedSetQuery = useDebouncedCallback((value: string) => setQuery(value), 500);
 
   const {
     data: termLinks,
     isLoading: isLinkedListFetching,
     isFetched: isLinkedListFetched,
-    fetchNextPage,
-    refetch,
-    hasNextPage,
+    isError,
     error,
+    fetchNextPage,
+    hasNextPage,
   } = useGetTermLinkedTerms({
     termId,
     size: 50,
@@ -34,6 +40,29 @@ const LinkedTermsList: FC = () => {
   });
   const termLinkedList = termLinks?.pages.flatMap(list => list.items);
   const total = termLinks?.pages[0].pageInfo.total;
+
+  const handleSearchChange = (value: string) => {
+    setSearchText(value);
+    debouncedSetQuery(value);
+  };
+
+  const handleSearchSubmit = () => {
+    debouncedSetQuery.cancel();
+    setQuery(searchText);
+  };
+
+  // The generated client throws a ResponseError wrapping the Response — surface the REAL error
+  // instead of the previous hard-coded 500 (which also rendered during normal loading).
+  const errResponse =
+    error instanceof Response ? error : (error as { response?: Response })?.response;
+  const linkedListError: ErrorState | undefined = error
+    ? {
+        status: errResponse?.status ?? 0,
+        statusText: errResponse?.statusText || 'Unknown Error',
+        url: errResponse?.url ?? '',
+        message: error instanceof Error ? error.message : 'Unknown Error',
+      }
+    : undefined;
 
   return (
     <Grid>
@@ -43,11 +72,12 @@ const LinkedTermsList: FC = () => {
             variant='search-m'
             placeholder={t('Search')}
             maxWidth={640}
-            onChange={e => {
-              setQuery(e.target.value);
+            onKeyDown={e => {
+              if (e.key === 'Enter') handleSearchSubmit();
             }}
-            value={query}
-            handleSearchClick={() => refetch()}
+            onChange={e => handleSearchChange(e.target.value)}
+            value={searchText}
+            handleSearchClick={handleSearchSubmit}
           />
         </Grid>
       </Grid>
@@ -80,21 +110,11 @@ const LinkedTermsList: FC = () => {
         )}
       </TermLinkedTermsListContainer>
       <EmptyContentPlaceholder
-        text={t('No linked entities')}
-        isContentLoaded={isLinkedListFetched}
+        text={t('No linked terms')}
+        isContentLoaded={isLinkedListFetched && !isError}
         isContentEmpty={!total}
       />
-      <AppErrorPage
-        showError={!isLinkedListFetched}
-        // FIXME
-        error={{
-          status: 500,
-          statusText: error?.message ?? 'Unknown Error',
-          url: query,
-          message: error?.message ?? 'Unknown Error',
-        }}
-        offsetTop={194}
-      />
+      <AppErrorPage showError={isError} error={linkedListError} offsetTop={194} />
     </Grid>
   );
 };
