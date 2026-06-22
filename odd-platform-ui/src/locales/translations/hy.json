@@ -634,5 +634,6 @@
   "URL should include protocol": "URL-ը պետք է ներառի արձանագրություն",
   "Warning": "Զգուշացում",
   "Open": "Բաց",
-  "Resolved automatically": "Հանգուցալուծված ինքնաշխատ կերպով"
+  "Resolved automatically": "Հանգուցալուծված ինքնաշխատ կերպով",
+  "Showing {{visible}} of {{total}}": "Ցուցադրվում է {{visible}}-ը {{total}}-ից"
 }

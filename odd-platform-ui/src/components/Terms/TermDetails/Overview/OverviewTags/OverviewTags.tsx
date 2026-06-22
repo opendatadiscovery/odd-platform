@@ -25,6 +25,9 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
     return tag1.important ? -1 : 1;
   };
 
+  // Sort the whole set once, then slice (#1768 — slice-then-sort defeated the comparator).
+  const sortedTags = tags ? [...tags].sort(tagsCompare) : [];
+
   return (
     <div>
       <CaptionContainer>
@@ -44,24 +47,20 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
       </CaptionContainer>
       {tags?.length ? (
         <Box sx={{ mx: -0.5, my: 0 }}>
-          {tags
-            .slice(0, visibleLimit)
-            .sort(tagsCompare)
-            .map(tag => (
-              <TagItem
-                key={tag.id}
-                label={tag.name}
-                important={tag.important}
-                sx={{ m: 0.5 }}
-              />
-            ))}
+          {sortedTags.slice(0, visibleLimit).map(tag => (
+            <TagItem
+              key={tag.id}
+              label={tag.name}
+              important={tag.important}
+              sx={{ m: 0.5 }}
+            />
+          ))}
           {tags?.length > visibleLimit ? (
             <>
               <Collapse in={viewAll} timeout='auto' unmountOnExit>
                 {viewAll
-                  ? tags
-                      ?.slice(visibleLimit)
-                      .sort(tagsCompare)
+                  ? sortedTags
+                      .slice(visibleLimit)
                       .map(tag => (
                         <TagItem
                           key={tag.id}

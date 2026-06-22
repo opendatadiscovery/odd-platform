@@ -46,19 +46,27 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
       </GroupsCaptionContainer>
       {dataEntityGroups?.length ? (
         <Box sx={{ mx: -0.5, my: 0 }}>
-          {dataEntityGroups
-            .slice(0, visibleLimit)
-            .sort()
-            .map(group => (
-              <GroupItem key={group.id} group={group} dataEntityId={dataEntityId} />
-            ))}
+          {!viewAll && dataEntityGroups.length > visibleLimit && (
+            <Typography
+              variant='caption'
+              color='texts.secondary'
+              sx={{ display: 'block', width: '100%', mb: 0.5, ml: 0.5 }}
+            >
+              {t('Showing {{visible}} of {{total}}', {
+                visible: visibleLimit,
+                total: dataEntityGroups.length,
+              })}
+            </Typography>
+          )}
+          {dataEntityGroups.slice(0, visibleLimit).map(group => (
+            <GroupItem key={group.id} group={group} dataEntityId={dataEntityId} />
+          ))}
           {dataEntityGroups?.length > visibleLimit && (
             <>
               <Collapse in={viewAll} timeout='auto' unmountOnExit>
                 {viewAll &&
                   dataEntityGroups
                     ?.slice(visibleLimit)
-                    .sort()
                     .map(group => (
                       <GroupItem
                         key={group.id}

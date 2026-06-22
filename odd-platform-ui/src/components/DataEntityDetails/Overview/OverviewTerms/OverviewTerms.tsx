@@ -45,24 +45,32 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
       </TermsCaptionContainer>
       {terms?.length ? (
         <Box sx={{ mx: -0.5, my: 0 }}>
-          {terms
-            .slice(0, visibleLimit)
-            .sort()
-            .map(linkedTerm => (
-              <TermItem
-                key={linkedTerm.term.id}
-                linkedTerm={linkedTerm}
-                dataEntityId={dataEntityId}
-                isStatusDeleted={isStatusDeleted}
-              />
-            ))}
+          {!viewAll && terms.length > visibleLimit && (
+            <Typography
+              variant='caption'
+              color='texts.secondary'
+              sx={{ display: 'block', width: '100%', mb: 0.5, ml: 0.5 }}
+            >
+              {t('Showing {{visible}} of {{total}}', {
+                visible: visibleLimit,
+                total: terms.length,
+              })}
+            </Typography>
+          )}
+          {terms.slice(0, visibleLimit).map(linkedTerm => (
+            <TermItem
+              key={linkedTerm.term.id}
+              linkedTerm={linkedTerm}
+              dataEntityId={dataEntityId}
+              isStatusDeleted={isStatusDeleted}
+            />
+          ))}
           {terms?.length > visibleLimit && (
             <>
               <Collapse in={viewAll} timeout='auto' unmountOnExit>
                 {viewAll &&
                   terms
                     ?.slice(visibleLimit)
-                    .sort()
                     .map(linkedTerm => (
                       <TermItem
                         key={linkedTerm.term.id}
