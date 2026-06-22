@@ -16,31 +16,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
- * F-008-UC-02 / PLT-003 — characterization pin for the ingestion auth-filter path-coverage gap.
+ * F-008-UC-02 / PLT-003 (RESOLVED, odd-platform #1740) — the two per-resource ingestion filters are
+ * exact-path BY DESIGN; the breadth is now provided by {@link IngestionAuthenticationFilter}.
  *
- * <p>The user/security promise (feature-reflections/detail/F-008.yaml, H-/UC-02): "enabling
- * {@code auth.ingestion.filter.enabled} authenticates ALL {@code /ingestion/*} endpoints." The
- * implementation does NOT honour that: each {@link AbstractIngestionFilter} subclass is wired with a
+ * <p>Each {@link AbstractIngestionFilter} subclass is wired with a
  * {@code PathPatternParserServerWebExchangeMatcher} bound to ONE exact path —
- * {@link IngestionDataEntitiesFilter} matches only {@code POST /ingestion/entities}
- * (IngestionDataEntitiesFilter.java:28) and {@link IngestionDataSourceFilter} only
- * {@code POST /ingestion/datasources} (IngestionDataSourceFilter.java:20). The other real ingestion
- * WRITE endpoints — {@code POST /ingestion/entities/datasets/stats} and {@code POST
- * /ingestion/metrics} — are matched by NEITHER filter, so they accept writes with no collector-token
- * check even when the flag is on.</p>
+ * {@link IngestionDataEntitiesFilter} gates {@code POST /ingestion/entities} (it carries the per-datasource
+ * authorization that needs the request body), and {@link IngestionDataSourceFilter} gates
+ * {@code POST /ingestion/datasources} (the collector-registration binding). Neither covers the sibling
+ * write/read routes — and that is correct: PLT-003 is closed NOT by widening these matchers but by mounting
+ * one uniform {@link IngestionAuthenticationFilter} across {@code /ingestion/**} (the full-coverage proof is
+ * {@link IngestionAuthenticationFilterTest}). This test pins the NARROWNESS of the two per-resource filters,
+ * so a future change that quietly broadened one — double-gating a path the uniform filter already owns — is
+ * caught.</p>
  *
- * <p>This test drives the REAL filter beans through {@link AbstractIngestionFilter#filter} with a
- * capturing chain and asserts which requests the matcher gates. A gated request is wrapped in a
- * {@link ServerHttpRequestDecorator} before being passed down the chain (AbstractIngestionFilter.java:39);
- * a non-matching request is passed through untouched (AbstractIngestionFilter.java:38). The lazy
- * token check lives inside the decorator's {@code getBody()}, so a chain that does not read the body
- * never triggers it — letting us assert pure path/method coverage without a DB or a token.</p>
- *
- * @pins PLT-003 (ingestion-filter path-coverage incomplete)
- * Flip protocol (LSN-029): this is a GREEN characterization pin of the CURRENT incomplete coverage.
- * When PLT-003 is fixed — the matcher widened to all {@code /ingestion/**} write paths (or a single
- * filter mounted across them) — the two {@code isFalse()} assertions on the stats/metrics paths flip
- * to {@code isTrue()}. At that point invert this test to assert full coverage and drop the @pins tag.
+ * <p>It drives the REAL filter beans through {@link AbstractIngestionFilter#filter} with a capturing chain:
+ * a gated request is wrapped in a {@link ServerHttpRequestDecorator} before being passed down
+ * (AbstractIngestionFilter.java:39); a non-matching request is passed through untouched
+ * (AbstractIngestionFilter.java:38). The lazy token check lives inside the decorator's {@code getBody()}, so
+ * a chain that does not read the body never triggers it — letting us assert pure path/method coverage
+ * without a DB or a token.</p>
  */
 class IngestionFilterPathCoverageTest {
 
@@ -56,8 +51,8 @@ class IngestionFilterPathCoverageTest {
     }
 
     @Test
-    @DisplayName("UC-02/PLT-003: the entities ingestion filter gates ONLY POST /ingestion/entities — "
-        + "stats + metrics write siblings are left unauthenticated")
+    @DisplayName("#1740: the entities ingestion filter gates ONLY POST /ingestion/entities — its stats + "
+        + "metrics siblings are covered by the uniform IngestionAuthenticationFilter, not this filter")
     void ingestionDataEntitiesFilterGatesOnlyItsExactPath() {
         final AbstractIngestionFilter filter = new IngestionDataEntitiesFilter(
             mock(ReactiveDataSourceRepository.class), mock(ReactiveCollectorRepository.class));
@@ -65,7 +60,8 @@ class IngestionFilterPathCoverageTest {
         // The single path this filter actually gates.
         assertThat(gates(filter, MockServerHttpRequest.post("/ingestion/entities").build())).isTrue();
 
-        // PLT-003: real ingestion WRITE siblings that the flag does NOT protect.
+        // The entities filter is exact-path BY DESIGN: these siblings are NOT gated HERE — the uniform
+        // IngestionAuthenticationFilter authenticates them (see IngestionAuthenticationFilterTest).
         assertThat(gates(filter, MockServerHttpRequest.post("/ingestion/entities/datasets/stats").build()))
             .isFalse();
         assertThat(gates(filter, MockServerHttpRequest.post("/ingestion/metrics").build())).isFalse();

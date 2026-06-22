@@ -211,6 +211,35 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("#1740: gets a data source by its token value; unknown + soft-deleted tokens return empty")
+    public void getByTokenTest() {
+        final var namespace = namespaceRepository.createByName(UUID.randomUUID().toString())
+            .blockOptional()
+            .orElseThrow();
+        final var token = tokenRepository.create(new TokenPojo().setValue(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();
+        final DataSourcePojo created = dataSourceRepository
+            .create(createDataSourcePojo(namespace.getId(), token.tokenPojo().getId()))
+            .blockOptional()
+            .orElseThrow();
+
+        dataSourceRepository.getByToken(token.tokenPojo().getValue())
+            .as(StepVerifier::create)
+            .assertNext(ds -> assertThat(ds.getId()).isEqualTo(created.getId()))
+            .verifyComplete();
+
+        dataSourceRepository.getByToken("no-such-token-value")
+            .as(StepVerifier::create)
+            .verifyComplete();
+
+        dataSourceRepository.delete(created.getId()).blockOptional().orElseThrow();
+        dataSourceRepository.getByToken(token.tokenPojo().getValue())
+            .as(StepVerifier::create)
+            .verifyComplete();
+    }
+
+    @Test
     @DisplayName("Gets list of data source dtos by their oddrns")
     public void getDtoByOddrnsTest() {
         final var namespace = namespaceRepository.createByName(UUID.randomUUID().toString())
