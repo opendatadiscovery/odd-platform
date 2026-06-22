@@ -18,10 +18,11 @@ public class DatasetFieldListMapperImpl implements DatasetFieldListMapper {
     private final OwnershipMapper ownershipMapper;
 
     @Override
-    public DatasetFieldList mapPojos(final List<DatasetFieldTermsDto> dataFieldsDto) {
+    public DatasetFieldList mapPojos(final List<DatasetFieldTermsDto> dataFieldsDto,
+                                     final long total, final int page, final int size) {
         final List<TermSearchDataSetField> entities = dataFieldsDto.stream().map(this::mapPojo).toList();
-        final PageInfo pageInfo = pageInfo(dataFieldsDto.size());
-        return new DatasetFieldList(entities, pageInfo);
+        final boolean hasNext = (long) page * size < total;
+        return new DatasetFieldList(entities, new PageInfo().total(total).hasNext(hasNext));
     }
 
     private TermSearchDataSetField mapPojo(final DatasetFieldTermsDto dto) {
@@ -42,9 +43,5 @@ public class DatasetFieldListMapperImpl implements DatasetFieldListMapper {
             .dataEntityName(dto.getDataEntityName())
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)));
-    }
-
-    private PageInfo pageInfo(final long total) {
-        return new PageInfo(total, false);
     }
 }

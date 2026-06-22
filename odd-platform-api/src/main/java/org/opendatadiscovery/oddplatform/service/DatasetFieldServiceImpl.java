@@ -183,9 +183,10 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     @Override
     public Mono<DatasetFieldList> listByTerm(final Long termId, final String query,
                                              final Integer page, final Integer size) {
-        return reactiveDatasetFieldRepository.listByTerm(termId, query, page, size)
-            .collectList()
-            .map(datasetFieldListMapper::mapPojos);
+        return Mono.zip(
+                reactiveDatasetFieldRepository.listByTerm(termId, query, page, size).collectList(),
+                reactiveDatasetFieldRepository.countByTerm(termId, query))
+            .map(tuple -> datasetFieldListMapper.mapPojos(tuple.getT1(), tuple.getT2(), page, size));
     }
 
     private Mono<Void> updateFieldsTags(final Map<String, DataSetFieldStat> statisticsDict,

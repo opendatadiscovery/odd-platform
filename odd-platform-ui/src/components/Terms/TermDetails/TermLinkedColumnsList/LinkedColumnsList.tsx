@@ -1,4 +1,4 @@
-import React, { type FC, useEffect, useState } from 'react';
+import React, { type FC, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
@@ -18,17 +18,19 @@ const size = 50;
 const LinkedColumnsList: FC = () => {
   const { t } = useTranslation();
   const { termId } = useTermsRouteParams();
-  const [query, setQuery] = useState('');
-  const {
-    data: { items, pageInfo },
-    isFetching,
-    isFetched,
-    refetch: search,
-  } = useGetTermLinkedColumns({ termId, page: 1, size, query });
 
-  useEffect(() => {
-    search();
-  }, []);
+  // query drives the input (immediate); submittedQuery feeds the request (on demand — Enter / icon
+  // click), preserving this tab's existing on-demand search while adding pagination past the size cap.
+  const [query, setQuery] = useState('');
+  const [submittedQuery, setSubmittedQuery] = useState('');
+
+  const { data, isFetching, isFetched, fetchNextPage, hasNextPage } =
+    useGetTermLinkedColumns({ termId, size, query: submittedQuery });
+
+  const items = data?.pages.flatMap(page => page.items) ?? [];
+  const total = data?.pages[0]?.pageInfo.total;
+
+  const search = () => setSubmittedQuery(query);
 
   const handleKeyDownSearch = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') search();
@@ -68,14 +70,14 @@ const LinkedColumnsList: FC = () => {
       </TermLinkedColumnsResultsTableHeader>
       {isFetching && <LinkedColumnsListSkeleton />}
       <TermLinkedColumnsListContainer
-        $isListEmpty={!pageInfo.total && isFetched}
+        $isListEmpty={!total && isFetched}
         id='term-linked-columns-list'
       >
         {items.length > 0 && (
           <InfiniteScroll
             dataLength={items.length}
-            next={() => {}}
-            hasMore={pageInfo.hasNext}
+            next={fetchNextPage}
+            hasMore={hasNextPage ?? false}
             loader={isFetching && <LinkedColumnsListSkeleton />}
             scrollThreshold='200px'
             scrollableTarget='term-linked-columns-list'
@@ -89,7 +91,7 @@ const LinkedColumnsList: FC = () => {
       <EmptyContentPlaceholder
         text={t('No linked columns')}
         isContentLoaded={!isFetching && isFetched}
-        isContentEmpty={!pageInfo.total}
+        isContentEmpty={!total}
       />
     </Grid>
   );
