@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldList;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
-import org.opendatadiscovery.oddplatform.dto.DatasetFieldTermsDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldListMapper;
@@ -20,15 +18,11 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntry
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -78,29 +72,5 @@ class DatasetFieldServiceImplTest {
             .thenReturn(Mono.error(new AssertionError("updated search vectors despite the field not existing")));
         StepVerifier.create(service.updateInternalName(FIELD_ID, new InternalNameFormData()))
             .verifyError(NotFoundException.class);
-    }
-
-    /**
-     * #1754 Defect 4 (CTRIB-028): listByTerm zips the page of linked columns with the REAL total from
-     * countByTerm and maps them — so the page_info reports the honest total/hasNext (the mapper is given the
-     * count, page and size). The end-to-end honest-page_info proof on the running system is integration IT-139.
-     *
-     * @validates F-153
-     */
-    @Test
-    void listByTerm_zipsLinkedColumnsWithTheRealCount_andMapsThem() {
-        final long termId = 7L;
-        final int page = 1;
-        final int size = 50;
-        final DatasetFieldList expected = mock(DatasetFieldList.class);
-
-        when(reactiveDatasetFieldRepository.listByTerm(termId, null, page, size))
-            .thenReturn(Flux.<DatasetFieldTermsDto>empty());
-        when(reactiveDatasetFieldRepository.countByTerm(termId, null)).thenReturn(Mono.just(60L));
-        when(datasetFieldListMapper.mapPojos(anyList(), eq(60L), eq(page), eq(size))).thenReturn(expected);
-
-        StepVerifier.create(service.listByTerm(termId, null, page, size))
-            .expectNext(expected)
-            .verifyComplete();
     }
 }

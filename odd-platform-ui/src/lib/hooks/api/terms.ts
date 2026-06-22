@@ -1,8 +1,14 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { termApi } from 'lib/api';
 import type {
   PageInfo,
   TermApiGetTermByNamespaceAndNameRequest,
+  TermApiGetTermDetailsRequest,
   TermApiGetTermLinkedColumnsRequest,
   TermApiGetTermLinkedTermsRequest,
   TermApiCreateQueryExampleToTermRelationshipRequest,
@@ -11,8 +17,6 @@ import type {
   TermApiAddLinkedTermToTermRequest,
 } from 'generated-sources';
 import { showSuccessToast, type AppError } from 'lib/errorHandling';
-import { useAppDispatch } from 'redux/lib/hooks';
-import { fetchTermDetails } from 'redux/thunks';
 
 export function useGetTermByNamespaceAndName() {
   const queryClient = useQueryClient();
@@ -29,23 +33,19 @@ export function useGetTermByNamespaceAndName() {
   };
 }
 
-export function useGetTermLinkedColumns(
-  params: Omit<TermApiGetTermLinkedColumnsRequest, 'page'>
-) {
-  return useInfiniteQuery({
-    queryKey: ['termLinkedColumns', params.termId, params.size, params.query],
-    queryFn: ({ pageParam }) =>
-      termApi.getTermLinkedColumns({
-        page: pageParam,
-        size: params.size,
-        termId: params.termId,
-        query: params.query,
-      }),
-    initialPageParam: 1,
-    // The backend now returns an honest pageInfo (real total + hasNext) for this endpoint,
-    // so paging is driven by it directly (no client-side full-page heuristic needed).
-    getNextPageParam: (lastPage, allPages) =>
-      lastPage.pageInfo.hasNext ? allPages.length + 1 : undefined,
+export function useGetTermLinkedColumns(params: TermApiGetTermLinkedColumnsRequest) {
+  return useQuery({
+    queryKey: ['termLinkedColumns', params.termId],
+    queryFn: () => termApi.getTermLinkedColumns(params),
+    enabled: false,
+    initialData: { pageInfo: { total: 0, hasNext: false }, items: [] },
+  });
+}
+
+export function useGetTermByID(params: TermApiGetTermDetailsRequest) {
+  return useQuery({
+    queryKey: ['term', params.termId],
+    queryFn: () => termApi.getTermDetails(params),
   });
 }
 
@@ -135,7 +135,7 @@ export function useUnassignTermQueryExample() {
 }
 
 export function useAddLinkedTermToTerm({ termId }: { termId: number }) {
-  const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
       termId: termIdParam,
@@ -147,14 +147,15 @@ export function useAddLinkedTermToTerm({ termId }: { termId: number }) {
       }),
     onSuccess: async () => {
       showSuccessToast({ message: 'Term successfully added!' });
-      // The Overview linked-terms panel reads term details from redux, so refresh that store.
-      await dispatch(fetchTermDetails({ termId }));
+      await queryClient.invalidateQueries({
+        queryKey: ['term', termId],
+      });
     },
   });
 }
 
 export function useDeleteLinkedTermToTerm({ termId }: { termId: number }) {
-  const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (params: TermApiDeleteLinkedTermFromTermRequest) => {
       await termApi.deleteLinkedTermFromTerm(params);
@@ -162,7 +163,9 @@ export function useDeleteLinkedTermToTerm({ termId }: { termId: number }) {
     },
     onSuccess: async () => {
       showSuccessToast({ message: 'Term successfully deleted!' });
-      await dispatch(fetchTermDetails({ termId }));
+      await queryClient.invalidateQueries({
+        queryKey: ['term', termId],
+      });
     },
   });
 }

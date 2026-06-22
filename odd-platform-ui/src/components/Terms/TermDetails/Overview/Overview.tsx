@@ -4,12 +4,8 @@ import { SkeletonWrapper } from 'components/shared/elements';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { useTermsRouteParams } from 'routes';
-import { useAppSelector } from 'redux/lib/hooks';
-import {
-  getResourcePermissions,
-  getTermDetails,
-  getTermDetailsFetchingStatuses,
-} from 'redux/selectors';
+import { useGetTermByID } from 'lib/hooks';
+import { useResourcePermissions } from 'lib/hooks/api/permissions';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import OverviewTags from './OverviewTags/OverviewTags';
@@ -20,15 +16,13 @@ import TermDefinition from './TermDefinition/TermDefinition';
 const Overview: FC = () => {
   const { termId } = useTermsRouteParams();
 
-  // Read the term details + permissions the shell (TermDetails.tsx) already loaded into redux,
-  // instead of issuing a second GET /api/terms/{id} (+ permissions) of the 13-JOIN hot path.
-  const termDetails = useAppSelector(getTermDetails(termId));
-  const termPermissions = useAppSelector(
-    getResourcePermissions(PermissionResourceType.TERM, termId)
-  );
-  const { isLoading: isTermDetailsFetching } = useAppSelector(
-    getTermDetailsFetchingStatuses
-  );
+  const { data: termDetails, isLoading: isTermDetailsFetching } = useGetTermByID({
+    termId,
+  });
+  const { data: termPermissions } = useResourcePermissions({
+    resourceId: termId,
+    permissionResourceType: PermissionResourceType.TERM,
+  });
 
   const linkedTerms = useMemo(() => termDetails?.terms || [], [termDetails]);
   const termsRef = useMemo(
@@ -38,7 +32,7 @@ const Overview: FC = () => {
 
   return (
     <>
-      {termDetails.id && !isTermDetailsFetching && (
+      {termDetails && !isTermDetailsFetching && (
         <Grid container spacing={2} sx={{ mt: 0 }}>
           <Grid item xs={8}>
             <S.DefinitionContainer elevation={9}>

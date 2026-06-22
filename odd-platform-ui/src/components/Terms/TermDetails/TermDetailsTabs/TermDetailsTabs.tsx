@@ -21,16 +21,19 @@ const TermDetailsTabs: React.FC = () => {
         name: t('Linked entities'),
         link: termDetailsPath(termId, 'linked-entities'),
         hint: termDetails?.entitiesUsingCount,
+        hidden: !termDetails?.entitiesUsingCount,
       },
       {
         name: t('Linked columns'),
         link: termDetailsPath(termId, 'linked-columns'),
         hint: termDetails?.columnsUsingCount,
+        hidden: !termDetails?.columnsUsingCount,
       },
       {
         name: t('Linked terms'),
         link: termDetailsPath(termId, 'linked-terms'),
         hint: termDetails?.linkedTermsUsingCount,
+        hidden: !termDetails?.linkedTermsUsingCount,
       },
       {
         name: t('Query examples'),

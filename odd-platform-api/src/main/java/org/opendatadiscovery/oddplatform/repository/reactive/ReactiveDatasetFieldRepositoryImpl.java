@@ -29,7 +29,6 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.name;
@@ -202,24 +201,6 @@ public class ReactiveDatasetFieldRepositoryImpl
 
         return jooqReactiveOperations.flux(jooqQuery)
             .map(datasetFieldTermsDtoMapper::mapRecordToDto);
-    }
-
-    @Override
-    public Mono<Long> countByTerm(final long termId, final String query) {
-        final List<Condition> conditions = new ArrayList<>();
-        conditions.add(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId));
-        if (StringUtils.isNotBlank(query)) {
-            conditions.add(DATASET_FIELD.NAME.containsIgnoreCase(query));
-        }
-
-        final var countQuery = select(countDistinct(DATASET_FIELD.ID))
-            .from(DATASET_FIELD)
-            .join(DATASET_FIELD_TO_TERM).on(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .where(conditions);
-
-        return jooqReactiveOperations.mono(countQuery)
-            .map(Record1::value1)
-            .map(Integer::longValue);
     }
 
     @NotNull
