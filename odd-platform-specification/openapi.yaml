@@ -1253,7 +1253,7 @@ paths:
   /api/dataentities/{data_entity_id}/lineage/upstream:
     get:
       summary: Get DataEntity's upstream lineage graph
-      description: Gets DataEntity's upstream lineage graph which size depends on lineage_depth parameter
+      description: Gets DataEntity's upstream lineage graph which size depends on lineage_depth parameter (defaults to 1 when omitted)
       operationId: getDataEntityUpstreamLineage
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
@@ -1264,6 +1264,7 @@ paths:
             type: integer
             format: int32
             minimum: 1
+            default: 1
         - name: expanded_entity_ids
           in: query
           required: false
@@ -1287,7 +1288,7 @@ paths:
   /api/dataentities/{data_entity_id}/lineage/downstream:
     get:
       summary: Get DataEntity's downstream lineage graph
-      description: Gets DataEntity's downstream lineage graph which size depends on lineage_depth parameter
+      description: Gets DataEntity's downstream lineage graph which size depends on lineage_depth parameter (defaults to 1 when omitted)
       operationId: getDataEntityDownstreamLineage
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
@@ -1298,6 +1299,7 @@ paths:
             type: integer
             format: int32
             minimum: 1
+            default: 1
         - name: expanded_entity_ids
           in: query
           required: false
