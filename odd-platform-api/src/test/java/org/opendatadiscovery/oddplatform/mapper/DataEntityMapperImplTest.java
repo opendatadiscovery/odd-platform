@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
+import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.dto.attributes.LinkedUrlAttribute;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.service.DataEntityStaleDetector;
@@ -198,6 +199,46 @@ class DataEntityMapperImplTest {
         assertThat(details.getEntities().get(0).getId()).isEqualTo(7L);
         assertThat(details.getHasChildren()).isTrue();
         assertThat(details.getManuallyCreated()).isTrue();
+    }
+
+    // ---- lookup-table description -> entity external_description propagation (CTRIB-032 / #1781) ----
+    // A lookup table is a source auto-ingested into the catalog, so its description is the entity's
+    // EXTERNAL description; the catalog-curated INTERNAL description (the About editor) stays independent
+    // and must never be clobbered by a lookup-table edit. RED on base (neither method set a description).
+
+    @Test
+    void mapCreatedLookupTablePojo_setsExternalDescriptionFromTableDescription() {
+        final ReferenceTableDto dto = ReferenceTableDto.builder()
+            .name("countries")
+            .tableName("n_1__countries")
+            .tableDescription("ISO 3166 country reference")
+            .build();
+
+        final DataEntityPojo pojo = mapper.mapCreatedLookupTablePojo(dto, DataEntityClassDto.DATA_SET);
+
+        assertThat(pojo.getExternalDescription()).isEqualTo("ISO 3166 country reference");
+        assertThat(pojo.getInternalName()).isEqualTo("countries");
+        assertThat(pojo.getInternalDescription()).isNull();
+    }
+
+    @Test
+    void applyToPojo_referenceTable_updatesExternalDescriptionAndKeepsInternalDescription() {
+        final DataEntityPojo existing = new DataEntityPojo()
+            .setId(ENTITY_ID)
+            .setInternalName("old-name")
+            .setExternalDescription("old external description")
+            .setInternalDescription("curated catalog note");
+        final ReferenceTableDto dto = ReferenceTableDto.builder()
+            .name("countries")
+            .tableName("n_1__countries")
+            .tableDescription("updated reference description")
+            .build();
+
+        final DataEntityPojo pojo = mapper.applyToPojo(existing, dto);
+
+        assertThat(pojo.getExternalDescription()).isEqualTo("updated reference description");
+        assertThat(pojo.getInternalName()).isEqualTo("countries");
+        assertThat(pojo.getInternalDescription()).isEqualTo("curated catalog note");
     }
 
     // ---- fixtures ----
