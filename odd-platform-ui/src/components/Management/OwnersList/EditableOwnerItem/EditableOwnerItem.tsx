@@ -25,7 +25,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
   const dispatch = useAppDispatch();
 
   const handleDelete = React.useCallback(
-    () => dispatch(deleteOwner({ ownerId })),
+    () => dispatch(deleteOwner({ ownerId })).unwrap(),
     [ownerId, deleteOwner]
   );
 

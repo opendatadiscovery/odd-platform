@@ -19,7 +19,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
   const dispatch = useAppDispatch();
 
   const handleDelete = React.useCallback(
-    () => dispatch(deleteNamespace({ namespaceId: namespace.id })),
+    () => dispatch(deleteNamespace({ namespaceId: namespace.id })).unwrap(),
     [namespace.id, deleteNamespace]
   );
 

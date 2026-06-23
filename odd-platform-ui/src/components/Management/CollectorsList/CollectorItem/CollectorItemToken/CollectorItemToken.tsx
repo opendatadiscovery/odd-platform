@@ -27,7 +27,7 @@ const CollectorItemToken: FC<CollectorItemProps> = ({
   }, [collector.token.value]);
 
   const onTokenRegenerate = () =>
-    dispatch(regenerateCollectorToken({ collectorId: collector.id }));
+    dispatch(regenerateCollectorToken({ collectorId: collector.id })).unwrap();
 
   return (
     <TokenContainer>
