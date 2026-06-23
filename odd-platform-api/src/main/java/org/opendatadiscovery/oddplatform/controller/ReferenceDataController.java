@@ -136,7 +136,7 @@ public class ReferenceDataController implements ReferenceDataApi {
         final Mono<LookupTableFieldUpdateFormData> lookupTableFieldUpdateFormData,
         final ServerWebExchange exchange) {
         return lookupTableFieldUpdateFormData
-            .flatMap(item -> referenceDataService.updateLookupTableField(columnId, item))
+            .flatMap(item -> referenceDataService.updateLookupTableField(lookupTableId, columnId, item))
             .map(ResponseEntity::ok);
     }
 
@@ -160,7 +160,7 @@ public class ReferenceDataController implements ReferenceDataApi {
     public Mono<ResponseEntity<Void>> deleteLookupTableField(final Long lookupTableId,
                                                              final Long columnId,
                                                              final ServerWebExchange exchange) {
-        return referenceDataService.deleteLookupTableField(columnId)
+        return referenceDataService.deleteLookupTableField(lookupTableId, columnId)
             .thenReturn(ResponseEntity.noContent().build());
     }
 

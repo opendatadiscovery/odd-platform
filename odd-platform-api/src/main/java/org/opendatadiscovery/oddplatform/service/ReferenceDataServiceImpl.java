@@ -20,6 +20,7 @@ import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
+import org.opendatadiscovery.oddplatform.exception.UniqueConstraintException;
 import org.opendatadiscovery.oddplatform.mapper.LookupTableDefinitionMapper;
 import org.opendatadiscovery.oddplatform.mapper.LookupTableMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
@@ -84,8 +85,12 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
                     .namespacePojo(namespacePojo)
                     .build();
 
-                return referenceDataRepository.createLookupTable(tableDto)
-                    .then(lookupDataService.createLookupTable(tableDto));
+                return tableRepository.existsByTableName(tableDto.getTableName())
+                    .flatMap(exists -> Boolean.TRUE.equals(exists)
+                        ? Mono.<LookupTable>error(new UniqueConstraintException(
+                            "Lookup table with this name already exists in this namespace"))
+                        : referenceDataRepository.createLookupTable(tableDto)
+                            .then(lookupDataService.createLookupTable(tableDto)));
             });
     }
 
@@ -130,11 +135,17 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     }
 
     @Override
-    public Mono<LookupTable> updateLookupTableField(final Long columnId,
+    public Mono<LookupTable> updateLookupTableField(final Long lookupTableId, final Long columnId,
                                                     final LookupTableFieldUpdateFormData formData) {
         return lookupDataService.getLookupTableDefinitionById(columnId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTableDefinition", columnId)))
             .flatMap(columnDto -> {
+                if (!columnDto.tablesPojo().getId().equals(lookupTableId)) {
+                    throw new BadUserRequestException("%s doesn't belong to %s",
+                        columnDto.columnPojo().getColumnName(),
+                        columnDto.tablesPojo().getName());
+                }
+
                 final ReferenceTableColumnDto inputColumnInfo = ReferenceTableColumnDto.builder()
                     .name(formData.getName())
                     .defaultValue(StringUtils.isNotBlank(formData.getDefaultValue())
@@ -165,11 +176,19 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     }
 
     @Override
-    public Mono<Void> deleteLookupTableField(final Long columnId) {
+    public Mono<Void> deleteLookupTableField(final Long lookupTableId, final Long columnId) {
         return lookupDataService.getLookupTableDefinitionById(columnId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTableDefinition", columnId)))
-            .flatMap(field -> referenceDataRepository.deleteLookupTableField(field)
-                .then(lookupDataService.deleteLookupTableField(field)));
+            .flatMap(field -> {
+                if (!field.tablesPojo().getId().equals(lookupTableId)) {
+                    throw new BadUserRequestException("%s doesn't belong to %s",
+                        field.columnPojo().getColumnName(),
+                        field.tablesPojo().getName());
+                }
+
+                return referenceDataRepository.deleteLookupTableField(field)
+                    .then(lookupDataService.deleteLookupTableField(field));
+            });
     }
 
     @Override

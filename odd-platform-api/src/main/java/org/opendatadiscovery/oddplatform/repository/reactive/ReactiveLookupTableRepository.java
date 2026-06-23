@@ -11,6 +11,8 @@ public interface ReactiveLookupTableRepository extends ReactiveCRUDRepository<Lo
 
     Mono<LookupTableDto> getTableById(final Long lookupTableId);
 
+    Mono<Boolean> existsByTableName(final String tableName);
+
     Mono<Long> countByState(final FacetStateDto state);
 
     Mono<Page<LookupTableDto>> findByState(FacetStateDto state, Integer page, Integer size);
