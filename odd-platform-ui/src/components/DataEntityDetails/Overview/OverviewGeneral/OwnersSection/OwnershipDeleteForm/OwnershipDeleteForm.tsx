@@ -24,7 +24,9 @@ const OwnershipDeleteForm: FC<OwnershipDeleteFormProps> = ({
   const [propagate, setPropagate] = useState(false);
 
   const handleOwnershipDelete = () =>
-    dispatch(deleteDataEntityOwnership({ dataEntityId, ownershipId, propagate }));
+    dispatch(
+      deleteDataEntityOwnership({ dataEntityId, ownershipId, propagate })
+    ).unwrap();
 
   return (
     <ConfirmationDialog

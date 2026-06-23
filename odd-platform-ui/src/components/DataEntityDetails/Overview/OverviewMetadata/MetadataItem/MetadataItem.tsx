@@ -61,7 +61,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
         dataEntityId,
         metadataFieldId: metadataItem.field.id,
       })
-    );
+    ).unwrap();
 
   const metadataVal = getMetadataValue(
     metadataItem.field,

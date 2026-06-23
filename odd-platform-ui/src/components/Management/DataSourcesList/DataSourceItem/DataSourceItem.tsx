@@ -28,7 +28,8 @@ const DataSourceItem: FC<DataSourceItemProps> = ({ dataSource }) => {
 
   const [isHidden, setIsHidden] = useState(true);
 
-  const onDelete = () => dispatch(deleteDataSource({ dataSourceId: dataSource.id }));
+  const onDelete = () =>
+    dispatch(deleteDataSource({ dataSourceId: dataSource.id })).unwrap();
 
   return (
     <S.Container elevation={0}>

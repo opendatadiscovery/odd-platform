@@ -27,7 +27,7 @@ const DataSourceItemToken: FC<DataSourceItemProps> = ({
   }, [dataSource.token.value]);
 
   const onTokenRegenerate = () =>
-    dispatch(regenerateDataSourceToken({ dataSourceId: dataSource.id }));
+    dispatch(regenerateDataSourceToken({ dataSourceId: dataSource.id })).unwrap();
 
   return (
     <TokenContainer>

@@ -23,7 +23,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
   const isAdministrator = name === 'Administrator';
 
   const handleDelete = useCallback(
-    () => dispatch(deletePolicy({ policyId })),
+    () => dispatch(deletePolicy({ policyId })).unwrap(),
     [policyId, deleteRole]
   );
 

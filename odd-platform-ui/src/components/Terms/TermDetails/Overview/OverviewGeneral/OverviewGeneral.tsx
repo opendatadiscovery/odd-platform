@@ -29,7 +29,7 @@ const OverviewGeneral: React.FC = () => {
   const ownership = useAppSelector(state => getTermOwnership(state, termId));
 
   const handleOwnershipDelete = (ownershipId: number) => () =>
-    dispatch(deleteTermOwnership({ termId, ownershipId }));
+    dispatch(deleteTermOwnership({ termId, ownershipId })).unwrap();
 
   const createdAt =
     termDetails.createdAt && termFormattedDateTime(termDetails.createdAt.getTime());
