@@ -206,6 +206,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         return new DataEntityPojo()
             .setInternalName(tableDto.getName())
             .setExternalName(tableDto.getTableName())
+            // A lookup table is a source auto-ingested into the catalog, so its description is the
+            // entity's EXTERNAL (source) description; the INTERNAL description stays catalog-curated (#1781).
+            .setExternalDescription(tableDto.getTableDescription())
             .setNamespaceId(tableDto.getNamespacePojo() != null ? tableDto.getNamespacePojo().getId() : null)
             .setEntityClassIds(new Integer[] {classDto.getId()})
             .setTypeId(DataEntityTypeDto.LOOKUP_TABLE.getId())
@@ -239,6 +242,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         return pojo
             .setInternalName(dto.getName())
             .setExternalName(dto.getTableName())
+            // Keep the entity's EXTERNAL (source) description in step with the lookup-table description;
+            // the INTERNAL (catalog-curated) description is intentionally left untouched (#1781).
+            .setExternalDescription(dto.getTableDescription())
             .setNamespaceId(dto.getNamespacePojo() != null ? dto.getNamespacePojo().getId() : null);
     }
 
