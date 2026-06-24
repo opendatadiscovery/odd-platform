@@ -636,5 +636,7 @@
   "Warning": "Aviso",
   "Open": "Aberto",
   "Resolved automatically": "Resolvido automaticamente",
-  "Showing {{visible}} of {{total}}": "Mostrando {{visible}} de {{total}}"
+  "Showing {{visible}} of {{total}}": "Mostrando {{visible}} de {{total}}",
+  "Are you sure you want to resolve this alert?": "Tem certeza de que deseja resolver este alerta?",
+  "Are you sure you want to reopen this alert?": "Tem certeza de que deseja reabrir este alerta?"
 }

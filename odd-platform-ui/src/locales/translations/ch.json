@@ -636,5 +636,7 @@
   "Warning": "警告",
   "Open": "打开",
   "Resolved automatically": "已自动解决",
-  "Showing {{visible}} of {{total}}": "显示 {{total}} 中的 {{visible}}"
+  "Showing {{visible}} of {{total}}": "显示 {{total}} 中的 {{visible}}",
+  "Are you sure you want to resolve this alert?": "您确定要解决此警报吗？",
+  "Are you sure you want to reopen this alert?": "您确定要重新打开此警报吗？"
 }

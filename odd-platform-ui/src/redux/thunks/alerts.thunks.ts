@@ -75,7 +75,11 @@ export const updateAlertStatus = handleResponseAsyncThunk<
   async params => {
     const alert = await alertApi.changeAlertStatus(params);
 
-    return { alert: castDatesToTimestamp(alert), dataEntityId: params.entityId };
+    // Emit the entity id under `entityId` — the key the reducer (and the sibling fetchDataEntityAlerts*
+    // thunks) read, and the one `Partial<EntityId>` declares. Pre-fix this returned `dataEntityId`, so the
+    // reducer's per-entity branch never ran and a per-entity resolve fell through to the global list
+    // (odd-platform#1803): the Data Entity > Alerts tab stayed stale until a refetch.
+    return { alert: castDatesToTimestamp(alert), entityId: params.entityId };
   },
   {
     setSuccessOptions: ({ alertStatusFormData, alertId }) => ({
