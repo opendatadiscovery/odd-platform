@@ -27,7 +27,8 @@ const CollectorItem: FC<CollectorItemProps> = ({ collector }) => {
 
   const [isHidden, setIsHidden] = useState(true);
 
-  const onDelete = () => dispatch(deleteCollector({ collectorId: collector.id }));
+  const onDelete = () =>
+    dispatch(deleteCollector({ collectorId: collector.id })).unwrap();
 
   return (
     <S.Container elevation={0}>

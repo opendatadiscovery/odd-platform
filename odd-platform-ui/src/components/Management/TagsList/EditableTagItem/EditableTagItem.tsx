@@ -19,7 +19,7 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
   const dispatch = useAppDispatch();
 
   const handleDelete = React.useCallback(
-    () => dispatch(deleteTag({ tagId: tag.id })),
+    () => dispatch(deleteTag({ tagId: tag.id })).unwrap(),
     [tag, deleteTag]
   );
 

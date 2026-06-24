@@ -46,9 +46,9 @@ const TermDetailsView: FC = () => {
 
   const handleTermDelete = useCallback(
     (id: number) => () =>
-      dispatch(deleteTerm({ termId: id })).then(() =>
-        navigate(termsSearchPath(termSearchId))
-      ),
+      dispatch(deleteTerm({ termId: id }))
+        .unwrap()
+        .then(() => navigate(termsSearchPath(termSearchId))),
     [termSearchId]
   );
 

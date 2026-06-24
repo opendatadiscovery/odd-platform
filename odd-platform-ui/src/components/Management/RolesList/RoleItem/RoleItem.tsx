@@ -25,7 +25,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
   const isAdministrator = name === 'Administrator';
 
   const handleDelete = useCallback(
-    () => dispatch(deleteRole({ roleId })),
+    () => dispatch(deleteRole({ roleId })).unwrap(),
     [roleId, deleteRole]
   );
 
