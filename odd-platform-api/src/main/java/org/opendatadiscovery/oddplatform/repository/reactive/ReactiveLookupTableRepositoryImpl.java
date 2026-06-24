@@ -100,6 +100,13 @@ public class ReactiveLookupTableRepositoryImpl
     }
 
     @Override
+    public Mono<Boolean> existsByTableName(final String tableName) {
+        return jooqReactiveOperations.mono(
+            DSL.selectOne().from(LOOKUP_TABLES).where(LOOKUP_TABLES.TABLE_NAME.eq(tableName))
+        ).hasElement();
+    }
+
+    @Override
     public Mono<Long> countByState(final FacetStateDto state) {
         var query = DSL.select(countDistinct(LOOKUP_TABLES.ID))
             .from(LOOKUP_TABLES)
