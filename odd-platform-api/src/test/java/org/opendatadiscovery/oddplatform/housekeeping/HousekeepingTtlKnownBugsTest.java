@@ -7,8 +7,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Known-bug characterization pins for the housekeeping TTL data-loss class — PLT-083 and PLT-005.
- * Both assert the CURRENT (incorrect) behaviour: GREEN while the bug exists, RED the instant the
+ * Known-bug characterization pin for the housekeeping TTL zero-default footgun — PLT-083.
+ * It asserts the CURRENT source shape: GREEN while the footgun exists, RED the instant the
  * code changes. See retrospectives/LSN-029 for the general rule + flip protocol.
  *
  * <p>PLT-083 (LSN-001 shape, F-010 H-002) — {@code HousekeepingTTLProperties} holds bare primitive
@@ -17,24 +17,22 @@ import org.junit.jupiter.api.Test;
  * {@code application.yml} override silently wipes all retained data within 15 minutes. The fix is a
  * sane non-zero default (or an unset≠0 guard). Flip on RED: confirm the default fix, drop this pin.
  *
- * <p>PLT-005 (F-010 H-001) — {@code AlertHousekeepingJob} chains {@code .where(A).or(B).and(C)},
- * which SQL precedence (AND binds tighter than OR) evaluates as {@code A OR (B AND C)} — NOT the
- * intended {@code (A OR B) AND C}. So manually-RESOLVED alerts (branch A) are hard-deleted next
- * cycle regardless of {@code resolved_alerts_days}. The fix groups the OR
- * ({@code .where(A.or(B)).and(C)} or {@code STATUS.in(...)}). Flip on RED: confirm the grouping fix,
- * drop this pin.
+ * <p>PLT-005 (the {@code AlertHousekeepingJob} {@code .or()/.and()} precedence claim) was FALSIFIED and
+ * is NOT pinned here: jOOQ DSL chaining renders {@code .where(A).or(B).and(C)} as {@code (A OR B) AND C}
+ * (the intended grouping), not {@code A OR (B AND C)}, so manual and auto resolutions respect the TTL
+ * symmetrically. The behaviour is proven by {@code AlertHousekeepingRetentionTest} (it runs the real job
+ * against a real Postgres). The earlier source-scan pin asserted a non-bug and was removed. See
+ * issues/odd-platform/PLT-005.md (status: rejected).
  *
- * <p>Idiom: source scan of the real config + job — deterministic, no Spring context; gradle runs
+ * <p>Idiom: source scan of the real config — deterministic, no Spring context; gradle runs
  * tests with the module root as the working dir.
  *
  * @pins PLT-083
- * @pins PLT-005
  */
 class HousekeepingTtlKnownBugsTest {
 
     private static final String BASE = "src/main/java/org/opendatadiscovery/oddplatform/housekeeping/";
     private static final Path TTL_PROPS = Path.of(BASE + "config/HousekeepingTTLProperties.java");
-    private static final Path ALERT_JOB = Path.of(BASE + "job/AlertHousekeepingJob.java");
 
     private static String read(final Path p) throws IOException {
         Assertions.assertThat(Files.exists(p))
@@ -56,16 +54,5 @@ class HousekeepingTtlKnownBugsTest {
             .contains("private int searchFacetsDays;")
             .contains("private int dataEntityDeleteDays;")
             .doesNotContain("@DefaultValue");
-    }
-
-    @Test
-    void alertHousekeepingOrAndPrecedence_knownBug_PLT005() throws IOException {
-        Assertions.assertThat(read(ALERT_JOB))
-            .as("PLT-005: the ungrouped .where(A).or(B).and(C) chain evaluates as A OR (B AND C) — so "
-                + "manually-RESOLVED alerts are deleted regardless of resolved_alerts_days. RED here = the OR "
-                + "was grouped (the fix); confirm and drop this @pins. See retrospectives/LSN-029.")
-            .contains(".where(ALERT.STATUS.eq(AlertStatusEnum.RESOLVED.getCode()))")
-            .contains(".or(ALERT.STATUS.eq(AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode()))")
-            .contains(".and(ALERT.STATUS_UPDATED_AT.lessOrEqual(");
     }
 }
