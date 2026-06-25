@@ -383,7 +383,7 @@
   "inputs": "输入",
   "integrations overall": "总集成数",
   "labels overall": "总标签数",
-  "main search placeholder": "主搜索占位符",
+  "main search placeholder": "通过关键词搜索数据表、特征组、作业和 ML 模型",
   "manually created": "手动创建",
   "messages in thread": "线程中的消息",
   "more output": "更多输出",
