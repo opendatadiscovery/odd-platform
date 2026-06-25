@@ -7,7 +7,12 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchResourcePermissions, updateAlertStatus } from 'redux/thunks';
 import { useAppDateTime } from 'lib/hooks';
 import { GearIcon, UserIcon } from 'components/shared/icons';
-import { AlertStatusItem, Button, EntityClassItem } from 'components/shared/elements';
+import {
+  AlertStatusItem,
+  Button,
+  ConfirmationDialog,
+  EntityClassItem,
+} from 'components/shared/elements';
 import { alertTitlesMap } from 'lib/constants';
 import { getGlobalPermissions } from 'redux/selectors';
 import { dataEntityDetailsPath } from 'routes';
@@ -34,41 +39,37 @@ const AlertItem: React.FC<AlertItemProps> = ({
   const { t } = useTranslation();
 
   const [showHistory, setShowHistory] = React.useState(false);
-  const [disableResolve, setDisableResolve] = React.useState(false);
-  const [isUpdating, setIsUpdating] = React.useState(false);
 
   const globalPermissions = useAppSelector(getGlobalPermissions);
 
-  const dispatchUpdateAlertStatus = () => {
-    const status =
-      alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
-    dispatch(updateAlertStatus({ alertId: id, alertStatusFormData: { status } })).then(
-      () => setIsUpdating(false)
-    );
-  };
+  const isOpen = alertStatus === AlertStatus.OPEN;
 
-  const handleResolve = () => {
-    if (dataEntity?.id) {
-      const params = {
+  // The global Alerts page lists alerts across entities, so DATA_ENTITY_ALERT_RESOLVE is checked per entity
+  // at confirm time. Both the permission check and the status change use `.unwrap()` so a denial / failure
+  // REJECTS the dialog's onConfirm — surfaced inline, the dialog stays open — instead of resolving and
+  // closing as success (odd-platform#1766 / CTRIB-031 idiom). The ConfirmationDialog renders its own loading
+  // + error state, so the previous bespoke isUpdating / disableResolve / "No access!" caption is gone.
+  const onConfirmStatusChange = async () => {
+    if (!dataEntity?.id) return;
+    const { permissions } = await dispatch(
+      fetchResourcePermissions({
         resourceId: dataEntity.id,
         permissionResourceType: PermissionResourceType.DATA_ENTITY,
-      };
-      setIsUpdating(true);
-      dispatch(fetchResourcePermissions(params))
-        .unwrap()
-        .then(({ permissions }) => {
-          if (
-            [...globalPermissions, ...permissions].includes(
-              Permission.DATA_ENTITY_ALERT_RESOLVE
-            )
-          ) {
-            dispatchUpdateAlertStatus();
-          } else {
-            setIsUpdating(false);
-            setDisableResolve(true);
-          }
-        });
+      })
+    ).unwrap();
+    if (
+      ![...globalPermissions, ...permissions].includes(
+        Permission.DATA_ENTITY_ALERT_RESOLVE
+      )
+    ) {
+      // getErrorResponse reads a Response body's `message`, so a thrown Response surfaces "No access!"
+      // in the dialog without a shared-util change.
+      throw new Response(JSON.stringify({ message: t('No access!') }), { status: 403 });
     }
+    const status = isOpen ? AlertStatus.RESOLVED : AlertStatus.OPEN;
+    await dispatch(
+      updateAlertStatus({ alertId: id, alertStatusFormData: { status } })
+    ).unwrap();
   };
 
   const resolvedInfo = React.useMemo(() => {
@@ -157,17 +158,23 @@ const AlertItem: React.FC<AlertItemProps> = ({
           {resolvedInfo}
           <AlertStatusItem status={alertStatus} />
           <Grid display='flex' flexDirection='column' alignItems='center' sx={{ ml: 2 }}>
-            <Button
-              text={alertStatus === 'OPEN' ? t('Resolve') : t('Reopen')}
-              sx={{ minWidth: '72px !important', minHeight: '24px' }}
-              buttonType='secondary-m'
-              onClick={handleResolve}
-              disabled={disableResolve}
-              isLoading={isUpdating}
+            <ConfirmationDialog
+              actionTitle={isOpen ? t('Resolve') : t('Reopen')}
+              actionName={isOpen ? t('Resolve') : t('Reopen')}
+              actionText={
+                isOpen
+                  ? t('Are you sure you want to resolve this alert?')
+                  : t('Are you sure you want to reopen this alert?')
+              }
+              onConfirm={onConfirmStatusChange}
+              actionBtn={
+                <Button
+                  text={isOpen ? t('Resolve') : t('Reopen')}
+                  sx={{ minWidth: '72px !important', minHeight: '24px' }}
+                  buttonType='secondary-m'
+                />
+              }
             />
-            {disableResolve && (
-              <Typography variant='caption'>{t('No access!')}</Typography>
-            )}
           </Grid>
         </S.Wrapper>
       </Grid>

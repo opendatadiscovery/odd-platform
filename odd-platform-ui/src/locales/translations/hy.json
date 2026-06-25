@@ -636,5 +636,7 @@
   "Warning": "Զգուշացում",
   "Open": "Բաց",
   "Resolved automatically": "Հանգուցալուծված ինքնաշխատ կերպով",
-  "Showing {{visible}} of {{total}}": "Ցուցադրվում է {{visible}}-ը {{total}}-ից"
+  "Showing {{visible}} of {{total}}": "Ցուցադրվում է {{visible}}-ը {{total}}-ից",
+  "Are you sure you want to resolve this alert?": "Դուք վստա՞հ եք, որ ուզում եք հանգուցալուծել այս ազդանշանը։",
+  "Are you sure you want to reopen this alert?": "Դուք վստա՞հ եք, որ ուզում եք վերաբացել այս ազդանշանը։"
 }

@@ -6,7 +6,7 @@ import { AlertStatus, Permission } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
 import { updateAlertStatus } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { AlertStatusItem, Button } from 'components/shared/elements';
+import { AlertStatusItem, Button, ConfirmationDialog } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { alertTitlesMap } from 'lib/constants';
@@ -35,12 +35,18 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
 
   const [showHistory, setShowHistory] = React.useState(false);
 
-  const alertStatusHandler = () => {
-    const status =
-      alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
-    const params = { alertId, alertStatusFormData: { status }, entityId: dataEntityId };
-
-    dispatch(updateAlertStatus(params));
+  const isOpen = alertStatus === AlertStatus.OPEN;
+  const onConfirmStatusChange = () => {
+    const status = isOpen ? AlertStatus.RESOLVED : AlertStatus.OPEN;
+    // `.unwrap()` so a failed status change REJECTS the dialog's onConfirm (surfaced inline, dialog stays
+    // open) instead of resolving and closing as success (odd-platform#1766 / CTRIB-031 idiom).
+    return dispatch(
+      updateAlertStatus({
+        alertId,
+        alertStatusFormData: { status },
+        entityId: dataEntityId,
+      })
+    ).unwrap();
   };
 
   const resolvedInfo = React.useMemo(() => {
@@ -110,11 +116,22 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
           <AlertStatusItem status={alertStatus} />
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_RESOLVE}>
             <Grid>
-              <Button
-                text={alertStatus === 'OPEN' ? t('Resolve') : t('Reopen')}
-                sx={{ ml: 2 }}
-                buttonType='secondary-m'
-                onClick={alertStatusHandler}
+              <ConfirmationDialog
+                actionTitle={isOpen ? t('Resolve') : t('Reopen')}
+                actionName={isOpen ? t('Resolve') : t('Reopen')}
+                actionText={
+                  isOpen
+                    ? t('Are you sure you want to resolve this alert?')
+                    : t('Are you sure you want to reopen this alert?')
+                }
+                onConfirm={onConfirmStatusChange}
+                actionBtn={
+                  <Button
+                    text={isOpen ? t('Resolve') : t('Reopen')}
+                    sx={{ ml: 2 }}
+                    buttonType='secondary-m'
+                  />
+                }
               />
             </Grid>
           </WithPermissions>

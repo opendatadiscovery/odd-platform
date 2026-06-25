@@ -636,5 +636,7 @@
   "Warning": "Warning",
   "Open": "Open",
   "Resolved automatically": "Resolved automatically",
-  "Showing {{visible}} of {{total}}": "Showing {{visible}} of {{total}}"
+  "Showing {{visible}} of {{total}}": "Showing {{visible}} of {{total}}",
+  "Are you sure you want to resolve this alert?": "Are you sure you want to resolve this alert?",
+  "Are you sure you want to reopen this alert?": "Are you sure you want to reopen this alert?"
 }
