@@ -148,14 +148,24 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
     }
 
     private DatasetTestReportDto mapTestReport(final Map<String, Long> report) {
+        final long successTotal = report.getOrDefault(SUCCESS.getValue(), 0L);
+        final long failedTotal = report.getOrDefault(FAILED.getValue(), 0L);
+        final long abortedTotal = report.getOrDefault(ABORTED.getValue(), 0L);
+        final long skippedTotal = report.getOrDefault(SKIPPED.getValue(), 0L);
+        final long brokenTotal = report.getOrDefault(BROKEN.getValue(), 0L);
+        final long unknownTotal = report.getOrDefault(UNKNOWN.getValue(), 0L);
         return DatasetTestReportDto.builder()
-            .successTotal(report.getOrDefault(SUCCESS.getValue(), 0L))
-            .failedTotal(report.getOrDefault(FAILED.getValue(), 0L))
-            .abortedTotal(report.getOrDefault(ABORTED.getValue(), 0L))
-            .skippedTotal(report.getOrDefault(SKIPPED.getValue(), 0L))
-            .brokenTotal(report.getOrDefault(BROKEN.getValue(), 0L))
-            .unknownTotal(report.getOrDefault(UNKNOWN.getValue(), 0L))
-            .total(report.values().stream().reduce(0L, Long::sum))
+            .successTotal(successTotal)
+            .failedTotal(failedTotal)
+            .abortedTotal(abortedTotal)
+            .skippedTotal(skippedTotal)
+            .brokenTotal(brokenTotal)
+            .unknownTotal(unknownTotal)
+            // Sum only the reported categories so total == the breakdown. An in-flight RUNNING latest run
+            // (now possible after #1794 defect 1) has no terminal-result column here and is not a completed
+            // test result — excluding it keeps the per-dataset report self-consistent (was: sum of all map
+            // values, which would count RUNNING in total but in no category).
+            .total(successTotal + failedTotal + abortedTotal + skippedTotal + brokenTotal + unknownTotal)
             .build();
     }
 }

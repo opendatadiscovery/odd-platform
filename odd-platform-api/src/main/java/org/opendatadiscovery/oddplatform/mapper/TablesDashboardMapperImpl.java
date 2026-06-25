@@ -20,6 +20,7 @@ public class TablesDashboardMapperImpl implements TablesDashboardMapper {
                 case GOOD_HEALTH -> tablesHealthDashboard.setHealthyTables(row.count());
                 case ERROR_HEALTH -> tablesHealthDashboard.setErrorTables(row.count());
                 case WARNING_HEALTH -> tablesHealthDashboard.setWarningTables(row.count());
+                case UNKNOWN_HEALTH -> tablesHealthDashboard.setUnknownTables(row.count());
             }
         });
 

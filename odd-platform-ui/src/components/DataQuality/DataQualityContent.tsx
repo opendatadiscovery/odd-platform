@@ -52,13 +52,14 @@ export const DataQualityContent: React.FC = () => {
 
   const tableHealthData = useMemo(() => {
     if (!data) return [];
-    const { healthyTables, warningTables, errorTables } =
+    const { healthyTables, warningTables, errorTables, unknownTables } =
       data.tablesDashboard.tablesHealth;
-    const { healthy, warning, error } = palette.dataQualityDashboard;
+    const { healthy, warning, error, unknown } = palette.dataQualityDashboard;
     return [
       { title: t('Healthy'), value: healthyTables, color: healthy },
       { title: t('Warning'), value: warningTables, color: warning },
       { title: t('Error'), value: errorTables, color: error },
+      { title: t('Unknown'), value: unknownTables, color: unknown },
     ];
   }, [data?.tablesDashboard.tablesHealth, t]);
 

@@ -3834,10 +3834,14 @@ components:
         warning_tables:
           type: integer
           format: int32
+        unknown_tables:
+          type: integer
+          format: int32
       required:
         - healthy_tables
         - error_tables
         - warning_tables
+        - unknown_tables
 
     MonitoredTablesDashboard:
       type: object

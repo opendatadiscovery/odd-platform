@@ -15,8 +15,11 @@ public class DataEntityTaskRunMapperImpl implements DataEntityTaskRunMapper {
             .setOddrn(taskRun.getOddrn())
             .setTaskOddrn(taskRun.getTaskOddrn())
             .setType(taskRun.getType().name())
-            .setStartTime(taskRun.getStartTime().toLocalDateTime())
-            .setEndTime(taskRun.getEndTime().toLocalDateTime())
+            // start_time and end_time are both optional on the wire (DataEntityRun requires only `status`):
+            // an in-flight run has no end_time yet. Map a missing timestamp to null instead of NPE-ing — a no
+            // end_time RUNNING run must ingest so the dashboard can count it (issue #1794, defect 1a).
+            .setStartTime(taskRun.getStartTime() != null ? taskRun.getStartTime().toLocalDateTime() : null)
+            .setEndTime(taskRun.getEndTime() != null ? taskRun.getEndTime().toLocalDateTime() : null)
             .setStatus(taskRun.getStatus().toString())
             .setStatusReason(taskRun.getStatusReason());
     }
