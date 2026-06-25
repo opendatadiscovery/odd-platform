@@ -63,6 +63,7 @@ const initialData: DataQualityResults = {
       healthyTables: 0,
       errorTables: 0,
       warningTables: 0,
+      unknownTables: 0,
     },
     monitoredTables: {
       monitoredTables: 0,

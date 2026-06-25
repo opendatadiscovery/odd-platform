@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -99,12 +100,24 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
     @Override
     @ReactiveTransactional
     public Mono<Void> insertLastRuns(final Collection<DataEntityTaskRunPojo> pojos) {
+        // Pick the latest run per task by COALESCE(end_time, start_time): an in-flight run (no end_time) is
+        // ordered by its start_time and becomes the current last run with status RUNNING, then is replaced by
+        // its terminal status on completion. Previously this filtered end_time != null, dropping in-flight runs
+        // so a running test never reached the dashboard (issue #1794, defect 1; conforms to #1793's
+        // "an in-flight run is the freshest" run ordering).
         final Map<String, DataEntityTaskLastRunPojo> lastRunMap = pojos.stream()
-            .filter(tr -> tr.getEndTime() != null)
             .collect(Collectors.toMap(
                 DataEntityTaskRunPojo::getTaskOddrn,
-                tr -> new DataEntityTaskLastRunPojo(tr.getTaskOddrn(), tr.getOddrn(), tr.getEndTime(), tr.getStatus()),
-                (tr1, tr2) -> tr1.getEndTime().isAfter(tr2.getEndTime()) ? tr1 : tr2
+                tr -> {
+                    final DataEntityTaskLastRunPojo lastRun = new DataEntityTaskLastRunPojo();
+                    lastRun.setTaskOddrn(tr.getTaskOddrn());
+                    lastRun.setLastTaskRunOddrn(tr.getOddrn());
+                    lastRun.setStartTime(tr.getStartTime());
+                    lastRun.setEndTime(tr.getEndTime());
+                    lastRun.setStatus(tr.getStatus());
+                    return lastRun;
+                },
+                ReactiveDataEntityTaskRunRepositoryImpl::latestLastRun
             ));
 
         final var existingLastRunsQuery = DSL
@@ -123,7 +136,7 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
                             return e.getValue();
                         }
 
-                        return existing.getEndTime().isAfter(e.getValue().getEndTime()) ? existing : e.getValue();
+                        return latestLastRun(e.getValue(), existing);
                     }))
                     .values();
 
@@ -147,6 +160,8 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
                         .set(Map.of(
                             DATA_ENTITY_TASK_LAST_RUN.LAST_TASK_RUN_ODDRN,
                             DSL.excluded(DATA_ENTITY_TASK_LAST_RUN.LAST_TASK_RUN_ODDRN),
+                            DATA_ENTITY_TASK_LAST_RUN.START_TIME,
+                            DSL.excluded(DATA_ENTITY_TASK_LAST_RUN.START_TIME),
                             DATA_ENTITY_TASK_LAST_RUN.END_TIME,
                             DSL.excluded(DATA_ENTITY_TASK_LAST_RUN.END_TIME),
                             DATA_ENTITY_TASK_LAST_RUN.STATUS,
@@ -156,6 +171,27 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
                 return jooqReactiveOperations.mono(query);
             })
             .then();
+    }
+
+    // The effective time of a last-run = end_time when completed, else start_time (an in-flight run). Used to
+    // pick the genuinely-latest run per task (issue #1794) — COALESCE(end_time, start_time) in SQL terms.
+    private static LocalDateTime effectiveTime(final DataEntityTaskLastRunPojo run) {
+        return run.getEndTime() != null ? run.getEndTime() : run.getStartTime();
+    }
+
+    // Returns whichever last-run is later by effective time. On a tie (or when `candidate` is not strictly
+    // later) keeps `current`; a null effective time (a run with neither timestamp) loses.
+    private static DataEntityTaskLastRunPojo latestLastRun(final DataEntityTaskLastRunPojo current,
+                                                           final DataEntityTaskLastRunPojo candidate) {
+        final LocalDateTime currentTime = effectiveTime(current);
+        final LocalDateTime candidateTime = effectiveTime(candidate);
+        if (candidateTime == null) {
+            return current;
+        }
+        if (currentTime == null) {
+            return candidate;
+        }
+        return candidateTime.isAfter(currentTime) ? candidate : current;
     }
 
     @Override

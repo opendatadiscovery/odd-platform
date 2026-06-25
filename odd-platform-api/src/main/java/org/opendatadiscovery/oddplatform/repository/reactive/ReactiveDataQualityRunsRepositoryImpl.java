@@ -31,6 +31,7 @@ import static org.opendatadiscovery.oddplatform.mapper.TablesDashboardMapperImpl
 import static org.opendatadiscovery.oddplatform.mapper.TablesDashboardMapperImpl.MONITORED_TABLES;
 import static org.opendatadiscovery.oddplatform.mapper.TablesDashboardMapperImpl.NOT_MONITORED_TABLES;
 import static org.opendatadiscovery.oddplatform.mapper.TablesDashboardMapperImpl.TABLE_STATUS;
+import static org.opendatadiscovery.oddplatform.mapper.TablesDashboardMapperImpl.UNKNOWN_HEALTH;
 import static org.opendatadiscovery.oddplatform.mapper.TablesDashboardMapperImpl.WARNING_HEALTH;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_QUALITY_TEST_RELATIONS;
@@ -55,6 +56,7 @@ public class ReactiveDataQualityRunsRepositoryImpl implements ReactiveDataQualit
     public static final String HEALTH_TABLE_CTE = "healthyTables";
     public static final String ERROR_HEALTH_TABLE_CTE = "errorTables";
     public static final String WARNING_HEALTH_TABLE_CTE = "warningTables";
+    public static final String UNKNOWN_HEALTH_TABLE_CTE = "unknownTables";
     public static final String DATA_ENTITY_CTE = "dataEntityCTE";
     public static final String MONITORED_TABLE_CTE = "monitoredTablesCTE";
     public static final String NOT_MONITORED_TABLE_CTE = "notMonitoredTablesCTE";
@@ -108,53 +110,40 @@ public class ReactiveDataQualityRunsRepositoryImpl implements ReactiveDataQualit
     public Flux<TableHealthRecord> getLatestTablesHealth(final DataQualityTestFiltersDto filtersDto) {
         final Table<Record1<String>> deOddrns = getSubQueryForLatestTablesHealth(filtersDto);
 
-        final Table<Record1<String>> healthyTables =
+        // Table Health is a priority cascade — the highest-severity latest-run status present on any of a
+        // table's tests wins (issue #1794):
+        //   Error   = at least one FAILED
+        //   Warning = at least one BROKEN (and no FAILED)
+        //   Unknown = at least one UNKNOWN (and no FAILED, no BROKEN)
+        //   Healthy = none of the above (only SUCCESS / SKIPPED / ABORTED / RUNNING)
+        // The four buckets partition the monitored tables exactly (each table lands in one).
+        final Table<Record1<String>> errorTables =
             DSL.select(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
                 .from(deOddrns)
-                .where(
-                    DSL.notExists(
-                        DSL.select()
-                            .from(DATA_ENTITY_TASK_LAST_RUN, DATA_QUALITY_TEST_RELATIONS)
-                            .where(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN)
-                                .eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
-                            .and(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN
-                                .eq(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN))
-                            .and(DATA_ENTITY_TASK_LAST_RUN.STATUS
-                                .notIn(DataEntityRunStatus.SUCCESS.getValue()))
-                    )
-                ).asTable(HEALTH_TABLE_CTE);
-
-        final Table<Record1<String>> errorTables = DSL.select(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
-            .from(deOddrns)
-            .where(
-                DSL.exists(
-                    DSL.select()
-                        .from(DATA_ENTITY_TASK_LAST_RUN, DATA_QUALITY_TEST_RELATIONS)
-                        .where(DSL.notExists(
-                                DSL.select()
-                                    .from(healthyTables)
-                                        .where(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN)
-                                                .eq(healthyTables.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))))
-                        )
-                        .and(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN)
-                            .eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
-                        .and(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN
-                            .eq(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN))
-                        .and(DATA_ENTITY_TASK_LAST_RUN.STATUS.in(DataEntityRunStatus.BROKEN.getValue(),
-                            DataEntityRunStatus.FAILED.getValue()))
-                )
-            ).asTable(ERROR_HEALTH_TABLE_CTE);
+                .where(DSL.exists(lastRunWithStatus(deOddrns, DataEntityRunStatus.FAILED.getValue())))
+                .asTable(ERROR_HEALTH_TABLE_CTE);
 
         final Table<Record1<String>> warningTables =
             DSL.select(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
                 .from(deOddrns)
-                .where(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN).notIn(
-                    DSL.select(healthyTables.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
-                        .from(healthyTables)))
-                .and(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN).notIn(
-                    DSL.select(errorTables.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
-                        .from(errorTables)))
+                .where(DSL.exists(lastRunWithStatus(deOddrns, DataEntityRunStatus.BROKEN.getValue())))
+                .and(DSL.notExists(lastRunWithStatus(deOddrns, DataEntityRunStatus.FAILED.getValue())))
                 .asTable(WARNING_HEALTH_TABLE_CTE);
+
+        final Table<Record1<String>> unknownTables =
+            DSL.select(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
+                .from(deOddrns)
+                .where(DSL.exists(lastRunWithStatus(deOddrns, DataEntityRunStatus.UNKNOWN.getValue())))
+                .and(DSL.notExists(lastRunWithStatus(deOddrns, DataEntityRunStatus.FAILED.getValue(),
+                    DataEntityRunStatus.BROKEN.getValue())))
+                .asTable(UNKNOWN_HEALTH_TABLE_CTE);
+
+        final Table<Record1<String>> healthyTables =
+            DSL.select(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
+                .from(deOddrns)
+                .where(DSL.notExists(lastRunWithStatus(deOddrns, DataEntityRunStatus.FAILED.getValue(),
+                    DataEntityRunStatus.BROKEN.getValue(), DataEntityRunStatus.UNKNOWN.getValue())))
+                .asTable(HEALTH_TABLE_CTE);
 
         return jooqReactiveOperations.flux(
                 DSL.select(DSL.count(healthyTables.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
@@ -168,8 +157,24 @@ public class ReactiveDataQualityRunsRepositoryImpl implements ReactiveDataQualit
                     .unionAll(DSL.select(DSL.count(warningTables.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
                                 .as(COUNT),
                             DSL.inline(WARNING_HEALTH).as(TABLE_STATUS))
-                        .from(warningTables)))
+                        .from(warningTables))
+                    .unionAll(DSL.select(DSL.count(unknownTables.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
+                                .as(COUNT),
+                            DSL.inline(UNKNOWN_HEALTH).as(TABLE_STATUS))
+                        .from(unknownTables)))
             .map(item -> item.into(TableHealthRecord.class));
+    }
+
+    // A correlated subquery: does the current deOddrns dataset have a latest-run with any of the given
+    // statuses? Wrap with DSL.exists / DSL.notExists at the call site (issue #1794 Table-Health cascade).
+    private Select<?> lastRunWithStatus(final Table<Record1<String>> deOddrns, final String... statuses) {
+        return DSL.select()
+            .from(DATA_ENTITY_TASK_LAST_RUN, DATA_QUALITY_TEST_RELATIONS)
+            .where(deOddrns.field(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN)
+                .eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
+            .and(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN
+                .eq(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN))
+            .and(DATA_ENTITY_TASK_LAST_RUN.STATUS.in(statuses));
     }
 
     @Override

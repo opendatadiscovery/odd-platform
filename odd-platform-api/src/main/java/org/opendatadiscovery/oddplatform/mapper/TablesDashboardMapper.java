@@ -9,6 +9,7 @@ public interface TablesDashboardMapper {
     String GOOD_HEALTH = "GOOD_HEALTH";
     String ERROR_HEALTH = "ERROR";
     String WARNING_HEALTH = "WARNING";
+    String UNKNOWN_HEALTH = "UNKNOWN";
     String MONITORED_TABLES = "MONITORED_TABLES";
     String NOT_MONITORED_TABLES = "NOT_MONITORED_TABLES";
     String COUNT = "COUNT";
