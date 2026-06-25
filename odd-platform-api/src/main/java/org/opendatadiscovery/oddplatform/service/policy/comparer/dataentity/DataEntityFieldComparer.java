@@ -11,6 +11,8 @@ public class DataEntityFieldComparer extends SimpleFieldComparer<DataEntityPolic
     }
 
     private static DataEntityPojo getDataEntity(final DataEntityPolicyResolverContext context) {
-        return context.dataEntity().getDataEntity();
+        return context.dataEntity().getDataEntity() == null
+            ? new DataEntityPojo()
+            : context.dataEntity().getDataEntity();
     }
 }

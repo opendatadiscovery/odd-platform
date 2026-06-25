@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.service.policy.resolver;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionDto;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionKeyDto;
@@ -22,7 +23,7 @@ public abstract class AbstractConditionResolver<T> implements ConditionResolver<
             return resolveAny(condition.getAny(), context);
         } else if (condition.getEq() != null) {
             final Map.Entry<PolicyConditionKeyDto, Object> entry = getUnaryCondition(condition.getEq());
-            return resolveEquals(entry.getKey(), entry.getValue().toString(), context);
+            return resolveEquals(entry.getKey(), Objects.toString(entry.getValue(), null), context);
         } else if (condition.getNotEq() != null) {
             final Map.Entry<PolicyConditionKeyDto, Object> entry = getUnaryCondition(condition.getNotEq());
             return resolveNotEquals(entry.getKey(), entry.getValue().toString(), context);

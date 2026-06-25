@@ -11,6 +11,8 @@ public class TermFieldComparer extends SimpleFieldComparer<TermPolicyResolverCon
     }
 
     private static TermPojo getTerm(final TermPolicyResolverContext context) {
-        return context.detailsDto().getTermDto().getTermRefDto().getTerm();
+        return context.detailsDto().getTermDto().getTermRefDto().getTerm() == null
+            ? new TermPojo()
+            : context.detailsDto().getTermDto().getTermRefDto().getTerm();
     }
 }
