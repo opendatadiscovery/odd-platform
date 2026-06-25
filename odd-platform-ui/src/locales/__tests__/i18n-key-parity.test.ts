@@ -215,3 +215,42 @@ describe('i18n no unwrapped object-property label literal (#1751 / PLT-205 wave 
     ).toEqual([]);
   });
 });
+
+// THE INVARIANT: for a SYMBOLIC key (one whose en value !== the key — the natural-keys exception),
+// every non-en value must translate the en VALUE, not gloss the KEY's words.
+//
+// WHY A FOURTH... err, FIFTH guard: the natural-keys pattern (key == English text) means a translator
+// working from the key list usually translates the value safely, because key and value coincide. The
+// one SYMBOLIC key, `main search placeholder`, breaks that — its en value is the long home-page search
+// hint, not the key. Working from the key list alone, all six non-en translators rendered the KEY's
+// words ("main search space" / "main search pointer" / the literal word "placeholder" in Chinese)
+// instead of the hint (odd-platform#1776). None of the key-parity / unwrapped-literal guards above can
+// see a wrong VALUE, so CI stayed green. THE CHECK: the en hint enumerates what is searchable (data
+// tables, feature groups, jobs, ML models) — a list carrying >=2 separators — whereas a literal
+// key-gloss is one short phrase with none. So every non-en value for this key must likewise be a
+// multi-item list (>=2 of ',' / '，' / '、' / ';' / '；'). This is a heuristic complement to the e2e
+// render assertion (odd-team IT-143); it is RED on the pre-#1776 catalogs (0 separators) and GREEN once
+// the values are real hints. Generalising it to ALL symbolic keys is tracked as a follow-up.
+const SYMBOLIC_HINT_KEY = 'main search placeholder';
+const LIST_SEPARATORS = /[,，、;；]/g;
+const separatorCount = (v: string): number => (v.match(LIST_SEPARATORS) ?? []).length;
+
+describe('i18n symbolic-key value translates the VALUE, not the KEY (#1776)', () => {
+  const enHint = (en as Record<string, string>)[SYMBOLIC_HINT_KEY];
+
+  it(`en.json '${SYMBOLIC_HINT_KEY}' is a multi-item hint (guard wired to the right key)`, () => {
+    expect(enHint, `en.json missing '${SYMBOLIC_HINT_KEY}'`).toBeDefined();
+    expect(separatorCount(enHint)).toBeGreaterThanOrEqual(2);
+  });
+
+  for (const [code, catalog] of Object.entries(localeCatalogs())) {
+    it(`${code}.json '${SYMBOLIC_HINT_KEY}' is a translated hint, not a literal key-gloss`, () => {
+      const value = catalog[SYMBOLIC_HINT_KEY];
+      expect(value, `${code}.json missing '${SYMBOLIC_HINT_KEY}'`).toBeDefined();
+      expect(
+        separatorCount(value),
+        `${code}.json '${SYMBOLIC_HINT_KEY}' = ${JSON.stringify(value)} looks like a literal gloss of the KEY, not a translation of the en hint "${enHint}". Expected a multi-item list of searchable things (>=2 separators). See odd-platform#1776.`
+      ).toBeGreaterThanOrEqual(2);
+    });
+  }
+});
