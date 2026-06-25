@@ -394,7 +394,7 @@
   "inputs": "вхідні дані",
   "integrations overall": "загальна інтеграція",
   "labels overall": "загальні мітки",
-  "main search placeholder": "основний покажчик пошуку",
+  "main search placeholder": "Пошук таблиць даних, груп ознак, завдань і ML-моделей за ключовими словами",
   "manually created": "створено вручну",
   "messages in thread": "повідомлення в темі",
   "more output": "більше результатів",
