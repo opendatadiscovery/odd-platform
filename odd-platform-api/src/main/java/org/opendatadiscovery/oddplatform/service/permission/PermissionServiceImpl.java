@@ -44,7 +44,10 @@ public class PermissionServiceImpl implements PermissionService {
         return extractors.stream()
             .filter(e -> e.getResourceType() == resourceType)
             .findFirst()
+            // A missing extractor bean for a valid resource type is a server wiring gap (a PolicyTypeDto
+            // shipped without its extractor), not bad client input -> an IllegalStateException that surfaces
+            // as 5xx (the diagnostic is logged by the global handler), never a 400.
             .orElseThrow(
-                () -> new IllegalArgumentException("No extractor for resource type %s".formatted(resourceType)));
+                () -> new IllegalStateException("No extractor for resource type %s".formatted(resourceType)));
     }
 }

@@ -7,6 +7,7 @@ import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 import java.io.IOException;
 import java.util.Set;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +26,13 @@ public class PolicyJSONValidator {
         try {
             final Set<ValidationMessage> errors = jsonSchema.validate(objectMapper.readTree(policyJson));
             if (!errors.isEmpty()) {
-                throw new IllegalArgumentException("Policy is not valid: " + errors);
+                // User-submitted policy JSON failed schema validation -> a client error (400), not a 500.
+                // Pass the detail as a format arg (never concatenated into the format string) so a validation
+                // message containing '%' cannot break String.format inside BadUserRequestException.
+                throw new BadUserRequestException("Policy is not valid: %s", errors);
             }
         } catch (final IOException e) {
-            throw new IllegalArgumentException("Policy is not valid: " + e.getMessage());
+            throw new BadUserRequestException("Policy is not valid: %s", e.getMessage());
         }
     }
 }
