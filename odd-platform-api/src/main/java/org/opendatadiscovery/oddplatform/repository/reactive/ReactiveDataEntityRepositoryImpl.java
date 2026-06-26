@@ -853,6 +853,21 @@ public class ReactiveDataEntityRepositoryImpl
             });
     }
 
+    @Override
+    public Mono<Void> updateSubtypes(final Map<String, String> oddrnToSubtype) {
+        if (oddrnToSubtype.isEmpty()) {
+            return Mono.empty();
+        }
+        return Flux.fromIterable(oddrnToSubtype.entrySet())
+            .flatMap(entry -> {
+                final var query = DSL.update(DATA_ENTITY)
+                    .set(DSL.field("subtype", String.class), entry.getValue())
+                    .where(DATA_ENTITY.ODDRN.eq(entry.getKey()));
+                return jooqReactiveOperations.mono(query);
+            })
+            .then();
+    }
+
     private Select<Record> baseDataEntityWithDatasourceAndNamespaceSelect(final List<Condition> conditions) {
         return DSL.select()
             .from(DATA_ENTITY)

@@ -45,4 +45,13 @@ public final class DataEntityComparorFactory {
     public static Comparer<DataEntityPolicyResolverContext> dataEntityOwnerTitle() {
         return new DataEntityOwnerTitleFieldComparer();
     }
+
+    /**
+     * Builds a subtype comparer that reads the 'subtype' column from the data entity.
+     * Note: Uses raw JOOQ field access because the subtype column may be added via Flyway
+     * before JOOQ code generation has been re-run.
+     */
+    public static Comparer<DataEntityPolicyResolverContext> dataEntitySubtype() {
+        return new DataEntitySubtypeFieldComparer();
+    }
 }
