@@ -17,6 +17,7 @@ interface TagItemProps {
   cursorPointer?: boolean;
   systemTag?: boolean;
   count?: number;
+  selected?: boolean;
 }
 
 const TagItem: FC<TagItemProps> = ({
@@ -29,12 +30,14 @@ const TagItem: FC<TagItemProps> = ({
   sx,
   systemTag,
   count,
+  selected,
 }) => (
   <S.Container
     variant='body1'
     $important={important}
     $systemTag={systemTag}
     $cursorPointer={cursorPointer}
+    $selected={selected}
     onClick={onClick}
     sx={sx}
   >

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import { Button } from 'components/shared/elements';
+import useStructure from '../../../lib/useStructure';
 import DatasetStructureTypeCountLabel from './DatasetStructureTypeCountLabel/DatasetStructureTypeCountLabel';
 
 interface DatasetStructureTypeCountsProps {
@@ -21,6 +22,7 @@ const DatasetStructureTypeCounts: React.FC<DatasetStructureTypeCountsProps> = ({
   setExpanded,
 }) => {
   const { t } = useTranslation();
+  const { selectedFieldTypes, toggleTypeFilter } = useStructure();
   const typesCountList = Object.entries(typesCount);
 
   const getTruncateMarkupAtom = ([type, count]: [string, number]) => (
@@ -30,6 +32,8 @@ const DatasetStructureTypeCounts: React.FC<DatasetStructureTypeCountsProps> = ({
         typeName={type as DataSetFieldTypeTypeEnum}
         count={count}
         fieldsCount={fieldsCount}
+        selected={selectedFieldTypes.includes(type as DataSetFieldTypeTypeEnum)}
+        onClick={() => toggleTypeFilter(type as DataSetFieldTypeTypeEnum)}
       />
     </TruncateMarkup.Atom>
   );

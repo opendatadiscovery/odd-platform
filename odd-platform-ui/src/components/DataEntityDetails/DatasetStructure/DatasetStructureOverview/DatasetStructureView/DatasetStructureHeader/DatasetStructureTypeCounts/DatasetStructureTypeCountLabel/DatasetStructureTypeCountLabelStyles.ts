@@ -4,12 +4,16 @@ import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
 
 export const Container = styled(Box)<{
   $typeName: DataSetFieldTypeTypeEnum;
-}>(({ theme, $typeName }) => ({
+  $selected?: boolean;
+  $cursorPointer?: boolean;
+}>(({ theme, $typeName, $selected, $cursorPointer }) => ({
   padding: theme.spacing(0.25, 1),
   border: `1px solid ${theme.palette.structureLabel[$typeName].border}`,
   borderRadius: '12px',
   display: 'flex',
   alignItems: 'center',
+  cursor: $cursorPointer ? 'pointer' : 'default',
+  backgroundColor: $selected ? theme.palette.backgrounds.secondary : 'transparent',
   '& > *': {
     marginRight: theme.spacing(0.5),
     '&:last-child': { marginRight: 0 },

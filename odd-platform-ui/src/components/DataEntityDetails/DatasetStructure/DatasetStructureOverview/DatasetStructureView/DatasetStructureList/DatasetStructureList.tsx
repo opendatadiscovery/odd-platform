@@ -2,7 +2,7 @@ import React, { type FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Permission, type DataSetField } from 'generated-sources';
 import { useDataEntityRouteParams } from 'routes';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { AddIcon } from 'components/shared/icons';
 import { Button } from 'components/shared/elements';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +17,8 @@ import useStructure from '../../lib/useStructure';
 const DatasetStructureList: FC = () => {
   const { dataEntityId, versionId } = useDataEntityRouteParams();
   const { lookupTableId } = useAppSelector(getDataEntityDetails(dataEntityId));
-  const { datasetStructureRoot, idxToScroll, isSearchUpdated } = useStructure();
+  const { datasetStructureRoot, idxToScroll, isSearchUpdated, filtersActive } =
+    useStructure();
   const { t } = useTranslation();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,6 +96,11 @@ const DatasetStructureList: FC = () => {
           )}
         </S.ItemContainer>
       </S.Container>
+      {structureLength === 0 && filtersActive && (
+        <Box display='flex' justifyContent='center' p={2}>
+          <Typography variant='subtitle1'>{t('No results')}</Typography>
+        </Box>
+      )}
     </S.Scrollable>
   );
 };
