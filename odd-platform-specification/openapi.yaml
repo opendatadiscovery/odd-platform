@@ -339,6 +339,78 @@ paths:
       tags:
         - title
 
+  /api/favorites/{asset_kind}/{asset_id}:
+    put:
+      summary: Add an asset to the current user's favorites
+      description: >-
+        Marks the (asset_kind, asset_id) asset as favorited for the current user. Idempotent set-state —
+        a no-op if it is already favorited. Identity is taken from the security context, never a request
+        parameter, so a user can only write their own favorites.
+      operationId: addFavorite
+      parameters:
+        - name: asset_kind
+          in: path
+          schema:
+            $ref: './components.yaml/#/components/schemas/AssetKind'
+          required: true
+        - name: asset_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          description: The asset is favorited
+      tags:
+        - favorite
+    delete:
+      summary: Remove an asset from the current user's favorites
+      description: >-
+        Removes the (asset_kind, asset_id) asset from the current user's favorites. Idempotent —
+        a no-op if it is not favorited. Identity is taken from the security context.
+      operationId: removeFavorite
+      parameters:
+        - name: asset_kind
+          in: path
+          schema:
+            $ref: './components.yaml/#/components/schemas/AssetKind'
+          required: true
+        - name: asset_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          description: The asset is not favorited
+      tags:
+        - favorite
+
+  /api/favorites/status:
+    post:
+      summary: Favorite status for a set of assets
+      description: >-
+        Returns the subset of the given asset references that are currently favorited by the current user,
+        so any list or search view can render stars in a single batch call without per-DTO changes.
+      operationId: getFavoriteStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/AssetRefList'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AssetRefList'
+      tags:
+        - favorite
+
   /api/tags:
     get:
       summary: List of popular tags
