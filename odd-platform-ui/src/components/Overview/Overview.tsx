@@ -14,6 +14,7 @@ import * as S from './OverviewStyles';
 import OwnerAssociation from './OwnerAssociation/OwnerAssociation';
 import TopTagsList from './TopTagsList/TopTagsList';
 import Directory from './Directory/Directory';
+import FavoritesPanel from './FavoritesPanel/FavoritesPanel';
 
 const Overview: React.FC = () => {
   const { isLoading: isIdentityFetching } = useAppSelector(getIdentityFetchingStatuses);
@@ -50,6 +51,7 @@ const Overview: React.FC = () => {
       <Domains />
       <DataEntitiesUsageInfo />
       <Directory />
+      <FavoritesPanel />
       {isShowOwnerAssociation && (
         <WithPermissionsProvider
           allowedPermissions={[Permission.DIRECT_OWNER_SYNC]}
