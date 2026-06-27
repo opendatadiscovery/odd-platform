@@ -641,5 +641,15 @@
   "Resolved automatically": "Հանգուցալուծված ինքնաշխատ կերպով",
   "Showing {{visible}} of {{total}}": "Ցուցադրվում է {{visible}}-ը {{total}}-ից",
   "Are you sure you want to resolve this alert?": "Դուք վստա՞հ եք, որ ուզում եք հանգուցալուծել այս ազդանշանը։",
-  "Are you sure you want to reopen this alert?": "Դուք վստա՞հ եք, որ ուզում եք վերաբացել այս ազդանշանը։"
+  "Are you sure you want to reopen this alert?": "Դուք վստա՞հ եք, որ ուզում եք վերաբացել այս ազդանշանը։",
+  "Favorites": "Ընտրանի",
+  "View all": "Տեսնել բոլորը",
+  "Star an asset to pin it here.": "Աստղով նշեք ակտիվը՝ այն այստեղ ամրացնելու համար։",
+  "Asset type": "Ակտիվի տեսակ",
+  "Data Entities": "Տվյալների միավորներ",
+  "Terms": "Տերմիններ",
+  "Data Entity": "Տվյալների միավոր",
+  "Query Example": "Հարցման օրինակ",
+  "Add to favorites": "Ավելացնել ընտրանիում",
+  "Remove from favorites": "Հեռացնել ընտրանուց"
 }

@@ -641,5 +641,15 @@
   "Resolved automatically": "Resolved automatically",
   "Showing {{visible}} of {{total}}": "Showing {{visible}} of {{total}}",
   "Are you sure you want to resolve this alert?": "Are you sure you want to resolve this alert?",
-  "Are you sure you want to reopen this alert?": "Are you sure you want to reopen this alert?"
+  "Are you sure you want to reopen this alert?": "Are you sure you want to reopen this alert?",
+  "Favorites": "Favorites",
+  "View all": "View all",
+  "Star an asset to pin it here.": "Star an asset to pin it here.",
+  "Asset type": "Asset type",
+  "Data Entities": "Data Entities",
+  "Terms": "Terms",
+  "Data Entity": "Data Entity",
+  "Query Example": "Query Example",
+  "Add to favorites": "Add to favorites",
+  "Remove from favorites": "Remove from favorites"
 }

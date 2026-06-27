@@ -641,5 +641,15 @@
   "Resolved automatically": "已自动解决",
   "Showing {{visible}} of {{total}}": "显示 {{total}} 中的 {{visible}}",
   "Are you sure you want to resolve this alert?": "您确定要解决此警报吗？",
-  "Are you sure you want to reopen this alert?": "您确定要重新打开此警报吗？"
+  "Are you sure you want to reopen this alert?": "您确定要重新打开此警报吗？",
+  "Favorites": "收藏",
+  "View all": "查看全部",
+  "Star an asset to pin it here.": "为资产加星，将其固定在此处。",
+  "Asset type": "资产类型",
+  "Data Entities": "数据实体",
+  "Terms": "术语",
+  "Data Entity": "数据实体",
+  "Query Example": "查询示例",
+  "Add to favorites": "添加到收藏",
+  "Remove from favorites": "从收藏中移除"
 }

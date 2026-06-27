@@ -641,5 +641,15 @@
   "Resolved automatically": "Resolvido automaticamente",
   "Showing {{visible}} of {{total}}": "Mostrando {{visible}} de {{total}}",
   "Are you sure you want to resolve this alert?": "Tem certeza de que deseja resolver este alerta?",
-  "Are you sure you want to reopen this alert?": "Tem certeza de que deseja reabrir este alerta?"
+  "Are you sure you want to reopen this alert?": "Tem certeza de que deseja reabrir este alerta?",
+  "Favorites": "Favoritos",
+  "View all": "Ver todos",
+  "Star an asset to pin it here.": "Marque um ativo com estrela para fixá-lo aqui.",
+  "Asset type": "Tipo de ativo",
+  "Data Entities": "Entidades de dados",
+  "Terms": "Termos",
+  "Data Entity": "Entidade de dados",
+  "Query Example": "Exemplo de consulta",
+  "Add to favorites": "Adicionar aos favoritos",
+  "Remove from favorites": "Remover dos favoritos"
 }
