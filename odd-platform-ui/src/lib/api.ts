@@ -13,6 +13,7 @@ import {
   DataSetApi,
   DatasetFieldApi,
   DataSourceApi,
+  FavoriteApi,
   FeatureApi,
   IdentityApi,
   LinksApi,
@@ -80,3 +81,4 @@ export const dataQualityRunsApi = new DataQualityRunsApi(apiConf);
 export const queryExampleApi = new QueryExampleApi(apiConf);
 export const referenceDataApi = new ReferenceDataApi(apiConf);
 export const relationshipApi = new RelationshipApi(apiConf);
+export const favoriteApi = new FavoriteApi(apiConf);

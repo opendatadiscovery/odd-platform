@@ -1,4 +1,5 @@
 export * from './owners.actions';
+export * from './favorites.actions';
 export * from './datasource.actions';
 export * from './dataentity.actions';
 export * from './datasetStructure.actions';
