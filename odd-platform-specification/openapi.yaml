@@ -411,6 +411,34 @@ paths:
       tags:
         - favorite
 
+  /api/favorites/list:
+    get:
+      summary: List the current user's favorited assets
+      description: >-
+        Returns the current user's favorited assets, newest-favorited first, resolved across all asset kinds.
+        Assets that have since been deleted are automatically excluded (visibility is inherited from each kind's
+        canonical query). Identity is taken from the security context, never a request parameter.
+      operationId: getFavoritesList
+      parameters:
+        - name: asset_types
+          in: query
+          description: Restrict the list to these asset kinds (multi-select; default = all kinds).
+          schema:
+            type: array
+            items:
+              $ref: './components.yaml/#/components/schemas/AssetKind'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/FavoriteAssetList'
+      tags:
+        - favorite
+
   /api/tags:
     get:
       summary: List of popular tags

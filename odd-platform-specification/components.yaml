@@ -342,6 +342,36 @@ components:
       items:
         $ref: '#/components/schemas/AssetRef'
 
+    FavoriteAsset:
+      type: object
+      description: >-
+        A favorited catalog asset. Exactly one of the per-kind references is populated, selected by asset_kind;
+        the others are absent. A deleted asset is never returned (visibility is inherited from each kind's query).
+      properties:
+        asset_kind:
+          $ref: '#/components/schemas/AssetKind'
+        data_entity:
+          $ref: '#/components/schemas/DataEntityRef'
+        term:
+          $ref: '#/components/schemas/TermRef'
+        query_example:
+          $ref: '#/components/schemas/QueryExampleRef'
+      required:
+        - asset_kind
+
+    FavoriteAssetList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/FavoriteAsset'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
     Tag:
       type: object
       properties:

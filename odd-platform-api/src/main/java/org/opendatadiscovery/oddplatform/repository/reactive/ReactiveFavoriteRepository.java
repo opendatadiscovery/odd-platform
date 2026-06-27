@@ -23,4 +23,15 @@ public interface ReactiveFavoriteRepository {
      * The subset of {@code refs} that are currently (not soft-deleted) favorited by the given user.
      */
     Flux<FavoritePojo> getFavorited(String oidcUsername, String provider, Collection<AssetRefDto> refs);
+
+    /**
+     * The current user's active favorites, newest-favorited first, paginated. {@code assetKinds} (when
+     * non-empty) restricts to those kinds. The page carries only the {@code (asset_kind, asset_id)} pairs —
+     * resolution into renderable assets happens upstream (order-then-semi-join, ADR D4).
+     */
+    Flux<FavoritePojo> getFavoritedPage(String oidcUsername, String provider,
+                                        Collection<String> assetKinds, int offset, int limit);
+
+    /** Count of the current user's active favorites (for page info), optionally restricted to {@code assetKinds}. */
+    Mono<Long> countFavorites(String oidcUsername, String provider, Collection<String> assetKinds);
 }

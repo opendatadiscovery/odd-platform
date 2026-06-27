@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.FavoriteAssetList;
+import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.service.FavoriteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
@@ -70,6 +73,22 @@ class FavoriteControllerTest {
                     .verifyComplete();
             })
             .verifyComplete();
+    }
+
+    @Test
+    void getFavoritesList_delegatesAndReturns200() {
+        final FavoriteAssetList list = new FavoriteAssetList()
+            .items(List.of())
+            .pageInfo(new PageInfo().total(0L).hasNext(false));
+        when(favoriteService.getFavoritesList(null, 1, 20)).thenReturn(Mono.just(list));
+
+        StepVerifier.create(controller.getFavoritesList(1, 20, null, exchange()))
+            .assertNext(response -> {
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+                assertThat(response.getBody()).isSameAs(list);
+            })
+            .verifyComplete();
+        verify(favoriteService).getFavoritesList(null, 1, 20);
     }
 
     private static MockServerWebExchange exchange() {
