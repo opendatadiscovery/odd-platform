@@ -312,6 +312,36 @@ components:
       required:
         - items
 
+    AssetKind:
+      type: string
+      description: >-
+        The catalog asset kind a favorite entry points at. A Lookup Table is favorited via its
+        DATA_ENTITY projection (lookup_tables.data_entity_id), so it is not a distinct kind.
+      enum:
+        - DATA_ENTITY
+        - TERM
+        - QUERY_EXAMPLE
+
+    AssetRef:
+      type: object
+      description: >-
+        A polymorphic reference to a catalog asset. The (asset_kind, asset_id) pair is mandatory —
+        the asset kinds use independent id sequences, so asset_id alone is ambiguous.
+      properties:
+        asset_kind:
+          $ref: '#/components/schemas/AssetKind'
+        asset_id:
+          type: integer
+          format: int64
+      required:
+        - asset_kind
+        - asset_id
+
+    AssetRefList:
+      type: array
+      items:
+        $ref: '#/components/schemas/AssetRef'
+
     Tag:
       type: object
       properties:
