@@ -2,11 +2,11 @@ import React, { useMemo } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { useGetQueryExampleDetails } from 'lib/hooks/api/dataModelling/queryExamples';
 import { useAppDateTime } from 'lib/hooks';
-import { AppLoadingPage } from 'components/shared/elements';
+import { AppLoadingPage, FavoriteStar } from 'components/shared/elements';
 import { TimeGapIcon } from 'components/shared/icons';
 import { useQueryExamplesRouteParams } from 'routes';
 import { WithPermissionsProvider } from 'components/shared/contexts';
-import { Permission, PermissionResourceType } from 'generated-sources';
+import { AssetKind, Permission, PermissionResourceType } from 'generated-sources';
 import { useResourcePermissions } from 'lib/hooks/api/permissions';
 import { useSearchParams } from 'react-router-dom';
 import QueryExampleDetailsTabs from './QueryExampleDetailsTabs';
@@ -44,7 +44,10 @@ const QueryExampleDetailsContainer: React.FC = () => {
   return queryExampleDetails && !isLoading ? (
     <Grid container gap={2} flexDirection='column'>
       <Grid item display='flex' alignItems='center' justifyContent='space-between'>
-        <Typography variant='h1'>{`Query Example #${exampleId}`}</Typography>
+        <Box display='flex' alignItems='center'>
+          <Typography variant='h1'>{`Query Example #${exampleId}`}</Typography>
+          <FavoriteStar assetKind={AssetKind.QUERY_EXAMPLE} assetId={exampleId} />
+        </Box>
         <Box display='flex' alignItems='center'>
           <TimeGapIcon />
           <Typography variant='body1' sx={{ ml: 1 }}>

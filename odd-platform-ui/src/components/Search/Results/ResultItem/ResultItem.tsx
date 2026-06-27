@@ -2,12 +2,13 @@ import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { DataEntityClassNameEnum } from 'generated-sources';
+import { AssetKind, DataEntityClassNameEnum } from 'generated-sources';
 import {
   AppTooltip,
   DataEntityDetailsPreview,
   DatasourceLogo,
   EntityClassItem,
+  FavoriteStar,
   NumberFormatted,
   TruncatedCell,
   EntityStatus,
@@ -97,13 +98,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
               {searchResult.internalName ?? searchResult.externalName}
             </Typography>
           </Box>
-          <Box display='flex' flexWrap='nowrap' sx={{ ml: 1 }}>
+          <Box display='flex' flexWrap='nowrap' alignItems='center' sx={{ ml: 1 }}>
             {searchQuery && (
               <AppTooltip checkForOverflow={false} title={searchHighlights}>
                 <QuestionIcon sx={{ mr: 1 }} />
               </AppTooltip>
             )}
             <DataEntityDetailsPreview dataEntityId={searchResult.id} />
+            <FavoriteStar assetKind={AssetKind.DATA_ENTITY} assetId={searchResult.id} />
           </Box>
         </S.NameContainer>
         <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>

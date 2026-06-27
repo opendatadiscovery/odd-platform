@@ -31,7 +31,18 @@ export const favoritesSlice = createSlice({
       });
     });
     builder.addCase(thunks.fetchFavoritesStatus.fulfilled, (state, { payload }) => {
-      payload.forEach(ref => {
+      const { asked, favorited } = payload;
+      // Authoritative batch hydrate: a list resolves all its visible rows in one call. Default
+      // every asked ref we don't yet know to false, then flip the favorited subset to true.
+      // Keys already known (e.g. a just-toggled optimistic value) are left intact, so a hydrate
+      // in flight can never clobber a user's explicit star/un-star.
+      asked.forEach(ref => {
+        const key = assetRefKey(ref.assetKind, ref.assetId);
+        if (state.favoritedByKey[key] === undefined) {
+          state.favoritedByKey[key] = false;
+        }
+      });
+      favorited.forEach(ref => {
         state.favoritedByKey[assetRefKey(ref.assetKind, ref.assetId)] = true;
       });
     });
