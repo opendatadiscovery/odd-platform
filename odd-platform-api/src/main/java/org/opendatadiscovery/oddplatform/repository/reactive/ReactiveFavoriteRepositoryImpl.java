@@ -1,7 +1,9 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
@@ -70,5 +72,40 @@ public class ReactiveFavoriteRepositoryImpl implements ReactiveFavoriteRepositor
             .and(refsCondition);
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(FavoritePojo.class));
+    }
+
+    @Override
+    public Flux<FavoritePojo> getFavoritedPage(final String oidcUsername, final String provider,
+                                               final Collection<String> assetKinds,
+                                               final int offset, final int limit) {
+        final var query = DSL.selectFrom(FAVORITE)
+            .where(activeConditions(oidcUsername, provider, assetKinds))
+            .orderBy(FAVORITE.CREATED_AT.desc(), FAVORITE.ID.desc())
+            .limit(limit)
+            .offset(offset);
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(FavoritePojo.class));
+    }
+
+    @Override
+    public Mono<Long> countFavorites(final String oidcUsername, final String provider,
+                                     final Collection<String> assetKinds) {
+        final var query = DSL.selectCount()
+            .from(FAVORITE)
+            .where(activeConditions(oidcUsername, provider, assetKinds));
+        return jooqReactiveOperations.mono(query)
+            .map(r -> r.value1().longValue());
+    }
+
+    private List<Condition> activeConditions(final String oidcUsername, final String provider,
+                                             final Collection<String> assetKinds) {
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(FAVORITE.OIDC_USERNAME.eq(oidcUsername));
+        conditions.add(FAVORITE.PROVIDER.eq(provider));
+        conditions.add(FAVORITE.DELETED_AT.isNull());
+        if (CollectionUtils.isNotEmpty(assetKinds)) {
+            conditions.add(FAVORITE.ASSET_KIND.in(assetKinds));
+        }
+        return conditions;
     }
 }

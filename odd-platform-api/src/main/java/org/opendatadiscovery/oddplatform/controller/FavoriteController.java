@@ -1,9 +1,11 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.FavoriteApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.FavoriteAssetList;
 import org.opendatadiscovery.oddplatform.service.FavoriteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,5 +36,13 @@ public class FavoriteController implements FavoriteApi {
     public Mono<ResponseEntity<Flux<AssetRef>>> getFavoriteStatus(final Flux<AssetRef> assetRef,
                                                                   final ServerWebExchange exchange) {
         return Mono.just(ResponseEntity.ok(favoriteService.getFavoriteStatus(assetRef)));
+    }
+
+    @Override
+    public Mono<ResponseEntity<FavoriteAssetList>> getFavoritesList(final Integer page, final Integer size,
+                                                                    final List<AssetKind> assetTypes,
+                                                                    final ServerWebExchange exchange) {
+        return favoriteService.getFavoritesList(assetTypes, page, size)
+            .map(ResponseEntity::ok);
     }
 }

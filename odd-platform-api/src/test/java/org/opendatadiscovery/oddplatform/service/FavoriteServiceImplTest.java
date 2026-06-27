@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.FavoriteAsset;
 import org.opendatadiscovery.oddplatform.auth.CurrentUserIdentityResolver;
 import org.opendatadiscovery.oddplatform.dto.AssetRefDto;
 import org.opendatadiscovery.oddplatform.dto.security.UserDto;
@@ -34,12 +35,13 @@ class FavoriteServiceImplTest {
 
     @Mock private CurrentUserIdentityResolver currentUserIdentityResolver;
     @Mock private ReactiveFavoriteRepository favoriteRepository;
+    @Mock private FavoriteAssetResolver favoriteAssetResolver;
 
     private FavoriteServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new FavoriteServiceImpl(currentUserIdentityResolver, favoriteRepository);
+        service = new FavoriteServiceImpl(currentUserIdentityResolver, favoriteRepository, favoriteAssetResolver);
     }
 
     @Test
@@ -84,5 +86,38 @@ class FavoriteServiceImplTest {
         StepVerifier.create(service.getFavoriteStatus(Flux.empty()))
             .verifyComplete();
         verifyNoInteractions(currentUserIdentityResolver, favoriteRepository);
+    }
+
+    @Test
+    void getFavoritesList_resolvesThePageAndBuildsPageInfo() {
+        when(currentUserIdentityResolver.resolve()).thenReturn(Mono.just(new UserDto("alice", "google")));
+        final List<FavoritePojo> page = List.of(new FavoritePojo().setAssetKind("DATA_ENTITY").setAssetId(1L));
+        when(favoriteRepository.getFavoritedPage("alice", "google", List.of(), 0, 20))
+            .thenReturn(Flux.fromIterable(page));
+        when(favoriteRepository.countFavorites("alice", "google", List.of())).thenReturn(Mono.just(1L));
+        final List<FavoriteAsset> resolved = List.of(new FavoriteAsset().assetKind(AssetKind.DATA_ENTITY));
+        when(favoriteAssetResolver.resolve(page)).thenReturn(Mono.just(resolved));
+
+        StepVerifier.create(service.getFavoritesList(null, 1, 20))
+            .assertNext(list -> {
+                assertThat(list.getItems()).isEqualTo(resolved);
+                assertThat(list.getPageInfo().getTotal()).isEqualTo(1L);
+                assertThat(list.getPageInfo().getHasNext()).isFalse();
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    void getFavoritesList_capsSizeAt100AndMapsAssetTypes() {
+        when(currentUserIdentityResolver.resolve()).thenReturn(Mono.just(new UserDto("alice", "google")));
+        when(favoriteRepository.getFavoritedPage("alice", "google", List.of("TERM"), 0, 100))
+            .thenReturn(Flux.empty());
+        when(favoriteRepository.countFavorites("alice", "google", List.of("TERM"))).thenReturn(Mono.just(0L));
+        when(favoriteAssetResolver.resolve(List.of())).thenReturn(Mono.just(List.of()));
+
+        StepVerifier.create(service.getFavoritesList(List.of(AssetKind.TERM), 1, 500))
+            .assertNext(list -> assertThat(list.getItems()).isEmpty())
+            .verifyComplete();
+        verify(favoriteRepository).getFavoritedPage("alice", "google", List.of("TERM"), 0, 100);
     }
 }

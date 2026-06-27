@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.dto.AssetRefDto;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.FavoritePojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
@@ -94,6 +95,48 @@ public class ReactiveFavoriteRepositoryImplTest extends BaseIntegrationTest {
     public void emptyRefsReturnsEmpty() {
         favoriteRepository.getFavorited(USER, PROVIDER, List.of())
             .as(StepVerifier::create)
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("getFavoritedPage returns active favorites newest-first, paginated, filtered by asset_kind")
+    public void getFavoritedPageOrdersPaginatesAndFilters() {
+        final String user = "page-user@corp";
+        favoriteRepository.markFavorite(user, PROVIDER, "DATA_ENTITY", 2001L).block();
+        favoriteRepository.markFavorite(user, PROVIDER, "TERM", 2002L).block();
+        favoriteRepository.markFavorite(user, PROVIDER, "DATA_ENTITY", 2003L).block();
+
+        favoriteRepository.getFavoritedPage(user, PROVIDER, List.of(), 0, 2)
+            .map(FavoritePojo::getAssetId)
+            .collectList()
+            .as(StepVerifier::create)
+            .assertNext(ids -> assertThat(ids).containsExactly(2003L, 2002L))
+            .verifyComplete();
+
+        favoriteRepository.getFavoritedPage(user, PROVIDER, List.of("DATA_ENTITY"), 0, 10)
+            .map(FavoritePojo::getAssetId)
+            .collectList()
+            .as(StepVerifier::create)
+            .assertNext(ids -> assertThat(ids).containsExactly(2003L, 2001L))
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("countFavorites counts active favorites only, honoring the asset_kind filter")
+    public void countFavoritesHonorsActiveAndFilter() {
+        final String user = "count-user@corp";
+        favoriteRepository.markFavorite(user, PROVIDER, "DATA_ENTITY", 2101L).block();
+        favoriteRepository.markFavorite(user, PROVIDER, "TERM", 2102L).block();
+        favoriteRepository.unmarkFavorite(user, PROVIDER, "TERM", 2102L).block();
+
+        favoriteRepository.countFavorites(user, PROVIDER, List.of())
+            .as(StepVerifier::create)
+            .assertNext(count -> assertThat(count).isEqualTo(1L))
+            .verifyComplete();
+
+        favoriteRepository.countFavorites(user, PROVIDER, List.of("DATA_ENTITY"))
+            .as(StepVerifier::create)
+            .assertNext(count -> assertThat(count).isEqualTo(1L))
             .verifyComplete();
     }
 }
