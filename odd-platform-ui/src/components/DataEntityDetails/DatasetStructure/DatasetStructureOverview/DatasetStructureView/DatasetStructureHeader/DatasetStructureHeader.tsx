@@ -21,6 +21,7 @@ import {
 } from 'routes';
 import useStructure from '../../lib/useStructure';
 import DatasetStructureTypeCounts from './DatasetStructureTypeCounts/DatasetStructureTypeCounts';
+import DatasetStructureTagFilters from './DatasetStructureTagFilters/DatasetStructureTagFilters';
 
 const DatasetStructureHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -35,6 +36,9 @@ const DatasetStructureHeader: FC = () => {
     datasetFieldTypesCount,
     datasetFieldFieldsCount,
     datasetVersions,
+    availableTags,
+    filtersActive,
+    clearFilters,
   } = useStructure();
 
   const [typesExpanded, setTypesExpanded] = useState(false);
@@ -46,10 +50,12 @@ const DatasetStructureHeader: FC = () => {
   const handleRevisionChange = useCallback(
     (event: SelectChangeEvent<unknown>) => {
       const newVersionId = event.target.value as number;
+      // Reset the in-page filters: a new revision can drop a tag the filter references.
+      clearFilters();
       dispatch(fetchDataSetStructure({ dataEntityId, versionId: newVersionId }));
       navigate(datasetStructurePath(dataEntityId, newVersionId));
     },
-    [dataEntityId]
+    [dataEntityId, clearFilters]
   );
 
   const handleKeyDown = useCallback(
@@ -77,78 +83,93 @@ const DatasetStructureHeader: FC = () => {
   }, [handleSearch, searchQuery]);
 
   return (
-    <Grid
-      p={2}
-      item
-      justifyContent='space-between'
-      alignItems={typesExpanded ? 'flex-start' : 'center'}
-      container
-      flexWrap='nowrap'
-    >
-      <Grid item>
-        <Typography variant='h5' sx={{ display: 'flex' }}>
-          <ColumnsIcon />
-          <NumberFormatted sx={{ mx: 0.5 }} value={datasetFieldFieldsCount} />
-          <Typography variant='body2' color='texts.hint'>
-            {t('columns')}
-          </Typography>
-        </Typography>
-      </Grid>
-      <Grid item container flexWrap='nowrap' ml={1}>
-        <DatasetStructureTypeCounts
-          fieldsCount={datasetFieldFieldsCount}
-          typesCount={datasetFieldTypesCount}
-          expanded={typesExpanded}
-          setExpanded={setTypesExpanded}
-        />
-      </Grid>
+    <Grid p={2} item container direction='column' rowGap={1}>
       <Grid
         item
         container
+        justifyContent='space-between'
+        alignItems={typesExpanded ? 'flex-start' : 'center'}
         flexWrap='nowrap'
-        alignItems='center'
-        justifyContent='flex-end'
       >
-        <Input
-          name='search'
-          variant='search-m'
-          placeholder={t('Search')}
-          sx={{ minWidth: '250px', mr: 1 }}
-          onKeyDown={handleKeyDown}
-          onChange={handleOnChange}
-          value={searchQuery}
-          handleSearchClick={onSearchClick}
-        />
-        <AppSelect
-          name='select-revision'
-          defaultValue={versionId}
-          value={versionId}
-          onChange={handleRevisionChange}
-          fullWidth={false}
+        <Grid item>
+          <Typography variant='h5' sx={{ display: 'flex' }}>
+            <ColumnsIcon />
+            <NumberFormatted sx={{ mx: 0.5 }} value={datasetFieldFieldsCount} />
+            <Typography variant='body2' color='texts.hint'>
+              {t('columns')}
+            </Typography>
+          </Typography>
+        </Grid>
+        <Grid item container flexWrap='nowrap' ml={1}>
+          <DatasetStructureTypeCounts
+            fieldsCount={datasetFieldFieldsCount}
+            typesCount={datasetFieldTypesCount}
+            expanded={typesExpanded}
+            setExpanded={setTypesExpanded}
+          />
+        </Grid>
+        <Grid
+          item
+          container
+          flexWrap='nowrap'
+          alignItems='center'
+          justifyContent='flex-end'
+          sx={{ flexShrink: 0 }}
         >
-          {sortedVersions.map(rev => (
-            <AppMenuItem key={rev.id} value={rev.id}>
-              <Grid container flexWrap='nowrap'>
-                <Typography variant='body1' mr={1}>
-                  {`Rev. ${rev.version}`}
-                </Typography>
-                <Typography variant='body1' color='texts.hint'>
-                  {`(${datasetStructureVersionFormattedDateTime(
-                    rev.createdAt.getTime()
-                  )})`}
-                </Typography>
-              </Grid>
-            </AppMenuItem>
-          ))}
-        </AppSelect>
-        <Button
-          text={t('Revision compare')}
-          buttonType='secondary-m'
-          sx={{ ml: 1 }}
-          onClick={handleCompareClick}
-          disabled={datasetVersions.length < 2}
-        />
+          <Input
+            name='search'
+            variant='search-m'
+            placeholder={t('Search')}
+            sx={{ minWidth: '250px', mr: 1 }}
+            onKeyDown={handleKeyDown}
+            onChange={handleOnChange}
+            value={searchQuery}
+            handleSearchClick={onSearchClick}
+          />
+          <AppSelect
+            name='select-revision'
+            defaultValue={versionId}
+            value={versionId}
+            onChange={handleRevisionChange}
+            fullWidth={false}
+          >
+            {sortedVersions.map(rev => (
+              <AppMenuItem key={rev.id} value={rev.id}>
+                <Grid container flexWrap='nowrap'>
+                  <Typography variant='body1' mr={1}>
+                    {`Rev. ${rev.version}`}
+                  </Typography>
+                  <Typography variant='body1' color='texts.hint'>
+                    {`(${datasetStructureVersionFormattedDateTime(
+                      rev.createdAt.getTime()
+                    )})`}
+                  </Typography>
+                </Grid>
+              </AppMenuItem>
+            ))}
+          </AppSelect>
+          <Button
+            text={t('Revision compare')}
+            buttonType='secondary-m'
+            sx={{ ml: 1 }}
+            onClick={handleCompareClick}
+            disabled={datasetVersions.length < 2}
+          />
+        </Grid>
       </Grid>
+      {(availableTags.length > 0 || filtersActive) && (
+        <Grid item container flexWrap='wrap' alignItems='center'>
+          <DatasetStructureTagFilters />
+          {filtersActive && (
+            <Button
+              text={t('Clear All')}
+              buttonType='tertiary-m'
+              onClick={clearFilters}
+              sx={{ ml: 0.5 }}
+            />
+          )}
+        </Grid>
+      )}
     </Grid>
   );
 };
