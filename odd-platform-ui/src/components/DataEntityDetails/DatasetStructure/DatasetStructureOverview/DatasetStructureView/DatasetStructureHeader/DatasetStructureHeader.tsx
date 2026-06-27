@@ -88,7 +88,7 @@ const DatasetStructureHeader: FC = () => {
         item
         container
         justifyContent='space-between'
-        alignItems={typesExpanded ? 'flex-start' : 'center'}
+        alignItems='center'
         flexWrap='nowrap'
       >
         <Grid item>
@@ -99,14 +99,6 @@ const DatasetStructureHeader: FC = () => {
               {t('columns')}
             </Typography>
           </Typography>
-        </Grid>
-        <Grid item container flexWrap='nowrap' ml={1}>
-          <DatasetStructureTypeCounts
-            fieldsCount={datasetFieldFieldsCount}
-            typesCount={datasetFieldTypesCount}
-            expanded={typesExpanded}
-            setExpanded={setTypesExpanded}
-          />
         </Grid>
         <Grid
           item
@@ -157,8 +149,37 @@ const DatasetStructureHeader: FC = () => {
           />
         </Grid>
       </Grid>
+      <Grid
+        item
+        container
+        flexWrap='wrap'
+        alignItems={typesExpanded ? 'flex-start' : 'center'}
+      >
+        <Typography
+          variant='body2'
+          color='texts.hint'
+          sx={{ mr: 0.5, whiteSpace: 'nowrap' }}
+        >
+          {t('Filter by type')}
+        </Typography>
+        <DatasetStructureTypeCounts
+          fieldsCount={datasetFieldFieldsCount}
+          typesCount={datasetFieldTypesCount}
+          expanded={typesExpanded}
+          setExpanded={setTypesExpanded}
+        />
+      </Grid>
       {(availableTags.length > 0 || filtersActive) && (
         <Grid item container flexWrap='wrap' alignItems='center'>
+          {availableTags.length > 0 && (
+            <Typography
+              variant='body2'
+              color='texts.hint'
+              sx={{ mr: 0.5, whiteSpace: 'nowrap' }}
+            >
+              {t('Filter by tag')}
+            </Typography>
+          )}
           <DatasetStructureTagFilters />
           {filtersActive && (
             <Button
