@@ -23,6 +23,7 @@ import activities from './activity.slice';
 import dataEntityRuns from './dataEntityRuns.slice';
 import dataCollaboration from './dataCollaboration.slice';
 import roles from './roles.slice';
+import favorites from './favorites.slice';
 
 export default combineReducers({
   namespaces,
@@ -49,4 +50,5 @@ export default combineReducers({
   roles,
   policies,
   dataCollaboration,
+  favorites,
 });

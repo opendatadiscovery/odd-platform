@@ -5,7 +5,7 @@ import get from 'lodash/get';
 import findKey from 'lodash/findKey';
 import omit from 'lodash/omit';
 import { useTranslation } from 'react-i18next';
-import { DataEntityClassNameEnum, Permission } from 'generated-sources';
+import { AssetKind, DataEntityClassNameEnum, Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityClassesDict,
@@ -22,7 +22,7 @@ import {
   getSearchTotals,
   getSearchUpdateStatuses,
 } from 'redux/selectors';
-import { fetchDataEntitySearchResults } from 'redux/thunks';
+import { fetchDataEntitySearchResults, fetchFavoritesStatus } from 'redux/thunks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import type { SearchClass } from 'redux/interfaces';
 import {
@@ -79,6 +79,20 @@ const Results: React.FC = () => {
       setShowDEGBtn(isCurrentSearchClass(DataEntityClassNameEnum.ENTITY_GROUP));
     }
   }, [searchFiltersSynced, searchId, isSearchCreating, isSearchUpdating]);
+
+  // Hydrate the favorited status of all visible results in one batch, so each row's star renders
+  // correctly without firing its own per-row request. Already-known refs are no-ops in the slice.
+  React.useEffect(() => {
+    if (searchResults.length === 0) return;
+    dispatch(
+      fetchFavoritesStatus({
+        assetRef: searchResults.map(result => ({
+          assetKind: AssetKind.DATA_ENTITY,
+          assetId: result.id,
+        })),
+      })
+    );
+  }, [searchResults]);
 
   const onSearchClassChange = React.useCallback(
     (tabValue: SearchClass | undefined) => {

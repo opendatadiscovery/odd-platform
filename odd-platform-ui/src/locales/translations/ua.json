@@ -641,5 +641,15 @@
   "Resolved automatically": "Вирішено автоматично",
   "Showing {{visible}} of {{total}}": "Показано {{visible}} з {{total}}",
   "Are you sure you want to resolve this alert?": "Ви дійсно хочете вирішити це сповіщення?",
-  "Are you sure you want to reopen this alert?": "Ви дійсно хочете знову відкрити це сповіщення?"
+  "Are you sure you want to reopen this alert?": "Ви дійсно хочете знову відкрити це сповіщення?",
+  "Favorites": "Обране",
+  "View all": "Переглянути всі",
+  "Star an asset to pin it here.": "Позначте актив зірочкою, щоб закріпити його тут.",
+  "Asset type": "Тип активу",
+  "Data Entities": "Сутності даних",
+  "Terms": "Терміни",
+  "Data Entity": "Сутність даних",
+  "Query Example": "Приклад запиту",
+  "Add to favorites": "Додати до обраного",
+  "Remove from favorites": "Видалити з обраного"
 }

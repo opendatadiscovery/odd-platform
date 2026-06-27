@@ -17,6 +17,7 @@ import {
   dataModellingPath,
   dataQualityPath,
   directoryPath,
+  favoritesPath,
   lookupTablesPath,
   managementPath,
   searchPath,
@@ -31,6 +32,7 @@ const Management = lazy(() => import('./Management/Management'));
 const DataEntityDetails = lazy(() => import('./DataEntityDetails/DataEntityDetails'));
 const TermDetails = lazy(() => import('./Terms/TermDetails/TermDetails'));
 const Overview = lazy(() => import('./Overview/Overview'));
+const Favorites = lazy(() => import('./Favorites/Favorites'));
 const Search = lazy(() => import('./Search/Search'));
 const TermSearch = lazy(() => import('./Terms/TermSearch/TermSearch'));
 const Alerts = lazy(() => import('./Alerts/Alerts'));
@@ -58,6 +60,7 @@ const App: React.FC = () => {
         <AppSuspenseWrapper>
           <Routes>
             <Route path='/' element={<Overview />} />
+            <Route path={favoritesPath()} element={<Favorites />} />
             <Route path={searchPath()}>
               <Route index element={<Search />} />
               <Route path=':searchId' element={<Search />} />

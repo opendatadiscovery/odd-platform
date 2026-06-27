@@ -11,7 +11,8 @@ import {
   WithFeature,
 } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
-import { type DataEntityDetails, Feature, Permission } from 'generated-sources';
+import { AssetKind, type DataEntityDetails, Feature, Permission } from 'generated-sources';
+import FavoriteStar from 'components/shared/elements/FavoriteStar';
 import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
@@ -76,6 +77,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
           <Typography variant='h0' noWrap sx={{ mr: 1 }}>
             {internalName || externalName}
           </Typography>
+          <FavoriteStar assetKind={AssetKind.DATA_ENTITY} assetId={dataEntityId} />
           {entityClasses?.map(entityClass => (
             <EntityClassItem
               sx={{ ml: 0.5 }}

@@ -34,6 +34,7 @@ import type {
   ActivityType,
   EnumValueList,
   DataSetField,
+  FavoriteAsset,
 } from 'generated-sources';
 import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
 import type { CurrentPageInfo, Dictionary, PageInfo, PaginatedResponse } from './common';
@@ -59,6 +60,12 @@ export interface CollectorsState extends EntityState<Collector> {
 }
 
 export interface TagsState extends EntityState<Tag> {
+  pageInfo: CurrentPageInfo;
+}
+
+export interface FavoritesState {
+  favoritedByKey: Record<string, boolean>;
+  list: FavoriteAsset[];
   pageInfo: CurrentPageInfo;
 }
 

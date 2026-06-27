@@ -7,9 +7,10 @@ import {
   AppPopover,
   ConfirmationDialog,
   EntityTypeItem,
+  FavoriteStar,
 } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
-import { Permission, type TermDetails } from 'generated-sources';
+import { AssetKind, Permission, type TermDetails } from 'generated-sources';
 import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
 import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
@@ -47,7 +48,8 @@ const TermDetailsHeader: React.FC<TermDetailsHeaderProps> = ({
         <Typography variant='h1' noWrap sx={{ mr: 1 }}>
           {name}
         </Typography>
-        <EntityTypeItem entityTypeName='DCT' />
+        <FavoriteStar assetKind={AssetKind.TERM} assetId={termId} />
+        <EntityTypeItem entityTypeName='DCT' sx={{ ml: 0.5 }} />
       </Grid>
       <Grid container justifyContent='flex-end'>
         {termUpdatedAt}
