@@ -25,3 +25,10 @@ export const getIsAssetFavorited = (assetKind: AssetKind, assetId: number) =>
   createSelector(favoritesState, (state): boolean =>
     Boolean(state.favoritedByKey[assetRefKey(assetKind, assetId)])
   );
+
+/** Raw favorited state: true | false when known, undefined when not yet hydrated (drives self-hydration). */
+export const getAssetFavoritedState = (assetKind: AssetKind, assetId: number) =>
+  createSelector(
+    favoritesState,
+    (state): boolean | undefined => state.favoritedByKey[assetRefKey(assetKind, assetId)]
+  );

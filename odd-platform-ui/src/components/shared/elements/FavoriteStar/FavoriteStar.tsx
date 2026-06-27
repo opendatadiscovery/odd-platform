@@ -2,8 +2,8 @@ import React from 'react';
 import { IconButton } from '@mui/material';
 import type { AssetKind } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { addFavorite, removeFavorite } from 'redux/thunks';
-import { getIsAssetFavorited } from 'redux/selectors';
+import { addFavorite, fetchFavoritesStatus, removeFavorite } from 'redux/thunks';
+import { getAssetFavoritedState } from 'redux/selectors';
 
 interface FavoriteStarProps {
   assetKind: AssetKind;
@@ -23,9 +23,18 @@ const STAR_PATH =
  */
 const FavoriteStar: React.FC<FavoriteStarProps> = ({ assetKind, assetId }) => {
   const dispatch = useAppDispatch();
-  const favorited = useAppSelector(getIsAssetFavorited(assetKind, assetId));
+  const favoritedState = useAppSelector(getAssetFavoritedState(assetKind, assetId));
+  const favorited = Boolean(favoritedState);
   const [pending, setPending] = React.useState<boolean | null>(null);
   const isFavorited = pending ?? favorited;
+
+  // Self-hydrate: if this asset's status is unknown, batch-ask once. A list can pre-hydrate all its
+  // visible refs (a single getFavoriteStatus call) to avoid one request per star.
+  React.useEffect(() => {
+    if (favoritedState === undefined) {
+      dispatch(fetchFavoritesStatus({ assetRef: [{ assetKind, assetId }] }));
+    }
+  }, [dispatch, favoritedState, assetKind, assetId]);
 
   const handleToggle = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
