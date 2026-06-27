@@ -1,5 +1,6 @@
 import React from 'react';
 import { IconButton } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { AssetKind } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { addFavorite, fetchFavoritesStatus, removeFavorite } from 'redux/thunks';
@@ -22,6 +23,7 @@ const STAR_PATH =
  * truth, and an in-flight intent is shown immediately and reverts if the request fails.
  */
 const FavoriteStar: React.FC<FavoriteStarProps> = ({ assetKind, assetId }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const favoritedState = useAppSelector(getAssetFavoritedState(assetKind, assetId));
   const favorited = Boolean(favoritedState);
@@ -55,7 +57,8 @@ const FavoriteStar: React.FC<FavoriteStarProps> = ({ assetKind, assetId }) => {
     <IconButton
       onClick={handleToggle}
       aria-pressed={isFavorited}
-      aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+      aria-label={t(isFavorited ? 'Remove from favorites' : 'Add to favorites')}
+      data-qa='favorite-star'
       size='small'
       sx={{ p: 0.5 }}
     >

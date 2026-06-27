@@ -15,6 +15,7 @@ import {
   dataEntitiesPath,
   dataQualityPath,
   directoryPath,
+  favoritesPath,
   lookupTablesPath,
   managementPath,
   queryExamplesPath,
@@ -36,6 +37,11 @@ const ToolbarTabs: FC = () => {
       {
         name: t('Catalog'),
         link: searchPath(),
+      },
+      {
+        name: t('Favorites'),
+        link: favoritesPath(),
+        value: 'favorites',
       },
       {
         name: t('Directory'),
