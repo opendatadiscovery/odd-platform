@@ -11,6 +11,7 @@ import {
   datasetVersionsAtom,
 } from './atoms';
 import HydrateAtoms, { type InitialValues } from './HydrateAtoms';
+import SyncAtoms from './SyncAtoms';
 
 interface DatasetStructureOverviewProviderProps extends PropsWithChildren {
   datasetStructureRoot: DataSetField[];
@@ -43,7 +44,16 @@ const DatasetStructureOverviewProvider: React.FC<
 
   return (
     <Provider>
-      <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+      <HydrateAtoms initialValues={initialValues}>
+        <SyncAtoms
+          datasetStructureRoot={datasetStructureRoot}
+          datasetFieldRowsCount={datasetFieldRowsCount}
+          datasetFieldTypesCount={datasetFieldTypesCount}
+          datasetFieldFieldsCount={datasetFieldFieldsCount}
+          datasetVersions={datasetVersions}
+        />
+        {children}
+      </HydrateAtoms>
     </Provider>
   );
 };
