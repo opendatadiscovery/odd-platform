@@ -9,8 +9,12 @@ export const Container = styled('div')(({ theme }) => ({
 
 export const DataEntityContainer = styled(Grid)(({ theme }) => ({
   marginTop: theme.spacing(2),
-  flexWrap: 'nowrap',
-  justifyContent: 'space-between',
+  // Pack the Recommended columns from the left and wrap — `space-between` stranded the two
+  // always-on columns (Favorites + Popular) at opposite edges; `flex-start` groups them, and
+  // `wrap` keeps the owner columns (My Objects / Upstream / Downstream) tidy when they're added.
+  flexWrap: 'wrap',
+  justifyContent: 'flex-start',
+  rowGap: theme.spacing(2),
   '& > *': { marginRight: theme.spacing(1.5) },
   '& > :last-child': { marginRight: theme.spacing(0) },
 }));
