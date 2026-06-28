@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
+import { AssetKind } from 'generated-sources';
 import { useScrollBarWidth } from 'lib/hooks';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
 import {
@@ -14,7 +15,7 @@ import {
   getTermSearchResultsPage,
   getTermSearchUpdateStatuses,
 } from 'redux/selectors';
-import { fetchTermsSearchResults } from 'redux/thunks';
+import { fetchFavoritesStatus, fetchTermsSearchResults } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import TermSearchResultItem from './TermSearchResultItem/TermSearchResultItem';
 import * as S from './TermSearchResultsStyles';
@@ -59,6 +60,20 @@ const TermSearchResults: React.FC = () => {
       fetchNextPage();
     }
   }, [isTermSearchFacetsSynced, searchId, isTermSearchCreating, isTermSearchUpdating]);
+
+  // Hydrate the favorited status of every visible term in one batch, so each row's star renders
+  // without firing its own per-row request (the catalog Results.tsx pattern).
+  React.useEffect(() => {
+    if (termSearchResults.length === 0) return;
+    dispatch(
+      fetchFavoritesStatus({
+        assetRef: termSearchResults.map(term => ({
+          assetKind: AssetKind.TERM,
+          assetId: term.id,
+        })),
+      })
+    );
+  }, [termSearchResults]);
 
   return (
     <Grid sx={{ mt: 2 }}>
