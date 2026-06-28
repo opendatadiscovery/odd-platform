@@ -13,7 +13,6 @@ import { WaitIcon } from 'components/shared/icons';
 import { useAppSelector } from 'redux/lib/hooks';
 import { Button } from 'components/shared/elements';
 import OwnerAssociationForm from './OwnerAssociationForm/OwnerAssociationForm';
-import OwnerEntitiesList from './OwnerEntitiesList/OwnerEntitiesList';
 import * as S from './OwnerAssociationStyles';
 
 const OwnerAssociation: FC = () => {
@@ -79,10 +78,6 @@ const OwnerAssociation: FC = () => {
           <OwnerAssociationForm />
         </S.Container>
       );
-    }
-
-    if (identity && ownership) {
-      return <OwnerEntitiesList />;
     }
 
     return null;

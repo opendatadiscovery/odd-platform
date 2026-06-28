@@ -2,13 +2,14 @@ import React, { type FC, useEffect } from 'react';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
-  getIsOwnerEntitiesFetching,
+  getIdentity,
   getMyDataEntitiesFetchingStatuses,
   getMyDownstreamFetchingStatuses,
   getMyEntities,
   getMyEntitiesDownstream,
   getMyEntitiesUpstream,
   getMyUpstreamDataEntitiesFetchingStatuses,
+  getOwnership,
   getPopularDataEntitiesFetchingStatuses,
   getPopularEntities,
 } from 'redux/selectors';
@@ -24,89 +25,94 @@ import {
   PopularIcon,
   UpstreamIcon,
 } from 'components/shared/icons';
-import { SkeletonWrapper } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import OwnerEntitiesListSkeleton from './OwnerEntitiesListSkeleton/OwnerEntitiesListSkeleton';
 import * as S from './OwnerEntitiesListStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
+import FavoritesColumn from './FavoritesColumn/FavoritesColumn';
 
+/**
+ * The Recommended section (#1815 / PRD-0002 A2). Always visible, for every audience: the **Favorites**
+ * and **Popular** columns are platform-recommended for everyone (Recently Viewed will join the always-on
+ * set when that feature ships). When the signed-in user is bound to an Owner, their personalised columns
+ * — **My Objects**, **Upstream dependents**, **Downstream dependents** — are added. Every column is the
+ * same size (the shared DataEntityList card form-factor), so no category spans the whole page.
+ */
 const OwnerEntitiesList: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
+  const identity = useAppSelector(getIdentity);
+  const ownership = useAppSelector(getOwnership);
+  const isOwnerBound = Boolean(identity && ownership);
+
+  const popularEntities = useAppSelector(getPopularEntities);
   const myEntities = useAppSelector(getMyEntities);
   const myEntitiesDownstream = useAppSelector(getMyEntitiesDownstream);
   const myEntitiesUpstream = useAppSelector(getMyEntitiesUpstream);
-  const popularEntities = useAppSelector(getPopularEntities);
 
-  const { isLoading: isMyDataEntitiesFetching, isNotLoaded: isMyDataEntitiesNotFetched } =
-    useAppSelector(getMyDataEntitiesFetchingStatuses);
-  const {
-    isLoading: isUpstreamDataEntitiesFetching,
-    isNotLoaded: isUpstreamDataEntitiesNotFetched,
-  } = useAppSelector(getMyUpstreamDataEntitiesFetchingStatuses);
-  const {
-    isLoading: isDownstreamDataEntitiesFetching,
-    isNotLoaded: isDownstreamDataEntitiesNotFetched,
-  } = useAppSelector(getMyDownstreamFetchingStatuses);
-  const {
-    isLoading: isPopularDataEntitiesFetching,
-    isNotLoaded: isPopularDataEntitiesNotFetched,
-  } = useAppSelector(getPopularDataEntitiesFetchingStatuses);
-  const isOwnerEntitiesListFetching = useAppSelector(getIsOwnerEntitiesFetching);
+  const { isLoading: isPopularFetching, isNotLoaded: isPopularNotFetched } =
+    useAppSelector(getPopularDataEntitiesFetchingStatuses);
+  const { isLoading: isMyFetching, isNotLoaded: isMyNotFetched } = useAppSelector(
+    getMyDataEntitiesFetchingStatuses
+  );
+  const { isLoading: isUpstreamFetching, isNotLoaded: isUpstreamNotFetched } =
+    useAppSelector(getMyUpstreamDataEntitiesFetchingStatuses);
+  const { isLoading: isDownstreamFetching, isNotLoaded: isDownstreamNotFetched } =
+    useAppSelector(getMyDownstreamFetchingStatuses);
 
+  // Popular is platform-wide → always fetched.
   useEffect(() => {
+    dispatch(fetchPopularDataEntitiesList({ page: 1, size: 5 }));
+  }, [dispatch]);
+
+  // The owner-personalised columns need an Owner binding → fetch only when bound.
+  useEffect(() => {
+    if (!isOwnerBound) return;
     const params = { page: 1, size: 5 };
     dispatch(fetchMyDataEntitiesList(params));
     dispatch(fetchMyUpstreamDataEntitiesList(params));
     dispatch(fetchMyDownstreamDataEntitiesList(params));
-    dispatch(fetchPopularDataEntitiesList(params));
-  }, []);
+  }, [dispatch, isOwnerBound]);
 
   return (
-    <>
-      {isOwnerEntitiesListFetching ? (
-        <SkeletonWrapper
-          renderContent={({ randWidth }) => (
-            <OwnerEntitiesListSkeleton width={randWidth()} />
-          )}
+    <S.Container>
+      <Typography variant='h1'>{t('Recommended')}</Typography>
+      <S.DataEntityContainer container>
+        <FavoritesColumn />
+        <DataEntityList
+          dataEntitiesList={popularEntities}
+          entityListName={t('Popular')}
+          entityListIcon={<PopularIcon />}
+          isFetching={isPopularFetching}
+          isNotFetched={isPopularNotFetched}
         />
-      ) : (
-        <S.Container>
-          <Typography variant='h1'>{t('Recommended')}</Typography>
-          <S.DataEntityContainer container>
+        {isOwnerBound && (
+          <>
             <DataEntityList
               dataEntitiesList={myEntities}
               entityListName={t('My Objects')}
               entityListIcon={<CatalogIcon />}
-              isFetching={isMyDataEntitiesFetching}
-              isNotFetched={isMyDataEntitiesNotFetched}
+              isFetching={isMyFetching}
+              isNotFetched={isMyNotFetched}
             />
             <DataEntityList
               dataEntitiesList={myEntitiesUpstream}
               entityListName={t('Upstream dependents')}
               entityListIcon={<UpstreamIcon />}
-              isFetching={isUpstreamDataEntitiesFetching}
-              isNotFetched={isUpstreamDataEntitiesNotFetched}
+              isFetching={isUpstreamFetching}
+              isNotFetched={isUpstreamNotFetched}
             />
             <DataEntityList
               dataEntitiesList={myEntitiesDownstream}
               entityListName={t('Downstream dependents')}
               entityListIcon={<DownstreamIcon />}
-              isFetching={isDownstreamDataEntitiesFetching}
-              isNotFetched={isDownstreamDataEntitiesNotFetched}
+              isFetching={isDownstreamFetching}
+              isNotFetched={isDownstreamNotFetched}
             />
-            <DataEntityList
-              dataEntitiesList={popularEntities}
-              entityListName={t('Popular')}
-              entityListIcon={<PopularIcon />}
-              isFetching={isPopularDataEntitiesFetching}
-              isNotFetched={isPopularDataEntitiesNotFetched}
-            />
-          </S.DataEntityContainer>
-        </S.Container>
-      )}
-    </>
+          </>
+        )}
+      </S.DataEntityContainer>
+    </S.Container>
   );
 };
 
