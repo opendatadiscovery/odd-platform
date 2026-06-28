@@ -21,7 +21,7 @@ import {
 import {
   CatalogIcon,
   DownstreamIcon,
-  StarIcon,
+  PopularIcon,
   UpstreamIcon,
 } from 'components/shared/icons';
 import { SkeletonWrapper } from 'components/shared/elements';
@@ -99,7 +99,7 @@ const OwnerEntitiesList: FC = () => {
             <DataEntityList
               dataEntitiesList={popularEntities}
               entityListName={t('Popular')}
-              entityListIcon={<StarIcon />}
+              entityListIcon={<PopularIcon />}
               isFetching={isPopularDataEntitiesFetching}
               isNotFetched={isPopularDataEntitiesNotFetched}
             />

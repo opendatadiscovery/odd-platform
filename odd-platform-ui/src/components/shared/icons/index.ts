@@ -1,6 +1,8 @@
 export { default as UpstreamIcon } from './UpstreamIcon';
 export { default as DownstreamIcon } from './DownstreamIcon';
-export { default as StarIcon } from './StarIcon';
+export { default as StarIcon, STAR_ICON_PATH } from './StarIcon';
+export { default as PopularIcon } from './PopularIcon';
+export { default as RecentlyViewedIcon } from './RecentlyViewedIcon';
 export { default as CatalogIcon } from './CatalogIcon';
 export { default as DropdownIcon } from './DropdownIcon';
 export { default as EditIcon } from './EditIcon';
