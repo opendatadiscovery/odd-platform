@@ -15,9 +15,10 @@ import {
   getFavoritesListFetchingStatuses,
   getFavoritesListPage,
 } from 'redux/selectors';
+import { ResultsTableHeader, SearchCol } from 'components/Search/Results/Results.styles';
 import FavoritesAssetTypeFilter from './FavoritesAssetTypeFilter/FavoritesAssetTypeFilter';
 import FavoritesListItem from './FavoritesListItem/FavoritesListItem';
-import { favoriteAssetId } from './lib';
+import { FAVORITES_TABLE_COLS as COL, favoriteAssetId } from './lib';
 
 const PAGE_SIZE = 30;
 const SKELETON_ROWS = ['s1', 's2', 's3', 's4', 's5'];
@@ -116,6 +117,22 @@ const Favorites: React.FC = () => {
 
           {!isFirstLoading && !hasError && (
             <>
+              {!isEmpty && (
+                <ResultsTableHeader container>
+                  <SearchCol item lg={COL.nm} md={COL.nm}>
+                    <Typography variant='caption'>{t('Name')}</Typography>
+                  </SearchCol>
+                  <SearchCol item lg={COL.ty} md={COL.ty}>
+                    <Typography variant='caption'>{t('Type')}</Typography>
+                  </SearchCol>
+                  <SearchCol item lg={COL.nd} md={COL.nd}>
+                    <Typography variant='caption'>{t('Namespace')}</Typography>
+                  </SearchCol>
+                  <SearchCol item lg={COL.up} md={COL.up}>
+                    <Typography variant='caption'>{t('Updated at')}</Typography>
+                  </SearchCol>
+                </ResultsTableHeader>
+              )}
               <Grid container flexDirection='column'>
                 {favorites.map(asset => (
                   <FavoritesListItem

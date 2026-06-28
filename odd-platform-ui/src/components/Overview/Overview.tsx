@@ -14,7 +14,7 @@ import * as S from './OverviewStyles';
 import OwnerAssociation from './OwnerAssociation/OwnerAssociation';
 import TopTagsList from './TopTagsList/TopTagsList';
 import Directory from './Directory/Directory';
-import FavoritesPanel from './FavoritesPanel/FavoritesPanel';
+import OwnerEntitiesList from './OwnerAssociation/OwnerEntitiesList/OwnerEntitiesList';
 
 const Overview: React.FC = () => {
   const { isLoading: isIdentityFetching } = useAppSelector(getIdentityFetchingStatuses);
@@ -51,7 +51,11 @@ const Overview: React.FC = () => {
       <Domains />
       <DataEntitiesUsageInfo />
       <Directory />
-      <FavoritesPanel />
+      {/* Recommended — always visible: Favorites + Popular for everyone, the owner-personalised
+          columns added when the user is bound to an Owner. */}
+      <OwnerEntitiesList />
+      {/* The owner-association request flow (form / pending / declined) when auth is on and the user
+          is not yet bound to an Owner; renders nothing once bound. */}
       {isShowOwnerAssociation && (
         <WithPermissionsProvider
           allowedPermissions={[Permission.DIRECT_OWNER_SYNC]}

@@ -1,16 +1,19 @@
 import React from 'react';
-import { Grid, Link as MuiLink, Typography } from '@mui/material';
+import { Box, Grid, Link as MuiLink, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AssetKind, type FavoriteAsset } from 'generated-sources';
 import { EntityClassItem, EntityStatus, FavoriteStar } from 'components/shared/elements';
+import { SearchCol } from 'components/Search/Results/Results.styles';
+import { useAppDateTime } from 'lib/hooks';
 import {
   assetKindSingularLabel,
-  favoriteAssetDescription,
+  FAVORITES_TABLE_COLS as COL,
   favoriteAssetId,
   favoriteAssetLink,
   favoriteAssetName,
   favoriteAssetNamespace,
+  favoriteAssetUpdatedAt,
 } from '../lib';
 
 interface FavoritesListItemProps {
@@ -18,19 +21,21 @@ interface FavoritesListItemProps {
 }
 
 /**
- * One row of the Favorites tab (#1815 / PRD-0002 A5). Reuses the catalog result-row information —
- * the name (linked to its detail page), the asset kind, the data-entity class chips + status, the
- * term namespace, and a truncated definition/query — resolved per-kind from the fields the favorites
- * payload already carries, degrading where a kind has none (a Query Example has no namespace; the
- * data-entity namespace/created-at await the payload-enrichment slice). Plus a star to un-star.
+ * One row of the Favorites tab, in the same column-aligned table layout the catalog Search results use
+ * (#1815 / PRD-0002 A5; the shared `Search/Results` grid + `SearchCol`): Name (+ the favorite star,
+ * right after the name — the same position as the Search result row) · Type (the asset kind + the
+ * data-entity class chips + status) · Namespace · Updated, resolved per-kind from the favorites payload
+ * and degrading where a kind has none (the data-entity namespace/updated arrive with the payload-
+ * enrichment slice).
  */
 const FavoritesListItem: React.FC<FavoritesListItemProps> = ({ asset }) => {
   const { t } = useTranslation();
+  const { formatDistanceToNowStrict } = useAppDateTime();
   const id = favoriteAssetId(asset);
   const name = favoriteAssetName(asset);
   const link = favoriteAssetLink(asset);
   const namespace = favoriteAssetNamespace(asset);
-  const description = favoriteAssetDescription(asset);
+  const updatedAt = favoriteAssetUpdatedAt(asset);
   const entityClasses =
     asset.assetKind === AssetKind.DATA_ENTITY
       ? asset.dataEntity?.entityClasses
@@ -42,12 +47,11 @@ const FavoritesListItem: React.FC<FavoritesListItemProps> = ({ asset }) => {
     <Grid
       container
       alignItems='center'
-      justifyContent='space-between'
       flexWrap='nowrap'
       sx={{ py: 1, borderBottom: '1px solid', borderColor: 'divider' }}
     >
-      <Grid container flexDirection='column' overflow='hidden' sx={{ pr: 1 }}>
-        <Grid container alignItems='center' flexWrap='nowrap' gap={0.5} overflow='hidden'>
+      <SearchCol item lg={COL.nm} md={COL.nm} container alignItems='center' wrap='nowrap'>
+        <Box display='flex' alignItems='center' overflow='hidden'>
           {link ? (
             <MuiLink component={Link} to={link} variant='body1' noWrap title={name}>
               {name}
@@ -57,39 +61,32 @@ const FavoritesListItem: React.FC<FavoritesListItemProps> = ({ asset }) => {
               {name}
             </Typography>
           )}
-          {entityClasses?.map(entityClass => (
-            <EntityClassItem
-              sx={{ ml: 0.5 }}
-              key={entityClass.id}
-              entityClassName={entityClass.name}
-            />
-          ))}
-          {status && <EntityStatus entityStatus={status} />}
-        </Grid>
-        <Grid
-          container
-          alignItems='center'
-          flexWrap='nowrap'
-          gap={1}
-          overflow='hidden'
-          sx={{ mt: 0.25 }}
-        >
-          <Typography variant='subtitle2' sx={{ whiteSpace: 'nowrap' }}>
-            {t(assetKindSingularLabel[asset.assetKind])}
-          </Typography>
-          {namespace && (
-            <Typography variant='subtitle2' noWrap title={namespace}>
-              {namespace}
-            </Typography>
-          )}
-          {description && (
-            <Typography variant='subtitle2' noWrap title={description}>
-              {description}
-            </Typography>
-          )}
-        </Grid>
-      </Grid>
-      <FavoriteStar assetKind={asset.assetKind} assetId={id} />
+        </Box>
+        <FavoriteStar assetKind={asset.assetKind} assetId={id} />
+      </SearchCol>
+      <SearchCol item lg={COL.ty} md={COL.ty} container alignItems='center' wrap='nowrap'>
+        <Typography variant='body1' noWrap>
+          {t(assetKindSingularLabel[asset.assetKind])}
+        </Typography>
+        {entityClasses?.map(entityClass => (
+          <EntityClassItem
+            sx={{ ml: 0.5 }}
+            key={entityClass.id}
+            entityClassName={entityClass.name}
+          />
+        ))}
+        {status && <EntityStatus entityStatus={status} />}
+      </SearchCol>
+      <SearchCol item lg={COL.nd} md={COL.nd}>
+        <Typography variant='body1' noWrap title={namespace}>
+          {namespace ?? ''}
+        </Typography>
+      </SearchCol>
+      <SearchCol item lg={COL.up} md={COL.up}>
+        <Typography variant='body1' noWrap>
+          {updatedAt ? formatDistanceToNowStrict(updatedAt, { addSuffix: true }) : ''}
+        </Typography>
+      </SearchCol>
     </Grid>
   );
 };

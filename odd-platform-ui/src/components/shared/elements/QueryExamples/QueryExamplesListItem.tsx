@@ -38,9 +38,6 @@ const QueryExamplesListItem = ({
     <Table.RowContainer>
       <Table.Cell $flex='1 0 1'>
         <Grid container alignItems='center' flexWrap='nowrap' gap={0.5}>
-          {showFavorite && (
-            <FavoriteStar assetKind={AssetKind.QUERY_EXAMPLE} assetId={queryExample.id} />
-          )}
           <Link to={queryExamplesPath(queryExample.id)}>
             <Typography
               variant='caption'
@@ -50,6 +47,9 @@ const QueryExamplesListItem = ({
               {queryExample.id}
             </Typography>
           </Link>
+          {showFavorite && (
+            <FavoriteStar assetKind={AssetKind.QUERY_EXAMPLE} assetId={queryExample.id} />
+          )}
         </Grid>
       </Table.Cell>
       <Table.Cell $flex='1 0 15%'>
