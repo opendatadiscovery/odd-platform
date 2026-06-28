@@ -356,6 +356,13 @@ components:
           $ref: '#/components/schemas/TermRef'
         query_example:
           $ref: '#/components/schemas/QueryExampleRef'
+        description:
+          type: string
+          description: >-
+            The asset's description for the favorites list, as Markdown: a data entity's internal
+            description (else its external description), or a term's definition; query examples have none.
+            Any [[Namespace:Term]] mentions are resolved server-side to term links. Absent when the asset
+            has no description.
       required:
         - asset_kind
 
