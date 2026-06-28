@@ -27,10 +27,11 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
     <S.TermSearchResultsItemLink to={termDetailsOverviewLink}>
       <S.TermSearchResultsContainer container>
         <TermSearchResultsColContainer item $colType='collg'>
-          <TermSearchNameContainer container item>
+          <TermSearchNameContainer container item alignItems='center' flexWrap='nowrap'>
             <Typography variant='body1' noWrap>
               {termSearchResult.name}
             </Typography>
+            <FavoriteStar assetKind={AssetKind.TERM} assetId={termSearchResult.id} />
           </TermSearchNameContainer>
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType='collg'>
@@ -66,9 +67,7 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
               formatDistanceToNowStrict(termSearchResult.updatedAt, { addSuffix: true })}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType='colxs'>
-          <FavoriteStar assetKind={AssetKind.TERM} assetId={termSearchResult.id} />
-        </TermSearchResultsColContainer>
+        <TermSearchResultsColContainer item $colType='colxs' />
       </S.TermSearchResultsContainer>
     </S.TermSearchResultsItemLink>
   );
