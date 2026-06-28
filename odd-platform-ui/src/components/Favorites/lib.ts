@@ -40,6 +40,27 @@ export const favoriteAssetLink = (asset: FavoriteAsset): string | undefined => {
   }
 };
 
+/**
+ * The namespace shown on a favorited asset's rich row, when its per-kind ref carries one. Only
+ * `TermRef` embeds a namespace today; `DataEntityRef` does not (the data-entity row's namespace /
+ * datasource / created-at wait on the payload enrichment tracked for the API-contract slice), and a
+ * Query Example has none by nature.
+ */
+export const favoriteAssetNamespace = (asset: FavoriteAsset): string | undefined =>
+  asset.assetKind === AssetKind.TERM ? asset.term?.namespace?.name : undefined;
+
+/** A short description/definition line for the rich row, per kind (undefined when the ref has none). */
+export const favoriteAssetDescription = (asset: FavoriteAsset): string | undefined => {
+  switch (asset.assetKind) {
+    case AssetKind.TERM:
+      return asset.term?.definition || undefined;
+    case AssetKind.QUERY_EXAMPLE:
+      return asset.queryExample?.query || undefined;
+    default:
+      return undefined;
+  }
+};
+
 /** The asset-type facet options, in display order. Labels are i18n keys (English == key). */
 export const ASSET_KIND_OPTIONS: ReadonlyArray<{ kind: AssetKind; labelKey: string }> = [
   { kind: AssetKind.DATA_ENTITY, labelKey: 'Data Entities' },
