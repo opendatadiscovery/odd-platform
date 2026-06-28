@@ -1,10 +1,11 @@
 import React from 'react';
 import type { LinkedUrl, QueryExample } from 'generated-sources';
-import { Permission } from 'generated-sources';
+import { AssetKind, Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import { queryExamplesPath, termDetailsPath } from 'routes';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import FavoriteStar from '../FavoriteStar/FavoriteStar';
 import TruncatedCell from '../TruncatedCell/TruncatedCell';
 import Markdown from '../Markdown/Markdown';
 import CollapsibleInfoContainer from '../CollapsibleInfoContainer/CollapsibleInfoContainer';
@@ -16,12 +17,16 @@ interface QueryExampleSearchResultsItemProps {
   queryExample: QueryExample;
   isTerm?: boolean;
   entityId?: number;
+  // The standalone Query Examples list shows a favorite star; the linked-QE tables (term / dataset
+  // details) reuse this row without one, so the star is opt-in.
+  showFavorite?: boolean;
 }
 
 const QueryExamplesListItem = ({
   queryExample,
   isTerm,
   entityId,
+  showFavorite,
 }: QueryExampleSearchResultsItemProps) => {
   const linkedTerms: LinkedUrl[] = queryExample?.linkedTerms?.items
     ? queryExample?.linkedTerms?.items.map(term => ({
@@ -32,11 +37,20 @@ const QueryExamplesListItem = ({
   return (
     <Table.RowContainer>
       <Table.Cell $flex='1 0 1'>
-        <Link to={queryExamplesPath(queryExample.id)}>
-          <Typography variant='caption' color='button.link.normal.color' fontWeight={500}>
-            {queryExample.id}
-          </Typography>
-        </Link>
+        <Grid container alignItems='center' flexWrap='nowrap' gap={0.5}>
+          {showFavorite && (
+            <FavoriteStar assetKind={AssetKind.QUERY_EXAMPLE} assetId={queryExample.id} />
+          )}
+          <Link to={queryExamplesPath(queryExample.id)}>
+            <Typography
+              variant='caption'
+              color='button.link.normal.color'
+              fontWeight={500}
+            >
+              {queryExample.id}
+            </Typography>
+          </Link>
+        </Grid>
       </Table.Cell>
       <Table.Cell $flex='1 0 15%'>
         <CollapsibleInfoContainer
