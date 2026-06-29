@@ -372,6 +372,67 @@ components:
         - items
         - page_info
 
+    RecentlyViewedAsset:
+      type: object
+      description: >-
+        A recently-viewed catalog asset (the recency companion to FavoriteAsset). Exactly one of the per-kind
+        references is populated, selected by asset_kind; the others are absent. A deleted asset is never
+        returned (visibility is inherited from each kind's query). last_viewed_at is when the current user last
+        opened it (UTC).
+      properties:
+        asset_kind:
+          $ref: '#/components/schemas/AssetKind'
+        data_entity:
+          $ref: '#/components/schemas/DataEntityRef'
+        term:
+          $ref: '#/components/schemas/TermRef'
+        query_example:
+          $ref: '#/components/schemas/QueryExampleRef'
+        last_viewed_at:
+          type: string
+          format: date-time
+      required:
+        - asset_kind
+        - last_viewed_at
+
+    RecentlyViewedAssetList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecentlyViewedAsset'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    RecentlyViewedRef:
+      type: object
+      description: >-
+        A recency marker for one asset: the (asset_kind, asset_id) pair plus when the current user last opened
+        it. Returned by the batch status endpoint so any list or detail view can show the "last viewed" value
+        and a remove control for the assets in the user's history.
+      properties:
+        asset_kind:
+          $ref: '#/components/schemas/AssetKind'
+        asset_id:
+          type: integer
+          format: int64
+        last_viewed_at:
+          type: string
+          format: date-time
+      required:
+        - asset_kind
+        - asset_id
+        - last_viewed_at
+
+    RecentlyViewedRefList:
+      type: array
+      items:
+        $ref: '#/components/schemas/RecentlyViewedRef'
+
     Tag:
       type: object
       properties:

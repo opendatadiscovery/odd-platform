@@ -439,6 +439,124 @@ paths:
       tags:
         - favorite
 
+  /api/recently-viewed/{asset_kind}/{asset_id}:
+    post:
+      summary: Record that the current user opened an asset
+      description: >-
+        Records (or moves to the top of) the current user's recently-viewed history for the
+        (asset_kind, asset_id) asset. Fired by the UI when a detail page opens — a deliberate signal, never a
+        side effect of the asset GET. Idempotent move-to-top (dedup). Identity is taken from the security
+        context, never a request parameter, so a user only ever writes their own history; under
+        auth.type=DISABLED it writes the shared instance-wide bucket.
+      operationId: recordRecentlyViewed
+      parameters:
+        - name: asset_kind
+          in: path
+          schema:
+            $ref: './components.yaml/#/components/schemas/AssetKind'
+          required: true
+        - name: asset_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          description: The view was recorded
+      tags:
+        - recently_viewed
+    delete:
+      summary: Remove an asset from the current user's recently-viewed history
+      description: >-
+        Removes the (asset_kind, asset_id) asset from the current user's recently-viewed history. Idempotent —
+        a no-op if it is not present. Identity is taken from the security context, so a user can remove only
+        their own entries; under auth.type=DISABLED it removes from the shared bucket.
+      operationId: removeRecentlyViewed
+      parameters:
+        - name: asset_kind
+          in: path
+          schema:
+            $ref: './components.yaml/#/components/schemas/AssetKind'
+          required: true
+        - name: asset_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          description: The asset is not in the recently-viewed history
+      tags:
+        - recently_viewed
+
+  /api/recently-viewed/status:
+    post:
+      summary: Recently-viewed status for a set of assets
+      description: >-
+        Returns, for the given asset references, the subset the current user has recently viewed together with
+        when each was last opened — so any list or detail view can render the "last viewed" value and a remove
+        control in a single batch call. Identity is taken from the security context.
+      operationId: getRecentlyViewedStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/AssetRefList'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/RecentlyViewedRefList'
+      tags:
+        - recently_viewed
+
+  /api/recently-viewed/list:
+    get:
+      summary: List the current user's recently-viewed assets
+      description: >-
+        Returns the current user's recently-viewed assets, most-recent first, resolved across all asset kinds.
+        Assets that have since been deleted are automatically excluded (visibility is inherited from each kind's
+        canonical query). Identity is taken from the security context, never a request parameter. The optional
+        viewed_after / viewed_before bounds (UTC) filter by when the asset was last opened — the data source for
+        the unified Search recency filter.
+      operationId: getRecentlyViewedList
+      parameters:
+        - name: asset_types
+          in: query
+          description: Restrict the list to these asset kinds (multi-select; default = all kinds).
+          schema:
+            type: array
+            items:
+              $ref: './components.yaml/#/components/schemas/AssetKind'
+        - name: viewed_after
+          in: query
+          description: Only assets last viewed at or after this instant (UTC).
+          schema:
+            type: string
+            format: date-time
+        - name: viewed_before
+          in: query
+          description: Only assets last viewed at or before this instant (UTC).
+          schema:
+            type: string
+            format: date-time
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/RecentlyViewedAssetList'
+      tags:
+        - recently_viewed
+
   /api/tags:
     get:
       summary: List of popular tags

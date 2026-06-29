@@ -9,4 +9,6 @@ public class HousekeepingTTLProperties {
     private int resolvedAlertsDays;
     private int searchFacetsDays;
     private int dataEntityDeleteDays;
+    private int recentlyViewedDays;
+    private int recentlyViewedMaxPerUser;
 }
