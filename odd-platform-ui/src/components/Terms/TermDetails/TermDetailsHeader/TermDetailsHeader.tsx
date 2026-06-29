@@ -8,6 +8,7 @@ import {
   ConfirmationDialog,
   EntityTypeItem,
   FavoriteStar,
+  RecentlyViewedTag,
 } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { AssetKind, Permission, type TermDetails } from 'generated-sources';
@@ -49,6 +50,7 @@ const TermDetailsHeader: React.FC<TermDetailsHeaderProps> = ({
           {name}
         </Typography>
         <FavoriteStar assetKind={AssetKind.TERM} assetId={termId} />
+        <RecentlyViewedTag assetKind={AssetKind.TERM} assetId={termId} />
         <EntityTypeItem entityTypeName='DCT' sx={{ ml: 0.5 }} />
       </Grid>
       <Grid container justifyContent='flex-end'>

@@ -10,8 +10,9 @@ import {
 } from 'redux/selectors';
 import { deleteTerm, fetchResourcePermissions, fetchTermDetails } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { Permission, PermissionResourceType } from 'generated-sources';
+import { AssetKind, Permission, PermissionResourceType } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
+import { useRecordRecentlyViewed } from 'lib/hooks';
 import { termsSearchPath, useTermsRouteParams } from 'routes';
 import TermDetailsHeader from './TermDetailsHeader/TermDetailsHeader';
 import TermDetailsSkeleton from './TermDetailsSkeleton/TermDetailsSkeleton';
@@ -23,6 +24,9 @@ const TermDetailsView: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { termId } = useTermsRouteParams();
+
+  // Record this open in the user's Recently Viewed history (#1816).
+  useRecordRecentlyViewed(AssetKind.TERM, termId);
 
   const { isLoading: isTermDetailsFetching, isNotLoaded: isTermDetailsNotFetched } =
     useAppSelector(getTermDetailsFetchingStatuses);

@@ -35,6 +35,8 @@ import type {
   EnumValueList,
   DataSetField,
   FavoriteAsset,
+  RecentlyViewedAsset,
+  RecentlyViewedRef,
 } from 'generated-sources';
 import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
 import type { CurrentPageInfo, Dictionary, PageInfo, PaginatedResponse } from './common';
@@ -67,6 +69,14 @@ export interface FavoritesState {
   favoritedByKey: Record<string, boolean>;
   list: FavoriteAsset[];
   pageInfo: CurrentPageInfo;
+}
+
+export interface RecentlyViewedState {
+  list: RecentlyViewedAsset[];
+  pageInfo: CurrentPageInfo;
+  // The per-asset recency marker (the cross-surface "last viewed" + remove control): a ref when viewed,
+  // null when asked-but-not, absent when not yet hydrated.
+  recencyByKey: Record<string, RecentlyViewedRef | null>;
 }
 
 export interface NamespacesState extends EntityState<Namespace> {

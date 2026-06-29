@@ -13,6 +13,7 @@ import {
 import { WithPermissions } from 'components/shared/contexts';
 import { AssetKind, type DataEntityDetails, Feature, Permission } from 'generated-sources';
 import FavoriteStar from 'components/shared/elements/FavoriteStar';
+import RecentlyViewedTag from 'components/shared/elements/RecentlyViewedTag';
 import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
@@ -78,6 +79,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
             {internalName || externalName}
           </Typography>
           <FavoriteStar assetKind={AssetKind.DATA_ENTITY} assetId={dataEntityId} />
+          <RecentlyViewedTag assetKind={AssetKind.DATA_ENTITY} assetId={dataEntityId} />
           {entityClasses?.map(entityClass => (
             <EntityClassItem
               sx={{ ml: 0.5 }}
