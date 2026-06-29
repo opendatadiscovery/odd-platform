@@ -42,6 +42,7 @@ interface Helpers {
   formatDuration: (...args: Parameters<typeof formatDuration>) => string;
   intervalToDuration: (...args: Parameters<typeof intervalToDuration>) => Duration;
   minutesToMilliseconds: (...args: Parameters<typeof minutesToMilliseconds>) => number;
+  dateTimeWithTimezone: (date: number | Date) => string;
 }
 type UseAppDateTimeReturn = Record<
   `${DateTimePatternNames}FormattedDateTime`,
@@ -79,6 +80,21 @@ const useAppDateTime = (): UseAppDateTimeReturn => {
     );
   };
 
+  // An ABSOLUTE timestamp in the user's browser timezone with an explicit UTC offset (e.g.
+  // "29 Jun 2026, 14:32 UTC+02:00"), falling back to UTC when the timezone cannot be resolved.
+  // For surfaces where a relative "x ago" is meaningless because the value is always ~now — e.g.
+  // the record-on-open recency marker on a detail page, where it would read "0 seconds ago" and
+  // reset on every refresh (#1816 / CTRIB-043).
+  const dateTimeWithTimezone = (date: number | Date): string => {
+    const useUS = currentTimezone?.startsWith('America') ?? false;
+    const pattern = `${useUS ? mainUSDateTimeFormat : mainEUDateTimeFormat} 'UTC'xxx`;
+    try {
+      return formatInTimeZone(date, currentTimezone || 'UTC', pattern);
+    } catch {
+      return formatInTimeZone(date, 'UTC', pattern);
+    }
+  };
+
   return {
     formatDistanceToNow,
     formatDistanceToNowStrict,
@@ -87,6 +103,7 @@ const useAppDateTime = (): UseAppDateTimeReturn => {
     intervalToDuration,
     minutesToMilliseconds,
     add,
+    dateTimeWithTimezone,
     datasetStructureVersionFormattedDateTime: formatDate('datasetStructureVersion'),
     alertFormattedDateTime: formatDate('alert'),
     associationRequestFormattedDateTime: formatDate('associationRequest'),

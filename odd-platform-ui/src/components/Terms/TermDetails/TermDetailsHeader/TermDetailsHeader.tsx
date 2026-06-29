@@ -50,7 +50,7 @@ const TermDetailsHeader: React.FC<TermDetailsHeaderProps> = ({
           {name}
         </Typography>
         <FavoriteStar assetKind={AssetKind.TERM} assetId={termId} />
-        <RecentlyViewedTag assetKind={AssetKind.TERM} assetId={termId} />
+        <RecentlyViewedTag assetKind={AssetKind.TERM} assetId={termId} absoluteTime />
         <EntityTypeItem entityTypeName='DCT' sx={{ ml: 0.5 }} />
       </Grid>
       <Grid container justifyContent='flex-end'>
