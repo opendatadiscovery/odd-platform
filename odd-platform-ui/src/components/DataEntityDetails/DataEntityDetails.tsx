@@ -17,9 +17,10 @@ import {
   getDataEntityGroupUpdatingStatuses,
   getResourcePermissions,
 } from 'redux/selectors';
-import { AlertStatus, Permission, PermissionResourceType } from 'generated-sources';
+import { AlertStatus, AssetKind, Permission, PermissionResourceType } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
+import { useRecordRecentlyViewed } from 'lib/hooks';
 import { useDataEntityRouteParams } from 'routes';
 import DataEntityDetailsHeader from './DataEntityDetailsHeader/DataEntityDetailsHeader';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
@@ -30,6 +31,10 @@ import DataEntityDetailsRoutes from './DataEntityDetailsRoutes/DataEntityDetails
 const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useDataEntityRouteParams();
+
+  // Record this open in the user's Recently Viewed history (a deliberate signal — distinct from the
+  // view-count increment on the GET; lookup tables are recorded as their DATA_ENTITY projection). #1816
+  useRecordRecentlyViewed(AssetKind.DATA_ENTITY, dataEntityId);
 
   const details = useAppSelector(getDataEntityDetails(dataEntityId));
   const resourcePermissions = useAppSelector(

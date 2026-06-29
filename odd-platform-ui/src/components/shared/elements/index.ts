@@ -68,6 +68,7 @@ export { default as DatasourceLogo } from './DatasourceLogo/DatasourceLogo';
 export { getCapitalizedDatasourceNameFromPrefix } from './DatasourceLogo/helpers';
 export { default as Button } from './Button/Button';
 export { default as FavoriteStar } from './FavoriteStar/FavoriteStar';
+export { default as RecentlyViewedTag } from './RecentlyViewedTag/RecentlyViewedTag';
 export { default as FileInput } from './FileInput/FileInput';
 export { default as Input } from './Input/Input';
 export { default as InfoItem } from './InfoItem/InfoItem';

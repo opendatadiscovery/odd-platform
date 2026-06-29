@@ -9,6 +9,7 @@ import {
   DatasourceLogo,
   EntityClassItem,
   FavoriteStar,
+  RecentlyViewedTag,
   NumberFormatted,
   TruncatedCell,
   EntityStatus,
@@ -106,6 +107,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             )}
             <DataEntityDetailsPreview dataEntityId={searchResult.id} />
             <FavoriteStar assetKind={AssetKind.DATA_ENTITY} assetId={searchResult.id} />
+            <RecentlyViewedTag assetKind={AssetKind.DATA_ENTITY} assetId={searchResult.id} />
           </Box>
         </S.NameContainer>
         <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>

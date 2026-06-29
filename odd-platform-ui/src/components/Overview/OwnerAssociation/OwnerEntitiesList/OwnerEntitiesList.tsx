@@ -29,6 +29,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import * as S from './OwnerEntitiesListStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
 import FavoritesColumn from './FavoritesColumn/FavoritesColumn';
+import RecentlyViewedColumn from './RecentlyViewedColumn/RecentlyViewedColumn';
 
 /**
  * The Recommended section (#1815 / PRD-0002 A2). Always visible, for every audience: the **Favorites**
@@ -79,6 +80,7 @@ const OwnerEntitiesList: FC = () => {
       <Typography variant='h1'>{t('Recommended')}</Typography>
       <S.DataEntityContainer container>
         <FavoritesColumn />
+        <RecentlyViewedColumn />
         <DataEntityList
           dataEntitiesList={popularEntities}
           entityListName={t('Popular')}

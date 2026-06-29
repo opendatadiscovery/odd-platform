@@ -1,5 +1,6 @@
 export * from './loader-selectors';
 export * from './favorites.selectors';
+export * from './recentlyViewed.selectors';
 export * from './alert.selectors';
 export * from './appInfo.selectors';
 export * from './profile.selectors';

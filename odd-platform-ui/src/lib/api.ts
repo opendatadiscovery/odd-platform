@@ -34,6 +34,7 @@ import {
   QueryExampleApi,
   ReferenceDataApi,
   RelationshipApi,
+  RecentlyViewedApi,
 } from 'generated-sources';
 
 const HEADERS: ConfigurationParameters = {
@@ -82,3 +83,4 @@ export const queryExampleApi = new QueryExampleApi(apiConf);
 export const referenceDataApi = new ReferenceDataApi(apiConf);
 export const relationshipApi = new RelationshipApi(apiConf);
 export const favoriteApi = new FavoriteApi(apiConf);
+export const recentlyViewedApi = new RecentlyViewedApi(apiConf);

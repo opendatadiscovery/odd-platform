@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { useGetQueryExampleDetails } from 'lib/hooks/api/dataModelling/queryExamples';
-import { useAppDateTime } from 'lib/hooks';
-import { AppLoadingPage, FavoriteStar } from 'components/shared/elements';
+import { useAppDateTime, useRecordRecentlyViewed } from 'lib/hooks';
+import { AppLoadingPage, FavoriteStar, RecentlyViewedTag } from 'components/shared/elements';
 import { TimeGapIcon } from 'components/shared/icons';
 import { useQueryExamplesRouteParams } from 'routes';
 import { WithPermissionsProvider } from 'components/shared/contexts';
@@ -17,6 +17,9 @@ import { QueryExampleDetailsContainerActions } from './QueryExampleDetailsContai
 
 const QueryExampleDetailsContainer: React.FC = () => {
   const { queryExampleId: exampleId } = useQueryExamplesRouteParams();
+
+  // Record this open in the user's Recently Viewed history (#1816).
+  useRecordRecentlyViewed(AssetKind.QUERY_EXAMPLE, exampleId);
 
   const { data: resourcePermissions } = useResourcePermissions({
     resourceId: exampleId,
@@ -47,6 +50,7 @@ const QueryExampleDetailsContainer: React.FC = () => {
         <Box display='flex' alignItems='center'>
           <Typography variant='h1'>{`Query Example #${exampleId}`}</Typography>
           <FavoriteStar assetKind={AssetKind.QUERY_EXAMPLE} assetId={exampleId} />
+          <RecentlyViewedTag assetKind={AssetKind.QUERY_EXAMPLE} assetId={exampleId} />
         </Box>
         <Box display='flex' alignItems='center'>
           <TimeGapIcon />
