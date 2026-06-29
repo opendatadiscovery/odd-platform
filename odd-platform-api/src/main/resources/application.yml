@@ -173,6 +173,8 @@ housekeeping:
     resolved_alerts_days: 30
     search_facets_days: 30
     data_entity_delete_days: 30
+    recently_viewed_days: 90
+    recently_viewed_max_per_user: 200
 
 notifications:
   enabled: false
