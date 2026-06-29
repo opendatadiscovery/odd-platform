@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +29,14 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
+    private static final Set<String> PREDEFINED_ROLE_NAMES = Set.of(
+        UserProviderRole.ADMIN.getValue(),
+        UserProviderRole.USER.getValue(),
+        "DataSteward",
+        "DataViewer",
+        "DataAnalyst"
+    );
+
     private final RoleMapper roleMapper;
     private final ReactiveRoleRepository roleRepository;
     private final ReactiveRoleToPolicyRepository roleToPolicyRepository;
@@ -65,8 +73,8 @@ public class RoleServiceImpl implements RoleService {
     public Mono<Role> update(final long id, final RoleFormData formData) {
         return roleRepository.get(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Role", id)))
-            .filter(role -> !role.getName().equals(UserProviderRole.ADMIN.getValue()))
-            .switchIfEmpty(Mono.error(new BadUserRequestException("Administrator role is not editable")))
+            .filter(role -> !PREDEFINED_ROLE_NAMES.contains(role.getName()))
+            .switchIfEmpty(Mono.error(new BadUserRequestException("Predefined role is not editable")))
             .flatMap(role -> updateRoleName(role, formData))
             .flatMap(role -> updateRolePolicyRelations(role, formData))
             .flatMap(role -> roleRepository.getDto(role.getId()))
@@ -78,8 +86,8 @@ public class RoleServiceImpl implements RoleService {
     public Mono<Void> delete(final long id) {
         return roleRepository.get(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Role", id)))
-            .filter(role -> Stream.of(UserProviderRole.values())
-                .noneMatch(r -> r.getValue().equalsIgnoreCase(role.getName())))
+            .filter(role -> PREDEFINED_ROLE_NAMES.stream()
+                .noneMatch(name -> name.equalsIgnoreCase(role.getName())))
             .switchIfEmpty(Mono.error(
                 new BadUserRequestException("Role is predefined and cannot be deleted")))
             .then(ownerToRoleRepository.isRoleAttachedToOwner(id))
@@ -101,9 +109,10 @@ public class RoleServiceImpl implements RoleService {
     }
 
     private Mono<RolePojo> updateRoleName(final RolePojo role, final RoleFormData formData) {
-        if (role.getName().equals(UserProviderRole.USER.getValue())
+        if (PREDEFINED_ROLE_NAMES.contains(role.getName())
             && !StringUtils.equals(role.getName(), formData.getName())) {
-            return Mono.error(new BadUserRequestException("User role name cannot be changed"));
+            return Mono.error(
+                new BadUserRequestException("Predefined role name cannot be changed"));
         }
         return Mono.just(roleMapper.applyToPojo(formData, role))
             .flatMap(roleRepository::update);
