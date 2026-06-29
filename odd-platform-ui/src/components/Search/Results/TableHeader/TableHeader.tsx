@@ -2,7 +2,6 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum } from 'generated-sources';
-import { useScrollBarWidth } from 'lib/hooks';
 import * as S from '../Results.styles';
 import type { GridSizesByBreakpoints } from '../Results.styles';
 
@@ -12,11 +11,10 @@ interface TableHeaderProps {
 }
 const TableHeader: React.FC<TableHeaderProps> = ({ grid, isCurrentSearchClass }) => {
   const { t } = useTranslation();
-  const scrollbarWidth = useScrollBarWidth();
 
   return (
-    <S.ResultsTableHeader container sx={{ mt: 2, pr: scrollbarWidth }} wrap='nowrap'>
-      <S.SearchCol item lg={grid.lg.nm} md={grid.md.nm}>
+    <S.ResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
+      <S.SearchCol item lg={grid.lg.nm} md={grid.md.nm} $sticky>
         <Typography variant='caption'>{t('Name')}</Typography>
       </S.SearchCol>
       {isCurrentSearchClass(DataEntityClassNameEnum.SET) && (

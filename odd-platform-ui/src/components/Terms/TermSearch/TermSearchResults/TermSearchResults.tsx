@@ -77,54 +77,57 @@ const TermSearchResults: React.FC = () => {
 
   return (
     <Grid sx={{ mt: 2 }}>
-      <S.TermSearchResultsTableHeader container $scrollbarWidth={scrollbarWidth}>
-        <S.TermSearchResultsColContainer item $colType='collg'>
-          <Typography variant='caption'>{t('Term name')}</Typography>
-        </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='collg'>
-          <Typography variant='caption'>{t('Namespace')}</Typography>
-        </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='collg'>
-          <Typography variant='caption'>{t('Owner')}</Typography>
-        </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='colxs'>
-          <Typography variant='caption'>{t('Using')}</Typography>
-        </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='colsm'>
-          <Typography variant='caption'>{t('Created')}</Typography>
-        </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='colsm'>
-          <Typography variant='caption'>{t('Last update')}</Typography>
-        </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='colsm'>
-          <Typography variant='caption'>{t('Recently viewed')}</Typography>
-        </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType='colxs' />
-      </S.TermSearchResultsTableHeader>
-      {isTermSearchCreating ? (
-        <TermSearchResultsSkeleton length={10} />
-      ) : (
-        <S.TermSearchListContainer id='term-search-results-list'>
-          <InfiniteScroll
-            dataLength={termSearchResults.length}
-            next={fetchNextPage}
-            hasMore={hasNext}
-            loader={isTermSearchFetching && <TermSearchResultsSkeleton length={10} />}
-            scrollThreshold='200px'
-            scrollableTarget='term-search-results-list'
-          >
-            {termSearchResults.map(termSearchResult => (
-              <TermSearchResultItem
-                key={termSearchResult.id}
-                termSearchResult={termSearchResult}
-              />
-            ))}
-          </InfiniteScroll>
-          {!isTermSearchFetching && !total && (
-            <EmptyContentPlaceholder text={t('No matches found')} />
-          )}
-        </S.TermSearchListContainer>
-      )}
+      <S.TermSearchListContainer id='term-search-results-list'>
+        <S.TermSearchResultsTableHeader container $scrollbarWidth={scrollbarWidth}>
+          <S.TermSearchResultsColContainer item $colType='collg' $sticky>
+            <Typography variant='caption'>{t('Term name')}</Typography>
+          </S.TermSearchResultsColContainer>
+          <S.TermSearchResultsColContainer item $colType='collg'>
+            <Typography variant='caption'>{t('Namespace')}</Typography>
+          </S.TermSearchResultsColContainer>
+          <S.TermSearchResultsColContainer item $colType='collg'>
+            <Typography variant='caption'>{t('Owner')}</Typography>
+          </S.TermSearchResultsColContainer>
+          <S.TermSearchResultsColContainer item $colType='colxs'>
+            <Typography variant='caption'>{t('Using')}</Typography>
+          </S.TermSearchResultsColContainer>
+          <S.TermSearchResultsColContainer item $colType='colsm'>
+            <Typography variant='caption'>{t('Created')}</Typography>
+          </S.TermSearchResultsColContainer>
+          <S.TermSearchResultsColContainer item $colType='colsm'>
+            <Typography variant='caption'>{t('Last update')}</Typography>
+          </S.TermSearchResultsColContainer>
+          <S.TermSearchResultsColContainer item $colType='colsm'>
+            <Typography variant='caption'>{t('Recently viewed')}</Typography>
+          </S.TermSearchResultsColContainer>
+          <S.TermSearchResultsColContainer item $colType='colxs' />
+        </S.TermSearchResultsTableHeader>
+        {isTermSearchCreating ? (
+          <TermSearchResultsSkeleton length={10} />
+        ) : (
+          <>
+            <InfiniteScroll
+              dataLength={termSearchResults.length}
+              next={fetchNextPage}
+              hasMore={hasNext}
+              loader={isTermSearchFetching && <TermSearchResultsSkeleton length={10} />}
+              scrollThreshold='200px'
+              scrollableTarget='term-search-results-list'
+              style={{ overflow: 'visible' }}
+            >
+              {termSearchResults.map(termSearchResult => (
+                <TermSearchResultItem
+                  key={termSearchResult.id}
+                  termSearchResult={termSearchResult}
+                />
+              ))}
+            </InfiniteScroll>
+            {!isTermSearchFetching && !total && (
+              <EmptyContentPlaceholder text={t('No matches found')} />
+            )}
+          </>
+        )}
+      </S.TermSearchListContainer>
     </Grid>
   );
 };

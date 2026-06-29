@@ -42,6 +42,24 @@ export const ListLink = styled(Link)<{ $hasAlerts?: boolean }>(
   })
 );
 
+// A non-link row container (Favorites / Recently-Viewed) that mirrors ListLink's open-alert highlight.
+// Those rows hold a name link + a star/recency control, so they cannot be a single ListLink — but they
+// must flag a data entity with open alerts the same way the Popular column does (#1816 / CTRIB-044).
+export const ListRow = styled(Grid)<{ $hasAlerts?: boolean }>(
+  ({ theme, $hasAlerts }) => ({
+    padding: theme.spacing(0.25),
+    borderRadius: '4px',
+    ...($hasAlerts
+      ? {
+          backgroundColor: theme.palette.alert.OPEN.background,
+          '&:hover': { backgroundColor: theme.palette.alert.OPEN.border },
+        }
+      : {
+          '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
+        }),
+  })
+);
+
 export const ListLinkInnerItem = styled('div')<{ $bounded?: boolean }>(
   ({ $bounded }) => ({
     display: 'flex',

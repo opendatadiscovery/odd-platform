@@ -3,7 +3,11 @@ import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
 import { SkeletonWrapper } from 'components/shared/elements';
-import { SearchCol, type GridSizesByBreakpoints } from '../Results.styles';
+import {
+  SearchCol,
+  SEARCH_TABLE_MIN_WIDTH,
+  type GridSizesByBreakpoints,
+} from '../Results.styles';
 
 interface SearchResultsSkeletonProps {
   grid: GridSizesByBreakpoints;
@@ -13,8 +17,13 @@ const SearchResultsSkeleton: React.FC<SearchResultsSkeletonProps> = ({ grid }) =
   <SkeletonWrapper
     length={30}
     renderContent={({ randWidth, key }) => (
-      <Grid container sx={{ py: 1.25 }} key={key} wrap='nowrap'>
-        <SearchCol item lg={grid.lg.nm} md={grid.md.nm}>
+      <Grid
+        container
+        sx={{ py: 1.25, minWidth: SEARCH_TABLE_MIN_WIDTH }}
+        key={key}
+        wrap='nowrap'
+      >
+        <SearchCol item lg={grid.lg.nm} md={grid.md.nm} $sticky>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
         <SearchCol item lg={grid.lg.nd} md={grid.md.nd}>
