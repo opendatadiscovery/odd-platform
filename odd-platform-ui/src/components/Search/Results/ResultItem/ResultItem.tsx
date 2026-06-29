@@ -107,7 +107,6 @@ const ResultItem: React.FC<ResultItemProps> = ({
             )}
             <DataEntityDetailsPreview dataEntityId={searchResult.id} />
             <FavoriteStar assetKind={AssetKind.DATA_ENTITY} assetId={searchResult.id} />
-            <RecentlyViewedTag assetKind={AssetKind.DATA_ENTITY} assetId={searchResult.id} />
           </Box>
         </S.NameContainer>
         <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
@@ -245,6 +244,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
       </SearchCol>
       <SearchCol item lg={grid.lg.up} md={grid.md.up}>
         {updatedAtDS}
+      </SearchCol>
+      <SearchCol item lg={grid.lg.rv} md={grid.md.rv}>
+        <RecentlyViewedTag assetKind={AssetKind.DATA_ENTITY} assetId={searchResult.id} />
       </SearchCol>
     </S.Container>
   );

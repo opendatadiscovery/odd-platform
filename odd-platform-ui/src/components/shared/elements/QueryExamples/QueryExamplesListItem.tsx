@@ -6,6 +6,7 @@ import { queryExamplesPath, termDetailsPath } from 'routes';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import FavoriteStar from '../FavoriteStar/FavoriteStar';
+import RecentlyViewedTag from '../RecentlyViewedTag/RecentlyViewedTag';
 import TruncatedCell from '../TruncatedCell/TruncatedCell';
 import Markdown from '../Markdown/Markdown';
 import CollapsibleInfoContainer from '../CollapsibleInfoContainer/CollapsibleInfoContainer';
@@ -72,6 +73,14 @@ const QueryExamplesListItem = ({
       <Table.Cell $flex='1 0 5%'>
         <TruncatedCell dataList={linkedTerms} externalEntityId={1} />
       </Table.Cell>
+      {showFavorite && (
+        <Table.Cell $flex='1 0 10%'>
+          <RecentlyViewedTag
+            assetKind={AssetKind.QUERY_EXAMPLE}
+            assetId={queryExample.id}
+          />
+        </Table.Cell>
+      )}
       <Table.HiddenCell $flex='0 0 15%' $justifyContent='right'>
         <WithPermissions
           permissionTo={

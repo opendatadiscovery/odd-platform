@@ -49,7 +49,7 @@ const QueryExamplesList = () => {
 
   return (
     <>
-      <QueryExamplesListHeader />
+      <QueryExamplesListHeader showRecentlyViewed />
       <ScrollableContainer container id='query-examples-list' $offsetY={165}>
         <InfiniteScroll
           dataLength={queryExamples.length}

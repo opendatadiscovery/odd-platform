@@ -33,7 +33,8 @@ export const SearchCol = styled(Grid)(() => ({
 // cr - Created
 // up - Updated
 // st - Status
-type MainColNames = 'nm' | 'nd' | 'ow' | 'gr' | 'cr' | 'up' | 'st';
+// rv - Recently viewed (per-user; the cell is empty unless the asset is in the user's history)
+type MainColNames = 'nm' | 'nd' | 'ow' | 'gr' | 'cr' | 'up' | 'st' | 'rv';
 // us - Use
 // rc - Rows / Columns
 // sr - Sources
@@ -61,37 +62,43 @@ export interface GridSizesByBreakpoints {
 }
 export type GridSizes = Record<SearchTabsNames, GridSizesByBreakpoints>;
 
+// The Recently-viewed column (rv) is carved from the namespace/owner/group columns (nd/ow/gr),
+// NOT from the Name column (nm) — the name keeps its full width and, with the recency marker moved
+// out of the name cell into this column, actually gains room (#1816 / CTRIB-042). Each variant's total
+// is unchanged.
 export const gridSizes: GridSizes = {
   all: {
-    lg: { nm: 2.68, nd: 2.28, ow: 2.08, gr: 2.28, st: 1, cr: 0.8, up: 0.8 },
-    md: { nm: 2.68, nd: 2.28, ow: 2.08, gr: 2.28, st: 1, cr: 0.8, up: 0.8 },
+    lg: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
+    md: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
   },
   my: {
-    lg: { nm: 2.68, nd: 2.08, ow: 2.08, gr: 2.48, st: 1, cr: 0.8, up: 0.8 },
-    md: { nm: 2.68, nd: 2.08, ow: 2.08, gr: 2.48, st: 1, cr: 0.8, up: 0.8 },
+    lg: { nm: 2.68, nd: 1.68, ow: 1.78, gr: 2.18, st: 1, cr: 0.8, up: 0.8, rv: 1 },
+    md: { nm: 2.68, nd: 1.68, ow: 1.78, gr: 2.18, st: 1, cr: 0.8, up: 0.8, rv: 1 },
   },
   DATA_SET: {
     lg: {
       nm: 2.68,
       us: 0.54,
       rc: 1.04,
-      nd: 1.82,
-      ow: 1.62,
-      gr: 1.62,
+      nd: 1.42,
+      ow: 1.32,
+      gr: 1.32,
       st: 1,
       cr: 0.8,
       up: 0.8,
+      rv: 1,
     },
     md: {
       nm: 2.68,
       us: 0.54,
       rc: 1.04,
-      nd: 1.82,
-      ow: 1.62,
-      gr: 1.62,
+      nd: 1.42,
+      ow: 1.32,
+      gr: 1.32,
       st: 1,
       cr: 0.8,
       up: 0.8,
+      rv: 1,
     },
   },
   DATA_TRANSFORMER: {
@@ -99,63 +106,107 @@ export const gridSizes: GridSizes = {
       nm: 2.68,
       sr: 1.4,
       tr: 1.4,
-      nd: 1.32,
-      ow: 1.3,
-      gr: 1.3,
+      nd: 0.92,
+      ow: 1.0,
+      gr: 1.0,
       st: 1,
       cr: 0.8,
       up: 0.8,
+      rv: 1,
     },
     md: {
       nm: 2.68,
       sr: 1.4,
       tr: 1.4,
-      nd: 1.32,
-      ow: 1.3,
-      gr: 1.3,
+      nd: 0.92,
+      ow: 1.0,
+      gr: 1.0,
       st: 1,
       cr: 0.8,
       up: 0.8,
+      rv: 1,
     },
   },
   DATA_CONSUMER: {
-    lg: { nm: 2.68, sr: 1.68, nd: 1.68, ow: 1.68, gr: 1.68, st: 1, cr: 0.8, up: 0.8 },
-    md: { nm: 2.68, sr: 1.68, nd: 1.68, ow: 1.68, gr: 1.68, st: 1, cr: 0.8, up: 0.8 },
+    lg: {
+      nm: 2.68,
+      sr: 1.68,
+      nd: 1.28,
+      ow: 1.38,
+      gr: 1.38,
+      st: 1,
+      cr: 0.8,
+      up: 0.8,
+      rv: 1,
+    },
+    md: {
+      nm: 2.68,
+      sr: 1.68,
+      nd: 1.28,
+      ow: 1.38,
+      gr: 1.38,
+      st: 1,
+      cr: 0.8,
+      up: 0.8,
+      rv: 1,
+    },
   },
   DATA_INPUT: {
-    lg: { nm: 2.68, nd: 2.18, ow: 2.18, gr: 2.28, st: 1, cr: 0.8, up: 0.8 },
-    md: { nm: 2.68, nd: 2.18, ow: 2.18, gr: 2.28, st: 1, cr: 0.8, up: 0.8 },
+    lg: { nm: 2.68, nd: 1.78, ow: 1.88, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
+    md: { nm: 2.68, nd: 1.78, ow: 1.88, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
   },
   DATA_QUALITY_TEST: {
     lg: {
       nm: 2.68,
       en: 1.4,
       su: 1.4,
-      nd: 1.32,
-      ow: 1.3,
-      gr: 1.3,
+      nd: 0.92,
+      ow: 1.0,
+      gr: 1.0,
       st: 1,
       cr: 0.8,
       up: 0.8,
+      rv: 1,
     },
     md: {
       nm: 2.68,
       en: 1.4,
       su: 1.4,
-      nd: 1.32,
-      ow: 1.3,
-      gr: 1.3,
+      nd: 0.92,
+      ow: 1.0,
+      gr: 1.0,
       st: 1,
       cr: 0.8,
       up: 0.8,
+      rv: 1,
     },
   },
   DATA_ENTITY_GROUP: {
-    lg: { nm: 2.68, ne: 1.09, nd: 1.91, ow: 1.81, gr: 1.91, st: 1, cr: 0.8, up: 0.8 },
-    md: { nm: 2.68, ne: 1.09, nd: 1.91, ow: 1.81, gr: 1.91, st: 1, cr: 0.8, up: 0.8 },
+    lg: {
+      nm: 2.68,
+      ne: 1.09,
+      nd: 1.51,
+      ow: 1.51,
+      gr: 1.61,
+      st: 1,
+      cr: 0.8,
+      up: 0.8,
+      rv: 1,
+    },
+    md: {
+      nm: 2.68,
+      ne: 1.09,
+      nd: 1.51,
+      ow: 1.51,
+      gr: 1.61,
+      st: 1,
+      cr: 0.8,
+      up: 0.8,
+      rv: 1,
+    },
   },
   DATA_RELATIONSHIP: {
-    lg: { nm: 2.68, nd: 2.28, ow: 2.08, gr: 2.28, st: 1, cr: 0.8, up: 0.8 },
-    md: { nm: 2.68, nd: 2.28, ow: 2.08, gr: 2.28, st: 1, cr: 0.8, up: 0.8 },
+    lg: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
+    md: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
   },
 };

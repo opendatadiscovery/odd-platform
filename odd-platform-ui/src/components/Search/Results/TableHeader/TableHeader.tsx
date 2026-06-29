@@ -77,6 +77,9 @@ const TableHeader: React.FC<TableHeaderProps> = ({ grid, isCurrentSearchClass })
       <S.SearchCol item lg={grid.lg.up} md={grid.md.up}>
         <Typography variant='caption'>{t('Updated')}</Typography>
       </S.SearchCol>
+      <S.SearchCol item lg={grid.lg.rv} md={grid.md.rv}>
+        <Typography variant='caption'>{t('Recently viewed')}</Typography>
+      </S.SearchCol>
     </S.ResultsTableHeader>
   );
 };

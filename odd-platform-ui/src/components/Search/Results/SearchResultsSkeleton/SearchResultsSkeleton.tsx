@@ -35,7 +35,7 @@ const SearchResultsSkeleton: React.FC<SearchResultsSkeletonProps> = ({ grid }) =
         <SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
+        <SearchCol item lg={grid.lg.rv} md={grid.md.rv}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
       </Grid>
