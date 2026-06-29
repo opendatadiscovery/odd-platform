@@ -19,6 +19,7 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionKeyDto
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionKeyDto.DATA_ENTITY_ODDRN;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionKeyDto.DATA_ENTITY_OWNER;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionKeyDto.DATA_ENTITY_OWNER_TITLE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionKeyDto.DATA_ENTITY_SUBTYPE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionKeyDto.DATA_ENTITY_TAG_NAME;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionKeyDto.DATA_ENTITY_TYPE;
 import static org.opendatadiscovery.oddplatform.service.policy.comparer.dataentity.DataEntityComparorFactory.dataEntity;
@@ -27,6 +28,7 @@ import static org.opendatadiscovery.oddplatform.service.policy.comparer.dataenti
 import static org.opendatadiscovery.oddplatform.service.policy.comparer.dataentity.DataEntityComparorFactory.dataEntityNamespace;
 import static org.opendatadiscovery.oddplatform.service.policy.comparer.dataentity.DataEntityComparorFactory.dataEntityOwner;
 import static org.opendatadiscovery.oddplatform.service.policy.comparer.dataentity.DataEntityComparorFactory.dataEntityOwnerTitle;
+import static org.opendatadiscovery.oddplatform.service.policy.comparer.dataentity.DataEntityComparorFactory.dataEntitySubtype;
 import static org.opendatadiscovery.oddplatform.service.policy.comparer.dataentity.DataEntityComparorFactory.dataEntityTag;
 import static org.opendatadiscovery.oddplatform.service.policy.comparer.dataentity.DataEntityComparorFactory.dataEntityType;
 
@@ -43,7 +45,8 @@ public class DataEntityConditionResolver extends AbstractConditionResolver<DataE
         entry(DATA_ENTITY_DATASOURCE_NAME, dataEntityDataSource(DataSourcePojo::getName)),
         entry(DATA_ENTITY_NAMESPACE_NAME, dataEntityNamespace(NamespacePojo::getName)),
         entry(DATA_ENTITY_TAG_NAME, dataEntityTag()),
-        entry(DATA_ENTITY_OWNER_TITLE, dataEntityOwnerTitle())
+        entry(DATA_ENTITY_OWNER_TITLE, dataEntityOwnerTitle()),
+        entry(DATA_ENTITY_SUBTYPE, dataEntitySubtype())
     );
 
     @Override

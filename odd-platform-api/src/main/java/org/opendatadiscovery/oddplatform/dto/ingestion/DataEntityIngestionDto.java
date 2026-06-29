@@ -32,6 +32,7 @@ public class DataEntityIngestionDto {
     protected Map<String, Object> metadata;
     protected List<String> tags;
     protected String specificAttributesJson;
+    protected String subtype;
 
     protected DataSetIngestionDto dataSet;
     protected DataTransformerIngestionDto dataTransformer;
