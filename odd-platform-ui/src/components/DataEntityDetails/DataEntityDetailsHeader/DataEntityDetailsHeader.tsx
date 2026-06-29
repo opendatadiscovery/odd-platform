@@ -79,7 +79,11 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
             {internalName || externalName}
           </Typography>
           <FavoriteStar assetKind={AssetKind.DATA_ENTITY} assetId={dataEntityId} />
-          <RecentlyViewedTag assetKind={AssetKind.DATA_ENTITY} assetId={dataEntityId} />
+          <RecentlyViewedTag
+            assetKind={AssetKind.DATA_ENTITY}
+            assetId={dataEntityId}
+            absoluteTime
+          />
           {entityClasses?.map(entityClass => (
             <EntityClassItem
               sx={{ ml: 0.5 }}

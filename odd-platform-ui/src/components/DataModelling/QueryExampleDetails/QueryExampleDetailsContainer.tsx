@@ -50,7 +50,11 @@ const QueryExampleDetailsContainer: React.FC = () => {
         <Box display='flex' alignItems='center'>
           <Typography variant='h1'>{`Query Example #${exampleId}`}</Typography>
           <FavoriteStar assetKind={AssetKind.QUERY_EXAMPLE} assetId={exampleId} />
-          <RecentlyViewedTag assetKind={AssetKind.QUERY_EXAMPLE} assetId={exampleId} />
+          <RecentlyViewedTag
+            assetKind={AssetKind.QUERY_EXAMPLE}
+            assetId={exampleId}
+            absoluteTime
+          />
         </Box>
         <Box display='flex' alignItems='center'>
           <TimeGapIcon />
