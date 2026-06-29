@@ -96,6 +96,9 @@ const TermSearchResults: React.FC = () => {
         <S.TermSearchResultsColContainer item $colType='colsm'>
           <Typography variant='caption'>{t('Last update')}</Typography>
         </S.TermSearchResultsColContainer>
+        <S.TermSearchResultsColContainer item $colType='colsm'>
+          <Typography variant='caption'>{t('Recently viewed')}</Typography>
+        </S.TermSearchResultsColContainer>
         <S.TermSearchResultsColContainer item $colType='colxs' />
       </S.TermSearchResultsTableHeader>
       {isTermSearchCreating ? (

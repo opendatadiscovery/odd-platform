@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { AssetKind, type Term } from 'generated-sources';
-import { FavoriteStar } from 'components/shared/elements';
+import { FavoriteStar, RecentlyViewedTag } from 'components/shared/elements';
 import { useAppDateTime } from 'lib/hooks';
 import { termDetailsPath } from 'routes';
 import {
@@ -66,6 +66,9 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
             {termSearchResult.updatedAt &&
               formatDistanceToNowStrict(termSearchResult.updatedAt, { addSuffix: true })}
           </Typography>
+        </TermSearchResultsColContainer>
+        <TermSearchResultsColContainer item $colType='colsm'>
+          <RecentlyViewedTag assetKind={AssetKind.TERM} assetId={termSearchResult.id} />
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType='colxs' />
       </S.TermSearchResultsContainer>
