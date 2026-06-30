@@ -83,6 +83,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
         container
         justifyContent='space-between'
         wrap='nowrap'
+        $sticky
       >
         <S.NameContainer container item>
           <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>

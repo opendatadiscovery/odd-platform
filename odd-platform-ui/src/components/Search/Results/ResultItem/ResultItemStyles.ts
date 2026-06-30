@@ -1,8 +1,10 @@
 import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { SEARCH_TABLE_MIN_WIDTH } from '../Results.styles';
 
 export const Container = styled(Grid)(({ theme }) => ({
+  minWidth: SEARCH_TABLE_MIN_WIDTH,
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.divider,
   textDecoration: 'none',

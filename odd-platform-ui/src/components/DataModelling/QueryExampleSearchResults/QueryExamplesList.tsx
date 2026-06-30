@@ -48,29 +48,28 @@ const QueryExamplesList = () => {
   );
 
   return (
-    <>
+    <ScrollableContainer container id='query-examples-list' $offsetY={165}>
       <QueryExamplesListHeader showRecentlyViewed />
-      <ScrollableContainer container id='query-examples-list' $offsetY={165}>
-        <InfiniteScroll
-          dataLength={queryExamples.length}
-          next={fetchNextPage}
-          hasMore={hasNextPage}
-          loader={<QueryExamplesSkeleton />}
-          scrollThreshold='200px'
-          scrollableTarget='query-examples-list'
-        >
-          {queryExamples.map(qe => (
-            <QueryExamplesListItem
-              queryExample={qe}
-              showFavorite
-              key={JSON.stringify(qe)}
-            />
-          ))}
-          {isLoading && <QueryExamplesSkeleton />}
-          {isEmpty && <EmptyContentPlaceholder offsetTop={215} />}
-        </InfiniteScroll>
-      </ScrollableContainer>
-    </>
+      <InfiniteScroll
+        dataLength={queryExamples.length}
+        next={fetchNextPage}
+        hasMore={hasNextPage}
+        loader={<QueryExamplesSkeleton />}
+        scrollThreshold='200px'
+        scrollableTarget='query-examples-list'
+        style={{ overflow: 'visible' }}
+      >
+        {queryExamples.map(qe => (
+          <QueryExamplesListItem
+            queryExample={qe}
+            showFavorite
+            key={JSON.stringify(qe)}
+          />
+        ))}
+        {isLoading && <QueryExamplesSkeleton />}
+        {isEmpty && <EmptyContentPlaceholder offsetTop={215} />}
+      </InfiniteScroll>
+    </ScrollableContainer>
   );
 };
 

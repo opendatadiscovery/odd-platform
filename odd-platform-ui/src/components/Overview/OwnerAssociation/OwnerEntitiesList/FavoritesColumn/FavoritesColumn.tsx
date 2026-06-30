@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Link as MuiLink, Typography } from '@mui/material';
+import { Link as MuiLink, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -7,7 +7,7 @@ import { useAppInfo } from 'lib/hooks/api';
 import { fetchFavoritesList } from 'redux/thunks';
 import { getFavoritesList } from 'redux/selectors';
 import { EmptyContentPlaceholder, FavoriteStar } from 'components/shared/elements';
-import { StarIcon } from 'components/shared/icons';
+import { StarIcon, AlertIcon } from 'components/shared/icons';
 import { favoritesPath } from 'routes';
 import {
   favoriteAssetId,
@@ -48,15 +48,21 @@ const FavoritesColumn: React.FC = () => {
           const link = favoriteAssetLink(asset);
           const name = favoriteAssetName(asset);
           const id = favoriteAssetId(asset);
+          // Only data entities carry alerts; a term / query example resolves no dataEntity ref.
+          const hasAlerts = asset.dataEntity?.hasAlerts ?? false;
           return (
             <li key={`${asset.assetKind}:${id}`}>
-              <Grid
+              <S.ListRow
                 container
                 alignItems='center'
                 justifyContent='space-between'
                 flexWrap='nowrap'
+                $hasAlerts={hasAlerts}
               >
                 <S.ListLinkInnerItem $bounded>
+                  {hasAlerts ? (
+                    <AlertIcon sx={{ mr: 0.5 }} data-qa='recommended-alert' />
+                  ) : null}
                   {link ? (
                     <MuiLink
                       component={Link}
@@ -74,7 +80,7 @@ const FavoritesColumn: React.FC = () => {
                   )}
                 </S.ListLinkInnerItem>
                 <FavoriteStar assetKind={asset.assetKind} assetId={id} />
-              </Grid>
+              </S.ListRow>
             </li>
           );
         })}

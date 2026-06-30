@@ -15,8 +15,11 @@ const QueryExamplesListHeader = ({
   const { t } = useTranslation();
 
   return (
-    <Table.HeaderContainer>
-      <Table.Cell $flex='1 0 1'>
+    <Table.HeaderContainer
+      $sticky={showRecentlyViewed}
+      $minWidth={showRecentlyViewed ? Table.QE_TABLE_MIN_WIDTH : undefined}
+    >
+      <Table.Cell $flex='1 0 1' $sticky={showRecentlyViewed}>
         <Typography variant='caption'>#</Typography>
       </Table.Cell>
       <Table.Cell $flex='1 0 15%'>

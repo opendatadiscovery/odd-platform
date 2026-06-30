@@ -26,7 +26,7 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
   return (
     <S.TermSearchResultsItemLink to={termDetailsOverviewLink}>
       <S.TermSearchResultsContainer container>
-        <TermSearchResultsColContainer item $colType='collg'>
+        <TermSearchResultsColContainer item $colType='collg' $sticky>
           <TermSearchNameContainer container item alignItems='center' flexWrap='nowrap'>
             <Typography variant='body1' noWrap>
               {termSearchResult.name}

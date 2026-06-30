@@ -36,8 +36,8 @@ const QueryExamplesListItem = ({
       }))
     : [];
   return (
-    <Table.RowContainer>
-      <Table.Cell $flex='1 0 1'>
+    <Table.RowContainer $minWidth={showFavorite ? Table.QE_TABLE_MIN_WIDTH : undefined}>
+      <Table.Cell $flex='1 0 1' $sticky={showFavorite}>
         <Grid container alignItems='center' flexWrap='nowrap' gap={0.5}>
           <Link to={queryExamplesPath(queryExample.id)}>
             <Typography

@@ -150,35 +150,38 @@ const Results: React.FC = () => {
           />
         )}
       </WithPermissions>
-      <TableHeader grid={grid} isCurrentSearchClass={isCurrentSearchClass} />
-      {isSearchCreating && <SearchResultsSkeleton grid={grid} />}
-      {!isSearchCreatingAndFetching && !isSearchResultsNotLoaded && (
-        <S.ListContainer id='results-list'>
-          <InfiniteScroll
-            dataLength={searchResults.length}
-            next={fetchNextPage}
-            hasMore={hasNext}
-            loader={isSearchFetching && <SearchResultsSkeleton grid={grid} />}
-            scrollThreshold='200px'
-            scrollableTarget='results-list'
-          >
-            {searchResults.map(searchResult => (
-              <ResultItem
-                key={searchResult.id}
-                searchResult={searchResult}
-                gridSizes={grid}
-                searchClassIdPredicate={isCurrentSearchClass}
-                showClassIcons={!searchClass || typeof searchClass === 'string'}
-              />
-            ))}
-          </InfiniteScroll>
-          <EmptyContentPlaceholder
-            isContentLoaded={!isSearchFetching}
-            isContentEmpty={!searchResults.length}
-            text={t('No matches found')}
-          />
-        </S.ListContainer>
-      )}
+      <S.ListContainer id='results-list'>
+        <TableHeader grid={grid} isCurrentSearchClass={isCurrentSearchClass} />
+        {isSearchCreating && <SearchResultsSkeleton grid={grid} />}
+        {!isSearchCreatingAndFetching && !isSearchResultsNotLoaded && (
+          <>
+            <InfiniteScroll
+              dataLength={searchResults.length}
+              next={fetchNextPage}
+              hasMore={hasNext}
+              loader={isSearchFetching && <SearchResultsSkeleton grid={grid} />}
+              scrollThreshold='200px'
+              scrollableTarget='results-list'
+              style={{ overflow: 'visible' }}
+            >
+              {searchResults.map(searchResult => (
+                <ResultItem
+                  key={searchResult.id}
+                  searchResult={searchResult}
+                  gridSizes={grid}
+                  searchClassIdPredicate={isCurrentSearchClass}
+                  showClassIcons={!searchClass || typeof searchClass === 'string'}
+                />
+              ))}
+            </InfiniteScroll>
+            <EmptyContentPlaceholder
+              isContentLoaded={!isSearchFetching}
+              isContentEmpty={!searchResults.length}
+              text={t('No matches found')}
+            />
+          </>
+        )}
+      </S.ListContainer>
       <AppErrorPage
         showError={isSearchResultsNotLoaded}
         error={searchResultsError}
