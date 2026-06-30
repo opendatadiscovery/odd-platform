@@ -63,10 +63,20 @@ export const TermSearchNameContainer = styled(Grid)<GridProps>(() => ({
 }));
 
 export const TermSearchListContainer = styled(Grid)(({ theme }) => ({
-  height: `calc(100vh - ${toolbarHeight}px - ${termSearchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
+  // ONE scroll container for the header + rows (header pins top, Term-name pins left). max-height (not a
+  // fixed height) shrinks the box to the rows so the horizontal scrollbar sits under them, and the
+  // scrollbar is made prominent so the trailing columns are reachable (#1816 / CTRIB-044).
+  maxHeight: `calc(100vh - ${toolbarHeight}px - ${termSearchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
     8
   )})`,
-  // ONE scroll container for the header + rows: the header pins to the top, the Term-name column pins left,
-  // and the table scrolls right past the trailing columns — they stay aligned (#1816 / CTRIB-044).
   overflow: 'auto',
+  '&::-webkit-scrollbar:horizontal': { height: '12px' },
+  '&::-webkit-scrollbar-thumb:horizontal': {
+    backgroundColor: '#C1C7D0',
+    borderRadius: '6px',
+    border: '3px solid transparent',
+    backgroundClip: 'content-box',
+    '&:hover': { backgroundColor: '#8993A4' },
+  },
+  '&::-webkit-scrollbar-track:horizontal': { backgroundColor: '#F4F5F7' },
 }));
