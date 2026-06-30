@@ -6,8 +6,16 @@ type QueryParams<Params extends object> = {
   [Key in keyof Params]: Params[Key];
 };
 
+interface SetQueryParamsOptions {
+  /** navigate to this pathname instead of the current one (the canonical /search base for ST-1 / ADR D10) */
+  pathname?: string;
+  /** replace the current history entry instead of pushing a new one (default: push) */
+  replace?: boolean;
+}
+
 type SetURLQueryParams<Params extends object> = (
-  value: QueryParams<Params> | ((prev: QueryParams<Params>) => QueryParams<Params>)
+  value: QueryParams<Params> | ((prev: QueryParams<Params>) => QueryParams<Params>),
+  options?: SetQueryParamsOptions
 ) => void;
 
 interface UseQueryParamsReturn<Params extends object> {
@@ -50,10 +58,11 @@ const useQueryParams = <Params extends object>(
   );
 
   const setQueryParams = React.useCallback<SetURLQueryParams<Params>>(
-    value => {
+    (value, options) => {
       const newParams = typeof value === 'function' ? value(queryParams) : value;
       const newQueryStr = createQueryString(newParams);
-      navigate(`${location.pathname}?${newQueryStr}`);
+      const pathname = options?.pathname ?? location.pathname;
+      navigate(`${pathname}?${newQueryStr}`, { replace: options?.replace ?? false });
     },
     [queryParams, location.pathname]
   );

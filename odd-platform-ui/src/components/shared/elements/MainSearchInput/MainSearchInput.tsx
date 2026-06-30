@@ -2,9 +2,9 @@ import React, { type FC, useCallback, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { updateDataEntitiesSearch } from 'redux/thunks';
-import { useCreateSearch } from 'lib/hooks';
-import { getSearchId, getSearchQuery } from 'redux/selectors';
+import { useQueryParams } from 'lib/hooks';
+import { searchPath } from 'routes';
+import { getSearchQuery } from 'redux/selectors';
 import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
 import SearchSuggestionsAutocomplete from 'components/shared/elements/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 
@@ -20,10 +20,9 @@ const MainSearchInput: FC<AppSearchProps> = ({
   mainSearch,
 }) => {
   const dispatch = useAppDispatch();
-  const createSearch = useCreateSearch();
   const { t } = useTranslation();
+  const { setQueryParams } = useQueryParams<{ q: string }>({ q: '' });
 
-  const storedSearchId = useAppSelector(getSearchId);
   const searchQuery = useAppSelector(getSearchQuery);
 
   useEffect(() => {
@@ -34,30 +33,22 @@ const MainSearchInput: FC<AppSearchProps> = ({
     return clearSearchQuery();
   }, [mainSearch]);
 
-  const handleCreateSearch = useCallback((query: string) => {
-    const searchFormData = { query, pageSize: 30, filters: {} };
-    createSearch(searchFormData);
-  }, []);
-
-  const handleUpdateSearch = useCallback(
+  // ST-1 / ADR D10 — committing a query navigates to the canonical, shareable param URL (/search?q=…)
+  // instead of POSTing a session (home hero) or PUTting an existing one (search page). The Search page
+  // reads the URL and runs the search; a new history entry is PUSHED so browser back/forward navigates
+  // prior query states. Both entry points (home hero + search page) share this single writer.
+  const handleSearch = useCallback(
     (query: string) => {
-      const searchFormData = { query, pageSize: 30, filters: {} };
-      dispatch(updateDataEntitiesSearch({ searchId: storedSearchId, searchFormData }));
+      setQueryParams({ q: query }, { pathname: searchPath() });
     },
-    [storedSearchId, updateDataEntitiesSearch]
+    [setQueryParams]
   );
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => (query: string) => {
-      if (event.key === 'Enter') {
-        if (mainSearch) {
-          handleCreateSearch(query);
-          return;
-        }
-        handleUpdateSearch(query);
-      }
+      if (event.key === 'Enter') handleSearch(query);
     },
-    [handleUpdateSearch, handleCreateSearch, mainSearch]
+    [handleSearch]
   );
 
   const mainSearchPlaceholder = t('main search placeholder');
@@ -69,7 +60,7 @@ const MainSearchInput: FC<AppSearchProps> = ({
         inputParams={{
           variant: 'search-lg',
           placeholder: placeholder ?? mainSearchPlaceholder,
-          searchAdornmentHandler: mainSearch ? handleCreateSearch : handleUpdateSearch,
+          searchAdornmentHandler: handleSearch,
           onKeyDownHandler: handleKeyDown,
         }}
         disableSuggestions={disableSuggestions}

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { paramsToSearchState } from 'lib/search/searchUrlState';
 import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
@@ -9,8 +11,11 @@ import {
   PageWithLeftSidebar,
   SearchSessionExpired,
 } from 'components/shared/elements';
-import { useCreateSearch } from 'lib/hooks';
-import { getDataEntitiesSearch, updateDataEntitiesSearch } from 'redux/thunks';
+import {
+  createDataEntitiesSearch,
+  getDataEntitiesSearch,
+  updateDataEntitiesSearch,
+} from 'redux/thunks';
 import {
   getSearchCreatingStatuses,
   getSearchError,
@@ -24,7 +29,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
-import { useSearchRouteParams } from 'routes';
+import { searchPath, useSearchRouteParams } from 'routes';
 import { resetLoaderByAction } from 'redux/slices/loader.slice';
 import * as actions from 'redux/actions';
 import Filters from './Filters/Filters';
@@ -34,7 +39,11 @@ const Search: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { searchId: routerSearchId } = useSearchRouteParams();
-  const createSearch = useCreateSearch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  // ST-1 / ADR D10 — one fresh session per /search visit, then updated as the URL query changes.
+  const sessionCreatedRef = React.useRef(false);
+  const ranQueryRef = React.useRef<string>('');
 
   const searchId = useAppSelector(getSearchId);
   const searchQuery = useAppSelector(getSearchQuery);
@@ -52,15 +61,32 @@ const Search: React.FC = () => {
 
   const handleStartNewSearch = React.useCallback(() => {
     dispatch(resetLoaderByAction(actions.getDataEntitySearchActionType));
-    createSearch({ query: '', filters: {} });
-  }, [dispatch, createSearch]);
+    navigate(searchPath());
+  }, [dispatch, navigate]);
+
+  // ST-1 / ADR D10 — the URL is the source of truth for the search query. On /search[?q=…] (NOT a legacy
+  // /search/{sessionId} deep-link, which is loaded by the effect below — D9), run the search from the URL
+  // query: create exactly one fresh session per visit, then UPDATE it whenever the URL query changes
+  // (a new committed query, or browser back/forward). This replaces the old unconditional empty-session
+  // create and dissolves the "Enter before the session exists" race (navigation no longer needs a session).
+  const urlQuery = React.useMemo(
+    () => paramsToSearchState(location.search).query,
+    [location.search]
+  );
 
   React.useEffect(() => {
-    if (!routerSearchId && !isSearchCreating && !searchId) {
-      const searchFormData = { query: '', pageSize: 30, filters: {} };
-      createSearch(searchFormData);
+    if (routerSearchId) return; // a legacy /search/{sessionId} deep-link is loaded by the effect below (D9)
+    if (isSearchCreating) return; // a create is already in flight — wait for it
+    const searchFormData = { query: urlQuery, pageSize: 30, filters: {} };
+    if (!sessionCreatedRef.current) {
+      sessionCreatedRef.current = true;
+      ranQueryRef.current = urlQuery;
+      dispatch(createDataEntitiesSearch({ searchFormData }));
+    } else if (ranQueryRef.current !== urlQuery && searchId) {
+      ranQueryRef.current = urlQuery;
+      dispatch(updateDataEntitiesSearch({ searchId, searchFormData }));
     }
-  }, [routerSearchId, isSearchCreating]);
+  }, [urlQuery, routerSearchId, searchId, isSearchCreating, dispatch]);
 
   React.useEffect(() => {
     if (!searchId && routerSearchId) {
