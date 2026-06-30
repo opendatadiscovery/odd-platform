@@ -246,7 +246,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
       <SearchCol item lg={grid.lg.up} md={grid.md.up}>
         {updatedAtDS}
       </SearchCol>
-      <SearchCol item lg={grid.lg.rv} md={grid.md.rv}>
+      <SearchCol item lg={grid.lg.rv} md={grid.md.rv} $stickyRight>
         <RecentlyViewedTag assetKind={AssetKind.DATA_ENTITY} assetId={searchResult.id} />
       </SearchCol>
     </S.Container>

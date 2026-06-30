@@ -16,10 +16,24 @@ export const SEARCH_TABLE_MIN_WIDTH = 1320;
 // header pins to the top and the Name column pins to the left; the table floors at SEARCH_TABLE_MIN_WIDTH
 // and scrolls right to reach the trailing columns — the AWS-Athena wide-table pattern (#1816 / CTRIB-044).
 export const ListContainer = styled(Grid)(({ theme }) => ({
-  height: `calc(100vh - ${toolbarHeight}px - ${searchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
+  // max-height (not a fixed height) so the box shrinks to the rows when there are few results — the
+  // horizontal scrollbar then sits right under the rows instead of at the bottom of a viewport-tall box.
+  maxHeight: `calc(100vh - ${toolbarHeight}px - ${searchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
     11.5
   )})`,
   overflow: 'auto',
+  // A wide table that overflows needs a CLEARLY VISIBLE horizontal scrollbar to reach the trailing columns
+  // (Status / Created / Updated / Recently viewed + its remove). The global 4px near-white bar is too easy to
+  // miss on a table this wide, so make this one prominent and usable (#1816 / CTRIB-044).
+  '&::-webkit-scrollbar:horizontal': { height: '12px' },
+  '&::-webkit-scrollbar-thumb:horizontal': {
+    backgroundColor: '#C1C7D0',
+    borderRadius: '6px',
+    border: '3px solid transparent',
+    backgroundClip: 'content-box',
+    '&:hover': { backgroundColor: '#8993A4' },
+  },
+  '&::-webkit-scrollbar-track:horizontal': { backgroundColor: '#F4F5F7' },
 }));
 
 export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
@@ -33,20 +47,30 @@ export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
   '& > *': { padding: theme.spacing(0, 1) },
 }));
 
-export const SearchCol = styled(Grid)<{ $sticky?: boolean }>(({ theme, $sticky }) => ({
-  display: 'flex',
-  overflow: 'hidden',
-  paddingRight: '8px',
-  paddingLeft: '8px',
-  // The Name column is pinned to the left edge while the rest of the row scrolls horizontally; it needs an
-  // opaque background so the scrolling columns pass behind it, not through it (#1816 / CTRIB-044).
-  ...($sticky && {
-    position: 'sticky',
-    left: 0,
-    zIndex: 1,
-    backgroundColor: theme.palette.background.default,
-  }),
-}));
+export const SearchCol = styled(Grid)<{ $sticky?: boolean; $stickyRight?: boolean }>(
+  ({ theme, $sticky, $stickyRight }) => ({
+    display: 'flex',
+    overflow: 'hidden',
+    paddingRight: '8px',
+    paddingLeft: '8px',
+    // The Name column is pinned to the LEFT edge and the Recently-viewed column to the RIGHT edge while the
+    // middle columns scroll horizontally between them — so the recency value + its remove control are always
+    // on screen on a narrow viewport, no scrolling required. Each pinned column needs an opaque background so
+    // the scrolling columns pass behind it, not through it (#1816 / CTRIB-044).
+    ...($sticky && {
+      position: 'sticky',
+      left: 0,
+      zIndex: 1,
+      backgroundColor: theme.palette.background.default,
+    }),
+    ...($stickyRight && {
+      position: 'sticky',
+      right: 0,
+      zIndex: 1,
+      backgroundColor: theme.palette.background.default,
+    }),
+  })
+);
 
 // nm - Name
 // nd - Namespace, Datasource
@@ -90,12 +114,12 @@ export type GridSizes = Record<SearchTabsNames, GridSizesByBreakpoints>;
 // is unchanged.
 export const gridSizes: GridSizes = {
   all: {
-    lg: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
-    md: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
+    lg: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1.6 },
+    md: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1.6 },
   },
   my: {
-    lg: { nm: 2.68, nd: 1.68, ow: 1.78, gr: 2.18, st: 1, cr: 0.8, up: 0.8, rv: 1 },
-    md: { nm: 2.68, nd: 1.68, ow: 1.78, gr: 2.18, st: 1, cr: 0.8, up: 0.8, rv: 1 },
+    lg: { nm: 2.68, nd: 1.68, ow: 1.78, gr: 2.18, st: 1, cr: 0.8, up: 0.8, rv: 1.6 },
+    md: { nm: 2.68, nd: 1.68, ow: 1.78, gr: 2.18, st: 1, cr: 0.8, up: 0.8, rv: 1.6 },
   },
   DATA_SET: {
     lg: {
@@ -108,7 +132,7 @@ export const gridSizes: GridSizes = {
       st: 1,
       cr: 0.8,
       up: 0.8,
-      rv: 1,
+      rv: 1.6,
     },
     md: {
       nm: 2.68,
@@ -120,7 +144,7 @@ export const gridSizes: GridSizes = {
       st: 1,
       cr: 0.8,
       up: 0.8,
-      rv: 1,
+      rv: 1.6,
     },
   },
   DATA_TRANSFORMER: {
@@ -134,7 +158,7 @@ export const gridSizes: GridSizes = {
       st: 1,
       cr: 0.8,
       up: 0.8,
-      rv: 1,
+      rv: 1.6,
     },
     md: {
       nm: 2.68,
@@ -146,7 +170,7 @@ export const gridSizes: GridSizes = {
       st: 1,
       cr: 0.8,
       up: 0.8,
-      rv: 1,
+      rv: 1.6,
     },
   },
   DATA_CONSUMER: {
@@ -159,7 +183,7 @@ export const gridSizes: GridSizes = {
       st: 1,
       cr: 0.8,
       up: 0.8,
-      rv: 1,
+      rv: 1.6,
     },
     md: {
       nm: 2.68,
@@ -170,12 +194,12 @@ export const gridSizes: GridSizes = {
       st: 1,
       cr: 0.8,
       up: 0.8,
-      rv: 1,
+      rv: 1.6,
     },
   },
   DATA_INPUT: {
-    lg: { nm: 2.68, nd: 1.78, ow: 1.88, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
-    md: { nm: 2.68, nd: 1.78, ow: 1.88, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
+    lg: { nm: 2.68, nd: 1.78, ow: 1.88, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1.6 },
+    md: { nm: 2.68, nd: 1.78, ow: 1.88, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1.6 },
   },
   DATA_QUALITY_TEST: {
     lg: {
@@ -188,7 +212,7 @@ export const gridSizes: GridSizes = {
       st: 1,
       cr: 0.8,
       up: 0.8,
-      rv: 1,
+      rv: 1.6,
     },
     md: {
       nm: 2.68,
@@ -200,7 +224,7 @@ export const gridSizes: GridSizes = {
       st: 1,
       cr: 0.8,
       up: 0.8,
-      rv: 1,
+      rv: 1.6,
     },
   },
   DATA_ENTITY_GROUP: {
@@ -213,7 +237,7 @@ export const gridSizes: GridSizes = {
       st: 1,
       cr: 0.8,
       up: 0.8,
-      rv: 1,
+      rv: 1.6,
     },
     md: {
       nm: 2.68,
@@ -224,11 +248,11 @@ export const gridSizes: GridSizes = {
       st: 1,
       cr: 0.8,
       up: 0.8,
-      rv: 1,
+      rv: 1.6,
     },
   },
   DATA_RELATIONSHIP: {
-    lg: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
-    md: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1 },
+    lg: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1.6 },
+    md: { nm: 2.68, nd: 1.88, ow: 1.78, gr: 1.98, st: 1, cr: 0.8, up: 0.8, rv: 1.6 },
   },
 };
