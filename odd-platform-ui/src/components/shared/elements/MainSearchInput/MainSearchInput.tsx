@@ -37,9 +37,12 @@ const MainSearchInput: FC<AppSearchProps> = ({
   // instead of POSTing a session (home hero) or PUTting an existing one (search page). The Search page
   // reads the URL and runs the search; a new history entry is PUSHED so browser back/forward navigates
   // prior query states. Both entry points (home hero + search page) share this single writer.
+  // ST-1b — merge q into the CURRENT params via the function updater so a query commit PRESERVES the active
+  // facet params in the URL. `prev` is parsed live from location.search (useQueryParams), so `{ q }` alone
+  // would replace the params and silently clear the filters (the clobber); the spread keeps them.
   const handleSearch = useCallback(
     (query: string) => {
-      setQueryParams({ q: query }, { pathname: searchPath() });
+      setQueryParams(prev => ({ ...prev, q: query }), { pathname: searchPath() });
     },
     [setQueryParams]
   );
