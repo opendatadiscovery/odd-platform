@@ -17,6 +17,7 @@ import type {
   CountableSearchFilter,
   SearchFacetsData,
   SearchFilter,
+  SearchFormData,
 } from 'generated-sources';
 import { assignWith } from 'redux/lib/helpers';
 
@@ -40,12 +41,13 @@ const isSearchIdsEquals = (oldId: string, newId: string) => oldId === newId;
 
 const updateSearchState = (
   state: DataEntitySearchState,
-  { payload }: { payload: SearchFacetsData }
+  { payload, meta }: { payload: SearchFacetsData; meta?: { arg?: unknown } }
 ): DataEntitySearchState => {
   const { facetState, searchId, query, myObjects, total, myObjectsTotal } = payload;
 
   const setFacetOptionsById = (
-    facetOptions: CountableSearchFilter[] | SearchFilter[] | undefined
+    facetOptions: CountableSearchFilter[] | SearchFilter[] | undefined,
+    facetName: string
   ) =>
     reduce<CountableSearchFilter | SearchFilter, SearchFacetStateById>(
       facetOptions,
@@ -53,7 +55,13 @@ const updateSearchState = (
         ...memo,
         [facetOption.id]: {
           entityId: facetOption.id,
-          entityName: facetOption.name,
+          // A URL-derived create request carries facet IDS only, and the server echoes the request's names
+          // back — so an echoed sidebar filter can arrive name-less (name:null on the wire). Never let that
+          // blank a label the client already knows (the optimistic entry / a prior response). A fresh
+          // deep-link has no known name to preserve — recipient-side label backfill is a logged follow-up.
+          entityName:
+            facetOption.name ??
+            state.facetState[facetName as SearchFacetNames]?.[facetOption.id]?.entityName,
           selected: 'selected' in facetOption ? !!facetOption.selected : true,
           syncedState: true,
         },
@@ -88,19 +96,37 @@ const updateSearchState = (
 
   // ST-1b — create-per-URL-state (the reader creates a fresh session per distinct URL) makes EVERY committed
   // state a NEW searchId, so the new-session branch below runs each time. A plain REPLACE would drop an option
-  // the user toggled WHILE this create was in flight (an optimistic `syncedState:false` entry not yet
-  // reflected by any create) — a reachable lost-update on a rapid 2nd facet selection. Carry those PENDING
-  // locals forward (the server response stays authoritative for every option it covers); keep
-  // `isFacetsStateSynced` false while any pending local remains, so the mirror re-fires and creates the newer
-  // state. The same-session branch is unchanged (no new session ⇒ no pending-local carry ⇒ synced stays true).
+  // the user toggled WHILE this create was in flight (an optimistic entry the create never saw) — a reachable
+  // lost-update on a rapid 2nd facet toggle. Reconcile against what THIS create actually requested
+  // (`meta.arg.searchFormData.filters`): an optimistic option whose `selected` differs from the request is a
+  // PENDING change made AFTER the create was issued — keep it (so `isFacetsStateSynced` stays false, the mirror
+  // re-fires, and the newer state is created); everything the create covered takes the authoritative server
+  // value. This handles a pending SELECT and a pending DESELECT symmetrically — a `!(id in serverFacet)`
+  // heuristic could not REMOVE a facet, because a facet deselected mid-flight is still `selected` in that
+  // create's response (the B1 lost-update / stranded-`synced` class). A legacy `get.fulfilled` carries no
+  // `searchFormData` ⇒ requested empty ⇒ a clean REPLACE (a legacy session load has no optimistic locals).
   const isNewSession = !isSearchIdsEquals(state.searchId, searchId);
+
+  // `meta.arg` is the thunk arg (typed `unknown` — the shared handler serves create/update/get, whose arg
+  // shapes differ). The create (and legacy update) arg carries `searchFormData`; a legacy session GET has
+  // none → requested empty → a clean REPLACE (correct: a legacy load has no optimistic locals to reconcile).
+  const requestedFilters = (meta?.arg as { searchFormData?: SearchFormData } | undefined)
+    ?.searchFormData?.filters;
+  const requestedSelectedIds = (facetName: SearchFacetNames): Set<number> =>
+    new Set(
+      (requestedFilters?.[facetName] ?? [])
+        .filter(filter => filter.selected)
+        .map(filter => filter.entityId)
+    );
 
   const carryPendingLocals = (facetName: string): SearchFacetStateById => {
     const serverFacet = newSearchFacetsById[facetName as SearchFacetNames] || {};
     const oldFacet = state.facetState[facetName as SearchFacetNames] || {};
+    const requestedSelected = requestedSelectedIds(facetName as SearchFacetNames);
     const pendingLocals = pickBy(
       oldFacet,
-      (option, id) => !option.syncedState && !(id in serverFacet)
+      option =>
+        !option.syncedState && option.selected !== requestedSelected.has(option.entityId)
     );
     return { ...serverFacet, ...pendingLocals };
   };
