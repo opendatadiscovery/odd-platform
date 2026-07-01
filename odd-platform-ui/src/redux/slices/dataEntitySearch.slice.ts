@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import mapValues from 'lodash/mapValues';
 import reduce from 'lodash/reduce';
 import values from 'lodash/values';
+import pickBy from 'lodash/pickBy';
 import get from 'lodash/get';
 import { dataEntitiesSearchActionTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
@@ -85,16 +86,45 @@ const updateSearchState = (
       }
     );
 
+  // ST-1b — create-per-URL-state (the reader creates a fresh session per distinct URL) makes EVERY committed
+  // state a NEW searchId, so the new-session branch below runs each time. A plain REPLACE would drop an option
+  // the user toggled WHILE this create was in flight (an optimistic `syncedState:false` entry not yet
+  // reflected by any create) — a reachable lost-update on a rapid 2nd facet selection. Carry those PENDING
+  // locals forward (the server response stays authoritative for every option it covers); keep
+  // `isFacetsStateSynced` false while any pending local remains, so the mirror re-fires and creates the newer
+  // state. The same-session branch is unchanged (no new session ⇒ no pending-local carry ⇒ synced stays true).
+  const isNewSession = !isSearchIdsEquals(state.searchId, searchId);
+
+  const carryPendingLocals = (facetName: string): SearchFacetStateById => {
+    const serverFacet = newSearchFacetsById[facetName as SearchFacetNames] || {};
+    const oldFacet = state.facetState[facetName as SearchFacetNames] || {};
+    const pendingLocals = pickBy(
+      oldFacet,
+      (option, id) => !option.syncedState && !(id in serverFacet)
+    );
+    return { ...serverFacet, ...pendingLocals };
+  };
+
+  const nextFacetState = isNewSession
+    ? mapValues({ ...state.facetState, ...newSearchFacetsById }, (_facet, facetName) =>
+        carryPendingLocals(facetName)
+      )
+    : mapValues(state.facetState, assignFacetStateWithNewFacets);
+
+  const hasPendingLocals =
+    isNewSession &&
+    values(nextFacetState).some(facet =>
+      values(facet).some(option => !option.syncedState)
+    );
+
   return {
     ...state,
     searchId,
     query,
     myObjects: !!myObjects,
     totals,
-    facetState: !isSearchIdsEquals(state.searchId, searchId)
-      ? newSearchFacetsById
-      : mapValues(state.facetState, assignFacetStateWithNewFacets),
-    isFacetsStateSynced: true,
+    facetState: nextFacetState,
+    isFacetsStateSynced: !hasPendingLocals,
     results: {
       items: [],
       pageInfo: { page: 0, total: total || 0, hasNext: true },
