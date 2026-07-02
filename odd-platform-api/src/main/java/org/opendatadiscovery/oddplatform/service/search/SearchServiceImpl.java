@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
@@ -129,8 +130,13 @@ public class SearchServiceImpl implements SearchService {
             .flatMap(owner -> reactiveDataEntityRepository.countByState(state, owner))
             .switchIfEmpty(Mono.just(0L));
 
-        return Mono.zip(entityClassFacet, allCount, myObjectsCount).map(
-            function((entityClassFacetMap, totalCount, myObjectsTotalCount) -> {
+        // ST-1d (#1825) — resolve the selected facets' display names so a URL-derived (id-only) request echoes
+        // labelled chips, not name-less ones. Runs in parallel with the counts; the fill happens in the combinator
+        // once every source has completed, so no source reads the state mid-mutation.
+        final Mono<Map<FacetType, Map<Long, String>>> facetNames = searchFacetRepository.resolveFacetNames(state);
+
+        return Mono.zip(entityClassFacet, allCount, myObjectsCount, facetNames).map(
+            function((entityClassFacetMap, totalCount, myObjectsTotalCount, resolvedFacetNames) -> {
                 final List<CountableSearchFilter> entityClasses = entityClassFacetMap.entrySet().stream()
                     .map(e -> searchMapper.mapCountableSearchFilter(e.getKey(), e.getValue()))
                     .sorted(Comparator.comparing(CountableSearchFilter::getCount).reversed())
@@ -144,6 +150,8 @@ public class SearchServiceImpl implements SearchService {
                     }
                 });
 
+                fillResolvedFacetNames(state, resolvedFacetNames);
+
                 return new SearchFacetsData()
                     .searchId(searchId)
                     .query(state.getQuery())
@@ -152,6 +160,23 @@ public class SearchServiceImpl implements SearchService {
                     .myObjects(state.isMyObjects())
                     .facetState(facetStateMapper.mapDto(entityClasses, state));
             }));
+    }
+
+    // ST-1d — fill each selected facet option's name from the resolved map, but ONLY where the request left it
+    // blank (a URL-derived id-only request). A name the client DID send is preserved (the interactive /
+    // label-preserve path), and an id that no longer resolves stays blank — fail-soft, exactly as before.
+    private void fillResolvedFacetNames(final FacetStateDto state,
+                                        final Map<FacetType, Map<Long, String>> resolvedFacetNames) {
+        resolvedFacetNames.forEach((type, names) -> {
+            for (final SearchFilterDto filter : state.getFacetEntities(type)) {
+                if (StringUtils.isEmpty(filter.getEntityName())) {
+                    final String resolvedName = names.get(filter.getEntityId());
+                    if (resolvedName != null) {
+                        filter.setEntityName(resolvedName);
+                    }
+                }
+            }
+        });
     }
 
     private Mono<SearchFacetsPojo> fetchFacetState(final UUID searchId) {
