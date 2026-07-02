@@ -1,9 +1,11 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { paramsToSearchState } from 'lib/search/searchUrlState';
+import {
+  paramsToSearchState,
+  searchStateToParams,
+  searchUrlStateToFormData,
+} from 'lib/search/searchUrlState';
 import { useDebouncedCallback } from 'use-debounce';
-import mapValues from 'lodash/mapValues';
-import values from 'lodash/values';
 import { useTranslation } from 'react-i18next';
 import {
   AppErrorPage,
@@ -11,20 +13,14 @@ import {
   PageWithLeftSidebar,
   SearchSessionExpired,
 } from 'components/shared/elements';
-import {
-  createDataEntitiesSearch,
-  getDataEntitiesSearch,
-  updateDataEntitiesSearch,
-} from 'redux/thunks';
+import { createDataEntitiesSearch, getDataEntitiesSearch } from 'redux/thunks';
 import {
   getSearchCreatingStatuses,
   getSearchError,
-  getSearchFacetsData,
   getSearchFacetsSynced,
   getSearchFetchStatuses,
   getSearchId,
-  getSearchMyObjects,
-  getSearchQuery,
+  getSearchUrlState,
 } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
@@ -41,15 +37,10 @@ const Search: React.FC = () => {
   const { searchId: routerSearchId } = useSearchRouteParams();
   const navigate = useNavigate();
   const location = useLocation();
-  // ST-1 / ADR D10 — one fresh session per /search visit, then updated as the URL query changes.
-  const sessionCreatedRef = React.useRef(false);
-  const ranQueryRef = React.useRef<string>('');
 
   const searchId = useAppSelector(getSearchId);
-  const searchQuery = useAppSelector(getSearchQuery);
-  const searchMyObjects = useAppSelector(getSearchMyObjects);
-  const searchFacetParams = useAppSelector(getSearchFacetsData);
   const searchFacetsSynced = useAppSelector(getSearchFacetsSynced);
+  const searchUrlState = useAppSelector(getSearchUrlState);
   const { isLoading: isSearchCreating } = useAppSelector(getSearchCreatingStatuses);
   const { isNotLoaded: isSearchNotLoaded } = useAppSelector(getSearchFetchStatuses);
   const searchError = useAppSelector(getSearchError);
@@ -64,29 +55,29 @@ const Search: React.FC = () => {
     navigate(searchPath());
   }, [dispatch, navigate]);
 
-  // ST-1 / ADR D10 — the URL is the source of truth for the search query. On /search[?q=…] (NOT a legacy
-  // /search/{sessionId} deep-link, which is loaded by the effect below — D9), run the search from the URL
-  // query: create exactly one fresh session per visit, then UPDATE it whenever the URL query changes
-  // (a new committed query, or browser back/forward). This replaces the old unconditional empty-session
-  // create and dissolves the "Enter before the session exists" race (navigation no longer needs a session).
-  const urlQuery = React.useMemo(
-    () => paramsToSearchState(location.search).query,
+  // ST-1 / ADR D10 — the URL is the source of truth for the whole search (query + facets + myObjects). ST-1b
+  // makes it authoritative for FACETS too: the reader CREATEs a fresh session per distinct URL state, because
+  // the server's search() runs removeUnselected (a REPLACE), so the URL's selected id set is the complete,
+  // authoritative facet spec — a plain updateFacets MERGEs a delta and could never REMOVE a facet the URL
+  // dropped (deselect / Clear-All / class-switch). Not a legacy /search/{sessionId} deep-link (loaded by the
+  // effect below — D9). `page` is not serialised (infinite scroll — Results.tsx).
+  const urlState = React.useMemo(
+    () => paramsToSearchState(location.search),
     [location.search]
   );
+  const urlStateKey = React.useMemo(() => searchStateToParams(urlState), [urlState]);
+  const lastAppliedStateRef = React.useRef<string | null>(null);
 
   React.useEffect(() => {
     if (routerSearchId) return; // a legacy /search/{sessionId} deep-link is loaded by the effect below (D9)
-    if (isSearchCreating) return; // a create is already in flight — wait for it
-    const searchFormData = { query: urlQuery, pageSize: 30, filters: {} };
-    if (!sessionCreatedRef.current) {
-      sessionCreatedRef.current = true;
-      ranQueryRef.current = urlQuery;
-      dispatch(createDataEntitiesSearch({ searchFormData }));
-    } else if (ranQueryRef.current !== urlQuery && searchId) {
-      ranQueryRef.current = urlQuery;
-      dispatch(updateDataEntitiesSearch({ searchId, searchFormData }));
-    }
-  }, [urlQuery, routerSearchId, searchId, isSearchCreating, dispatch]);
+    // A create is in flight — defer; this effect re-runs when it clears, so the NEWEST URL state is never
+    // lost (load-bearing — do not remove: it serialises overlapping creates from a rapid facet burst).
+    if (isSearchCreating) return;
+    if (lastAppliedStateRef.current === urlStateKey) return; // this exact URL state already ran
+    lastAppliedStateRef.current = urlStateKey;
+    const searchFormData = { ...searchUrlStateToFormData(urlState), pageSize: 30 };
+    dispatch(createDataEntitiesSearch({ searchFormData }));
+  }, [urlStateKey, urlState, routerSearchId, isSearchCreating, dispatch]);
 
   React.useEffect(() => {
     if (!searchId && routerSearchId) {
@@ -94,28 +85,23 @@ const Search: React.FC = () => {
     }
   }, [searchId, routerSearchId]);
 
-  const updateSearchFacets = React.useCallback(
-    useDebouncedCallback(
-      () => {
-        const searchFormData = {
-          query: searchQuery,
-          myObjects: searchMyObjects,
-          filters: mapValues(searchFacetParams, values),
-        };
-
-        dispatch(updateDataEntitiesSearch({ searchId, searchFormData }));
-      },
-      1500,
-      { leading: true }
-    ),
-    [searchId, searchFacetParams]
-  );
+  // ST-1b — the facet→URL mirror. On a LOCAL facet change (isFacetsStateSynced=false, set by every toggle
+  // site: the Filters sidebar select/deselect, Clear-All, AND the Results class / My-Objects tabs) write the
+  // full search state to the URL, debounced, PUSHed so each committed filter set is a back/forward stop.
+  // Reacting to the SLICE (getSearchUrlState) covers every dispatch site without touching them (the round-1
+  // census fix). The server response sets synced=true, so the mirror never re-fires on repopulation (no
+  // loop); the normalised equality guard skips a redundant navigate. The reader above then runs the new URL.
+  const writeStateToUrl = useDebouncedCallback(() => {
+    const nextParams = searchStateToParams(searchUrlState);
+    if (nextParams !== location.search.replace(/^\?/, '')) {
+      navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);
+    }
+  }, 400);
 
   React.useEffect(() => {
-    if (!searchFacetsSynced) {
-      updateSearchFacets();
-    }
-  }, [searchFacetParams]);
+    if (routerSearchId) return; // a legacy session deep-link is not mirrored to the param URL (D9)
+    if (!searchFacetsSynced) writeStateToUrl();
+  }, [searchUrlState, searchFacetsSynced, routerSearchId, writeStateToUrl]);
 
   if (isSearchSessionExpired) {
     return <SearchSessionExpired onStartNewSearch={handleStartNewSearch} />;

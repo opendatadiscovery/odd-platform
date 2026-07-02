@@ -25,6 +25,11 @@ import {
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import { emptyArr } from 'lib/constants';
+import {
+  SEARCH_FACET_PARAMS,
+  type SearchUrlFacets,
+  type SearchUrlState,
+} from 'lib/search/searchUrlState';
 
 const searchState = ({ dataEntitySearch }: RootState): DataEntitySearchState =>
   dataEntitySearch;
@@ -157,3 +162,22 @@ export const getDataEntitySearchHighlights = (dataEntityId: number) =>
     (search): DataEntitySearchHighlight | undefined =>
       search.dataEntitySearchHighlightById[dataEntityId]
   );
+
+/**
+ * ST-1b / ADR D10 — project the current search slice onto the shareable URL state (the selected facet ids per
+ * dimension + query + myObjects). The mirror in `Search.tsx` serialises this to the URL on a local facet
+ * change. Only numeric, selected option ids are emitted — the `'my'`/`'all'` pseudo-classes are not facet ids
+ * (`'my'` rides the separate `myObjects` boolean).
+ */
+export const getSearchUrlState = createSelector(searchState, (search): SearchUrlState => {
+  const facets: SearchUrlFacets = {};
+  SEARCH_FACET_PARAMS.forEach(name => {
+    const byId = search.facetState[name];
+    if (!byId) return;
+    const ids = values(byId)
+      .filter(option => option.selected && typeof option.entityId === 'number')
+      .map(option => option.entityId as number);
+    if (ids.length > 0) facets[name] = ids;
+  });
+  return { query: search.query, facets, myObjects: search.myObjects };
+});

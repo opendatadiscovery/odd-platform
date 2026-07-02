@@ -170,7 +170,11 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             .owners(getSearchFiltersForFacetType(state, FacetType.OWNERS))
             .namespaces(getSearchFiltersForFacetType(state, FacetType.NAMESPACES))
             .tags(getSearchFiltersForFacetType(state, FacetType.TAGS))
-            .groups(getSearchFiltersForFacetType(state, FacetType.GROUPS));
+            .groups(getSearchFiltersForFacetType(state, FacetType.GROUPS))
+            // The status facet is filtered on (FORM_MAPPINGS above) but was never echoed back, so the FE could
+            // not reflect a selected status (chip) and the client's URL-driven search state could not resolve
+            // to "synced". FacetState.statuses is a NOT_REQUIRED contract field — this is an additive fill.
+            .statuses(getSearchFiltersForFacetType(state, FacetType.STATUSES));
     }
 
     private SearchFilterDto mapFilter(final SearchFilterState f, final FacetType type) {
