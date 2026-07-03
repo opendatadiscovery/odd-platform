@@ -1,8 +1,9 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import type { SearchFilter, SearchFilterState } from 'generated-sources';
-import { TextFormatted, Button } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import type { OptionalFacetNames } from 'redux/interfaces';
+import formatFacetName from 'components/Search/Filters/formatFacetName';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
@@ -33,7 +34,7 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({ filter, facetName }) 
   return (
     <S.Container>
       <Typography noWrap title={filterName}>
-        <TextFormatted value={filterName} />
+        {formatFacetName(facetName, filterName)}
       </Typography>
       <Button
         sx={{ ml: 0.5 }}
