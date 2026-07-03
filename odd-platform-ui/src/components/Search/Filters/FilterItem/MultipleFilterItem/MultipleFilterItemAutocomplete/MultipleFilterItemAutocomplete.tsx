@@ -14,6 +14,7 @@ import type {
 } from 'generated-sources';
 import { Input } from 'components/shared/elements';
 import { ClearIcon, DropdownIcon } from 'components/shared/icons';
+import formatFacetName from 'components/Search/Filters/formatFacetName';
 import { type OptionalFacetNames } from 'redux/interfaces';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDataEntitySearchFacetOptions } from 'redux/thunks';
@@ -125,8 +126,7 @@ const MultipleFilterItemAutocomplete: React.FC<MultipleFilterItemAutocompletePro
     option: FilterOption,
     state: AutocompleteRenderOptionState
   ) => {
-    const formattedOptionName =
-      facetName === 'types' ? option.name.replaceAll('_', ' ') : option.name;
+    const formattedOptionName = formatFacetName(facetName, option.name);
     if (!state.inputValue) {
       return (
         <li {...props}>
