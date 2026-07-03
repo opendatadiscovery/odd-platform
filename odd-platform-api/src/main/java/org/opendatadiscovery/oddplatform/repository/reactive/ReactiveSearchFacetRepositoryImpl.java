@@ -2,10 +2,13 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -531,6 +534,83 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             .filter(s -> StringUtils.isEmpty(query)
                 || StringUtils.containsIgnoreCase(query, s.getLeft().getName()))
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight, (t1, t2) -> t1 == 0 ? t2 : t1));
+    }
+
+    @Override
+    public Mono<Map<FacetType, Map<Long, String>>> resolveFacetNames(final FacetStateDto state) {
+        // Enum-backed facets resolve in-process — no query.
+        final Map<FacetType, Map<Long, String>> enumResolved = new EnumMap<>(FacetType.class);
+        putIfNotEmpty(enumResolved, FacetType.TYPES, resolveEnumFacet(state, FacetType.TYPES,
+            id -> DataEntityTypeDto.findById(id.intValue()).map(Enum::name).orElse(null)));
+        putIfNotEmpty(enumResolved, FacetType.STATUSES, resolveEnumFacet(state, FacetType.STATUSES,
+            id -> DataEntityStatusDto.findById(id.shortValue()).map(Enum::name).orElse(null)));
+
+        // DB-backed facets — one batched "id IN (selected ids)" lookup each; skipped when none is selected.
+        final List<Mono<Pair<FacetType, Map<Long, String>>>> dbResolvers = List.of(
+            resolveDbFacet(state, FacetType.OWNERS, OWNER, OWNER.ID, OWNER.NAME),
+            resolveDbFacet(state, FacetType.TAGS, TAG, TAG.ID, TAG.NAME),
+            resolveDbFacet(state, FacetType.NAMESPACES, NAMESPACE, NAMESPACE.ID, NAMESPACE.NAME),
+            resolveDbFacet(state, FacetType.DATA_SOURCES, DATA_SOURCE, DATA_SOURCE.ID, DATA_SOURCE.NAME),
+            resolveGroupFacet(state)
+        );
+
+        // collectList always emits (an empty list when every DB facet is unselected) — never Mono.empty().
+        return Flux.merge(dbResolvers)
+            .collectList()
+            .map(dbPairs -> {
+                final Map<FacetType, Map<Long, String>> resolved = new EnumMap<>(FacetType.class);
+                resolved.putAll(enumResolved);
+                dbPairs.forEach(p -> resolved.put(p.getLeft(), p.getRight()));
+                return resolved;
+            });
+    }
+
+    private Map<Long, String> resolveEnumFacet(final FacetStateDto state, final FacetType type,
+                                               final Function<Long, String> nameResolver) {
+        final Map<Long, String> names = new HashMap<>();
+        for (final Long id : state.getFacetEntitiesIds(type)) {
+            final String name = nameResolver.apply(id);
+            if (name != null) {
+                names.put(id, name);
+            }
+        }
+        return names;
+    }
+
+    private void putIfNotEmpty(final Map<FacetType, Map<Long, String>> target, final FacetType type,
+                               final Map<Long, String> names) {
+        if (!names.isEmpty()) {
+            target.put(type, names);
+        }
+    }
+
+    private Mono<Pair<FacetType, Map<Long, String>>> resolveDbFacet(final FacetStateDto state, final FacetType type,
+                                                                    final Table<?> table, final Field<Long> idField,
+                                                                    final Field<String> nameField) {
+        final Set<Long> ids = state.getFacetEntitiesIds(type);
+        if (ids.isEmpty()) {
+            return Mono.empty();
+        }
+        final var select = DSL.select(idField, nameField).from(table).where(idField.in(ids));
+        return jooqReactiveOperations.flux(select)
+            .filter(r -> r.component2() != null)
+            .collect(Collectors.toMap(r -> r.component1(), r -> r.component2()))
+            .map(names -> Pair.of(type, names));
+    }
+
+    private Mono<Pair<FacetType, Map<Long, String>>> resolveGroupFacet(final FacetStateDto state) {
+        final Set<Long> ids = state.getFacetEntitiesIds(FacetType.GROUPS);
+        if (ids.isEmpty()) {
+            return Mono.empty();
+        }
+        // A group's display name is its data-entity name (internal preferred over external) — same source the
+        // group facet histogram uses.
+        final Field<String> groupName = coalesce(DATA_ENTITY.INTERNAL_NAME, DATA_ENTITY.EXTERNAL_NAME);
+        final var select = DSL.select(DATA_ENTITY.ID, groupName).from(DATA_ENTITY).where(DATA_ENTITY.ID.in(ids));
+        return jooqReactiveOperations.flux(select)
+            .filter(r -> r.component2() != null)
+            .collect(Collectors.toMap(r -> r.component1(), r -> r.component2()))
+            .map(names -> Pair.of(FacetType.GROUPS, names));
     }
 
     private List<Integer> typeIdsByName(final String name) {
