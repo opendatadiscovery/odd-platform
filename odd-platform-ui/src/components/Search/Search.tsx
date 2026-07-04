@@ -92,7 +92,11 @@ const Search: React.FC = () => {
   // census fix). The server response sets synced=true, so the mirror never re-fires on repopulation (no
   // loop); the normalised equality guard skips a redundant navigate. The reader above then runs the new URL.
   const writeStateToUrl = useDebouncedCallback(() => {
-    const nextParams = searchStateToParams(searchUrlState);
+    // ST-2b — the mirror rebuilds the URL from the redux facet state, which does NOT carry `sort` (sort is URL-only,
+    // no slice). Merge the live URL's sort back in so a facet toggle PRESERVES the active ordering instead of
+    // silently resetting it to the per-context default.
+    const currentSort = paramsToSearchState(location.search).sort;
+    const nextParams = searchStateToParams({ ...searchUrlState, sort: currentSort });
     if (nextParams !== location.search.replace(/^\?/, '')) {
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);
     }

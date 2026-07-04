@@ -23,6 +23,8 @@ import type { SearchFormData, SearchFormDataFilters } from 'generated-sources';
 export const SEARCH_QUERY_PARAM = 'q';
 /** the My-Objects (owned-by-me) boolean param */
 export const SEARCH_MY_OBJECTS_PARAM = 'my';
+/** the sort-ordering param (ST-2b / #1836) — a single named ordering, honoured server-side (`SearchFormData.sort`) */
+export const SEARCH_SORT_PARAM = 'sort';
 
 /**
  * The 8 facet dimensions carried in the URL as id lists, matching the redux `facetState` keys. `entityClasses`
@@ -42,6 +44,66 @@ export const SEARCH_FACET_PARAMS: SearchFacetNames[] = [
 
 export type SearchUrlFacets = Partial<Record<SearchFacetNames, number[]>>;
 
+/**
+ * The named orderings the global sort dropdown offers (ST-2b / #1836) — the four the server-side `sort` contract ships
+ * (ST-2a / `SearchSortDto`): relevance, status priority, recently updated, name. "Most popular" is intentionally NOT
+ * here (deferred to ST-5 — it needs the snapshotted popularity score; the live view-count signal is trivially
+ * inflatable). The token is sent verbatim as `SearchFormData.sort` and matched case-insensitively server-side; an
+ * unknown/absent value falls back to the per-context default (relevance for a text query, status priority for browse).
+ */
+export type SearchSortValue = 'relevance' | 'status_priority' | 'updated_at' | 'name';
+
+export interface SearchSortOption {
+  value: SearchSortValue;
+  /** an en.json translation key, rendered via t() — never a raw label (the i18n-key-parity object-property guard) */
+  labelKey: string;
+}
+
+export const SEARCH_SORT_OPTIONS: SearchSortOption[] = [
+  { value: 'relevance', labelKey: 'Relevance' },
+  { value: 'status_priority', labelKey: 'Status priority' },
+  { value: 'updated_at', labelKey: 'Recently updated' },
+  { value: 'name', labelKey: 'Name' },
+];
+
+export const SEARCH_SORT_VALUES: SearchSortValue[] = SEARCH_SORT_OPTIONS.map(
+  option => option.value
+);
+
+/**
+ * The server's per-context DEFAULT ordering, mirrored here ONLY so the dropdown can display the active default when the
+ * URL carries no `?sort=`. THE SINGLE SOURCE for this FE re-derivation: a text query defaults to relevance, empty browse
+ * to status priority — matching `ReactiveDataEntityRepositoryImpl.getSearchResultOrderFields` / `SearchSortDto`. If the
+ * server default ever changes (e.g. the ST-5 hybrid `status_priority → popularity`), update this in lockstep — or,
+ * better, resolve PLT-254 (have the server echo the applied sort) so the control reads truth instead of re-deriving it.
+ */
+export function defaultSortForContext(
+  query: string | number | boolean | null | undefined
+): SearchSortValue {
+  // `query` may arrive as a number or boolean — `useQueryParams` parses `?q=123` → 123 and `?q=true` → true
+  // (parseNumbers/parseBooleans). Coerce defensively: a numeric/boolean query must NEVER throw in a caller's render,
+  // because there is no error boundary in odd-platform-ui — an uncaught throw white-screens the whole app (IT-006).
+  const text = query == null ? '' : String(query);
+  return text.trim() ? 'relevance' : 'status_priority';
+}
+
+/**
+ * The ordering the dropdown should DISPLAY as active: the URL's `sort` when it is one of the known tokens, else the
+ * per-context default (fail-closed on an absent OR garbage value — R6). Pure so the display logic is unit-testable
+ * without rendering the MUI control.
+ */
+export function resolveActiveSort(
+  rawSort: string | number | boolean | null | undefined,
+  query: string | number | boolean | null | undefined
+): SearchSortValue {
+  // `rawSort` may also arrive coerced (`?sort=2024` → 2024); stringify before the allow-list check — a numeric token
+  // is simply not a known sort, so it falls through to the per-context default. Never throws (review B1).
+  const token = rawSort == null ? undefined : String(rawSort);
+  return SEARCH_SORT_VALUES.includes(token as SearchSortValue)
+    ? (token as SearchSortValue)
+    : defaultSortForContext(query);
+}
+
 export interface SearchUrlState {
   /** the free-text search query (an empty string means browse / no query) */
   query: string;
@@ -49,6 +111,8 @@ export interface SearchUrlState {
   facets: SearchUrlFacets;
   /** the My-Objects (owned-by-me) filter */
   myObjects: boolean;
+  /** the active ordering (ST-2b); undefined = the server's per-context default (relevance for a query, else status priority) */
+  sort?: SearchSortValue;
 }
 
 /**
@@ -78,6 +142,7 @@ export function searchStateToParams(state: SearchUrlState): string {
     if (ids && ids.length > 0) params[name] = ids;
   });
   if (state.myObjects) params[SEARCH_MY_OBJECTS_PARAM] = true;
+  if (state.sort) params[SEARCH_SORT_PARAM] = state.sort;
   return stringify(params, QUERY_STRING_OPTIONS);
 }
 
@@ -115,7 +180,15 @@ export function paramsToSearchState(search: string): SearchUrlState {
     // enough — and anything else (absent, garbage) fails closed to `false`.
     const myObjects = parsed[SEARCH_MY_OBJECTS_PARAM] === 'true';
 
-    return { query, facets, myObjects };
+    // `sort` fail-closed: keep it only when it is one of the known tokens, else drop it (→ the server's per-context
+    // default). Mirrors the facet-id integer filter above — a garbage `?sort=` never reaches the request.
+    const rawSort = parsed[SEARCH_SORT_PARAM];
+    const sortStr = typeof rawSort === 'string' ? rawSort : undefined;
+    const sort = SEARCH_SORT_VALUES.includes(sortStr as SearchSortValue)
+      ? (sortStr as SearchSortValue)
+      : undefined;
+
+    return { query, facets, myObjects, sort };
   } catch {
     return empty;
   }
@@ -135,5 +208,5 @@ export function searchUrlStateToFormData(state: SearchUrlState): SearchFormData 
       filters[name] = ids.map(entityId => ({ entityId, selected: true }));
     }
   });
-  return { query: state.query, myObjects: state.myObjects, filters };
+  return { query: state.query, myObjects: state.myObjects, sort: state.sort, filters };
 }
