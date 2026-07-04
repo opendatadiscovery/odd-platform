@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { TagItem } from 'components/shared/elements';
-import { useCreateSearch } from 'lib/hooks';
+import { useNavigateToSearch } from 'lib/hooks';
 import type { Tag } from 'generated-sources';
 
 interface Props {
@@ -8,17 +8,13 @@ interface Props {
 }
 
 const TopTagsList = ({ tags }: Props) => {
-  const createSearch = useCreateSearch();
+  const navigateToSearch = useNavigateToSearch();
 
   const handleTagClick = useCallback(
-    (id: number, name: string) => () => {
-      const searchFormData = {
-        query: '',
-        filters: { tags: [{ entityId: id, entityName: name, selected: true }] },
-      };
-      createSearch(searchFormData);
+    (id: number) => () => {
+      navigateToSearch({ facets: { tags: [id] } });
     },
-    []
+    [navigateToSearch]
   );
 
   const sortedTags = useMemo(
@@ -37,7 +33,7 @@ const TopTagsList = ({ tags }: Props) => {
     <>
       {sortedTags.map(tag => (
         <TagItem
-          onClick={handleTagClick(tag.id, tag.name)}
+          onClick={handleTagClick(tag.id)}
           key={tag.id}
           label={tag.name}
           important={tag.important}

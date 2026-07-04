@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDataEntitiesUsage } from 'lib/hooks/api';
-import { useCreateSearch } from 'lib/hooks';
-import type { SearchFormData } from 'generated-sources';
+import { useNavigateToSearch } from 'lib/hooks';
 import DataEntitiesUsageInfoView from './DataEntityUsageInfoView/DataEntitiesUsageInfoView';
 
 export interface HandleEntityClassClickParams {
@@ -17,40 +16,23 @@ export interface HandleEntityClassTypeClickParams {
 }
 
 const DataEntitiesUsageInfo: React.FC = () => {
-  const createSearch = useCreateSearch();
+  const navigateToSearch = useNavigateToSearch();
   const { data: usageInfo, isError } = useDataEntitiesUsage();
 
   const handleEntityClassClick = React.useCallback(
-    ({ entityId, entityName }: HandleEntityClassClickParams) => {
-      const searchFormData: SearchFormData = {
-        query: '',
-        filters: { entityClasses: [{ entityId, entityName, selected: true }] },
-      };
-      createSearch(searchFormData);
+    ({ entityId }: HandleEntityClassClickParams) => {
+      navigateToSearch({ facets: { entityClasses: [entityId] } });
     },
-    []
+    [navigateToSearch]
   );
 
   const handleEntityClassTypeClick = React.useCallback(
-    ({
-      entityClassId,
-      entityClassName,
-      entityClassTypeName,
-      entityClassTypeId,
-    }: HandleEntityClassTypeClickParams) => {
-      const selected = true;
-      const entityClasses = [
-        { entityId: entityClassId, entityName: entityClassName, selected },
-      ];
-      const types = [
-        { entityId: entityClassTypeId, entityName: entityClassTypeName, selected },
-      ];
-      const searchFormData: SearchFormData = {
-        filters: { entityClasses, types },
-      };
-      createSearch(searchFormData);
+    ({ entityClassId, entityClassTypeId }: HandleEntityClassTypeClickParams) => {
+      navigateToSearch({
+        facets: { entityClasses: [entityClassId], types: [entityClassTypeId] },
+      });
     },
-    []
+    [navigateToSearch]
   );
 
   if (isError || !usageInfo) return null;

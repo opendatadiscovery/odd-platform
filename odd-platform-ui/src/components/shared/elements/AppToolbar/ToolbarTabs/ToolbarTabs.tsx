@@ -1,7 +1,7 @@
 import React, { type FC, useCallback, useMemo, useState, useEffect } from 'react';
 import { matchPath, useLocation, useNavigate, useResolvedPath } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useCreateSearch, useQueryParams } from 'lib/hooks';
+import { useNavigateToSearch, useQueryParams } from 'lib/hooks';
 import {
   type ActivityQuery,
   defaultActivityQuery,
@@ -27,7 +27,7 @@ const ToolbarTabs: FC = () => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const createSearch = useCreateSearch();
+  const navigateToSearch = useNavigateToSearch();
   const { pathname } = useResolvedPath(useLocation());
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
@@ -125,7 +125,7 @@ const ToolbarTabs: FC = () => {
       }
 
       if (tabs[idx].name === t('Catalog') && tabs[idx].link?.includes('search')) {
-        createSearch(initialParams);
+        navigateToSearch();
       }
     },
     [tabs]
