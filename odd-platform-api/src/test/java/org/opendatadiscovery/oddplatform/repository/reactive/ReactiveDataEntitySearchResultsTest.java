@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
@@ -197,10 +198,41 @@ class ReactiveDataEntitySearchResultsTest extends BaseIntegrationTest {
             .verifyComplete();
     }
 
+    @Test
+    @DisplayName("sort=UPDATED_AT orders newest source-updated first, nulls last")
+    void findByState_updatedAtSort_newestFirst() {
+        seedSearchableUpdatedAt("sortupdatedold", LocalDateTime.of(2020, 1, 1, 0, 0));
+        seedSearchableUpdatedAt("sortupdatednew", LocalDateTime.of(2024, 1, 1, 0, 0));
+
+        final FacetStateDto state = sortedQueryState("sortupdated", "UPDATED_AT");
+
+        dataEntityRepository.findByState(state, 1, 30, null)
+            .as(StepVerifier::create)
+            .assertNext(items -> assertThat(items)
+                .extracting(dto -> dto.getDataEntity().getExternalName())
+                .as("source_updated_at DESC NULLS LAST: newest first")
+                .containsExactly("sortupdatednew", "sortupdatedold"))
+            .verifyComplete();
+    }
+
     private static FacetStateDto sortedQueryState(final String query, final String sort) {
         final FacetStateDto state = queryState(query);
         state.setSort(sort);
         return state;
+    }
+
+    private void seedSearchableUpdatedAt(final String name, final LocalDateTime sourceUpdatedAt) {
+        final DataEntityPojo pojo = new DataEntityPojo()
+            .setOddrn("//resulttest/" + name)
+            .setExternalName(name)
+            .setEntityClassIds(new Integer[] {DATA_SET})
+            .setTypeId(1)
+            .setHollow(false)
+            .setStatus(DataEntityStatusDto.UNASSIGNED.getId())
+            .setSourceUpdatedAt(sourceUpdatedAt)
+            .setExcludeFromSearch(false);
+        final DataEntityPojo created = dataEntityRepository.bulkCreate(List.of(pojo)).blockLast();
+        searchEntrypointRepository.updateDataEntityVectors(created.getId()).block();
     }
 
     private List<String> namesOnPage(final FacetStateDto state, final int page, final int size) {
