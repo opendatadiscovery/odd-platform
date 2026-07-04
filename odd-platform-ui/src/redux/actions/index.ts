@@ -1,6 +1,7 @@
 export * from './owners.actions';
 export * from './favorites.actions';
 export * from './recentlyViewed.actions';
+export * from './savedSearch.actions';
 export * from './datasource.actions';
 export * from './dataentity.actions';
 export * from './datasetStructure.actions';

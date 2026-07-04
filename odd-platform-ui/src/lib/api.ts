@@ -24,6 +24,7 @@ import {
   PermissionApi,
   PolicyApi,
   RoleApi,
+  SavedSearchApi,
   SearchApi,
   TagApi,
   TermApi,
@@ -84,3 +85,4 @@ export const referenceDataApi = new ReferenceDataApi(apiConf);
 export const relationshipApi = new RelationshipApi(apiConf);
 export const favoriteApi = new FavoriteApi(apiConf);
 export const recentlyViewedApi = new RecentlyViewedApi(apiConf);
+export const savedSearchApi = new SavedSearchApi(apiConf);

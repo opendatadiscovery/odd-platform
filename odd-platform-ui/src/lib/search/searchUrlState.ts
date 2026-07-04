@@ -210,3 +210,36 @@ export function searchUrlStateToFormData(state: SearchUrlState): SearchFormData 
   });
   return { query: state.query, myObjects: state.myObjects, sort: state.sort, filters };
 }
+
+/**
+ * The inverse of {@link searchUrlStateToFormData}: rebuild the shareable URL state from a persisted
+ * `SearchFormData` spec (ST-3 / ADR D11 — a saved search stores exactly a `SearchFormData`). A caller
+ * rebuilds the canonical param URL with `searchStateToParams(searchFormDataToUrlState(spec))`, so a saved
+ * search REAPPLIES by navigating to that URL and the Search page re-queries itself off it (D10).
+ *
+ * FAIL CLOSED, and NEVER throws — there is no error boundary in odd-platform-ui, so an uncaught throw in a
+ * caller's render white-screens the whole app (IT-006). A `sort` outside the known tokens is dropped to
+ * `undefined` (→ the server's per-context default, mirroring `paramsToSearchState`); only facet ids that are
+ * positive integers with `selected !== false` survive; and a missing / undefined `filters` (a defensively
+ * empty or malformed stored spec) yields no facets instead of throwing.
+ */
+export function searchFormDataToUrlState(formData: SearchFormData): SearchUrlState {
+  const filters: SearchFormDataFilters = formData.filters ?? {};
+  const facets: SearchUrlFacets = {};
+  SEARCH_FACET_PARAMS.forEach(name => {
+    const ids = (filters[name] ?? [])
+      .filter(state => state?.selected !== false)
+      .map(state => Number(state?.entityId))
+      .filter(id => Number.isInteger(id) && id > 0);
+    if (ids.length > 0) facets[name] = ids;
+  });
+  const sort = SEARCH_SORT_VALUES.includes(formData.sort as SearchSortValue)
+    ? (formData.sort as SearchSortValue)
+    : undefined;
+  return {
+    query: formData.query ?? '',
+    facets,
+    myObjects: formData.myObjects ?? false,
+    sort,
+  };
+}

@@ -46,8 +46,97 @@ tags:
   - name: referenceData
   - name: genai
   - name: relationship
+  - name: savedSearch
 
 paths:
+  /api/saved_searches:
+    get:
+      summary: List the current user's saved searches
+      description: >-
+        Lists the saved searches owned by the current user, newest first, paginated. Owner-scoped by the
+        logged-in identity (never a request parameter); under auth.type=DISABLED all users share one bucket.
+      operationId: getSavedSearchList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SavedSearchList'
+      tags:
+        - savedSearch
+    post:
+      summary: Save a search
+      description: >-
+        Creates a new saved search owned by the current user. The name must be unique among the user's saved
+        searches (a duplicate is rejected as a 4xx, never a 500).
+      operationId: createSavedSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/SavedSearchFormData'
+      responses:
+        '201':
+          description: The saved search has been created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SavedSearch'
+      tags:
+        - savedSearch
+
+  /api/saved_searches/{saved_search_id}:
+    put:
+      summary: Update a saved search
+      description: >-
+        Renames a saved search and/or replaces its stored spec. Owner-scoped — a saved search not owned by
+        the current user returns 404 (existence is never leaked). A rename to a name already used by the
+        user is rejected as a 4xx, never a 500.
+      operationId: updateSavedSearch
+      parameters:
+        - name: saved_search_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/SavedSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SavedSearch'
+      tags:
+        - savedSearch
+    delete:
+      summary: Delete a saved search
+      description: Deletes a saved search owned by the current user (404 if not owned).
+      operationId: deleteSavedSearch
+      parameters:
+        - name: saved_search_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - savedSearch
+
   /api/integrations:
     get:
       summary: Get available integrations' list for an integration wizard

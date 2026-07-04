@@ -665,5 +665,14 @@
   "Data Entity": "Сутність даних",
   "Query Example": "Приклад запиту",
   "Add to favorites": "Додати до обраного",
-  "Remove from favorites": "Видалити з обраного"
+  "Remove from favorites": "Видалити з обраного",
+  "Save current search": "Зберегти поточний пошук",
+  "Saved searches": "Збережені пошуки",
+  "Rename": "Перейменувати",
+  "Copy link": "Скопіювати посилання",
+  "No saved searches yet": "Ще немає збережених пошуків",
+  "Enter search name": "Введіть назву пошуку",
+  "Search saved": "Пошук збережено",
+  "Saved search updated": "Збережений пошук оновлено",
+  "Saved search deleted": "Збережений пошук видалено"
 }
