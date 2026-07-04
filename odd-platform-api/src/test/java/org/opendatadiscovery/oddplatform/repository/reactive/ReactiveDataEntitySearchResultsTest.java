@@ -124,6 +124,85 @@ class ReactiveDataEntitySearchResultsTest extends BaseIntegrationTest {
             .verifyComplete();
     }
 
+    @Test
+    @DisplayName("sort=STATUS_PRIORITY leads with STABLE (index-backed #1705), id-tiebroken")
+    void findByState_statusPrioritySort_leadsWithStable() {
+        seedSearchable("sortstatusunassigned", DataEntityStatusDto.UNASSIGNED, false, false);
+        seedSearchable("sortstatusstable", DataEntityStatusDto.STABLE, false, false);
+        seedSearchable("sortstatusdraft", DataEntityStatusDto.DRAFT, false, false);
+
+        final FacetStateDto state = sortedQueryState("sortstatus", "STATUS_PRIORITY");
+
+        dataEntityRepository.findByState(state, 1, 30, null)
+            .as(StepVerifier::create)
+            .assertNext(items -> assertThat(items)
+                .extracting(dto -> dto.getDataEntity().getExternalName())
+                .as("status_priority ASC: STABLE(0) -> DRAFT(2) -> UNASSIGNED(3)")
+                .containsExactly("sortstatusstable", "sortstatusdraft", "sortstatusunassigned"))
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("sort=NAME orders case-insensitively A->Z")
+    void findByState_nameSort_ordersAlphabetically() {
+        seedSearchable("sortnamecharlie", DataEntityStatusDto.UNASSIGNED, false, false);
+        seedSearchable("sortnamealpha", DataEntityStatusDto.UNASSIGNED, false, false);
+        seedSearchable("sortnamebravo", DataEntityStatusDto.UNASSIGNED, false, false);
+
+        final FacetStateDto state = sortedQueryState("sortname", "NAME");
+
+        dataEntityRepository.findByState(state, 1, 30, null)
+            .as(StepVerifier::create)
+            .assertNext(items -> assertThat(items)
+                .extracting(dto -> dto.getDataEntity().getExternalName())
+                .containsExactly("sortnamealpha", "sortnamebravo", "sortnamecharlie"))
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("an unknown sort fails closed to the default order, never errors")
+    void findByState_unknownSort_failsClosedToDefault() {
+        seedSearchable("sortgarbagea", DataEntityStatusDto.UNASSIGNED, false, false);
+        seedSearchable("sortgarbageb", DataEntityStatusDto.UNASSIGNED, false, false);
+
+        final FacetStateDto state = sortedQueryState("sortgarbage", "not-a-real-sort");
+
+        dataEntityRepository.findByState(state, 1, 30, null)
+            .as(StepVerifier::create)
+            .assertNext(items -> assertThat(items)
+                .extracting(dto -> dto.getDataEntity().getExternalName())
+                .as("an unrecognised sort returns the matching set (default order), no error")
+                .containsExactlyInAnyOrder("sortgarbagea", "sortgarbageb"))
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("a text query leads by RELEVANCE, not status (query-context default correction)")
+    void findByState_queryContext_leadsByRelevanceNotStatus() {
+        // Seed the STABLE (best-status) prefix-match FIRST (lower id) and the exact-match UNASSIGNED
+        // (worst-status) SECOND (higher id). Pre-fix (status-primary) the STABLE row leads; post-fix
+        // (relevance-primary) the exact match leads — by higher rank, or by the id tiebreaker on equal
+        // rank since it was seeded later. RED on ref:main, GREEN on the fix.
+        seedSearchable("zzrelevancetail", DataEntityStatusDto.STABLE, false, false);
+        seedSearchable("zzrelevance", DataEntityStatusDto.UNASSIGNED, false, false);
+
+        final FacetStateDto state = queryState("zzrelevance");
+
+        dataEntityRepository.findByState(state, 1, 30, null)
+            .as(StepVerifier::create)
+            .assertNext(items -> assertThat(items)
+                .extracting(dto -> dto.getDataEntity().getExternalName())
+                .as("relevance-first: the exact 'zzrelevance' match leads despite its worse status")
+                .containsExactly("zzrelevance", "zzrelevancetail"))
+            .verifyComplete();
+    }
+
+    private static FacetStateDto sortedQueryState(final String query, final String sort) {
+        final FacetStateDto state = queryState(query);
+        state.setSort(sort);
+        return state;
+    }
+
     private List<String> namesOnPage(final FacetStateDto state, final int page, final int size) {
         return dataEntityRepository.findByState(state, page, size, null)
             .map(items -> items.stream().map(dto -> dto.getDataEntity().getExternalName()).toList())

@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -254,9 +255,13 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             return null;
         }
         final DataEntityStatusDto statusDto = DataEntityStatusDto.valueOf(status.getStatus().getValue());
+        final Short previousStatus = pojo.getStatus();
         pojo.setStatus(statusDto.getId());
         pojo.setStatusSwitchTime(DateTimeUtil.mapUTCDateTime(status.getStatusSwitchTime()));
-        if (statusDto.getId() != pojo.getStatus()) {
+        // PLT-027 (CTRIB-053): compare the NEW status against the PRIOR one captured before the
+        // setStatus above — the old guard compared against the already-overwritten value, so it was
+        // always false and status_updated_at never bumped on a transition.
+        if (!Objects.equals(statusDto.getId(), previousStatus)) {
             pojo.setStatusUpdatedAt(DateTimeUtil.generateNow());
         }
         return pojo;

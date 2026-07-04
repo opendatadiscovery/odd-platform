@@ -5,9 +5,12 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.api.contract.model.FacetState;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilter;
+import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormDataFilters;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -28,6 +31,24 @@ class FacetStateMapperImplTest {
     private final FacetStateMapperImpl mapper = new FacetStateMapperImpl(new SearchMapperImpl());
 
     @Test
+    void mapForm_carriesSortFromTheForm() {
+        final SearchFormData form = new SearchFormData()
+            .query("q")
+            .sort("NAME")
+            .filters(new SearchFormDataFilters());
+        assertThat(mapper.mapForm(form).getSort()).isEqualTo("NAME");
+    }
+
+    @Test
+    void sessionRoundTrip_preservesSort() {
+        final FacetStateDto state = new FacetStateDto(Map.of(), "q", false, "STATUS_PRIORITY");
+        final SearchFacetsPojo pojo = mapper.mapStateToPojo(state);
+        assertThat(mapper.pojoToState(pojo).getSort())
+            .as("sort survives the JSONB session round-trip (mapStateToPojo -> pojoToState)")
+            .isEqualTo("STATUS_PRIORITY");
+    }
+
+    @Test
     void mapDto_echoesSelectedStatuses() {
         final FacetStateDto state = new FacetStateDto(
             Map.of(FacetType.STATUSES, List.of(
@@ -39,7 +60,8 @@ class FacetStateMapperImplTest {
                     .build()
             )),
             "q",
-            false
+            false,
+            null
         );
 
         final FacetState result = mapper.mapDto(List.of(), state);
@@ -59,7 +81,8 @@ class FacetStateMapperImplTest {
                     .entityId(4L).entityName("DEPRECATED").selected(true).type(FacetType.STATUSES).build())
             ),
             "",
-            false
+            false,
+            null
         );
 
         final FacetState result = mapper.mapDto(List.of(), state);
