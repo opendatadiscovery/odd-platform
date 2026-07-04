@@ -2384,6 +2384,14 @@ components:
           type: string
         my_objects:
           type: boolean
+        sort:
+          type: string
+          description: >-
+            The named canonical ordering for the result set — one of RELEVANCE, STATUS_PRIORITY,
+            UPDATED_AT, NAME (case-insensitive). Absent or unrecognised values fall back to a
+            per-context default (relevance for an active text query, status priority for empty
+            browse). Deliberately a plain string rather than a strict enum so an unknown value
+            degrades gracefully to the default instead of failing the request.
         filters:
           type: object
           properties:

@@ -33,6 +33,7 @@ import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
+import org.opendatadiscovery.oddplatform.dto.SearchSortDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -699,16 +700,7 @@ public class ReactiveDataEntityRepositoryImpl
             .leftJoin(GROUP_ENTITY_RELATIONS)
             .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ODDRN)));
 
-        final List<OrderField<?>> orderFields = new ArrayList<>();
-
-        orderFields.add(DSL.case_(deCte.field(DATA_ENTITY.STATUS))
-            .when(DataEntityStatusDto.STABLE.getId(), 1)
-            .when(DataEntityStatusDto.DEPRECATED.getId(), 2)
-            .when(DataEntityStatusDto.DRAFT.getId(), 3)
-            .when(DataEntityStatusDto.UNASSIGNED.getId(), 4)
-            .when(DataEntityStatusDto.DELETED.getId(), 5));
-
-        orderFields.addAll(getOrderFields(cteConfig, deCte));
+        final List<OrderField<?>> orderFields = getSearchResultOrderFields(state.getSort(), cteConfig, deCte);
 
         final var query = DSL.with(deCteName)
             .asMaterialized(dataEntitySelect)
@@ -967,6 +959,34 @@ public class ReactiveDataEntityRepositoryImpl
         } else {
             orderFields.add(field(DATA_ENTITY.ID).desc());
         }
+        return orderFields;
+    }
+
+    // CTRIB-053 / #1836 ST-2a — the result-page ordering for the main DE search: the named sort's key
+    // (fail-closed to the per-context default — relevance for a query, status priority for empty browse),
+    // always terminated by the unique DATA_ENTITY.ID tiebreaker so keyset/offset pages never duplicate or
+    // skip rows (D12 §1E). Replaces the former inline status CASE with the indexed status_priority column.
+    private List<OrderField<?>> getSearchResultOrderFields(final String sort,
+                                                           final DataEntityCTEQueryConfig cteConfig,
+                                                           final Table<? extends Record> deCte) {
+        final boolean hasQuery = cteConfig.getFts() != null;
+        final SearchSortDto resolvedSort = SearchSortDto.fromString(sort)
+            .orElse(hasQuery ? SearchSortDto.RELEVANCE : SearchSortDto.STATUS_PRIORITY);
+
+        final List<OrderField<?>> orderFields = new ArrayList<>();
+        if (resolvedSort == SearchSortDto.RELEVANCE && hasQuery) {
+            orderFields.add(deCte.field(cteConfig.getFts().rankFieldAlias()).desc());
+        } else if (resolvedSort == SearchSortDto.UPDATED_AT) {
+            orderFields.add(deCte.field(DATA_ENTITY.SOURCE_UPDATED_AT).desc().nullsLast());
+        } else if (resolvedSort == SearchSortDto.NAME) {
+            orderFields.add(DSL.lower(coalesce(
+                    deCte.field(DATA_ENTITY.INTERNAL_NAME), deCte.field(DATA_ENTITY.EXTERNAL_NAME)))
+                .asc().nullsLast());
+        } else {
+            // STATUS_PRIORITY, or RELEVANCE with no query (relevance is meaningless on empty browse)
+            orderFields.add(deCte.field(DATA_ENTITY.STATUS_PRIORITY).asc());
+        }
+        orderFields.add(deCte.field(DATA_ENTITY.ID).desc());
         return orderFields;
     }
 

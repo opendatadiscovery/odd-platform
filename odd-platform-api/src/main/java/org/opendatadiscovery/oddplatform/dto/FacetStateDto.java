@@ -22,9 +22,13 @@ public class FacetStateDto {
     private Map<FacetType, List<SearchFilterDto>> state;
     private String query;
     private boolean myObjects;
+    // CTRIB-053 / #1836 ST-2a — the named ordering (SearchSortDto name; nullable = per-context default).
+    // A session-level property (not a facet): it must be PRESERVED across removeUnselected + a facet-toggle
+    // merge, and it round-trips in the JSONB session blob via mapStateToPojo/pojoToState.
+    private String sort;
 
     public static FacetStateDto empty() {
-        return new FacetStateDto(Map.of(), "", false);
+        return new FacetStateDto(Map.of(), "", false, null);
     }
 
     public static FacetStateDto removeUnselected(final FacetStateDto facetState) {
@@ -35,7 +39,7 @@ public class FacetStateDto {
                 .collect(Collectors.toList())))
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
-        return new FacetStateDto(state, facetState.getQuery(), facetState.isMyObjects());
+        return new FacetStateDto(state, facetState.getQuery(), facetState.isMyObjects(), facetState.getSort());
     }
 
     public static FacetStateDto merge(final FacetStateDto currentState, final FacetStateDto delta) {
@@ -45,7 +49,10 @@ public class FacetStateDto {
             newState.merge(deltaEntry.getKey(), deltaEntry.getValue(), FacetStateDto::mergeFacetState);
         }
 
-        return new FacetStateDto(newState, delta.getQuery(), delta.isMyObjects());
+        // A facet-toggle delta carries no sort of its own; preserve the session's current sort so a
+        // filter change never silently resets the ordering (CTRIB-053).
+        final String mergedSort = delta.getSort() != null ? delta.getSort() : currentState.getSort();
+        return new FacetStateDto(newState, delta.getQuery(), delta.isMyObjects(), mergedSort);
     }
 
     private static List<SearchFilterDto> mergeFacetState(final List<SearchFilterDto> currentFilters,

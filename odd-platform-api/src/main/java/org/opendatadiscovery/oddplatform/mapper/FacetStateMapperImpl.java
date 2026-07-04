@@ -75,8 +75,12 @@ public class FacetStateMapperImpl implements FacetStateMapper {
     @Override
     public FacetStateDto mapForm(final SearchFormData formData) {
         final SearchFormDataFilters filters = formData.getFilters();
+        final boolean myObjects = formData.getMyObjects() != null ? formData.getMyObjects() : false;
+        // capture sort BEFORE the null-filters early-return so a browse-with-sort-and-no-filters
+        // does not silently default (CTRIB-053 / #1836 ST-2a; filters is `required` so this is a
+        // defensive path, but the sort must survive it)
         if (filters == null) {
-            return FacetStateDto.empty();
+            return new FacetStateDto(Map.of(), formData.getQuery(), myObjects, formData.getSort());
         }
 
         final Map<FacetType, List<SearchFilterDto>> state = FORM_MAPPINGS.entrySet().stream()
@@ -98,7 +102,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
         return new FacetStateDto(
             state,
             formData.getQuery(),
-            formData.getMyObjects() != null ? formData.getMyObjects() : false
+            myObjects,
+            formData.getSort()
         );
     }
 
@@ -125,7 +130,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
         return new FacetStateDto(
             state,
             formData.getQuery(),
-            false
+            false,
+            null
         );
     }
 
@@ -134,7 +140,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
         return new FacetStateDto(
             Map.of(),
             formData.getQuery(),
-            false
+            false,
+            null
         );
     }
 
@@ -143,7 +150,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
         return new FacetStateDto(
             Map.of(),
             formData.getQuery(),
-            false
+            false,
+            null
         );
     }
 
