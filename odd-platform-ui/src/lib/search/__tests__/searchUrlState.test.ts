@@ -3,6 +3,8 @@ import {
   paramsToSearchState,
   searchStateToParams,
   searchUrlStateToFormData,
+  defaultSortForContext,
+  resolveActiveSort,
   type SearchUrlState,
 } from '../searchUrlState';
 
@@ -109,5 +111,70 @@ describe('searchUrlState — facets + myObjects ⇄ URL params (ST-1b / D10)', (
       { entityId: 7, selected: true },
     ]);
     expect(formData.filters.entityClasses).toEqual([{ entityId: 1, selected: true }]);
+  });
+});
+
+/**
+ * ST-2b (#1836) — the sort ordering ⇄ URL param, layered additively on ST-1. RED before this module carried `sort`
+ * (SearchUrlState had no `sort`); GREEN on the ST-2b implementation. The four tokens are the server-side contract
+ * (ST-2a / SearchSortDto); an unknown token fails closed to the server's per-context default.
+ */
+describe('searchUrlState — sort ⇄ URL params (ST-2b / #1836)', () => {
+  it('round-trips a sort through the URL (identity)', () => {
+    const s = state({ query: 'orders', sort: 'name' });
+    expect(paramsToSearchState(`?${searchStateToParams(s)}`)).toEqual(s);
+  });
+
+  it('serialises sort as ?sort=<token> and omits it when unset (the default order → a clean URL)', () => {
+    expect(searchStateToParams(state({ sort: 'updated_at' }))).toContain(
+      'sort=updated_at'
+    );
+    expect(searchStateToParams(state())).toBe('');
+  });
+
+  it('accepts each of the four known sort tokens', () => {
+    (['relevance', 'status_priority', 'updated_at', 'name'] as const).forEach(token => {
+      expect(paramsToSearchState(`?sort=${token}`).sort).toBe(token);
+    });
+  });
+
+  it('fails closed on an unknown/absent sort: dropped (→ the server default), never passed through', () => {
+    expect(paramsToSearchState('?sort=garbage').sort).toBeUndefined();
+    expect(paramsToSearchState('?sort=').sort).toBeUndefined();
+    expect(paramsToSearchState('?q=x').sort).toBeUndefined();
+  });
+
+  it('sort is preserved alongside a faceted query (parse+serialise identity)', () => {
+    const s = state({
+      query: 'q',
+      facets: { tags: [5] },
+      myObjects: true,
+      sort: 'updated_at',
+    });
+    expect(paramsToSearchState(`?${searchStateToParams(s)}`)).toEqual(s);
+  });
+
+  it('searchUrlStateToFormData carries sort to the create request (and omits it when unset)', () => {
+    expect(searchUrlStateToFormData(state({ sort: 'updated_at' })).sort).toBe(
+      'updated_at'
+    );
+    expect(searchUrlStateToFormData(state()).sort).toBeUndefined();
+  });
+});
+
+/** ST-2b — the per-context default + the fail-closed active-sort resolution the dropdown displays. */
+describe('sort defaults + fail-closed resolution (ST-2b)', () => {
+  it('defaultSortForContext: relevance when there is a query, status priority when browsing', () => {
+    expect(defaultSortForContext('orders')).toBe('relevance');
+    expect(defaultSortForContext('   ')).toBe('status_priority');
+    expect(defaultSortForContext('')).toBe('status_priority');
+  });
+
+  it('resolveActiveSort: a valid URL sort wins; absent/garbage falls back to the context default', () => {
+    expect(resolveActiveSort('name', 'orders')).toBe('name');
+    expect(resolveActiveSort(undefined, 'orders')).toBe('relevance');
+    expect(resolveActiveSort(undefined, '')).toBe('status_priority');
+    expect(resolveActiveSort('garbage', 'orders')).toBe('relevance');
+    expect(resolveActiveSort('garbage', '')).toBe('status_priority');
   });
 });

@@ -32,9 +32,11 @@ import {
 } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
+import { useSearchRouteParams } from 'routes';
 import TableHeader from './TableHeader/TableHeader';
 import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
+import SearchSortMenu from './SearchSortMenu/SearchSortMenu';
 import ResultItem from './ResultItem/ResultItem';
 import SearchResultsSkeleton from './SearchResultsSkeleton/SearchResultsSkeleton';
 import * as S from './Results.styles';
@@ -43,6 +45,10 @@ const Results: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const size = 30;
+
+  // ST-2b — the global sort dropdown is a param-URL control (ADR D10). It is hidden on the deprecated legacy
+  // `/search/{sessionId}` route, where writing `?sort=` would navigate away from the session and discard its state.
+  const { searchId: routerSearchId } = useSearchRouteParams();
 
   const searchId = useAppSelector(getSearchId);
   const searchClass = useAppSelector(getSearchEntityClass);
@@ -150,6 +156,7 @@ const Results: React.FC = () => {
           />
         )}
       </WithPermissions>
+      {!routerSearchId && <SearchSortMenu />}
       <S.ListContainer id='results-list'>
         <TableHeader grid={grid} isCurrentSearchClass={isCurrentSearchClass} />
         {isSearchCreating && <SearchResultsSkeleton grid={grid} />}
