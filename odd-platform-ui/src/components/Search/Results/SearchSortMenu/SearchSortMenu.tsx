@@ -21,16 +21,17 @@ import {
  */
 const SearchSortMenu: React.FC = () => {
   const { t } = useTranslation();
-  const { queryParams, setQueryParams } = useQueryParams<{ q?: string; sort?: string }>(
-    {}
-  );
+  // useQueryParams parses with parseNumbers/parseBooleans, so `q`/`sort` can arrive as a number or boolean
+  // (e.g. ?q=123 → 123, ?sort=2024 → 2024) — the generic reflects that reality, and resolveActiveSort coerces, so a
+  // numeric/boolean query renders normally instead of throwing (review B1: a throw here white-screens the app).
+  const { queryParams, setQueryParams } = useQueryParams<{
+    q?: string | number | boolean;
+    sort?: string | number | boolean;
+  }>({});
 
   // The active ordering: the URL's `sort` when it is a known token, else the per-context default (fail-closed on
-  // absent/garbage — R6). The default MIRRORS the server so the control never misrepresents the applied order.
-  const activeSort: SearchSortValue = resolveActiveSort(
-    queryParams.sort,
-    queryParams.q ?? ''
-  );
+  // absent/garbage/non-string — R6, B1). The default MIRRORS the server so the control never misrepresents the order.
+  const activeSort: SearchSortValue = resolveActiveSort(queryParams.sort, queryParams.q);
 
   // Merge into the CURRENT params (spread) so choosing a sort PRESERVES the active query + facet params — never a
   // clobber (the `MainSearchInput` `q` precedent). PUSH a history entry so browser back/forward moves between sorts.

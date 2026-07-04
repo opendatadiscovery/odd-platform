@@ -67,6 +67,20 @@ describe('SearchSortMenu (ST-2b / #1836)', () => {
     expect(screen.getByRole('combobox')).toHaveTextContent('Relevance');
   });
 
+  // Regression (review BLOCKER B1): useQueryParams parses with parseNumbers/parseBooleans, so ?q=123 arrives as a
+  // NUMBER and ?q=true as a BOOLEAN. Before the fix, defaultSortForContext(123).trim() threw an uncaught TypeError —
+  // and there is no error boundary in odd-platform-ui, so the throw white-screened the whole app. A numeric/boolean
+  // query must render normally (it is still a text query → Relevance default), never crash.
+  it('does not crash on a numeric query (?q=123 parsed as a number) — shows the Relevance default', () => {
+    renderAt('/search?q=123');
+    expect(screen.getByRole('combobox')).toHaveTextContent('Relevance');
+  });
+
+  it('does not crash on a boolean-looking query (?q=true parsed as a boolean)', () => {
+    renderAt('/search?q=true');
+    expect(screen.getByRole('combobox')).toHaveTextContent('Relevance');
+  });
+
   it('offers the four canonical orderings and, on select, writes ?sort= preserving the query', async () => {
     const user = userEvent.setup();
     renderAt('/search?q=orders');

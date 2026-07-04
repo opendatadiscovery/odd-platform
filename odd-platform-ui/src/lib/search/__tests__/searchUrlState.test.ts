@@ -177,4 +177,18 @@ describe('sort defaults + fail-closed resolution (ST-2b)', () => {
     expect(resolveActiveSort('garbage', 'orders')).toBe('relevance');
     expect(resolveActiveSort('garbage', '')).toBe('status_priority');
   });
+
+  // Regression (review BLOCKER B1): useQueryParams parses ?q=123 -> 123 (number) and ?q=true -> true (boolean); the
+  // helpers must coerce, never call .trim() on a non-string (there is no error boundary — a throw white-screens the app).
+  it('coerces a numeric / boolean query or sort — never throws (B1)', () => {
+    expect(defaultSortForContext(123)).toBe('relevance');
+    expect(defaultSortForContext(2024)).toBe('relevance');
+    expect(defaultSortForContext(true)).toBe('relevance');
+    expect(defaultSortForContext(false)).toBe('relevance');
+    expect(defaultSortForContext(null)).toBe('status_priority');
+    expect(defaultSortForContext(undefined)).toBe('status_priority');
+    expect(resolveActiveSort(undefined, 123)).toBe('relevance'); // numeric query -> a text query -> relevance
+    expect(resolveActiveSort(2024, 'orders')).toBe('relevance'); // numeric sort token -> unknown -> default
+    expect(resolveActiveSort('name', 456)).toBe('name'); // a valid sort wins even with a numeric query
+  });
 });

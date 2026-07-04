@@ -77,8 +77,14 @@ export const SEARCH_SORT_VALUES: SearchSortValue[] = SEARCH_SORT_OPTIONS.map(
  * server default ever changes (e.g. the ST-5 hybrid `status_priority → popularity`), update this in lockstep — or,
  * better, resolve PLT-254 (have the server echo the applied sort) so the control reads truth instead of re-deriving it.
  */
-export function defaultSortForContext(query: string): SearchSortValue {
-  return query.trim() ? 'relevance' : 'status_priority';
+export function defaultSortForContext(
+  query: string | number | boolean | null | undefined
+): SearchSortValue {
+  // `query` may arrive as a number or boolean — `useQueryParams` parses `?q=123` → 123 and `?q=true` → true
+  // (parseNumbers/parseBooleans). Coerce defensively: a numeric/boolean query must NEVER throw in a caller's render,
+  // because there is no error boundary in odd-platform-ui — an uncaught throw white-screens the whole app (IT-006).
+  const text = query == null ? '' : String(query);
+  return text.trim() ? 'relevance' : 'status_priority';
 }
 
 /**
@@ -87,11 +93,14 @@ export function defaultSortForContext(query: string): SearchSortValue {
  * without rendering the MUI control.
  */
 export function resolveActiveSort(
-  rawSort: string | undefined,
-  query: string
+  rawSort: string | number | boolean | null | undefined,
+  query: string | number | boolean | null | undefined
 ): SearchSortValue {
-  return SEARCH_SORT_VALUES.includes(rawSort as SearchSortValue)
-    ? (rawSort as SearchSortValue)
+  // `rawSort` may also arrive coerced (`?sort=2024` → 2024); stringify before the allow-list check — a numeric token
+  // is simply not a known sort, so it falls through to the per-context default. Never throws (review B1).
+  const token = rawSort == null ? undefined : String(rawSort);
+  return SEARCH_SORT_VALUES.includes(token as SearchSortValue)
+    ? (token as SearchSortValue)
     : defaultSortForContext(query);
 }
 
