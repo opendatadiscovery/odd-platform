@@ -665,5 +665,14 @@
   "Data Entity": "Entidad de datos",
   "Query Example": "Ejemplo de consulta",
   "Add to favorites": "Añadir a favoritos",
-  "Remove from favorites": "Quitar de favoritos"
+  "Remove from favorites": "Quitar de favoritos",
+  "Save current search": "Guardar búsqueda actual",
+  "Saved searches": "Búsquedas guardadas",
+  "Rename": "Renombrar",
+  "Copy link": "Copiar enlace",
+  "No saved searches yet": "Aún no hay búsquedas guardadas",
+  "Enter search name": "Introduzca el nombre de la búsqueda",
+  "Search saved": "Búsqueda guardada",
+  "Saved search updated": "Búsqueda guardada actualizada",
+  "Saved search deleted": "Búsqueda guardada eliminada"
 }

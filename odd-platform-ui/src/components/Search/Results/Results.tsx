@@ -37,6 +37,7 @@ import TableHeader from './TableHeader/TableHeader';
 import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
 import SearchSortMenu from './SearchSortMenu/SearchSortMenu';
+import SavedSearches from './SavedSearches';
 import ResultItem from './ResultItem/ResultItem';
 import SearchResultsSkeleton from './SearchResultsSkeleton/SearchResultsSkeleton';
 import * as S from './Results.styles';
@@ -156,7 +157,15 @@ const Results: React.FC = () => {
           />
         )}
       </WithPermissions>
-      {!routerSearchId && <SearchSortMenu />}
+      {/* ST-3 / #1837 — the saved-search toolbar sits alongside the global sort control, both gated to the
+          param-URL search (there is no shareable spec on the legacy `/search/{sessionId}` route). Each child
+          carries its own `mt: 2`, so `alignItems='center'` keeps them on one aligned toolbar row. */}
+      {!routerSearchId && (
+        <Grid container justifyContent='space-between' alignItems='center' wrap='nowrap'>
+          <SavedSearches />
+          <SearchSortMenu />
+        </Grid>
+      )}
       <S.ListContainer id='results-list'>
         <TableHeader grid={grid} isCurrentSearchClass={isCurrentSearchClass} />
         {isSearchCreating && <SearchResultsSkeleton grid={grid} />}

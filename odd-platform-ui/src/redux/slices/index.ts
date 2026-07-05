@@ -25,6 +25,7 @@ import dataCollaboration from './dataCollaboration.slice';
 import roles from './roles.slice';
 import favorites from './favorites.slice';
 import recentlyViewed from './recentlyViewed.slice';
+import savedSearch from './savedSearch.slice';
 
 export default combineReducers({
   namespaces,
@@ -53,4 +54,5 @@ export default combineReducers({
   dataCollaboration,
   favorites,
   recentlyViewed,
+  savedSearch,
 });

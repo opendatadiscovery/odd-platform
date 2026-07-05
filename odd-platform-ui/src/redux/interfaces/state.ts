@@ -37,6 +37,7 @@ import type {
   FavoriteAsset,
   RecentlyViewedAsset,
   RecentlyViewedRef,
+  SavedSearch,
 } from 'generated-sources';
 import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
 import type { CurrentPageInfo, Dictionary, PageInfo, PaginatedResponse } from './common';
@@ -81,6 +82,14 @@ export interface RecentlyViewedState {
 
 export interface NamespacesState extends EntityState<Namespace> {
   pageInfo?: CurrentPageInfo;
+}
+
+// ST-3 / ADR D11 — the current user's named saved searches. `list` holds the SavedSearch rows
+// (each `spec` is a SearchFormData) that drive REAPPLY / rename / delete / share; `pageInfo` carries
+// the paginated newest-first list cursor, mirroring FavoritesState.
+export interface SavedSearchState {
+  list: SavedSearch[];
+  pageInfo: CurrentPageInfo;
 }
 
 export interface DataEntityGroupLinkedListState {

@@ -665,5 +665,14 @@
   "Data Entity": "Տվյալների միավոր",
   "Query Example": "Հարցման օրինակ",
   "Add to favorites": "Ավելացնել ընտրանիում",
-  "Remove from favorites": "Հեռացնել ընտրանուց"
+  "Remove from favorites": "Հեռացնել ընտրանուց",
+  "Save current search": "Պահպանել ընթացիկ որոնումը",
+  "Saved searches": "Պահպանված որոնումներ",
+  "Rename": "Վերանվանել",
+  "Copy link": "Պատճենել հղումը",
+  "No saved searches yet": "Դեռ չկան պահպանված որոնումներ",
+  "Enter search name": "Մուտքագրեք որոնման անունը",
+  "Search saved": "Որոնումը պահպանված է",
+  "Saved search updated": "Պահպանված որոնումը թարմացվել է",
+  "Saved search deleted": "Պահպանված որոնումը ջնջվել է"
 }

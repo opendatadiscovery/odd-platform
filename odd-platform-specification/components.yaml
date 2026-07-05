@@ -2430,6 +2430,60 @@ components:
       required:
         - filters
 
+    SavedSearch:
+      type: object
+      description: >-
+        A named, per-user saved search (ST-3 / ADR D11). `spec` is the parametrised search state — the same
+        SearchFormData the URL encodes (query + filters + sort) — so one canonical spec drives both the
+        shareable URL and the saved row. Private to its owner; sharing is the parametrised URL, not a grant.
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        spec:
+          $ref: '#/components/schemas/SearchFormData'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - spec
+        - created_at
+        - updated_at
+
+    SavedSearchList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SavedSearch'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    SavedSearchFormData:
+      type: object
+      description: Create/update payload for a saved search — a name plus the search spec to persist.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        spec:
+          $ref: '#/components/schemas/SearchFormData'
+      required:
+        - name
+        - spec
+
     AlertChunk:
       type: object
       properties:

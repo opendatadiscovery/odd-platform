@@ -665,5 +665,14 @@
   "Data Entity": "数据实体",
   "Query Example": "查询示例",
   "Add to favorites": "添加到收藏",
-  "Remove from favorites": "从收藏中移除"
+  "Remove from favorites": "从收藏中移除",
+  "Save current search": "保存当前搜索",
+  "Saved searches": "已保存的搜索",
+  "Rename": "重命名",
+  "Copy link": "复制链接",
+  "No saved searches yet": "尚无已保存的搜索",
+  "Enter search name": "输入搜索名称",
+  "Search saved": "搜索已保存",
+  "Saved search updated": "已保存的搜索已更新",
+  "Saved search deleted": "已保存的搜索已删除"
 }

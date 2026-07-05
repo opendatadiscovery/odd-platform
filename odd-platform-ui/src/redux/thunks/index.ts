@@ -1,6 +1,7 @@
 export * from './datasources.thunks';
 export * from './favorites.thunks';
 export * from './recentlyViewed.thunks';
+export * from './savedSearch.thunks';
 export * from './dataentities.thunks';
 export * from './datasetStructure.thunks';
 export * from './dataQualityTest.thunks';
