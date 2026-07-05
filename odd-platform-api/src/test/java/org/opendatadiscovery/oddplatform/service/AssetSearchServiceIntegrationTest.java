@@ -244,6 +244,28 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
             .verifyComplete();
     }
 
+    @Test
+    @DisplayName("my_objects with no resolvable owner returns an EMPTY page — never a full-catalog leak (fail-closed)")
+    void searchAssets_myObjects_noAssociatedOwner_returnsEmptyNotFullCatalog() {
+        // A matchable catalog exists. With no authenticated user in the test context, fetchAssociatedOwner()
+        // resolves empty, so the my_objects branch MUST fail closed to an empty page (matching
+        // SearchServiceImpl.getSearchResults) — it must NOT fall through to the full-catalog listing.
+        seedDataEntity("myobjectseta");
+        seedTerm("myobjectseta");
+
+        assetSearchService.searchAssets(form("myobjectseta").myObjects(true), 1, 30)
+            .as(StepVerifier::create)
+            .assertNext(list -> {
+                assertThat(list.getItems())
+                    .as("my_objects with no resolvable owner yields an EMPTY page, never a full-catalog leak")
+                    .isEmpty();
+                assertThat(list.getPageInfo().getTotal())
+                    .as("and the count is 0, not the catalog total")
+                    .isEqualTo(0L);
+            })
+            .verifyComplete();
+    }
+
     private static AssetSearchFormData form(final String query) {
         return new AssetSearchFormData()
             .query(query)
