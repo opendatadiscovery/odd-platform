@@ -19,6 +19,7 @@ tags:
   - name: tag
   - name: dataSource
   - name: search
+  - name: asset-search
   - name: dataSet
   - name: dataEntity
   - name: dataEntityRun
@@ -957,6 +958,35 @@ paths:
                 $ref: './components.yaml/#/components/schemas/SearchFacetsData'
       tags:
         - search
+
+  /api/search/assets:
+    post:
+      summary: Unified cross-kind asset search
+      description: >-
+        Stateless cross-kind search over all asset kinds (Data Entity, Term, Query Example). Runs a single
+        ranked query over the unified asset_search_entrypoint index and returns a paginated, relevance-ranked
+        list of polymorphic assets, each routing to its own kind's detail. Honors the shared SearchFormData
+        contract (query + filters + sort + my_objects) plus an optional asset_kinds filter (empty = all kinds).
+        Additive — /api/search and the per-kind searches are unaffected (ADR D9).
+      operationId: searchAssets
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/AssetSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AssetList'
+      tags:
+        - asset-search
 
   /api/search/{search_id}:
     get:
