@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DataEntityClassNameEnum } from 'generated-sources';
 import type { SearchClass, SearchTotalsByName } from 'redux/interfaces';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import SearchTabsSkeleton from './SearchTabsSkeleton/SearchTabsSkeleton';
@@ -13,6 +12,13 @@ interface SearchResultsTabsProps {
   onSearchClassChange: (tabValue: SearchClass | undefined) => void;
 }
 
+/**
+ * ST-4 (#1838) — the /search result tabs. The seven per-entity-class tabs (Datasets / Transformers / Data
+ * Consumers / Data Inputs / Quality Tests / Groups / Relationships) are RETIRED — class/kind selection is now
+ * the Asset-type sidebar filter. Only All and My Objects remain. My-Objects retirement + the My-data filter is
+ * a later slice (ST-8), so the existing My-Objects control stays here unchanged; it still writes `?my=` and
+ * narrows the (now cross-kind) results to the current user's owned entities.
+ */
 const SearchResultsTabs: React.FC<SearchResultsTabsProps> = ({
   showTabsSkeleton,
   isHintUpdating,
@@ -27,53 +33,19 @@ const SearchResultsTabs: React.FC<SearchResultsTabsProps> = ({
     setTabs([
       { name: t('All'), hint: totals.all, value: 'all' },
       { name: t('My Objects'), hint: totals.myObjectsTotal, value: 'my' },
-      {
-        name: t('Datasets'),
-        hint: totals[DataEntityClassNameEnum.SET]?.count || 0,
-        value: totals[DataEntityClassNameEnum.SET]?.id,
-      },
-      {
-        name: t('Transformers'),
-        hint: totals[DataEntityClassNameEnum.TRANSFORMER]?.count || 0,
-        value: totals[DataEntityClassNameEnum.TRANSFORMER]?.id,
-      },
-      {
-        name: t('Data Consumers'),
-        hint: totals[DataEntityClassNameEnum.CONSUMER]?.count || 0,
-        value: totals[DataEntityClassNameEnum.CONSUMER]?.id,
-      },
-      {
-        name: t('Data Inputs'),
-        hint: totals[DataEntityClassNameEnum.INPUT]?.count || 0,
-        value: totals[DataEntityClassNameEnum.INPUT]?.id,
-      },
-      {
-        name: t('Quality Tests'),
-        hint: totals[DataEntityClassNameEnum.QUALITY_TEST]?.count || 0,
-        value: totals[DataEntityClassNameEnum.QUALITY_TEST]?.id,
-      },
-      {
-        name: t('Groups'),
-        hint: totals[DataEntityClassNameEnum.ENTITY_GROUP]?.count || 0,
-        value: totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id,
-      },
-      {
-        name: t('Relationships'),
-        hint: totals[DataEntityClassNameEnum.RELATIONSHIP]?.count || 0,
-        value: totals[DataEntityClassNameEnum.RELATIONSHIP]?.id,
-      },
     ]);
   }, [totals, t]);
 
-  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
+  const [selectedTab, setSelectedTab] = React.useState<number>(0);
 
+  // My Objects is index 1; everything else — All, or an entity-class narrowing chosen in the Asset-type
+  // filter — keeps the All tab (index 0) active (a class narrowing is a refinement of All, not of My).
   React.useEffect(() => {
-    setSelectedTab(searchClass ? tabs.findIndex(tab => tab.value === searchClass) : 0);
-  }, [tabs, searchClass]);
+    setSelectedTab(searchClass === 'my' ? 1 : 0);
+  }, [searchClass]);
 
   const onTabChange = (newTabIndex: number) => {
-    const tabValue = tabs[newTabIndex].value;
-    onSearchClassChange(tabValue);
+    onSearchClassChange(tabs[newTabIndex]?.value);
   };
 
   return (

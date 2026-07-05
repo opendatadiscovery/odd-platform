@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { AssetKind } from 'generated-sources';
 import {
   paramsToSearchState,
   searchStateToParams,
   searchUrlStateToFormData,
+  searchUrlStateToAssetSearchFormData,
   defaultSortForContext,
   resolveActiveSort,
   type SearchUrlState,
@@ -159,6 +161,63 @@ describe('searchUrlState — sort ⇄ URL params (ST-2b / #1836)', () => {
       'updated_at'
     );
     expect(searchUrlStateToFormData(state()).sort).toBeUndefined();
+  });
+});
+
+/**
+ * ST-4 (#1838) — the asset-type kinds ⇄ URL param, layered additively on ST-1/2. The tokens are the AssetKind
+ * enum values; an unknown token fails closed (dropped), and an empty selection = all kinds (omitted from the URL).
+ */
+describe('searchUrlState — asset_kinds ⇄ URL params (ST-4 / #1838)', () => {
+  it('round-trips the selected kinds through the URL (identity)', () => {
+    const s = state({ assetKinds: [AssetKind.DATA_ENTITY, AssetKind.TERM] });
+    expect(paramsToSearchState(`?${searchStateToParams(s)}`)).toEqual(s);
+  });
+
+  it('serialises kinds as ?asset_kinds[]=... and omits them when none are selected', () => {
+    expect(searchStateToParams(state({ assetKinds: [AssetKind.TERM] }))).toContain(
+      'asset_kinds[]=TERM'
+    );
+    expect(searchStateToParams(state({ assetKinds: [] }))).toBe('');
+    expect(searchStateToParams(state())).toBe('');
+  });
+
+  it('fails closed: unknown kind tokens are dropped, an all-garbage list → undefined (= all kinds)', () => {
+    expect(
+      paramsToSearchState('?asset_kinds[]=TERM,BOGUS,DATA_ENTITY').assetKinds
+    ).toEqual([AssetKind.TERM, AssetKind.DATA_ENTITY]);
+    expect(paramsToSearchState('?asset_kinds[]=BOGUS').assetKinds).toBeUndefined();
+    expect(paramsToSearchState('').assetKinds).toBeUndefined();
+  });
+
+  it('is preserved alongside a faceted, sorted query (parse+serialise identity)', () => {
+    const s = state({
+      query: 'orders',
+      facets: { entityClasses: [1] },
+      myObjects: true,
+      sort: 'updated_at',
+      assetKinds: [AssetKind.QUERY_EXAMPLE],
+    });
+    expect(paramsToSearchState(`?${searchStateToParams(s)}`)).toEqual(s);
+  });
+
+  it('searchUrlStateToAssetSearchFormData carries the kinds + the shared SearchFormData fields', () => {
+    const formData = searchUrlStateToAssetSearchFormData(
+      state({
+        query: 'q',
+        facets: { tags: [5] },
+        myObjects: true,
+        sort: 'name',
+        assetKinds: [AssetKind.TERM],
+      })
+    );
+    expect(formData.query).toBe('q');
+    expect(formData.myObjects).toBe(true);
+    expect(formData.sort).toBe('name');
+    expect(formData.filters.tags).toEqual([{ entityId: 5, selected: true }]);
+    expect(formData.assetKinds).toEqual([AssetKind.TERM]);
+    // an empty selection is omitted so the request never over-constrains to "no kinds"
+    expect(searchUrlStateToAssetSearchFormData(state()).assetKinds).toBeUndefined();
   });
 });
 

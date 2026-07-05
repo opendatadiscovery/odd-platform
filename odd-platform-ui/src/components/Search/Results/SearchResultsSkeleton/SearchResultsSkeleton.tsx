@@ -4,16 +4,14 @@ import { Grid } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
 import { SkeletonWrapper } from 'components/shared/elements';
 import {
+  ASSET_RESULT_COLS as COL,
   SearchCol,
   SEARCH_TABLE_MIN_WIDTH,
-  type GridSizesByBreakpoints,
 } from '../Results.styles';
 
-interface SearchResultsSkeletonProps {
-  grid: GridSizesByBreakpoints;
-}
-
-const SearchResultsSkeleton: React.FC<SearchResultsSkeletonProps> = ({ grid }) => (
+// ST-4 (#1838) — a loading placeholder matching the cross-kind column set (Name · Type · Namespace · Status ·
+// Updated · Recently viewed), the same sticky Name / Recently-viewed columns as the real rows.
+const SearchResultsSkeleton: React.FC = () => (
   <SkeletonWrapper
     length={30}
     renderContent={({ randWidth, key }) => (
@@ -23,28 +21,22 @@ const SearchResultsSkeleton: React.FC<SearchResultsSkeletonProps> = ({ grid }) =
         key={key}
         wrap='nowrap'
       >
-        <SearchCol item lg={grid.lg.nm} md={grid.md.nm} $sticky>
+        <SearchCol item lg={COL.nm} md={COL.nm} $sticky>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.nd} md={grid.md.nd}>
+        <SearchCol item lg={COL.ty} md={COL.ty}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.ow} md={grid.md.ow}>
+        <SearchCol item lg={COL.nd} md={COL.nd}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
+        <SearchCol item lg={COL.st} md={COL.st}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
+        <SearchCol item lg={COL.up} md={COL.up}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.up} md={grid.md.up}>
-          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
-        </SearchCol>
-        <SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
-          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
-        </SearchCol>
-        <SearchCol item lg={grid.lg.rv} md={grid.md.rv} $stickyRight>
+        <SearchCol item lg={COL.rv} md={COL.rv} $stickyRight>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
       </Grid>

@@ -6,6 +6,7 @@ import dataSources from './datasources.slice';
 import dataEntities from './dataentities.slice';
 import tags from './tags.slice';
 import dataEntitySearch from './dataEntitySearch.slice';
+import assetSearch from './assetSearch.slice';
 import metaData from './metadata.slice';
 import owners from './owners.slice';
 import datasetStructure from './datasetStructure.slice';
@@ -32,6 +33,7 @@ export default combineReducers({
   dataSources,
   dataEntities,
   dataEntitySearch,
+  assetSearch,
   loader,
   tags,
   metaData,

@@ -12,6 +12,7 @@ import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Button, AppCircularProgress } from 'components/shared/elements';
 import { clearDataEntitySearchFacets } from 'redux/slices/dataEntitySearch.slice';
+import AssetTypeFilter from './AssetTypeFilter/AssetTypeFilter';
 import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';
 import SingleFilterItem from './FilterItem/SingleFilterItem/SingleFilterItem';
 import * as S from './FiltersStyles';
@@ -44,6 +45,9 @@ const Filters: React.FC = () => {
         />
       </Grid>
       <S.ListContainer>
+        {/* ST-4 (#1838) — the cross-kind Asset-type filter (kinds + the DE entity-class sub-values) sits above
+            the shared facets, which keep narrowing the (now cross-kind) results via the retained DE session. */}
+        <AssetTypeFilter />
         <SingleFilterItem
           key='ds'
           facetName='datasources'
