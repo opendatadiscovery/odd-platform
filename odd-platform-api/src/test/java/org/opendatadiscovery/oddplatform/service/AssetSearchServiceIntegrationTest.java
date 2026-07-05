@@ -180,6 +180,70 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
             .verifyComplete();
     }
 
+    @Test
+    @DisplayName("a shared facet Terms carry (namespace) narrows data entities; a matching Term passes through")
+    void searchAssets_namespaceFacet_narrowsDataEntities_termPassesThrough() {
+        // Two distinct namespace rows -> deterministically distinct serial ids (no reliance on UUID inequality).
+        final long keepNsId = namespaceRepository.createByName(UUID.randomUUID().toString()).block().getId();
+        final long otherNsId = namespaceRepository.createByName(UUID.randomUUID().toString()).block().getId();
+
+        final long keptDeId = seedDataEntityInNamespace("nsfacetepsilon", keepNsId);  // in the selected namespace
+        seedDataEntityInNamespace("nsfacetepsilon", otherNsId);                        // other namespace -> dropped
+        seedTerm("nsfacetepsilon");                                    // its own (random) namespace -> passes through
+
+        final AssetSearchFormData form = form("nsfacetepsilon")
+            .filters(new SearchFormDataFilters().namespaces(List.of(new SearchFilterState(keepNsId, true))));
+
+        assetSearchService.searchAssets(form, 1, 30)
+            .as(StepVerifier::create)
+            .assertNext(list -> {
+                assertThat(list.getItems())
+                    .filteredOn(a -> a.getAssetKind() == AssetKind.DATA_ENTITY)
+                    .as("only the DE in the selected namespace survives; the other-namespace DE is narrowed out")
+                    .singleElement()
+                    .satisfies(a -> assertThat(a.getDataEntity().getId()).isEqualTo(keptDeId));
+                assertThat(list.getItems())
+                    .extracting(Asset::getAssetKind)
+                    .as("the term (a non-DE kind) passes through — the facet is not applied to its own namespace")
+                    .contains(AssetKind.TERM);
+                assertThat(list.getPageInfo().getTotal())
+                    .as("count = the kept DE + the term (the other-namespace DE is excluded)")
+                    .isEqualTo(2L);
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("a DE-only facet (status) narrows data entities and excludes non-DE kinds (ADR D3)")
+    void searchAssets_statusFacet_narrowsDataEntities_excludesNonDe() {
+        final long draftDeId =
+            seedDataEntityWithStatus("statusfacetzeta", DataEntityStatusDto.DRAFT.getId());  // selected status - kept
+        seedDataEntityWithStatus("statusfacetzeta", DataEntityStatusDto.STABLE.getId());     // other status - dropped
+        seedTerm("statusfacetzeta");                                                         // non-DE - excluded (D3)
+
+        final AssetSearchFormData form = form("statusfacetzeta")
+            .filters(new SearchFormDataFilters()
+                .statuses(List.of(new SearchFilterState((long) DataEntityStatusDto.DRAFT.getId(), true))));
+
+        assetSearchService.searchAssets(form, 1, 30)
+            .as(StepVerifier::create)
+            .assertNext(list -> {
+                assertThat(list.getItems())
+                    .as("a DE-only facet excludes Terms / Query Examples outright (ADR D3) — only DE rows survive")
+                    .isNotEmpty()
+                    .extracting(Asset::getAssetKind)
+                    .containsOnly(AssetKind.DATA_ENTITY);
+                assertThat(list.getItems())
+                    .as("and among DEs only the one carrying the selected status is kept (the facet narrows DEs)")
+                    .singleElement()
+                    .satisfies(a -> assertThat(a.getDataEntity().getId()).isEqualTo(draftDeId));
+                assertThat(list.getPageInfo().getTotal())
+                    .as("count = the single DRAFT DE (the STABLE DE and the term are both excluded)")
+                    .isEqualTo(1L);
+            })
+            .verifyComplete();
+    }
+
     private static AssetSearchFormData form(final String query) {
         return new AssetSearchFormData()
             .query(query)
@@ -198,6 +262,35 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
             .setTypeId(1)
             .setHollow(false)
             .setStatus(DataEntityStatusDto.UNASSIGNED.getId())
+            .setExcludeFromSearch(false);
+        final DataEntityPojo created = dataEntityRepository.bulkCreate(List.of(pojo)).blockLast();
+        searchEntrypointRepository.updateDataEntityVectors(created.getId()).block();
+        return created.getId();
+    }
+
+    private long seedDataEntityInNamespace(final String name, final long namespaceId) {
+        final DataEntityPojo pojo = new DataEntityPojo()
+            .setOddrn("//assetsearch/de/ns" + namespaceId + "/" + name)
+            .setExternalName(name)
+            .setEntityClassIds(new Integer[] {DATA_SET})
+            .setTypeId(1)
+            .setNamespaceId(namespaceId)
+            .setHollow(false)
+            .setStatus(DataEntityStatusDto.UNASSIGNED.getId())
+            .setExcludeFromSearch(false);
+        final DataEntityPojo created = dataEntityRepository.bulkCreate(List.of(pojo)).blockLast();
+        searchEntrypointRepository.updateDataEntityVectors(created.getId()).block();
+        return created.getId();
+    }
+
+    private long seedDataEntityWithStatus(final String name, final short statusId) {
+        final DataEntityPojo pojo = new DataEntityPojo()
+            .setOddrn("//assetsearch/de/st" + statusId + "/" + name)
+            .setExternalName(name)
+            .setEntityClassIds(new Integer[] {DATA_SET})
+            .setTypeId(1)
+            .setHollow(false)
+            .setStatus(statusId)
             .setExcludeFromSearch(false);
         final DataEntityPojo created = dataEntityRepository.bulkCreate(List.of(pojo)).blockLast();
         searchEntrypointRepository.updateDataEntityVectors(created.getId()).block();

@@ -24,9 +24,14 @@ import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.ASSET_SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
+import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
+import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
+import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.QUERY_EXAMPLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
 
 @Repository
 @RequiredArgsConstructor
@@ -127,10 +132,48 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
                     .where(OWNERSHIP.OWNER_ID.eq(owner.getId())))));
         }
 
-        // EXTENSION POINT (CTRIB-056 follow-up increment): the shared facets carried on FacetStateDto —
-        // namespace / owner / tag / group / status / datasource — are NOT applied in this increment. They plug
-        // in here as additional DE-scoped predicates over `state` (reusing the DATA_ENTITY facet condition
-        // builders), in the same kind-guarded `ASSET_KIND.ne('DATA_ENTITY').or(<de predicate>)` shape as (4).
+        // (6) shared sidebar facets — namespace / owner / tag / group / status / datasource carried on
+        // FacetStateDto. Applied to DE rows through a DE-id semi-join that REUSES the exact DE facet predicate
+        // builders the /search result query uses (FTSConstants.DATA_ENTITY_CONDITIONS) — never a hand-rolled
+        // predicate. entity_class (already applied at (4)) and type (an Asset-type-filter concern) are ignored
+        // so only the six shared facets compile here; the list is empty (and the whole join skipped) unless at
+        // least one shared facet is actually selected.
+        final List<Condition> deFacetConditions = jooqFTSHelper.facetStateConditions(
+            state, DATA_ENTITY_CONDITIONS, List.of(FacetType.ENTITY_CLASSES, FacetType.TYPES));
+        if (!deFacetConditions.isEmpty()) {
+            // FROM mirrors ReactiveDataEntityRepositoryImpl.findByState's facet joins so every shared facet's
+            // table is reachable: DATA_SOURCE (+ its namespace), NAMESPACE, OWNERSHIP -> OWNER,
+            // GROUP_ENTITY_RELATIONS. tag/group resolve through their own nested sub-selects on data_entity.id,
+            // so no tag / dataset-structure joins are needed here. Duplicate DE ids from the fan-out joins are
+            // irrelevant — it feeds an IN (...) semi-join.
+            final var deFacetMatches = DSL.select(DATA_ENTITY.ID)
+                .from(DATA_ENTITY
+                    .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+                    .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID)
+                        .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID)))
+                    .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                    .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
+                    .leftJoin(GROUP_ENTITY_RELATIONS)
+                    .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN)))
+                .where(deFacetConditions);
+            // Kind-guarded like (4): DE rows must be in the facet-matching set; non-DE rows pass through here
+            // (cross-kind facet application over Terms / Query Examples is ST-11, out of scope).
+            conditions.add(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.ne(AssetKind.DATA_ENTITY.getValue())
+                .or(DATA_ENTITY.ID.in(deFacetMatches)));
+        }
+
+        // (7) ADR D3 — Terms / Query Examples carry no datasource / status / group / type. When any of those
+        // DE-only facets is selected the non-DE kinds cannot satisfy it, so exclude them outright (only DE rows
+        // survive). The Terms-carrying shared facets (namespace / owner / tag) narrow DE rows at (6) but let
+        // non-DE rows pass.
+        final boolean deOnlyFacetSelected =
+            !state.getFacetEntities(FacetType.DATA_SOURCES).isEmpty()
+                || !state.getFacetEntities(FacetType.STATUSES).isEmpty()
+                || !state.getFacetEntities(FacetType.GROUPS).isEmpty()
+                || !state.getFacetEntities(FacetType.TYPES).isEmpty();
+        if (deOnlyFacetSelected) {
+            conditions.add(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.DATA_ENTITY.getValue()));
+        }
 
         return conditions;
     }
