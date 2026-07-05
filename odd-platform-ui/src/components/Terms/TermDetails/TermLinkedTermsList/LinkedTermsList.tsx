@@ -60,7 +60,7 @@ const LinkedTermsList: FC = () => {
         status: errResponse?.status ?? 0,
         statusText: errResponse?.statusText || 'Unknown Error',
         url: errResponse?.url ?? '',
-        message: error instanceof Error ? error.message : 'Unknown Error',
+        message: error instanceof Error ? error.message : t('Unknown Error'),
       }
     : undefined;
 
