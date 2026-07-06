@@ -141,6 +141,15 @@ export const getSearchFacetsData = createSelector(searchState, search =>
 
 export const getSearchTotals = createSelector(searchState, search => search.totals);
 
+// ST-4 (#1838) — the numeric entity-class ids currently selected in the Data-entity-type multiselect filter.
+// entityClasses is NOT an OptionalFacetName (the class dimension is special-cased), so it needs its own read;
+// the facetState is the optimistic source of truth (the chips reflect a selection before the server re-syncs).
+export const getSelectedEntityClassIds = createSelector(searchState, search =>
+  values(search.facetState.entityClasses || {})
+    .filter(option => option.selected && typeof option.entityId === 'number')
+    .map(option => option.entityId as number)
+);
+
 export const getSearchResults = createSelector(
   searchState,
   search => search.results.items

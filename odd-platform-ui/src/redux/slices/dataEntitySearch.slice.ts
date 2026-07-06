@@ -165,9 +165,11 @@ export const dataEntitiesSearchSlice = createSlice({
     clearDataEntitySearchFacets: (
       state: DataEntitySearchState
     ): DataEntitySearchState => {
-      const getClearedFacetState = (_: SearchFacetStateById, facetName: string) => {
-        if (facetName === 'entityClasses') return state.facetState.entityClasses; // Not clearing entityClasses filter
-        return reduce<SearchFacetStateById, SearchFacetStateById>(
+      const getClearedFacetState = (_: SearchFacetStateById, facetName: string) =>
+        // ST-4 (#1838): the entity classes are now the standard Data-entity-type multiselect FILTER, so the
+        // single Filters-panel "Clear All" clears them like any facet (the class-tab-era special-case that
+        // preserved them is gone). My-Objects is `state.myObjects` (untouched here), so it survives Clear All.
+        reduce<SearchFacetStateById, SearchFacetStateById>(
           state.facetState[facetName as SearchFacetNames],
           (acc, facetOption) => {
             if (facetOption.selected) {
@@ -183,7 +185,6 @@ export const dataEntitiesSearchSlice = createSlice({
           },
           {}
         );
-      };
 
       return {
         ...state,
