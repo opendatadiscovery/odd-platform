@@ -112,14 +112,18 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
 
         // (4) entity-class refinement — a DE-only predicate; non-DE rows pass through (when the DE branch of the
         // Asset-type control is chosen the asset-kind filter (2) excludes the other kinds). Applied BEFORE the
-        // limit so paging + counts stay correct. Same array-contains (@>) predicate the DE facet uses.
+        // limit so paging + counts stay correct. The class selection is a MULTISELECT with OR semantics — a
+        // Data Entity matches if it is in ANY selected class — so this is array OVERLAP (`&&`), NOT contains-all
+        // (`@>`). `@>` would require the entity to hold EVERY selected class at once, so selecting
+        // [Datasets, Transformers] returned nothing (no entity is both a dataset AND a transformer).
         final List<SearchFilterDto> entityClasses = state.getFacetEntities(FacetType.ENTITY_CLASSES);
         if (!entityClasses.isEmpty()) {
             final Integer[] classIds = entityClasses.stream()
                 .map(f -> (int) f.getEntityId())
                 .toArray(Integer[]::new);
             conditions.add(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.ne(AssetKind.DATA_ENTITY.getValue())
-                .or(DATA_ENTITY.ENTITY_CLASS_IDS.contains(classIds)));
+                .or(DSL.condition("{0} && {1}", DATA_ENTITY.ENTITY_CLASS_IDS,
+                    DSL.val(classIds, DATA_ENTITY.ENTITY_CLASS_IDS.getDataType()))));
         }
 
         // (5) my-objects — restrict DE rows to the owner's owned set; non-DE rows pass through. Only reached

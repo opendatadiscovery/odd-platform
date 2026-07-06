@@ -1,73 +1,64 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { DataEntityClassNameEnum } from 'generated-sources';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { getSearchTotals, getSelectedEntityClassIds } from 'redux/selectors';
-import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
+import { searchPath } from 'routes';
+import { paramsToSearchState, searchStateToParams } from 'lib/search/searchUrlState';
 import FixedOptionsMultiFilter, {
   type FixedFilterOption,
 } from '../FilterItem/FixedOptionsMultiFilter/FixedOptionsMultiFilter';
 
-// The entity classes, in the same order + labels the retired class tabs used. The class id is resolved from
-// the search-response totals (the retired tabs sourced it the same way).
-const DE_CLASS_OPTIONS: ReadonlyArray<{
-  className: DataEntityClassNameEnum;
-  labelKey: string;
-}> = [
-  { className: DataEntityClassNameEnum.SET, labelKey: 'Datasets' },
-  { className: DataEntityClassNameEnum.TRANSFORMER, labelKey: 'Transformers' },
-  { className: DataEntityClassNameEnum.CONSUMER, labelKey: 'Data Consumers' },
-  { className: DataEntityClassNameEnum.INPUT, labelKey: 'Data Inputs' },
-  { className: DataEntityClassNameEnum.QUALITY_TEST, labelKey: 'Quality Tests' },
-  { className: DataEntityClassNameEnum.ENTITY_GROUP, labelKey: 'Groups' },
-  { className: DataEntityClassNameEnum.RELATIONSHIP, labelKey: 'Relationships' },
+// The entity classes as a FIXED reference taxonomy — id + label, in the order the retired class tabs used.
+// The ids are the immutable DataEntityClassDto ids (odd-platform-api dto/DataEntityClassDto.java): DATA_SET(1),
+// DATA_TRANSFORMER(2), DATA_QUALITY_TEST(4), DATA_CONSUMER(6), DATA_INPUT(7), DATA_ENTITY_GROUP(8),
+// DATA_RELATIONSHIP(9). Hardcoded (exactly as ASSET_KIND_OPTIONS lists the asset kinds) so the option list and
+// the selected chips are RELIABLE — never dependent on the single-class DE-session facet totals, which collapse
+// to one class under a multi-class selection (they carried the old class tabs, which were single-select).
+const DE_CLASS_OPTIONS: ReadonlyArray<{ id: number; labelKey: string }> = [
+  { id: 1, labelKey: 'Datasets' },
+  { id: 2, labelKey: 'Transformers' },
+  { id: 6, labelKey: 'Data Consumers' },
+  { id: 7, labelKey: 'Data Inputs' },
+  { id: 4, labelKey: 'Quality Tests' },
+  { id: 8, labelKey: 'Groups' },
+  { id: 9, labelKey: 'Relationships' },
 ];
 
 /**
  * ST-4 (#1838) — the **Data entity type** filter: a STANDARD, SEPARATE search-filter multiselect (identical
- * control to Statuses / Tag) over the entity classes (Datasets / Transformers / Data Consumers / …). It narrows
- * the Data-Entity rows of the cross-kind result to the selected classes; other kinds are unaffected. It writes
- * the existing `entityClasses` facet as a MULTISELECT (no `facetSingle`), so the class ids ride
- * `?entityClasses[]=` and the ranked query applies them. NOT a nested reveal, NOT single-select, no per-filter
- * Clear All — the single Filters-panel "Clear All" clears it (like every other filter).
+ * control to Statuses / Tag / the Asset-type filter) over the entity classes. It narrows the Data-Entity rows of
+ * the cross-kind result to ANY of the selected classes (an OR — `entity_class_ids && [ids]`); other kinds pass
+ * through. Like the Asset-type filter, the selection rides the URL (`?entityClasses[]=`) DIRECTLY — never the
+ * redux DE-session facet, whose single-class collapse dropped the second chip on reload and could not carry a
+ * multi-class selection. NOT a nested reveal, NOT single-select, no per-filter Clear All (the single
+ * Filters-panel "Clear All" clears it, like every other filter).
  */
 const DataEntityTypeFilter: React.FC = () => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
-  const totals = useAppSelector(getSearchTotals);
-  const selectedIds = useAppSelector(getSelectedEntityClassIds);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const selectedIds = React.useMemo(
+    () => paramsToSearchState(location.search).facets.entityClasses ?? [],
+    [location.search]
+  );
 
   const options: FixedFilterOption[] = React.useMemo(
-    () =>
-      DE_CLASS_OPTIONS.reduce<FixedFilterOption[]>((acc, { className, labelKey }) => {
-        const total = totals[className];
-        if (total?.id) acc.push({ id: total.id, name: t(labelKey) });
-        return acc;
-      }, []),
-    [totals, t]
+    () => DE_CLASS_OPTIONS.map(({ id, labelKey }) => ({ id, name: t(labelKey) })),
+    [t]
   );
 
-  const setClass = React.useCallback(
-    (id: string | number, selected: boolean) => {
-      const entry = DE_CLASS_OPTIONS.find(
-        ({ className }) => totals[className]?.id === id
-      );
-      const total = entry ? totals[entry.className] : undefined;
-      dispatch(
-        changeDataEntitySearchFacet({
-          facetName: 'entityClasses',
-          facetOptionId: id,
-          facetOptionName: total?.name ?? String(id),
-          facetOptionState: selected,
-        })
-      );
+  const writeClasses = React.useCallback(
+    (ids: number[]) => {
+      const current = paramsToSearchState(location.search);
+      const next = {
+        ...current,
+        facets: { ...current.facets, entityClasses: ids.length ? ids : undefined },
+      };
+      const params = searchStateToParams(next);
+      navigate(`${searchPath()}${params ? `?${params}` : ''}`);
     },
-    [dispatch, totals]
+    [location.search, navigate]
   );
-
-  // Hide until the (DE-session) class totals resolve, so the control is never empty. The class ids arrive with
-  // the first search response, exactly as the retired class tabs sourced them.
-  if (options.length === 0) return null;
 
   return (
     <FixedOptionsMultiFilter
@@ -75,8 +66,8 @@ const DataEntityTypeFilter: React.FC = () => {
       filterId='entityClasses'
       options={options}
       selectedIds={selectedIds}
-      onSelect={option => setClass(option.id, true)}
-      onRemove={option => setClass(option.id, false)}
+      onSelect={option => writeClasses([...selectedIds, option.id as number])}
+      onRemove={option => writeClasses(selectedIds.filter(id => id !== option.id))}
     />
   );
 };

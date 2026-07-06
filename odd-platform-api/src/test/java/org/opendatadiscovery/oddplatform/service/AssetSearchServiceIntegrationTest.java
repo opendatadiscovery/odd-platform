@@ -181,6 +181,35 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("a multiselect of entity classes is an OR (union) — a DE in ANY selected class is kept")
+    void searchAssets_entityClassFilter_multipleClasses_returnsUnion() {
+        final long datasetId = seedDataEntity("ecunionzeta", DATA_SET);              // class 1
+        final long transformerId = seedDataEntity("ecunionzeta", DATA_TRANSFORMER);  // class 2
+
+        // BOTH classes selected -> the class refinement is an OR (array overlap `&&`): a DE in class 1 OR class 2
+        // is kept. The old contains-all (`@>`) predicate required a DE to hold class 1 AND class 2 at once, so
+        // selecting [Datasets, Transformers] returned NOTHING (no entity is both a dataset and a transformer).
+        final AssetSearchFormData form = form("ecunionzeta")
+            .filters(new SearchFormDataFilters().entityClasses(List.of(
+                new SearchFilterState((long) DATA_SET, true),
+                new SearchFilterState((long) DATA_TRANSFORMER, true))));
+
+        assetSearchService.searchAssets(form, 1, 30)
+            .as(StepVerifier::create)
+            .assertNext(list -> {
+                assertThat(list.getItems())
+                    .filteredOn(a -> a.getAssetKind() == AssetKind.DATA_ENTITY)
+                    .as("both the DATASET and the DATA_TRANSFORMER survive the OR (union) class refinement")
+                    .extracting(a -> a.getDataEntity().getId())
+                    .containsExactlyInAnyOrder(datasetId, transformerId);
+                assertThat(list.getPageInfo().getTotal())
+                    .as("count = both DEs (class 1 OR class 2)")
+                    .isEqualTo(2L);
+            })
+            .verifyComplete();
+    }
+
+    @Test
     @DisplayName("a shared facet Terms carry (namespace) narrows data entities; a matching Term passes through")
     void searchAssets_namespaceFacet_narrowsDataEntities_termPassesThrough() {
         // Two distinct namespace rows -> deterministically distinct serial ids (no reliance on UUID inequality).
