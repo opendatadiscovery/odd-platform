@@ -141,15 +141,6 @@ export const getSearchFacetsData = createSelector(searchState, search =>
 
 export const getSearchTotals = createSelector(searchState, search => search.totals);
 
-// ST-4 (#1838) — the numeric entity-class ids currently selected in the Data-entity-type multiselect filter.
-// entityClasses is NOT an OptionalFacetName (the class dimension is special-cased), so it needs its own read;
-// the facetState is the optimistic source of truth (the chips reflect a selection before the server re-syncs).
-export const getSelectedEntityClassIds = createSelector(searchState, search =>
-  values(search.facetState.entityClasses || {})
-    .filter(option => option.selected && typeof option.entityId === 'number')
-    .map(option => option.entityId as number)
-);
-
 export const getSearchResults = createSelector(
   searchState,
   search => search.results.items
@@ -181,6 +172,11 @@ export const getDataEntitySearchHighlights = (dataEntityId: number) =>
 export const getSearchUrlState = createSelector(searchState, (search): SearchUrlState => {
   const facets: SearchUrlFacets = {};
   SEARCH_FACET_PARAMS.forEach(name => {
+    // entityClasses is driven DIRECTLY on the URL by DataEntityTypeFilter (like assetKinds), NOT mirrored from
+    // the redux facet: the DE session is single-class, so its facetState echo collapses a multi-class selection
+    // to one. The Search.tsx mirror re-merges entityClasses from the live URL, so other-facet toggles preserve
+    // it instead of overwriting it with the collapsed value.
+    if (name === 'entityClasses') return;
     const byId = search.facetState[name];
     if (!byId) return;
     const ids = values(byId)
