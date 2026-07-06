@@ -1,4 +1,5 @@
 export * from './owners.actions';
+export * from './assetSearch.actions';
 export * from './favorites.actions';
 export * from './recentlyViewed.actions';
 export * from './savedSearch.actions';

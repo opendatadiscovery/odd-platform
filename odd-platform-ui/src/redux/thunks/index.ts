@@ -7,6 +7,7 @@ export * from './datasetStructure.thunks';
 export * from './dataQualityTest.thunks';
 export * from './dataentityLineage.thunks';
 export * from './dataentitiesSearch.thunks';
+export * from './assetSearch.thunks';
 export * from './owners.thunks';
 export * from './tags.thunks';
 export * from './namespace.thunks';

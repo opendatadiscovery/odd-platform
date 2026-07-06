@@ -3,6 +3,7 @@ import {
   ActivityApi,
   AlertApi,
   AppInfoApi,
+  AssetSearchApi,
   CollectorApi,
   Configuration,
   DataCollaborationApi,
@@ -59,6 +60,7 @@ export const linksApi = new LinksApi(apiConf);
 export const collectorApi = new CollectorApi(apiConf);
 export const dataCollaborationApi = new DataCollaborationApi(apiConf);
 export const searchApi = new SearchApi(apiConf);
+export const assetSearchApi = new AssetSearchApi(apiConf);
 export const dataEntityRunApi = new DataEntityRunApi(apiConf);
 export const dataQualityApi = new DataQualityApi(apiConf);
 export const datasetApiClient = new DataSetApi(apiConf);

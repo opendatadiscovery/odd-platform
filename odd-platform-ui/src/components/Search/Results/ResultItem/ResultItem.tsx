@@ -1,84 +1,78 @@
 import React from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { AssetKind, DataEntityClassNameEnum } from 'generated-sources';
+import { AssetKind, type Asset } from 'generated-sources';
 import {
   AppTooltip,
   DataEntityDetailsPreview,
-  DatasourceLogo,
   EntityClassItem,
-  FavoriteStar,
-  RecentlyViewedTag,
-  NumberFormatted,
-  TruncatedCell,
   EntityStatus,
+  FavoriteStar,
   MetadataStale,
+  RecentlyViewedTag,
 } from 'components/shared/elements';
-import { ColumnsIcon, QuestionIcon, RowsIcon } from 'components/shared/icons';
+import { QuestionIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
-import type { DataEntity } from 'redux/interfaces';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getSearchQuery } from 'redux/selectors';
-import { dataEntityDetailsPath } from 'routes';
-import { type GridSizesByBreakpoints, SearchCol } from '../Results.styles';
+// ST-4 (#1838) — REUSE the polymorphic-asset helpers the Favorites list already ships (`Asset` and
+// `FavoriteAsset` are the same `{ asset_kind, data_entity?, term?, query_example? }` shape), so id / name /
+// detail-link / kind-label resolution stays single-sourced instead of duplicated (Gate 1).
+import {
+  assetKindSingularLabel,
+  favoriteAssetId as assetItemId,
+  favoriteAssetLink as assetItemLink,
+  favoriteAssetName as assetItemName,
+} from 'components/Favorites/lib';
+import { ASSET_RESULT_COLS as COL, SearchCol } from '../Results.styles';
 import * as S from './ResultItemStyles';
 import SearchHighlights from './SearchHighlights/SearchHighlights';
 
 interface ResultItemProps {
-  searchResult: DataEntity;
-  gridSizes: GridSizesByBreakpoints;
-  searchClassIdPredicate: (totalName: DataEntityClassNameEnum) => boolean;
-  showClassIcons: boolean;
+  asset: Asset;
 }
 
-const ResultItem: React.FC<ResultItemProps> = ({
-  searchResult,
-  gridSizes: grid,
-  searchClassIdPredicate,
-  showClassIcons,
-}) => {
+/**
+ * ST-4 (#1838) — one polymorphic cross-kind result row. It switches on `asset.asset_kind` and routes on click
+ * to that kind's detail page (Data Entity → /dataentities, Term → /terms, Query Example → the data-modelling
+ * query-example page — all via the shared `favoriteAsset*` resolvers). The Data-Entity row keeps its rich
+ * affordances that the `DataEntityRef` payload supports (staleness marker, the "why it matched" highlight,
+ * the details preview, class chips, status); Term / Query-Example render the clean minimal row the slice calls
+ * for (name / definition + the kind label; no highlight — that parity is ST-12). PLT-147 guard: a row whose
+ * per-kind ref is null / absent renders empty cells and a no-op click — it never throws (no error boundary
+ * exists in odd-platform-ui, so a throw here would white-screen /search).
+ */
+const ResultItem: React.FC<ResultItemProps> = ({ asset }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { dataEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
-  const detailsLink = dataEntityDetailsPath(searchResult.id);
-
+  const { formatDistanceToNowStrict } = useAppDateTime();
   const searchQuery = useAppSelector(getSearchQuery);
 
-  const searchHighlights = React.useMemo(
-    () => <SearchHighlights dataEntityId={searchResult.id} />,
-    [searchResult.id]
-  );
+  const id = assetItemId(asset);
+  const name = assetItemName(asset);
+  const detailsLink = assetItemLink(asset);
+  const hasRef = id > 0; // PLT-147: a null-details ref → no id → no star / recency / routable link
 
-  const updatedAtDS = searchResult?.sourceUpdatedAt ? (
-    <Typography
-      variant='body1'
-      title={formatDistanceToNowStrict(searchResult.sourceUpdatedAt, { addSuffix: true })}
-      noWrap
-    >
-      {formatDistanceToNowStrict(searchResult.sourceUpdatedAt, { addSuffix: true })}
-    </Typography>
-  ) : null;
+  const isDataEntity = asset.assetKind === AssetKind.DATA_ENTITY;
+  const { dataEntity, term } = asset;
 
-  const createdAtDS = searchResult?.sourceCreatedAt ? (
-    <Typography
-      variant='body1'
-      title={dataEntityFormattedDateTime(searchResult.sourceCreatedAt)}
-      noWrap
-    >
-      {dataEntityFormattedDateTime(searchResult.sourceCreatedAt)}
-    </Typography>
-  ) : null;
+  // Per-kind cell projections — each renders only where its ref carries the value, empty otherwise.
+  const entityClasses = isDataEntity ? dataEntity?.entityClasses : undefined;
+  const status = isDataEntity ? dataEntity?.status : undefined;
+  const namespace = term?.namespace?.name; // only TermRef embeds a namespace today
+  const updatedAt = term?.updatedAt;
+  const definition = asset.assetKind === AssetKind.TERM ? term?.definition : undefined;
+
+  const handleOpen = React.useCallback(() => {
+    if (detailsLink) navigate(detailsLink);
+  }, [detailsLink, navigate]);
 
   return (
-    <S.Container
-      data-testid='search-result-item'
-      container
-      onClick={() => navigate(detailsLink)}
-    >
+    <S.Container data-testid='search-result-item' container onClick={handleOpen}>
       <SearchCol
-        lg={grid.lg.nm}
-        md={grid.md.nm}
+        lg={COL.nm}
+        md={COL.nm}
         item
         container
         justifyContent='space-between'
@@ -87,167 +81,78 @@ const ResultItem: React.FC<ResultItemProps> = ({
       >
         <S.NameContainer container item>
           <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
-            <MetadataStale
-              isStale={searchResult.isStale}
-              lastIngestedAt={searchResult.lastIngestedAt}
-            />
-            <Typography
-              ml={0.5}
-              variant='body1'
-              noWrap
-              title={searchResult.internalName ?? searchResult.externalName}
-            >
-              {searchResult.internalName ?? searchResult.externalName}
+            {isDataEntity && <MetadataStale isStale={!!dataEntity?.isStale} />}
+            <Typography ml={0.5} variant='body1' noWrap title={name}>
+              {name}
             </Typography>
+            {definition && (
+              <Typography ml={1} variant='subtitle2' noWrap title={definition}>
+                {definition}
+              </Typography>
+            )}
           </Box>
           <Box display='flex' flexWrap='nowrap' alignItems='center' sx={{ ml: 1 }}>
-            {searchQuery && (
-              <AppTooltip checkForOverflow={false} title={searchHighlights}>
+            {/* The DE "why it matched" highlight (fetched via the retained DE session's searchId). ST-12
+                leaves Term / Query-Example without a highlight — they degrade gracefully with no badge. */}
+            {isDataEntity && dataEntity && searchQuery && (
+              <AppTooltip
+                checkForOverflow={false}
+                title={<SearchHighlights dataEntityId={dataEntity.id} />}
+              >
                 <QuestionIcon sx={{ mr: 1 }} />
               </AppTooltip>
             )}
-            <DataEntityDetailsPreview dataEntityId={searchResult.id} />
-            <FavoriteStar assetKind={AssetKind.DATA_ENTITY} assetId={searchResult.id} />
+            {isDataEntity && dataEntity && (
+              <DataEntityDetailsPreview dataEntityId={dataEntity.id} />
+            )}
+            {hasRef && <FavoriteStar assetKind={asset.assetKind} assetId={id} />}
           </Box>
         </S.NameContainer>
-        <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
-          {showClassIcons &&
-            searchResult.entityClasses?.map(entityClass => (
-              <EntityClassItem
-                sx={{ ml: 0.5 }}
-                key={entityClass.id}
-                entityClassName={entityClass.name}
-              />
-            ))}
-        </Grid>
       </SearchCol>
-      {searchClassIdPredicate(DataEntityClassNameEnum.SET) ? (
-        <>
-          <SearchCol item lg={grid.lg.us} md={grid.md.us}>
-            <Typography variant='body1' noWrap>
-              {searchResult.stats?.consumersCount}
-            </Typography>
-          </SearchCol>
-          <SearchCol item lg={grid.lg.rc} md={grid.md.rc}>
-            <S.RCContainer variant='body1' noWrap mr={1}>
-              <RowsIcon fill='#C4C4C4' sx={{ mr: 0.25 }} />
-              <NumberFormatted value={searchResult.stats?.rowsCount} />
-            </S.RCContainer>
-            <S.RCContainer variant='body1' noWrap>
-              <ColumnsIcon fill='#C4C4C4' sx={{ mr: 0.25 }} />
-              {searchResult.stats?.fieldsCount}
-            </S.RCContainer>
-          </SearchCol>
-        </>
-      ) : null}
-      {searchClassIdPredicate(DataEntityClassNameEnum.TRANSFORMER) ? (
-        <>
-          <SearchCol lg={grid.lg.sr} md={grid.md.sr} item container wrap='wrap'>
-            <TruncatedCell
-              dataList={searchResult.sourceList}
-              externalEntityId={searchResult.id}
-            />
-          </SearchCol>
-          <SearchCol item lg={grid.lg.tr} md={grid.md.tr}>
-            <TruncatedCell
-              dataList={searchResult.targetList}
-              externalEntityId={searchResult.id}
-            />
-          </SearchCol>
-        </>
-      ) : null}
-      {searchClassIdPredicate(DataEntityClassNameEnum.CONSUMER) ? (
-        <SearchCol item lg={grid.lg.sr} md={grid.md.sr}>
-          <TruncatedCell
-            dataList={searchResult.inputList}
-            externalEntityId={searchResult.id}
+
+      <SearchCol item lg={COL.ty} md={COL.ty} container alignItems='center' wrap='nowrap'>
+        <Typography
+          variant='body1'
+          noWrap
+          title={t(assetKindSingularLabel[asset.assetKind])}
+        >
+          {t(assetKindSingularLabel[asset.assetKind])}
+        </Typography>
+        {entityClasses?.map(entityClass => (
+          <EntityClassItem
+            sx={{ ml: 0.5 }}
+            key={entityClass.id}
+            entityClassName={entityClass.name}
           />
-        </SearchCol>
-      ) : null}
-      {searchClassIdPredicate(DataEntityClassNameEnum.QUALITY_TEST) ? (
-        <>
-          <SearchCol item container wrap='wrap' lg={grid.lg.en} md={grid.md.en}>
-            <TruncatedCell
-              dataList={searchResult.datasetsList}
-              externalEntityId={searchResult.id}
-            />
-          </SearchCol>
-          <SearchCol item lg={grid.lg.su} md={grid.md.su}>
-            <TruncatedCell
-              dataList={searchResult.linkedUrlList}
-              externalEntityId={searchResult.id}
-            />
-          </SearchCol>
-        </>
-      ) : null}
-      {searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP) ? (
-        <SearchCol item lg={grid.lg.ne} md={grid.md.ne}>
-          <Typography variant='body1' noWrap>
-            {searchResult?.itemsCount}
+        ))}
+      </SearchCol>
+
+      <SearchCol item lg={COL.nd} md={COL.nd}>
+        {namespace ? (
+          <Typography variant='body1' noWrap title={namespace}>
+            {namespace}
           </Typography>
-        </SearchCol>
-      ) : null}
-      <SearchCol item lg={grid.lg.nd} md={grid.md.nd} flexDirection='column'>
-        {searchResult.dataSource.namespace?.name ? (
+        ) : null}
+      </SearchCol>
+
+      <SearchCol item lg={COL.st} md={COL.st}>
+        {status ? <EntityStatus entityStatus={status} /> : null}
+      </SearchCol>
+
+      <SearchCol item lg={COL.up} md={COL.up}>
+        {updatedAt ? (
           <Typography
             variant='body1'
-            title={searchResult.dataSource.namespace?.name}
             noWrap
+            title={formatDistanceToNowStrict(updatedAt, { addSuffix: true })}
           >
-            {searchResult.dataSource.namespace?.name}
+            {formatDistanceToNowStrict(updatedAt, { addSuffix: true })}
           </Typography>
-        ) : (
-          <Typography variant='subtitle2'>{t('not in any namespace')}</Typography>
-        )}
-        {searchResult.dataSource?.name ? (
-          <Grid container alignItems='center' flexWrap='nowrap'>
-            <DatasourceLogo
-              width={24}
-              padding={0}
-              backgroundColor='transparent'
-              name={searchResult.dataSource?.oddrn}
-            />
-            <Typography
-              ml={1}
-              variant='body1'
-              title={searchResult.dataSource?.name}
-              noWrap
-            >
-              {searchResult.dataSource?.name}
-            </Typography>
-          </Grid>
-        ) : (
-          <Typography variant='subtitle2'>{t('manually created')}</Typography>
-        )}
+        ) : null}
       </SearchCol>
-      <SearchCol item lg={grid.lg.ow} md={grid.md.ow}>
-        <Grid container direction='column' alignItems='flex-start'>
-          {searchResult.ownership?.map(ownership => (
-            <Grid item key={ownership.id}>
-              <Typography variant='body1' title={ownership.owner.name} noWrap>
-                {ownership.owner.name}
-              </Typography>
-            </Grid>
-          ))}
-        </Grid>
-      </SearchCol>
-      <SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
-        <TruncatedCell
-          dataList={searchResult.dataEntityGroups}
-          externalEntityId={searchResult.id}
-        />
-      </SearchCol>
-      <SearchCol item lg={grid.lg.st} md={grid.md.st}>
-        <EntityStatus entityStatus={searchResult.status} />
-      </SearchCol>
-      <SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
-        {createdAtDS}
-      </SearchCol>
-      <SearchCol item lg={grid.lg.up} md={grid.md.up}>
-        {updatedAtDS}
-      </SearchCol>
-      <SearchCol item lg={grid.lg.rv} md={grid.md.rv} $stickyRight>
-        <RecentlyViewedTag assetKind={AssetKind.DATA_ENTITY} assetId={searchResult.id} />
+
+      <SearchCol item lg={COL.rv} md={COL.rv} $stickyRight>
+        {hasRef && <RecentlyViewedTag assetKind={asset.assetKind} assetId={id} />}
       </SearchCol>
     </S.Container>
   );

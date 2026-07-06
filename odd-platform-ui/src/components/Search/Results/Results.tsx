@@ -1,38 +1,40 @@
 import React from 'react';
 import { Grid } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import get from 'lodash/get';
-import findKey from 'lodash/findKey';
-import omit from 'lodash/omit';
 import { useTranslation } from 'react-i18next';
-import { AssetKind, DataEntityClassNameEnum, Permission } from 'generated-sources';
+import { DataEntityClassNameEnum, Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
+  getAssetSearchError,
+  getAssetSearchFetchingStatuses,
+  getAssetSearchResults,
+  getAssetSearchResultsPageInfo,
   getDataEntityClassesDict,
   getSearchCreatingStatuses,
   getSearchEntityClass,
   getSearchFacetsSynced,
   getSearchId,
-  getSearchIsCreatingAndFetching,
-  getSearchIsFetching,
-  getSearchResults,
-  getSearchResultsError,
-  getSearchResultsFetchStatuses,
-  getSearchResultsPageInfo,
   getSearchTotals,
   getSearchUpdateStatuses,
 } from 'redux/selectors';
-import { fetchDataEntitySearchResults, fetchFavoritesStatus } from 'redux/thunks';
+import { fetchFavoritesStatus, searchAssets } from 'redux/thunks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import type { SearchClass } from 'redux/interfaces';
 import {
-  Button,
   AppErrorPage,
+  Button,
   EmptyContentPlaceholder,
 } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { useSearchRouteParams } from 'routes';
+import {
+  paramsToSearchState,
+  searchUrlStateToAssetSearchFormData,
+} from 'lib/search/searchUrlState';
+import { favoriteAssetId } from 'components/Favorites/lib';
 import TableHeader from './TableHeader/TableHeader';
 import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
@@ -45,28 +47,30 @@ import * as S from './Results.styles';
 const Results: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const size = 30;
 
-  // ST-2b — the global sort dropdown is a param-URL control (ADR D10). It is hidden on the deprecated legacy
-  // `/search/{sessionId}` route, where writing `?sort=` would navigate away from the session and discard its state.
+  // ST-2b — the global sort dropdown (+ saved searches) are param-URL controls (ADR D10), hidden on the
+  // deprecated legacy `/search/{sessionId}` route where writing `?sort=` would navigate away from the session.
   const { searchId: routerSearchId } = useSearchRouteParams();
 
+  // ST-4 — the RESULTS list is the cross-kind asset search (rebound from `/api/search` to the stateless
+  // `/api/search/assets`). The facet sidebar + the All / My-Objects tabs still read the DE-session slice below,
+  // so rebinding the list does NOT orphan them (W1).
+  const searchResults = useAppSelector(getAssetSearchResults);
+  const { page, hasNext } = useAppSelector(getAssetSearchResultsPageInfo);
+  const { isLoading: isAssetSearchLoading, isNotLoaded: isAssetSearchNotLoaded } =
+    useAppSelector(getAssetSearchFetchingStatuses);
+  const assetSearchError = useAppSelector(getAssetSearchError);
+
+  // The DE-session slice: still the source for the facet sidebar + the All / My-Objects tabs (W1).
   const searchId = useAppSelector(getSearchId);
   const searchClass = useAppSelector(getSearchEntityClass);
   const dataEntityClassesDict = useAppSelector(getDataEntityClassesDict);
   const searchTotals = useAppSelector(getSearchTotals);
-  const searchResults = useAppSelector(getSearchResults);
-  const searchResultsError = useAppSelector(getSearchResultsError);
   const searchFiltersSynced = useAppSelector(getSearchFacetsSynced);
-  const { page, hasNext } = useAppSelector(getSearchResultsPageInfo);
-
-  const isSearchFetching = useAppSelector(getSearchIsFetching);
-  const isSearchCreatingAndFetching = useAppSelector(getSearchIsCreatingAndFetching);
-  const { isLoading: isSearchUpdating } = useAppSelector(getSearchUpdateStatuses);
-  const { isNotLoaded: isSearchResultsNotLoaded } = useAppSelector(
-    getSearchResultsFetchStatuses
-  );
   const { isLoading: isSearchCreating } = useAppSelector(getSearchCreatingStatuses);
+  const { isLoading: isSearchUpdating } = useAppSelector(getSearchUpdateStatuses);
 
   const [showDEGBtn, setShowDEGBtn] = React.useState(false);
 
@@ -75,32 +79,49 @@ const Results: React.FC = () => {
     [searchClass, searchTotals]
   );
 
-  const fetchNextPage = React.useCallback(() => {
-    if (!hasNext) return;
-    dispatch(fetchDataEntitySearchResults({ searchId, page: page + 1, size }));
-  }, [hasNext, searchId, page, size]);
+  // The cross-kind request is derived straight from the URL (the search's source of truth — ADR D10): query +
+  // facets + sort + my_objects + the new asset_kinds. Page 1 is owned by the settle-effect; scroll extends it.
+  const assetSearchFormData = React.useMemo(
+    () => searchUrlStateToAssetSearchFormData(paramsToSearchState(location.search)),
+    [location.search]
+  );
 
+  const fetchNextPage = React.useCallback(() => {
+    if (!hasNext || page < 1) return; // page 1 is fired by the settle-effect; scroll only extends it
+    dispatch(searchAssets({ page: page + 1, size, assetSearchFormData }));
+  }, [hasNext, page, size, assetSearchFormData, dispatch]);
+
+  // Fetch page 1 once the DE session (facet sidebar + tabs) has settled for the current URL — the same timing
+  // gate the DE results used, so the list and the sidebar stay in lockstep. A new URL (query / facet / sort /
+  // asset-type) re-creates the session → synced flips → this re-fires page 1 (which REPLACES) for the new state.
   React.useEffect(() => {
     if (searchFiltersSynced && searchId && !isSearchCreating && !isSearchUpdating) {
-      fetchNextPage();
+      dispatch(searchAssets({ page: 1, size, assetSearchFormData }));
       setShowDEGBtn(isCurrentSearchClass(DataEntityClassNameEnum.ENTITY_GROUP));
     }
-  }, [searchFiltersSynced, searchId, isSearchCreating, isSearchUpdating]);
+  }, [
+    searchFiltersSynced,
+    searchId,
+    isSearchCreating,
+    isSearchUpdating,
+    assetSearchFormData,
+  ]);
 
-  // Hydrate the favorited status of all visible results in one batch, so each row's star renders
-  // correctly without firing its own per-row request. Already-known refs are no-ops in the slice.
+  // Hydrate the favorited status of all visible rows in one batch (all kinds), so each row's star renders
+  // without a per-row request. Already-known refs are no-ops in the slice.
   React.useEffect(() => {
     if (searchResults.length === 0) return;
     dispatch(
       fetchFavoritesStatus({
-        assetRef: searchResults.map(result => ({
-          assetKind: AssetKind.DATA_ENTITY,
-          assetId: result.id,
-        })),
+        assetRef: searchResults
+          .map(asset => ({ assetKind: asset.assetKind, assetId: favoriteAssetId(asset) }))
+          .filter(ref => ref.assetId > 0),
       })
     );
-  }, [searchResults]);
+  }, [searchResults, dispatch]);
 
+  // All / My-Objects tab switch — unchanged mechanism: it writes the `entityClasses` pseudo-facet (`all` clears
+  // My-Objects; `my` sets it), which mirrors to `?my=` and re-queries. Kept as-is (My-Objects retirement = ST-8).
   const onSearchClassChange = React.useCallback(
     (tabValue: SearchClass | undefined) => {
       const newSearchClass = tabValue ? get(dataEntityClassesDict, `${tabValue}`) : null;
@@ -117,27 +138,15 @@ const Results: React.FC = () => {
         })
       );
     },
-    [dataEntityClassesDict]
+    [dataEntityClassesDict, dispatch]
   );
 
-  const grid = React.useMemo(() => {
-    let key: S.SearchTabsNames = 'all';
-
-    if (typeof searchClass === 'string') key = searchClass;
-    if (typeof searchClass === 'number') {
-      key = findKey(
-        omit(searchTotals, 'myObjectsTotal', 'all'),
-        searchTotal => searchTotal?.id === searchClass
-      ) as S.SearchTabsNames;
-    }
-
-    return S.gridSizes[key];
-  }, [searchClass, searchTotals]);
+  const isFirstLoading = isAssetSearchLoading && searchResults.length === 0;
 
   return (
     <Grid sx={{ mt: 2 }}>
       <SearchResultsTabs
-        showTabsSkeleton={isSearchCreatingAndFetching}
+        showTabsSkeleton={isSearchCreating}
         isHintUpdating={isSearchUpdating}
         totals={searchTotals}
         searchClass={searchClass}
@@ -158,8 +167,7 @@ const Results: React.FC = () => {
         )}
       </WithPermissions>
       {/* ST-3 / #1837 — the saved-search toolbar sits alongside the global sort control, both gated to the
-          param-URL search (there is no shareable spec on the legacy `/search/{sessionId}` route). Each child
-          carries its own `mt: 2`, so `alignItems='center'` keeps them on one aligned toolbar row. */}
+          param-URL search (there is no shareable spec on the legacy `/search/{sessionId}` route). */}
       {!routerSearchId && (
         <Grid container justifyContent='space-between' alignItems='center' wrap='nowrap'>
           <SavedSearches />
@@ -167,31 +175,31 @@ const Results: React.FC = () => {
         </Grid>
       )}
       <S.ListContainer id='results-list'>
-        <TableHeader grid={grid} isCurrentSearchClass={isCurrentSearchClass} />
-        {isSearchCreating && <SearchResultsSkeleton grid={grid} />}
-        {!isSearchCreatingAndFetching && !isSearchResultsNotLoaded && (
+        <TableHeader />
+        {isFirstLoading && <SearchResultsSkeleton />}
+        {!isAssetSearchNotLoaded && !isFirstLoading && (
           <>
             <InfiniteScroll
               dataLength={searchResults.length}
               next={fetchNextPage}
               hasMore={hasNext}
-              loader={isSearchFetching && <SearchResultsSkeleton grid={grid} />}
+              loader={
+                isAssetSearchLoading &&
+                searchResults.length > 0 && <SearchResultsSkeleton />
+              }
               scrollThreshold='200px'
               scrollableTarget='results-list'
               style={{ overflow: 'visible' }}
             >
-              {searchResults.map(searchResult => (
+              {searchResults.map(asset => (
                 <ResultItem
-                  key={searchResult.id}
-                  searchResult={searchResult}
-                  gridSizes={grid}
-                  searchClassIdPredicate={isCurrentSearchClass}
-                  showClassIcons={!searchClass || typeof searchClass === 'string'}
+                  key={`${asset.assetKind}:${favoriteAssetId(asset)}`}
+                  asset={asset}
                 />
               ))}
             </InfiniteScroll>
             <EmptyContentPlaceholder
-              isContentLoaded={!isSearchFetching}
+              isContentLoaded={!isAssetSearchLoading}
               isContentEmpty={!searchResults.length}
               text={t('No matches found')}
             />
@@ -199,8 +207,8 @@ const Results: React.FC = () => {
         )}
       </S.ListContainer>
       <AppErrorPage
-        showError={isSearchResultsNotLoaded}
-        error={searchResultsError}
+        showError={isAssetSearchNotLoaded}
+        error={assetSearchError}
         offsetTop={210}
       />
     </Grid>

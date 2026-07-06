@@ -3,7 +3,12 @@ import queryStringPackage, {
   type StringifyOptions,
 } from 'query-string';
 import type { SearchFacetNames } from 'redux/interfaces';
-import type { SearchFormData, SearchFormDataFilters } from 'generated-sources';
+import { AssetKind } from 'generated-sources';
+import type {
+  AssetSearchFormData,
+  SearchFormData,
+  SearchFormDataFilters,
+} from 'generated-sources';
 
 /**
  * ST-1 / ADR D10 — the main search's state lives in the URL as parametrised query params, so a search is
@@ -25,6 +30,16 @@ export const SEARCH_QUERY_PARAM = 'q';
 export const SEARCH_MY_OBJECTS_PARAM = 'my';
 /** the sort-ordering param (ST-2b / #1836) — a single named ordering, honoured server-side (`SearchFormData.sort`) */
 export const SEARCH_SORT_PARAM = 'sort';
+/**
+ * The Asset-type-kind param (ST-4 / #1838) — the cross-kind narrowing dimension. A list of `AssetKind`
+ * tokens ({@link AssetKind}); empty / absent = all kinds. Unlike the DE entity-class facet (which rides the
+ * redux `entityClasses` facet + `?entityClasses=`), the Term / Query-Example kinds have no facet today, so the
+ * kind selection is a URL-only param (like `sort`) carried verbatim into `AssetSearchFormData.asset_kinds`.
+ */
+export const SEARCH_ASSET_KINDS_PARAM = 'asset_kinds';
+
+/** The set of valid `asset_kinds` tokens — a parse-time allow-list so an unknown kind fails closed (dropped). */
+const VALID_ASSET_KINDS = new Set<string>(Object.values(AssetKind));
 
 /**
  * The 8 facet dimensions carried in the URL as id lists, matching the redux `facetState` keys. `entityClasses`
@@ -113,6 +128,8 @@ export interface SearchUrlState {
   myObjects: boolean;
   /** the active ordering (ST-2b); undefined = the server's per-context default (relevance for a query, else status priority) */
   sort?: SearchSortValue;
+  /** the selected asset-type kinds (ST-4); undefined / empty = all kinds */
+  assetKinds?: AssetKind[];
 }
 
 /**
@@ -134,7 +151,7 @@ const QUERY_STRING_OPTIONS: StringifyOptions & ParseOptions = {
  */
 export function searchStateToParams(state: SearchUrlState): string {
   const { stringify } = queryStringPackage;
-  const params: Record<string, string | number[] | boolean | undefined> = {
+  const params: Record<string, string | number[] | string[] | boolean | undefined> = {
     [SEARCH_QUERY_PARAM]: state.query || undefined,
   };
   SEARCH_FACET_PARAMS.forEach(name => {
@@ -143,6 +160,11 @@ export function searchStateToParams(state: SearchUrlState): string {
   });
   if (state.myObjects) params[SEARCH_MY_OBJECTS_PARAM] = true;
   if (state.sort) params[SEARCH_SORT_PARAM] = state.sort;
+  // Serialise the asset-type kinds only when a narrowing is active (like `sort`): an empty selection is
+  // "all kinds" → omitted, so the default state stays a clean URL and the round-trip is byte-identical.
+  if (state.assetKinds && state.assetKinds.length > 0) {
+    params[SEARCH_ASSET_KINDS_PARAM] = state.assetKinds;
+  }
   return stringify(params, QUERY_STRING_OPTIONS);
 }
 
@@ -188,7 +210,20 @@ export function paramsToSearchState(search: string): SearchUrlState {
       ? (sortStr as SearchSortValue)
       : undefined;
 
-    return { query, facets, myObjects, sort };
+    // `asset_kinds` fail-closed (mirrors the facet-id filter): keep only tokens in the AssetKind allow-list,
+    // drop garbage, and collapse an empty result to `undefined` (→ all kinds) so the state round-trips exactly.
+    const rawKinds = parsed[SEARCH_ASSET_KINDS_PARAM];
+    const rawKindValues = Array.isArray(rawKinds)
+      ? rawKinds
+      : rawKinds != null
+        ? [rawKinds]
+        : [];
+    const kindList = rawKindValues.filter(
+      (v): v is AssetKind => typeof v === 'string' && VALID_ASSET_KINDS.has(v)
+    );
+    const assetKinds = kindList.length > 0 ? kindList : undefined;
+
+    return { query, facets, myObjects, sort, assetKinds };
   } catch {
     return empty;
   }
@@ -209,6 +244,24 @@ export function searchUrlStateToFormData(state: SearchUrlState): SearchFormData 
     }
   });
   return { query: state.query, myObjects: state.myObjects, sort: state.sort, filters };
+}
+
+/**
+ * ST-4 (#1838) — the cross-kind counterpart of {@link searchUrlStateToFormData}: the URL state → the
+ * `AssetSearchFormData` the stateless `POST /api/search/assets` fetch sends. It reuses the shared
+ * `SearchFormData` projection (query + filters + sort + myObjects, all round-tripped exactly as today) and
+ * layers the `asset_kinds` narrowing on top. `searchUrlStateToFormData` is left untouched so the existing
+ * `createDataEntitiesSearch` (`/api/search`) path keeps its non-breaking `SearchFormData` contract (D9); an
+ * empty kind selection is omitted (→ all kinds) so it never over-constrains the request.
+ */
+export function searchUrlStateToAssetSearchFormData(
+  state: SearchUrlState
+): AssetSearchFormData {
+  return {
+    ...searchUrlStateToFormData(state),
+    assetKinds:
+      state.assetKinds && state.assetKinds.length > 0 ? state.assetKinds : undefined,
+  };
 }
 
 /**

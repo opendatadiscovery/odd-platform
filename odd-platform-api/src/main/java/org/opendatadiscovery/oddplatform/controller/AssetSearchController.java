@@ -1,0 +1,32 @@
+package org.opendatadiscovery.oddplatform.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.api.contract.api.AssetSearchApi;
+import org.opendatadiscovery.oddplatform.api.contract.model.AssetList;
+import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
+import org.opendatadiscovery.oddplatform.service.AssetSearchService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+@RestController
+@RequiredArgsConstructor
+public class AssetSearchController implements AssetSearchApi {
+    private final AssetSearchService assetSearchService;
+
+    // NB: this override declares ZERO parameter constraints. The generated AssetSearchApi interface owns the
+    // constraint configuration (@NotNull @Valid on page/size, @Valid @RequestBody on the form data). A method
+    // override that redefines a PARTIAL parameter-constraint set violates Bean Validation (HV000151) and 500s
+    // every request — mirror SavedSearchController#getSavedSearchList: implement with plain params, let the
+    // interface's @Valid @RequestBody drive body validation.
+    @Override
+    public Mono<ResponseEntity<AssetList>> searchAssets(final Integer page,
+                                                        final Integer size,
+                                                        final Mono<AssetSearchFormData> assetSearchFormData,
+                                                        final ServerWebExchange exchange) {
+        return assetSearchFormData
+            .flatMap(formData -> assetSearchService.searchAssets(formData, page, size))
+            .map(ResponseEntity::ok);
+    }
+}

@@ -4,6 +4,7 @@ import type { store } from 'redux/store';
 export * from './state';
 export * from './loader';
 export * from './dataEntitySearch';
+export * from './assetSearch';
 export * from './dataentities';
 export * from './datasetStructure';
 export * from './dataQualityTest';

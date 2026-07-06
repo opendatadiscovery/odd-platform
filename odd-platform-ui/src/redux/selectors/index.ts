@@ -10,6 +10,7 @@ export * from './dataentity.selectors';
 export * from './dataentityLineage.selectors';
 export * from './dataentityLinkedList.selectors';
 export * from './dataentitySearch.selectors';
+export * from './assetSearch.selectors';
 export * from './dataQualityTest.selectors';
 export * from './datasetStructure.selectors';
 export * from './datasources.selectors';
