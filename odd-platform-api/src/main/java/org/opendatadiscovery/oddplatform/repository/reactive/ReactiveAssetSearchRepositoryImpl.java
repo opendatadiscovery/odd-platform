@@ -36,10 +36,6 @@ import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DAT
 @Repository
 @RequiredArgsConstructor
 public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRepository {
-    // Non-data-entity kinds have no status_priority column; they browse-sort as UNASSIGNED-priority (the
-    // V0_0_96 ELSE branch — smallint 3), so the empty-query browse ordering is stable across all kinds.
-    private static final short NON_DE_STATUS_PRIORITY = 3;
-
     private final JooqReactiveOperations jooqReactiveOperations;
     private final JooqFTSHelper jooqFTSHelper;
 
@@ -182,9 +178,12 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
         return conditions;
     }
 
-    // ORDER BY replicating the shipped ST-2 4-token sort contract (getSearchResultOrderFields), extended
-    // cross-kind: the sort key coalesces across the joined base tables, always terminated by the unique
-    // (asset_kind, asset_id) tiebreaker so offset/keyset pages never duplicate or skip a row.
+    // ORDER BY replicating the shipped ST-2 4-token sort contract, cross-kind. ST-5a (CTRIB-057): the sort
+    // keys are read from the columns DENORMALISED onto asset_search_entrypoint (V0_0_99) rather than
+    // coalesced across the joined base tables — a coalesce-over-joins ORDER BY is un-indexable (a Sort node
+    // at scale), a bare denormalised column is served by a NULLS-aligned composite btree (Index Scan, no
+    // Sort). Ordering is byte-identical to ST-4 (the denormalised values mirror the same expressions). Always
+    // terminated by the unique (asset_kind, asset_id) tiebreaker so offset/keyset pages never dup or skip.
     private List<OrderField<?>> orderFields(final FacetStateDto state) {
         final boolean hasQuery = StringUtils.isNotBlank(state.getQuery());
         final SearchSortDto sort = SearchSortDto.fromString(state.getSort())
@@ -192,18 +191,21 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
 
         final List<OrderField<?>> order = new ArrayList<>();
         if (sort == SearchSortDto.RELEVANCE && hasQuery) {
+            // ts_rank is not seekable and not index-backed — relevance stays OFFSET-paged (the keyset
+            // depth-cap is ST-5b). This is the one browse sort ST-5a does not make index-backed, by design.
             order.add(jooqFTSHelper.ftsRankField(ASSET_SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()).desc());
         } else if (sort == SearchSortDto.UPDATED_AT) {
-            order.add(DSL.coalesce(DATA_ENTITY.SOURCE_UPDATED_AT, TERM.UPDATED_AT, QUERY_EXAMPLE.UPDATED_AT)
-                .desc().nullsLast());
+            order.add(ASSET_SEARCH_ENTRYPOINT.UPDATED_AT.desc().nullsLast());
         } else if (sort == SearchSortDto.NAME) {
-            order.add(DSL.lower(DSL.coalesce(DATA_ENTITY.INTERNAL_NAME, DATA_ENTITY.EXTERNAL_NAME, TERM.NAME))
-                .asc().nullsLast());
+            // name is stored raw; lower(...) matches asset_search_entrypoint_name_idx (functional on
+            // lower(name)) and preserves ST-4's case-insensitive ordering.
+            order.add(DSL.lower(ASSET_SEARCH_ENTRYPOINT.NAME).asc().nullsLast());
         } else {
-            // STATUS_PRIORITY, or RELEVANCE on empty browse (relevance is meaningless with no query). Non-DE
-            // rows fold to UNASSIGNED-priority so the browse default (#1705) is preserved cross-kind. Only the
-            // at-scale index/keyset hardening of this ordering is deferred (ST-5), not the contract itself.
-            order.add(DSL.coalesce(DATA_ENTITY.STATUS_PRIORITY, DSL.inline(NON_DE_STATUS_PRIORITY)).asc());
+            // STATUS_PRIORITY, or RELEVANCE on empty browse (relevance is meaningless with no query). The
+            // denormalised column is NOT NULL (V0_0_99 stores non-DE rows as UNASSIGNED-priority 3), so a
+            // bare-column ORDER BY matches asset_search_entrypoint_status_priority_idx — a coalesce() wrapper
+            // would NOT match the plain-column btree and would reintroduce a Sort node.
+            order.add(ASSET_SEARCH_ENTRYPOINT.STATUS_PRIORITY.asc());
         }
         order.add(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.asc());
         order.add(ASSET_SEARCH_ENTRYPOINT.ASSET_ID.desc());
