@@ -21,8 +21,9 @@ import org.springframework.test.web.reactive.server.WebTestClient;
  *
  * <p>@regresses the HV000151 dead-endpoint 500: {@code AssetSearchController#searchAssets} originally
  * re-declared a PARTIAL parameter-constraint set ({@code @Valid} on the body only) while overriding the generated
- * {@code AssetSearchApi#searchAssets}, which declares {@code @NotNull @Valid} on {@code page}/{@code size} PLUS
- * {@code @Valid} on the body. Bean Validation (JSR-380 / HV000151) forbids an override redefining the parameter
+ * {@code AssetSearchApi#searchAssets}, which declares {@code @NotNull @Valid} on {@code size} PLUS {@code @Valid}
+ * on the body and the optional {@code cursor} (ST-5b / #1839 moved pagination from page/size to a keyset cursor).
+ * Bean Validation (JSR-380 / HV000151) forbids an override redefining the parameter
  * constraint configuration, so EVERY request 500'd {@code SYS001} — a fully dead endpoint invisible to a service
  * test and to the repo's plain-Mockito controller tests (which bypass the proxy). The fix makes the override
  * declare ZERO parameter constraints (inheriting the interface's), mirroring
@@ -42,7 +43,7 @@ public class AssetSearchControllerWebTest extends BaseIntegrationTest {
     @Test
     void searchAssets_browse_returns200AssetList_notHv000151_500() {
         webTestClient.post()
-            .uri("/api/search/assets?page=1&size=30")
+            .uri("/api/search/assets?size=30")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(new AssetSearchFormData().query("").filters(new SearchFormDataFilters()).myObjects(false))
             .exchange()
@@ -58,7 +59,7 @@ public class AssetSearchControllerWebTest extends BaseIntegrationTest {
     @Test
     void searchAssets_withAssetKindsFilter_returns200() {
         webTestClient.post()
-            .uri("/api/search/assets?page=1&size=30")
+            .uri("/api/search/assets?size=30")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(new AssetSearchFormData().query("anything").filters(new SearchFormDataFilters())
                 .assetKinds(List.of(AssetKind.TERM)))

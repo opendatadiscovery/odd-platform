@@ -58,7 +58,7 @@ const Results: React.FC = () => {
   // `/api/search/assets`). The facet sidebar + the All / My-Objects tabs still read the DE-session slice below,
   // so rebinding the list does NOT orphan them (W1).
   const searchResults = useAppSelector(getAssetSearchResults);
-  const { page, hasNext } = useAppSelector(getAssetSearchResultsPageInfo);
+  const { hasNext, lastId: nextCursor } = useAppSelector(getAssetSearchResultsPageInfo);
   const { isLoading: isAssetSearchLoading, isNotLoaded: isAssetSearchNotLoaded } =
     useAppSelector(getAssetSearchFetchingStatuses);
   const assetSearchError = useAppSelector(getAssetSearchError);
@@ -87,16 +87,18 @@ const Results: React.FC = () => {
   );
 
   const fetchNextPage = React.useCallback(() => {
-    if (!hasNext || page < 1) return; // page 1 is fired by the settle-effect; scroll only extends it
-    dispatch(searchAssets({ page: page + 1, size, assetSearchFormData }));
-  }, [hasNext, page, size, assetSearchFormData, dispatch]);
+    // ST-5b keyset: the first page is fired by the settle-effect (no cursor); scroll extends it by passing
+    // back the server's opaque nextCursor. No cursor yet (or no further pages) ⇒ nothing to fetch.
+    if (!hasNext || !nextCursor) return;
+    dispatch(searchAssets({ cursor: nextCursor, size, assetSearchFormData }));
+  }, [hasNext, nextCursor, size, assetSearchFormData, dispatch]);
 
   // Fetch page 1 once the DE session (facet sidebar + tabs) has settled for the current URL — the same timing
   // gate the DE results used, so the list and the sidebar stay in lockstep. A new URL (query / facet / sort /
   // asset-type) re-creates the session → synced flips → this re-fires page 1 (which REPLACES) for the new state.
   React.useEffect(() => {
     if (searchFiltersSynced && searchId && !isSearchCreating && !isSearchUpdating) {
-      dispatch(searchAssets({ page: 1, size, assetSearchFormData }));
+      dispatch(searchAssets({ size, assetSearchFormData })); // the first page carries no cursor
       setShowDEGBtn(isCurrentSearchClass(DataEntityClassNameEnum.ENTITY_GROUP));
     }
   }, [

@@ -91,7 +91,7 @@ class AssetSearchSortIntegrationTest extends BaseIntegrationTest {
         final long unassignedId = seedDataEntityWithStatus("spriotoken", DataEntityStatusDto.UNASSIGNED.getId());
         seedTerm("spriotoken");     // non-DE -> priority 3, ties with the UNASSIGNED DE, broken by the tiebreaker
 
-        assetSearchService.searchAssets(browse("spriotoken", "STATUS_PRIORITY"), 1, 30)
+        assetSearchService.searchAssets(browse("spriotoken", "STATUS_PRIORITY"), 30, null)
             .as(StepVerifier::create)
             .assertNext(list -> {
                 final List<Long> deOrder = list.getItems().stream()
@@ -116,7 +116,7 @@ class AssetSearchSortIntegrationTest extends BaseIntegrationTest {
         setSourceUpdatedAt(recentId, LocalDateTime.now());
         setSourceUpdatedAt(olderId, LocalDateTime.now().minusDays(10));
 
-        assetSearchService.searchAssets(browse("updtoken", "UPDATED_AT"), 1, 30)
+        assetSearchService.searchAssets(browse("updtoken", "UPDATED_AT"), 30, null)
             .as(StepVerifier::create)
             .assertNext(list -> assertThat(list.getItems().stream()
                     .filter(a -> a.getAssetKind() == AssetKind.DATA_ENTITY)
@@ -134,7 +134,7 @@ class AssetSearchSortIntegrationTest extends BaseIntegrationTest {
         final long zebra = seedDataEntityNamed("namea", "Zebra");
         final long qeId = seedQueryExample("namea");   // no name -> NULLS LAST
 
-        assetSearchService.searchAssets(browse("namea", "NAME"), 1, 30)
+        assetSearchService.searchAssets(browse("namea", "NAME"), 30, null)
             .as(StepVerifier::create)
             .assertNext(list -> {
                 final List<AssetKind> kinds = list.getItems().stream().map(Asset::getAssetKind).toList();
