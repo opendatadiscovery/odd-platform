@@ -192,6 +192,30 @@ class AssetSearchKeysetPaginationTest extends BaseIntegrationTest {
         assertThat(capped.getPageInfo().getNextCursor()).as("no nextCursor past the cap").isNull();
     }
 
+    @Test
+    @DisplayName("relevance search (below the cap) paginates by an offset cursor — page == single, no dup/skip")
+    void relevance_paginatesByOffsetCursorBelowCap() {
+        for (int i = 0; i < 5; i++) {
+            seedDataEntityNamed("ksrelpage", "ksrelpage row " + (char) ('a' + i));
+        }
+        // a query + no explicit sort → RELEVANCE, which is offset-paged (its cursor carries the offset).
+        final AssetSearchFormData relevance =
+            new AssetSearchFormData().query("ksrelpage").filters(new SearchFormDataFilters());
+        assertPagingEqualsSinglePage(relevance, 2);
+    }
+
+    @Test
+    @DisplayName("a null size clamps to a single-row page (defensive — size is @NotNull on the wire)")
+    void nullSize_clampsToOne() {
+        seedDataEntityWithStatus("ksnullsize", DataEntityStatusDto.STABLE.getId());
+        seedDataEntityWithStatus("ksnullsize", DataEntityStatusDto.DRAFT.getId());
+
+        final AssetList page =
+            assetSearchService.searchAssets(browse("ksnullsize", "STATUS_PRIORITY"), null, null).block();
+        assertThat(page.getItems()).as("a null size clamps to one row").hasSize(1);
+        assertThat(page.getPageInfo().getHasNext()).as("more rows remain").isTrue();
+    }
+
     // ---------------------------------------------------------------------------------------------------
     // Index range-start (T1 fix-proof) — the UNION-of-ranges seek range-starts; the OR-form scan-and-discards
     // ---------------------------------------------------------------------------------------------------

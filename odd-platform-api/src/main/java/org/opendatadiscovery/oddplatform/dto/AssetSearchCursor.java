@@ -1,9 +1,10 @@
 package org.opendatadiscovery.oddplatform.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -77,26 +78,25 @@ public final class AssetSearchCursor {
         return assetId == null ? 0L : assetId;
     }
 
-    /** Encode to an opaque base64url token (no padding). Returns {@code null} only if serialization fails. */
+    /** Encode to an opaque base64url token (no padding). */
     public String encode() {
-        final Map<String, Object> m = new LinkedHashMap<>();
-        m.put("s", sort.name());
+        final ObjectNode node = MAPPER.createObjectNode();
+        node.put("s", sort.name());
         if (sort == SearchSortDto.RELEVANCE) {
-            m.put("o", offset());
+            node.put("o", offset());
         } else {
-            m.put("k", assetKind);
-            m.put("i", assetId);
+            node.put("k", assetKind);
+            node.put("i", assetId());
             if (sortValueNull) {
-                m.put("vn", Boolean.TRUE);
+                node.put("vn", true);
             } else {
-                m.put("v", sortValue);
+                node.put("v", sortValue);
             }
         }
-        try {
-            return Base64.getUrlEncoder().withoutPadding().encodeToString(MAPPER.writeValueAsBytes(m));
-        } catch (final Exception e) {
-            return null;
-        }
+        // node.toString() renders the JSON with no checked exception (unlike writeValueAsBytes) — the token is
+        // built from our own trusted, JSON-trivial fields, so there is no failure path to handle.
+        return Base64.getUrlEncoder().withoutPadding()
+            .encodeToString(node.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     /**
