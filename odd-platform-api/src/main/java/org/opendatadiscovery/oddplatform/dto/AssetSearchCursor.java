@@ -125,6 +125,12 @@ public final class AssetSearchCursor {
                 return Optional.empty();
             }
             final boolean valueNull = Boolean.TRUE.equals(m.get("vn"));
+            if (valueNull && sort == SearchSortDto.STATUS_PRIORITY) {
+                // status_priority is NOT NULL — a null-tail (vn) cursor is structurally impossible for it, so a
+                // tampered one must fail closed here rather than reach the seek and silently query a different
+                // column's NULL tail (R-B4 fail-closed; the null tail is a nullable-sort-only concept).
+                return Optional.empty();
+            }
             final String value = valueNull ? null : (m.get("v") == null ? null : String.valueOf(m.get("v")));
             if (!valueNull) {
                 if (value == null || !parsesForSort(expectedSort, value)) {

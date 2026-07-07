@@ -69,7 +69,8 @@ class AssetSearchCursorTest {
         // an unknown sort value
         assertThat(AssetSearchCursor.decode(b64("{\"s\":\"NOPE\",\"o\":1}"), SearchSortDto.RELEVANCE)).isEmpty();
         // relevance: offset not a number, and a negative offset
-        assertThat(AssetSearchCursor.decode(b64("{\"s\":\"RELEVANCE\",\"o\":\"x\"}"), SearchSortDto.RELEVANCE)).isEmpty();
+        assertThat(AssetSearchCursor.decode(
+            b64("{\"s\":\"RELEVANCE\",\"o\":\"x\"}"), SearchSortDto.RELEVANCE)).isEmpty();
         assertThat(AssetSearchCursor.decode(
             AssetSearchCursor.relevance(SearchSortDto.RELEVANCE, -1).encode(), SearchSortDto.RELEVANCE)).isEmpty();
         // keyset: missing the (k, i) position
@@ -84,6 +85,11 @@ class AssetSearchCursorTest {
         assertThat(AssetSearchCursor.decode(
             AssetSearchCursor.keyset(SearchSortDto.UPDATED_AT, "not-a-timestamp", false, "TERM", 1L).encode(),
             SearchSortDto.UPDATED_AT)).isEmpty();
+        // keyset: a null-tail (vn) cursor on the NOT-NULL status_priority sort is structurally impossible — it must
+        // fail closed, never reach the seek and silently query a different column's NULL tail (R-B4).
+        assertThat(AssetSearchCursor.decode(
+            AssetSearchCursor.keyset(SearchSortDto.STATUS_PRIORITY, null, true, "DATA_ENTITY", 1L).encode(),
+            SearchSortDto.STATUS_PRIORITY)).isEmpty();
     }
 
     private static void roundTripKeyset(final SearchSortDto sort, final String value, final boolean valueNull,
