@@ -422,10 +422,32 @@ components:
           items:
             $ref: '#/components/schemas/Asset'
         page_info:
-          $ref: '#/components/schemas/PageInfo'
+          $ref: '#/components/schemas/AssetPageInfo'
       required:
         - items
         - page_info
+
+    AssetPageInfo:
+      type: object
+      description: >-
+        Pagination metadata for the cross-kind asset search (ST-5b). Unlike the shared offset PageInfo, this
+        carries an opaque forward-only cursor: the search paginates by keyset seek so deep pages stay
+        index-fast and stable under concurrent writes (the relevance sort keeps a bounded offset). total is
+        the match count (display only, unaffected by paging depth); hasNext drives the infinite scroll;
+        nextCursor is echoed back as the cursor query param to fetch the next page, and is absent on the last
+        page. A malformed or foreign cursor fails closed to the first page.
+      properties:
+        total:
+          type: integer
+          format: int64
+        hasNext:
+          type: boolean
+        nextCursor:
+          type: string
+          description: Opaque forward-only pagination token; pass it back as the cursor query param. Absent on the last page.
+      required:
+        - total
+        - hasNext
 
     AssetSearchFormData:
       description: >-
@@ -4518,6 +4540,18 @@ components:
       schema:
         type: integer
         format: int32
+
+    AssetSearchCursorParam:
+      name: cursor
+      in: query
+      description: >-
+        Opaque forward-only pagination cursor (ST-5b). Absent / empty = the first page; otherwise pass back
+        the previous page's page_info.nextCursor. The cursor is scoped to the request's sort — changing the
+        query, filters, or sort resets to the first page — and a malformed or foreign cursor fails closed to
+        the first page (never an error).
+      required: false
+      schema:
+        type: string
 
     SearchParam:
       name: query

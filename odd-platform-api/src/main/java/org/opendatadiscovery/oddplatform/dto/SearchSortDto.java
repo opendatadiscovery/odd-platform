@@ -26,4 +26,16 @@ public enum SearchSortDto {
             .filter(sort -> sort.name().equalsIgnoreCase(value.trim()))
             .findFirst();
     }
+
+    /**
+     * The sort that actually orders the page, folding the per-context defaults + the "relevance needs a query"
+     * rule into one place (ST-5b — the repository ORDER BY, the keyset-vs-offset choice, and the cursor scope
+     * must all agree on this). An absent / unknown value defaults to relevance for a text query, else the
+     * status-priority browse default; and {@code RELEVANCE} without a query (meaningless — {@code ts_rank} needs
+     * a query) folds back to the browse default so empty browse is keyset-paged, not offset-paged.
+     */
+    public static SearchSortDto resolveEffective(final String sortParam, final boolean hasQuery) {
+        final SearchSortDto resolved = fromString(sortParam).orElse(hasQuery ? RELEVANCE : STATUS_PRIORITY);
+        return resolved == RELEVANCE && !hasQuery ? STATUS_PRIORITY : resolved;
+    }
 }

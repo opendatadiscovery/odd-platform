@@ -71,7 +71,7 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
         seedTerm("mixkindalpha");
         seedQueryExample("mixkindalpha");
 
-        assetSearchService.searchAssets(form("mixkindalpha"), 1, 30)
+        assetSearchService.searchAssets(form("mixkindalpha"), 30, null)
             .as(StepVerifier::create)
             .assertNext(list -> {
                 assertThat(list.getItems())
@@ -117,7 +117,7 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
 
         final AssetSearchFormData form = form("kindfilterbeta").assetKinds(List.of(AssetKind.TERM));
 
-        assetSearchService.searchAssets(form, 1, 30)
+        assetSearchService.searchAssets(form, 30, null)
             .as(StepVerifier::create)
             .assertNext(list -> {
                 assertThat(list.getItems())
@@ -142,7 +142,7 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
         seedTerm("poisongamma");
 
         for (final String poison : List.of("poisongamma )(", ":*", "a & | b", "()&|!*:<>", "'foo", "a<b")) {
-            assetSearchService.searchAssets(form(poison), 1, 30)
+            assetSearchService.searchAssets(form(poison), 30, null)
                 .as(StepVerifier::create)
                 .assertNext(list -> assertThat(list.getItems())
                     .as("query [%s] must yield a (possibly empty) page, never 42601 / 500", poison)
@@ -161,7 +161,7 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
         final AssetSearchFormData form = form("ecnarrowdelta")
             .filters(new SearchFormDataFilters().entityClasses(List.of(new SearchFilterState(1L, true))));
 
-        assetSearchService.searchAssets(form, 1, 30)
+        assetSearchService.searchAssets(form, 30, null)
             .as(StepVerifier::create)
             .assertNext(list -> {
                 assertThat(list.getItems())
@@ -194,7 +194,7 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
                 new SearchFilterState((long) DATA_SET, true),
                 new SearchFilterState((long) DATA_TRANSFORMER, true))));
 
-        assetSearchService.searchAssets(form, 1, 30)
+        assetSearchService.searchAssets(form, 30, null)
             .as(StepVerifier::create)
             .assertNext(list -> {
                 assertThat(list.getItems())
@@ -223,7 +223,7 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
         final AssetSearchFormData form = form("nsfacetepsilon")
             .filters(new SearchFormDataFilters().namespaces(List.of(new SearchFilterState(keepNsId, true))));
 
-        assetSearchService.searchAssets(form, 1, 30)
+        assetSearchService.searchAssets(form, 30, null)
             .as(StepVerifier::create)
             .assertNext(list -> {
                 assertThat(list.getItems())
@@ -254,7 +254,7 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
             .filters(new SearchFormDataFilters()
                 .statuses(List.of(new SearchFilterState((long) DataEntityStatusDto.DRAFT.getId(), true))));
 
-        assetSearchService.searchAssets(form, 1, 30)
+        assetSearchService.searchAssets(form, 30, null)
             .as(StepVerifier::create)
             .assertNext(list -> {
                 assertThat(list.getItems())
@@ -282,7 +282,7 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
         seedDataEntity("myobjectseta");
         seedTerm("myobjectseta");
 
-        assetSearchService.searchAssets(form("myobjectseta").myObjects(true), 1, 30)
+        assetSearchService.searchAssets(form("myobjectseta").myObjects(true), 30, null)
             .as(StepVerifier::create)
             .assertNext(list -> {
                 assertThat(list.getItems())

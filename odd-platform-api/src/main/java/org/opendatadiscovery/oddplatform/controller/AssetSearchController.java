@@ -16,17 +16,19 @@ public class AssetSearchController implements AssetSearchApi {
     private final AssetSearchService assetSearchService;
 
     // NB: this override declares ZERO parameter constraints. The generated AssetSearchApi interface owns the
-    // constraint configuration (@NotNull @Valid on page/size, @Valid @RequestBody on the form data). A method
-    // override that redefines a PARTIAL parameter-constraint set violates Bean Validation (HV000151) and 500s
-    // every request — mirror SavedSearchController#getSavedSearchList: implement with plain params, let the
-    // interface's @Valid @RequestBody drive body validation.
+    // constraint configuration (@NotNull @Valid on size, @Valid @RequestBody on the form data, @Valid on the
+    // optional cursor). A method override that redefines a PARTIAL parameter-constraint set violates Bean
+    // Validation (HV000151) and 500s every request — mirror SavedSearchController#getSavedSearchList: implement
+    // with plain params, let the interface's @Valid @RequestBody drive body validation. The param ORDER matches
+    // the generated interface exactly (size, body, cursor, exchange — required params + body before the optional
+    // cursor). cursor is the opaque forward-only pagination token (null/empty = first page; ST-5b).
     @Override
-    public Mono<ResponseEntity<AssetList>> searchAssets(final Integer page,
-                                                        final Integer size,
+    public Mono<ResponseEntity<AssetList>> searchAssets(final Integer size,
                                                         final Mono<AssetSearchFormData> assetSearchFormData,
+                                                        final String cursor,
                                                         final ServerWebExchange exchange) {
         return assetSearchFormData
-            .flatMap(formData -> assetSearchService.searchAssets(formData, page, size))
+            .flatMap(formData -> assetSearchService.searchAssets(formData, size, cursor))
             .map(ResponseEntity::ok);
     }
 }
