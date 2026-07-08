@@ -142,8 +142,11 @@ public class IngestionServiceImpl implements IngestionService {
                     .bulkCreate(pojosToCreate)
                     .map(d -> new EnrichedDataEntityIngestionDto(d.getId(), null, ingestionDtoMap.get(d.getOddrn())));
 
+                final Mono<Void> subtypeUpdate = persistSubtypes(ingestionDtoMap, existingPojoDict);
+
                 return updated
                     .then(restoredEntities)
+                    .then(subtypeUpdate)
                     .thenMany(enrichedNewDtos)
                     .collectList()
                     .map(newEntities -> buildIngestionRequest(newEntities, enrichedExistingDtos, taskRuns,
@@ -298,6 +301,19 @@ public class IngestionServiceImpl implements IngestionService {
             .count();
 
         return new DataEntityTotalDelta(hollowUpdatedEntitiesCount + searchablePojos.size(), entityDeltaMap);
+    }
+
+    private Mono<Void> persistSubtypes(final Map<String, DataEntityIngestionDto> ingestionDtos,
+                                       final Map<String, DataEntityPojo> existingPojoDict) {
+        final Map<String, String> oddrnToSubtype = new java.util.HashMap<>();
+        for (final var entry : ingestionDtos.entrySet()) {
+            final String oddrn = entry.getKey();
+            final String subtype = entry.getValue().getSubtype();
+            if (subtype != null && !subtype.isBlank()) {
+                oddrnToSubtype.put(oddrn, subtype);
+            }
+        }
+        return dataEntityRepository.updateSubtypes(oddrnToSubtype);
     }
 
     private void calculateDeltaValues(final Integer[] entityClassIds,

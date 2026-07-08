@@ -116,4 +116,6 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
     Mono<Map<Long, Long>> getCountByDataSources(final Collection<Long> dataSourceIds);
 
     Flux<DataEntityDomainInfoDto> getDataEntityDomainsInfo();
+
+    Mono<Void> updateSubtypes(final Map<String, String> oddrnToSubtype);
 }

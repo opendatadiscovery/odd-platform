@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntitySubTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.RelationshipTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
@@ -120,7 +121,9 @@ public class IngestionMapperImpl implements IngestionMapper {
             .specificAttributesJson(specificAttributesAsString(entityClasses, dataEntity));
 
         if (CollectionUtils.isNotEmpty(dataEntity.getMetadata())) {
-            builder = builder.metadata(dataEntity.getMetadata().get(0).getMetadata());
+            final Object rawMetadata = dataEntity.getMetadata().get(0).getMetadata();
+            builder = builder.metadata(rawMetadata);
+            builder = builder.subtype(detectSubtype(dataEntity, rawMetadata));
         }
 
         if (CollectionUtils.isNotEmpty(dataEntity.getTags())) {
@@ -444,5 +447,139 @@ public class IngestionMapperImpl implements IngestionMapper {
     private DataEntityStatusDto getStatus(final Short statusId) {
         return DataEntityStatusDto.findById(statusId)
             .orElseThrow(() -> new IllegalArgumentException("Unknown DE status %s".formatted(statusId)));
+    }
+
+    private String detectSubtype(final DataEntity dataEntity, final Object metadata) {
+        if (!(metadata instanceof Map<?, ?> metadataMap)) {
+            return null;
+        }
+
+        final String platform = getMetadataString(metadataMap, "platform");
+        final String engine = getMetadataString(metadataMap, "engine");
+        final String tool = getMetadataString(metadataMap, "tool");
+        final String serviceType = getMetadataString(metadataMap, "service_type");
+
+        final String hint = platform != null ? platform
+            : engine != null ? engine
+            : tool != null ? tool
+            : serviceType;
+
+        if (hint == null) {
+            return null;
+        }
+
+        final DataEntityTypeDto type = DataEntityTypeDto.valueOf(
+            dataEntity.getType().getValue());
+
+        return mapSubtype(type, hint.toLowerCase());
+    }
+
+    private String mapSubtype(final DataEntityTypeDto type, final String hint) {
+        return switch (type) {
+            case TABLE -> mapTableSubtype(hint);
+            case VIEW -> mapViewSubtype(hint);
+            case KAFKA_TOPIC -> mapTopicSubtype(hint);
+            case DASHBOARD -> mapDashboardSubtype(hint);
+            case JOB -> mapJobSubtype(hint);
+            case JOB_RUN -> mapJobRunSubtype(hint);
+            case DATABASE_SERVICE -> mapDatabaseServiceSubtype(hint);
+            case FILE -> mapFileSubtype(hint);
+            default -> null;
+        };
+    }
+
+    private String mapTableSubtype(final String hint) {
+        if (hint.contains("starrocks")) return DataEntitySubTypeDto.STARROCKS_TABLE.name();
+        if (hint.contains("doris")) return DataEntitySubTypeDto.DORIS_TABLE.name();
+        if (hint.contains("tidb")) return DataEntitySubTypeDto.TIDB_TABLE.name();
+        if (hint.contains("mariadb")) return DataEntitySubTypeDto.MARIADB_TABLE.name();
+        if (hint.contains("mysql")) return DataEntitySubTypeDto.MYSQL_TABLE.name();
+        if (hint.contains("postgres")) return DataEntitySubTypeDto.POSTGRESQL_TABLE.name();
+        if (hint.contains("sqlserver") || hint.contains("mssql")) return DataEntitySubTypeDto.MSSQL_TABLE.name();
+        if (hint.contains("oracle")) return DataEntitySubTypeDto.ORACLE_TABLE.name();
+        if (hint.contains("singlestore")) return DataEntitySubTypeDto.SINGLESTORE_TABLE.name();
+        if (hint.contains("clickhouse")) return DataEntitySubTypeDto.CLICKHOUSE_TABLE.name();
+        if (hint.contains("cockroach")) return DataEntitySubTypeDto.COCKROACHDB_TABLE.name();
+        if (hint.contains("duckdb")) return DataEntitySubTypeDto.DUCKDB_TABLE.name();
+        if (hint.contains("sqlite")) return DataEntitySubTypeDto.SQLITE_TABLE.name();
+        if (hint.contains("vertica")) return DataEntitySubTypeDto.VERTICA_TABLE.name();
+        if (hint.contains("hive")) return DataEntitySubTypeDto.HIVE_TABLE.name();
+        if (hint.contains("presto")) return DataEntitySubTypeDto.PRESTO_TABLE.name();
+        if (hint.contains("trino")) return DataEntitySubTypeDto.TRINO_TABLE.name();
+        if (hint.contains("druid")) return DataEntitySubTypeDto.DRUID_TABLE.name();
+        return null;
+    }
+
+    private String mapViewSubtype(final String hint) {
+        if (hint.contains("starrocks")) return DataEntitySubTypeDto.STARROCKS_VIEW.name();
+        if (hint.contains("postgres")) return DataEntitySubTypeDto.POSTGRESQL_VIEW.name();
+        if (hint.contains("mysql")) return DataEntitySubTypeDto.MYSQL_VIEW.name();
+        return null;
+    }
+
+    private String mapTopicSubtype(final String hint) {
+        if (hint.contains("rocketmq")) return DataEntitySubTypeDto.ROCKETMQ_TOPIC.name();
+        if (hint.contains("pulsar")) return DataEntitySubTypeDto.PULSAR_TOPIC.name();
+        if (hint.contains("kafka")) return DataEntitySubTypeDto.KAFKA_TOPIC_TYPE.name();
+        return null;
+    }
+
+    private String mapDashboardSubtype(final String hint) {
+        if (hint.contains("finebi")) return DataEntitySubTypeDto.FINEBI_DASHBOARD.name();
+        if (hint.contains("dataease")) return DataEntitySubTypeDto.DATAEASE_DASHBOARD.name();
+        if (hint.contains("tableau")) return DataEntitySubTypeDto.TABLEAU_DASHBOARD.name();
+        if (hint.contains("superset")) return DataEntitySubTypeDto.SUPERSET_DASHBOARD.name();
+        if (hint.contains("metabase")) return DataEntitySubTypeDto.METABASE_DASHBOARD.name();
+        if (hint.contains("redash")) return DataEntitySubTypeDto.REDASH_DASHBOARD.name();
+        if (hint.contains("mode")) return DataEntitySubTypeDto.MODE_DASHBOARD.name();
+        if (hint.contains("powerbi")) return DataEntitySubTypeDto.POWERBI_DASHBOARD.name();
+        if (hint.contains("quicksight")) return DataEntitySubTypeDto.QUICKSIGHT_DASHBOARD.name();
+        if (hint.contains("cube")) return DataEntitySubTypeDto.CUBE_DASHBOARD.name();
+        return null;
+    }
+
+    private String mapJobSubtype(final String hint) {
+        if (hint.contains("airflow")) return DataEntitySubTypeDto.AIRFLOW_DAG.name();
+        if (hint.contains("dbt")) return DataEntitySubTypeDto.DBT_JOB.name();
+        if (hint.contains("airbyte")) return DataEntitySubTypeDto.AIRBYTE_JOB.name();
+        if (hint.contains("fivetran")) return DataEntitySubTypeDto.FIVETRAN_JOB.name();
+        if (hint.contains("spark")) return DataEntitySubTypeDto.SPARK_JOB.name();
+        return null;
+    }
+
+    private String mapJobRunSubtype(final String hint) {
+        if (hint.contains("airflow")) return DataEntitySubTypeDto.AIRFLOW_TASK_RUN.name();
+        if (hint.contains("dbt")) return DataEntitySubTypeDto.DBT_RUN.name();
+        if (hint.contains("spark")) return DataEntitySubTypeDto.SPARK_RUN.name();
+        return null;
+    }
+
+    private String mapDatabaseServiceSubtype(final String hint) {
+        if (hint.contains("starrocks")) return DataEntitySubTypeDto.STARROCKS_SERVICE.name();
+        if (hint.contains("doris")) return DataEntitySubTypeDto.DORIS_SERVICE.name();
+        if (hint.contains("tidb")) return DataEntitySubTypeDto.TIDB_SERVICE.name();
+        if (hint.contains("postgres")) return DataEntitySubTypeDto.POSTGRESQL_SERVICE.name();
+        if (hint.contains("mysql")) return DataEntitySubTypeDto.MYSQL_SERVICE.name();
+        if (hint.contains("duckdb")) return DataEntitySubTypeDto.DUCKDB_SERVICE.name();
+        if (hint.contains("clickhouse")) return DataEntitySubTypeDto.CLICKHOUSE_SERVICE.name();
+        if (hint.contains("snowflake")) return DataEntitySubTypeDto.SNOWFLAKE_SERVICE.name();
+        if (hint.contains("bigquery")) return DataEntitySubTypeDto.BIGQUERY_SERVICE.name();
+        if (hint.contains("redshift")) return DataEntitySubTypeDto.REDSHIFT_SERVICE.name();
+        if (hint.contains("databricks")) return DataEntitySubTypeDto.DATABRICKS_SERVICE.name();
+        if (hint.contains("glue")) return DataEntitySubTypeDto.GLUE_SERVICE.name();
+        return null;
+    }
+
+    private String mapFileSubtype(final String hint) {
+        if (hint.contains("s3") || hint.contains("aws")) return DataEntitySubTypeDto.S3_FILE.name();
+        if (hint.contains("gcs") || hint.contains("google")) return DataEntitySubTypeDto.GCS_FILE.name();
+        if (hint.contains("abs") || hint.contains("azure")) return DataEntitySubTypeDto.ABS_FILE.name();
+        if (hint.contains("delta")) return DataEntitySubTypeDto.DELTA_FILE.name();
+        return null;
+    }
+
+    private String getMetadataString(final Map<?, ?> metadata, final String key) {
+        final Object value = metadata.get(key);
+        return value instanceof String str && !str.isBlank() ? str : null;
     }
 }

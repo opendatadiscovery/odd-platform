@@ -519,8 +519,10 @@
         "dataEntity:externalName",
         "dataEntity:type",
         "dataEntity:class",
+        "dataEntity:subtype",
         "dataEntity:datasource:oddrn",
         "dataEntity:datasource:name",
+        "dataEntity:datasource:type",
         "dataEntity:namespace:name",
         "dataEntity:tag:name",
         "dataEntity:owner",
@@ -632,7 +634,9 @@
         "LOOKUP_TABLE_DEFINITION_DELETE",
         "LOOKUP_TABLE_DATA_CREATE",
         "LOOKUP_TABLE_DATA_UPDATE",
-        "LOOKUP_TABLE_DATA_DELETE"
+        "LOOKUP_TABLE_DATA_DELETE",
+        "DATA_MASKING_RULE_MANAGE",
+        "DATA_MASKING_FIELD_MANAGE"
       ]
     },
     "all_permissions": {
