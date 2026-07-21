@@ -196,6 +196,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         final Table<NamespaceRecord> assignedTermsNamespace = NAMESPACE.asTable("assigned_terms_namespace");
         final Table<TermToTermRecord> assignedTermRelations = TERM_TO_TERM.asTable("assigned_term_relations");
         final Table<TermToTermRecord> linkedTerms = TERM_TO_TERM.asTable("linked_terms");
+        final Table<TermRecord> linkedTermsTerm = TERM.asTable("linked_terms_term");
 
         final List<Field<?>> groupByFields = Stream.of(TERM.fields(), NAMESPACE.fields())
             .flatMap(Arrays::stream)
@@ -213,7 +214,9 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
             .select(DSL.countDistinct(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID).as(COLUMNS_COUNT))
             .select(DSL.countDistinct(QUERY_EXAMPLE_TO_TERM.QUERY_EXAMPLE_ID).as(QUERY_EXAMPLE_COUNT))
-            .select(DSL.countDistinct(linkedTerms.field(TERM_TO_TERM.TARGET_TERM_ID)).as(LINKED_TERMS_COUNT))
+            .select(DSL.countDistinct(linkedTerms.field(TERM_TO_TERM.TARGET_TERM_ID))
+                .filterWhere(linkedTermsTerm.field(TERM.DELETED_AT).isNull())
+                .as(LINKED_TERMS_COUNT))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID))
@@ -225,6 +228,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(QUERY_EXAMPLE_TO_TERM).on(QUERY_EXAMPLE_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(linkedTerms).on(linkedTerms.field(TERM_TO_TERM.ASSIGNED_TERM_ID).eq(TERM.ID))
+            .leftJoin(linkedTermsTerm)
+            .on(linkedTermsTerm.field(TERM.ID).eq(linkedTerms.field(TERM_TO_TERM.TARGET_TERM_ID)))
             .leftJoin(assignedTermRelations)
             .on(assignedTermRelations.field(TERM_TO_TERM.TARGET_TERM_ID).eq(TERM.ID))
             .leftJoin(assignedTerms)
@@ -322,6 +327,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .toList();
 
         final Table<TermToTermRecord> linkedTerms = TERM_TO_TERM.asTable("linked_terms");
+        final Table<TermRecord> linkedTermsTerm = TERM.asTable("linked_terms_term");
 
         final var query = DSL.with(termCTE.getName())
             .as(termSelect)
@@ -333,7 +339,9 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
             .select(DSL.countDistinct(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID).as(COLUMNS_COUNT))
             .select(DSL.countDistinct(QUERY_EXAMPLE_TO_TERM.QUERY_EXAMPLE_ID).as(QUERY_EXAMPLE_COUNT))
-            .select(DSL.countDistinct(linkedTerms.field(TERM_TO_TERM.TARGET_TERM_ID)).as(LINKED_TERMS_COUNT))
+            .select(DSL.countDistinct(linkedTerms.field(TERM_TO_TERM.TARGET_TERM_ID))
+                .filterWhere(linkedTermsTerm.field(TERM.DELETED_AT).isNull())
+                .as(LINKED_TERMS_COUNT))
             .from(termCTE.getName())
             .join(NAMESPACE).on(NAMESPACE.ID.eq(termCTE.field(TERM.NAMESPACE_ID)))
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(termCTE.field(TERM.ID)))
@@ -343,6 +351,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
             .leftJoin(QUERY_EXAMPLE_TO_TERM).on(QUERY_EXAMPLE_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
             .leftJoin(linkedTerms).on(linkedTerms.field(TERM_TO_TERM.ASSIGNED_TERM_ID).eq(termCTE.field(TERM.ID)))
+            .leftJoin(linkedTermsTerm)
+            .on(linkedTermsTerm.field(TERM.ID).eq(linkedTerms.field(TERM_TO_TERM.TARGET_TERM_ID)))
             .groupBy(groupByFields);
 
         return jooqReactiveOperations.flux(query)
