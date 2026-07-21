@@ -194,8 +194,10 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     public Mono<TermDetailsDto> getTermDetailsDto(final Long id) {
         final Table<TermRecord> assignedTerms = TERM.asTable("assigned_terms");
         final Table<NamespaceRecord> assignedTermsNamespace = NAMESPACE.asTable("assigned_terms_namespace");
-        final Table<TermToTermRecord> assignedTermRelations = TERM_TO_TERM.asTable("assigned_term_relations");
-        final Table<TermToTermRecord> linkedTerms = TERM_TO_TERM.asTable("linked_terms");
+        // Manual term-to-term links are undirected: the augmented relation exposes each manual
+        // edge in both orientations so a link is visible/removable from either term's page.
+        final Table<? extends Record> assignedTermRelations = symmetricTermRelations("assigned_term_relations");
+        final Table<? extends Record> linkedTerms = symmetricTermRelations("linked_terms");
         final Table<TermRecord> linkedTermsTerm = TERM.asTable("linked_terms_term");
 
         final List<Field<?>> groupByFields = Stream.of(TERM.fields(), NAMESPACE.fields())
@@ -233,7 +235,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(assignedTermRelations)
             .on(assignedTermRelations.field(TERM_TO_TERM.TARGET_TERM_ID).eq(TERM.ID))
             .leftJoin(assignedTerms)
-            .on(assignedTerms.field(TERM.ID).eq(assignedTermRelations.field(TERM_TO_TERM.ASSIGNED_TERM_ID)))
+            .on(assignedTerms.field(TERM.ID).eq(assignedTermRelations.field(TERM_TO_TERM.ASSIGNED_TERM_ID))
+                .and(assignedTerms.field(TERM.DELETED_AT).isNull()))
             .leftJoin(assignedTermsNamespace)
             .on(assignedTerms.field(TERM.NAMESPACE_ID).eq(assignedTermsNamespace.field(NAMESPACE.ID)))
             .where(TERM.ID.eq(id).and(TERM.DELETED_AT.isNull()))
@@ -326,7 +329,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .flatMap(Arrays::stream)
             .toList();
 
-        final Table<TermToTermRecord> linkedTerms = TERM_TO_TERM.asTable("linked_terms");
+        final Table<? extends Record> linkedTerms = symmetricTermRelations("linked_terms");
         final Table<TermRecord> linkedTermsTerm = TERM.asTable("linked_terms_term");
 
         final var query = DSL.with(termCTE.getName())
@@ -480,7 +483,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .orderBy(TERM.ID.desc());
 
         final Table<Record> termCTE = baseQuery.asTable("term_cte");
-        final Table<TermToTermRecord> assignedTermRelations = TERM_TO_TERM.asTable("assigned_term_relations");
+        final Table<? extends Record> assignedTermRelations = symmetricTermRelations("assigned_term_relations");
 
         final List<Field<?>> groupByFields = Stream.of(termCTE.fields(), NAMESPACE.fields(),
                 assignedTermRelations.fields(TERM_TO_TERM.IS_DESCRIPTION_LINK))
@@ -534,6 +537,22 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
         return jooqReactiveOperations.mono(finalQuery)
             .map(this::mapRecordToLinkedTermDto);
+    }
+
+    // A manual (non-description) term-to-term link has no inherent direction, yet it is stored as a
+    // single directed row (assigned -> target). This derived table keeps every row as-is and adds a
+    // mirrored copy of each manual row with the endpoints swapped, so callers can keep their existing
+    // join direction while seeing manual links from both sides. Description links (is_description_link
+    // = true) are NOT mirrored: they stay directional ("references" vs "referenced-by").
+    private Table<? extends Record> symmetricTermRelations(final String alias) {
+        return DSL
+            .select(TERM_TO_TERM.ASSIGNED_TERM_ID, TERM_TO_TERM.TARGET_TERM_ID, TERM_TO_TERM.IS_DESCRIPTION_LINK)
+            .from(TERM_TO_TERM)
+            .unionAll(DSL
+                .select(TERM_TO_TERM.TARGET_TERM_ID, TERM_TO_TERM.ASSIGNED_TERM_ID, TERM_TO_TERM.IS_DESCRIPTION_LINK)
+                .from(TERM_TO_TERM)
+                .where(TERM_TO_TERM.IS_DESCRIPTION_LINK.isFalse()))
+            .asTable(alias);
     }
 
     private LinkedTermDto mapRecordToLinkedTermDto(final Record record) {
