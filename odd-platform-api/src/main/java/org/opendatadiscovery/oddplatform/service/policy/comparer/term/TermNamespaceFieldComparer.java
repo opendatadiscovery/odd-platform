@@ -11,6 +11,8 @@ public class TermNamespaceFieldComparer extends SimpleFieldComparer<TermPolicyRe
     }
 
     private static NamespacePojo getTermNamespace(final TermPolicyResolverContext context) {
-        return context.detailsDto().getTermDto().getTermRefDto().getNamespace();
+        return context.detailsDto().getTermDto().getTermRefDto().getNamespace() == null
+            ? new NamespacePojo()
+            : context.detailsDto().getTermDto().getTermRefDto().getNamespace();
     }
 }

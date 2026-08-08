@@ -22,8 +22,10 @@ public class SimpleFieldComparer<T> implements Comparer<T> {
     }
 
     @Override
-    public boolean equals(final String value, final  T context) {
-        return value.equals(fieldExtractor.apply(context));
+    public boolean equals(final String value, final T context) {
+        return value == null
+            ? fieldExtractor.apply(context) == null
+            : value.equals(fieldExtractor.apply(context));
     }
 
     @Override
