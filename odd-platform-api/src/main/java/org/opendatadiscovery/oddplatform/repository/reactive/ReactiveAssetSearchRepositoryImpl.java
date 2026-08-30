@@ -18,12 +18,12 @@ import org.jooq.impl.SQLDataType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchCursor;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchPageRow;
+import org.opendatadiscovery.oddplatform.dto.AssetSearchScope;
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 import org.opendatadiscovery.oddplatform.dto.SearchSortDto;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
@@ -39,6 +39,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.QUERY_EXAMPLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
+import static org.opendatadiscovery.oddplatform.model.Tables.TERM_OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
 
 @Repository
@@ -49,10 +50,10 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
 
     @Override
     public Flux<AssetSearchPageRow> keysetPage(final FacetStateDto state, final List<String> assetKinds,
-                                               final OwnerPojo owner, final AssetSearchCursor cursor,
+                                               final AssetSearchScope scope, final AssetSearchCursor cursor,
                                                final int limit) {
         final SearchSortDto sort = effectiveSort(state);
-        final List<Condition> base = conditions(state, assetKinds, owner);
+        final List<Condition> base = conditions(state, assetKinds, scope);
         final List<OrderField<?>> order = orderFields(state);
         // Also select the active sort's value so the service can mint the next cursor from the last row.
         final Collection<? extends SelectFieldOrAsterisk> columns = List.of(
@@ -85,13 +86,13 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
 
     @Override
     public Flux<AssetSearchPageRow> relevancePage(final FacetStateDto state, final List<String> assetKinds,
-                                                  final OwnerPojo owner, final int offset, final int limit) {
+                                                  final AssetSearchScope scope, final int offset, final int limit) {
         // ts_rank is computed per query, not a stored seekable column → relevance keeps OFFSET (the service
         // bounds `offset` by the relevance depth cap). ADR unified-asset-search D12.
         final var query = DSL
             .select(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND, ASSET_SEARCH_ENTRYPOINT.ASSET_ID)
             .from(searchFrom())
-            .where(conditions(state, assetKinds, owner))
+            .where(conditions(state, assetKinds, scope))
             .orderBy(orderFields(state))
             .limit(DSL.val(limit))
             .offset(DSL.val(offset));
@@ -100,10 +101,11 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
     }
 
     @Override
-    public Mono<Long> count(final FacetStateDto state, final List<String> assetKinds, final OwnerPojo owner) {
+    public Mono<Long> count(final FacetStateDto state, final List<String> assetKinds,
+                            final AssetSearchScope scope) {
         final var query = DSL.selectCount()
             .from(searchFrom())
-            .where(conditions(state, assetKinds, owner));
+            .where(conditions(state, assetKinds, scope));
         return jooqReactiveOperations.mono(query).map(r -> r.value1().longValue());
     }
 
@@ -241,6 +243,13 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
     // FROM asset_search_entrypoint a LEFT JOIN each base table, kind-guarded so exactly one base row joins per
     // entrypoint row (the ids collide across kinds, so the join key is (asset_kind, asset_id)). The base tables
     // supply eligibility + the shared sort/filter columns; the GIN-indexed a.search_vector does the matching.
+    // `col IN (SELECT unnest(?))` — a single array bind the planner can hash into a semi-join. See the
+    // measurement note on condition (5): the `= ANY(array)` alternative is a per-row linear scan on PG13.
+    private static Condition unnestIn(final Field<Long> column, final Collection<Long> ids) {
+        return DSL.condition("{0} in (select unnest({1}))", column,
+            DSL.val(ids.toArray(Long[]::new), SQLDataType.BIGINT.getArrayDataType()));
+    }
+
     private Table<?> searchFrom() {
         return ASSET_SEARCH_ENTRYPOINT
             .leftJoin(DATA_ENTITY)
@@ -255,7 +264,7 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
     }
 
     private List<Condition> conditions(final FacetStateDto state, final List<String> assetKinds,
-                                       final OwnerPojo owner) {
+                                       final AssetSearchScope scope) {
         final List<Condition> conditions = new ArrayList<>();
 
         // (1) FTS — only for a non-blank query. A blank/absent query means "browse" (no FTS predicate). A
@@ -299,14 +308,47 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
                     DSL.val(classIds, DATA_ENTITY.ENTITY_CLASS_IDS.getDataType()))));
         }
 
-        // (5) my-objects — restrict DE rows to the owner's owned set; non-DE rows pass through. Only reached
-        // when an owner resolved; the service short-circuits to an empty page when my_objects is set but no
-        // owner resolves (e.g. auth disabled) — matching SearchServiceImpl.getSearchResults.
-        if (owner != null) {
-            conditions.add(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.ne(AssetKind.DATA_ENTITY.getValue())
-                .or(DATA_ENTITY.ID.in(DSL.select(OWNERSHIP.DATA_ENTITY_ID)
+        // (5) MY-DATA scope (ST-8 / #1842) — the generalisation of the old my-objects boolean. Only reached when
+        // an owner resolved; the service short-circuits to an empty page when a scope is selected but no owner
+        // resolves (e.g. auth disabled) — matching SearchServiceImpl.getSearchResults.
+        //
+        // Unlike every other condition here this one is NOT kind-guarded-with-pass-through: a scope that says
+        // "assets I own / next to mine" cannot be satisfied by a kind it does not reach, so non-matching kinds
+        // are excluded OUTRIGHT (the condition-(7) shape). Concretely: Terms enter only through MY_OBJECTS
+        // (term_ownership); Query Examples have no ownership model at all (V0_0_84) and lineage is
+        // data-entity-only, so query examples can never be in scope.
+        //
+        // SHAPE MATTERS, MEASURED (CTRIB-062 plan-time probe on postgres:13.2 — the deployed version): the
+        // lineage ids MUST be bound as `IN (SELECT unnest(?))`, never `= ANY(array)` and never a literal IN
+        // list. `= ANY(array)` is a scalar array operation Postgres evaluates LINEARLY PER CANDIDATE ROW, and
+        // PG13 has no hashed-ScalarArrayOp optimisation, so a 10k-id scope over a 200k-row catalog measured
+        // 54 443 ms — versus 249 ms for the sub-select form. It is also applied to ASSET_SEARCH_ENTRYPOINT's
+        // own asset_id, not the left-joined DATA_ENTITY.ID: for a DE row they are the same value, and keeping
+        // the predicate off the join is what preserves the FTS-bitmap-driven plan.
+        if (scope != null && scope.active()) {
+            final List<Condition> dataEntityBranches = new ArrayList<>();
+            if (scope.myObjects()) {
+                dataEntityBranches.add(ASSET_SEARCH_ENTRYPOINT.ASSET_ID.in(DSL.select(OWNERSHIP.DATA_ENTITY_ID)
                     .from(OWNERSHIP)
-                    .where(OWNERSHIP.OWNER_ID.eq(owner.getId())))));
+                    .where(OWNERSHIP.OWNER_ID.eq(scope.ownerId()))));
+            }
+            if (scope.lineageSelected()) {
+                // A selected lineage scope that resolved to NOTHING must narrow to nothing, never fall through.
+                dataEntityBranches.add(scope.lineageDataEntityIds().isEmpty()
+                    ? DSL.falseCondition()
+                    : unnestIn(ASSET_SEARCH_ENTRYPOINT.ASSET_ID, scope.lineageDataEntityIds()));
+            }
+            final Condition dataEntityScoped = ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.DATA_ENTITY.getValue())
+                .and(DSL.or(dataEntityBranches));
+            // Terms are in scope only via ownership, and only when MY_OBJECTS is selected — lineage never
+            // reaches them (the lineage edge table is keyed on data-entity oddrns).
+            final Condition termScoped = scope.myObjects()
+                ? ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.TERM.getValue())
+                    .and(ASSET_SEARCH_ENTRYPOINT.ASSET_ID.in(DSL.select(TERM_OWNERSHIP.TERM_ID)
+                        .from(TERM_OWNERSHIP)
+                        .where(TERM_OWNERSHIP.OWNER_ID.eq(scope.ownerId()))))
+                : DSL.falseCondition();
+            conditions.add(dataEntityScoped.or(termScoped));
         }
 
         // (6) shared sidebar facets — namespace / owner / tag / group / status / datasource carried on
