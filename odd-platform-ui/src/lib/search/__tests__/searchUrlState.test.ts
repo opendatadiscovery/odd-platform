@@ -10,18 +10,18 @@ import {
   type SearchUrlState,
 } from '../searchUrlState';
 
-/** a full SearchUrlState from a partial (defaults: no facets, not my-objects) */
+/** a full SearchUrlState from a partial (defaults: no facets, no My-data scope) */
 const state = (partial: Partial<SearchUrlState> = {}): SearchUrlState => ({
   query: '',
   facets: {},
-  myObjects: false,
   ...partial,
 });
 
 /**
  * ST-1a (ADR D10) — the search query ⇄ URL param round-trip. The URL is the canonical, shareable search
  * state; this is the (de)serialiser the Search page reads on load and writes on each committed query.
- * (Widened for ST-1b to carry facets + myObjects — the query assertions below are unchanged in substance.)
+ * (Widened for ST-1b to carry facets + the owned scope, and for ST-8 to carry the My-data scope group — the
+ * query assertions below are unchanged in substance.)
  */
 describe('searchUrlState — query ⇄ URL params (ST-1a / D10)', () => {
   it('round-trips a query through the URL (identity)', () => {
@@ -54,31 +54,30 @@ describe('searchUrlState — query ⇄ URL params (ST-1a / D10)', () => {
 });
 
 /**
- * ST-1b (ADR D10) — the 8 facets + myObjects ⇄ URL params, layered additively on ST-1a. RED before this
- * module carried facets (SearchUrlState was `{ query }` only); GREEN on the ST-1b implementation.
+ * ST-1b (ADR D10) — the 8 facets ⇄ URL params, layered additively on ST-1a. RED before this module carried
+ * facets (SearchUrlState was `{ query }` only); GREEN on the ST-1b implementation. ST-8 (#1842) replaced the
+ * owned-only `myObjects` boolean with the `my_data` scope GROUP; the legacy param is still parsed (below).
  */
-describe('searchUrlState — facets + myObjects ⇄ URL params (ST-1b / D10)', () => {
-  it('round-trips a faceted search (query + multiple facets + myObjects) — identity', () => {
+describe('searchUrlState — facets + My-data ⇄ URL params (ST-1b / ST-8 / D10)', () => {
+  it('round-trips a faceted search (query + multiple facets + a My-data scope) — identity', () => {
     const s = state({
       query: 'orders',
       facets: { tags: [5, 7], datasources: [3], entityClasses: [1] },
-      myObjects: true,
+      myData: ['MY_OBJECTS'],
     });
     expect(paramsToSearchState(`?${searchStateToParams(s)}`)).toEqual(s);
   });
 
-  it('serialises facet ids as a bracket-separated CSV and my as a boolean flag', () => {
+  it('serialises facet ids as a bracket-separated CSV and the scope group as its own list', () => {
     const params = searchStateToParams(
-      state({ facets: { tags: [5, 7] }, myObjects: true })
+      state({ facets: { tags: [5, 7] }, myData: ['MY_OBJECTS', 'UPSTREAM'] })
     );
     expect(params).toContain('tags[]=5,7');
-    expect(params).toContain('my=true');
+    expect(params).toContain('my_data[]=MY_OBJECTS,UPSTREAM');
   });
 
-  it('omits empty facets and my=false → removal / Clear-All yields a clean URL', () => {
-    expect(searchStateToParams(state({ facets: { tags: [] }, myObjects: false }))).toBe(
-      ''
-    );
+  it('omits empty facets and an empty scope → removal / Clear-All yields a clean URL', () => {
+    expect(searchStateToParams(state({ facets: { tags: [] }, myData: [] }))).toBe('');
     // a single selected facet is present; dropping it (empty) removes it entirely — the round-2 removal path
     expect(paramsToSearchState('?tags[]=5').facets).toEqual({ tags: [5] });
     expect(paramsToSearchState('').facets).toEqual({});
@@ -95,18 +94,63 @@ describe('searchUrlState — facets + myObjects ⇄ URL params (ST-1b / D10)', (
     expect(paramsToSearchState('?bogusFacet[]=1,2')).toEqual(state());
   });
 
-  it('my fails closed: only the exact string "true" enables it', () => {
-    expect(paramsToSearchState('?my=true').myObjects).toBe(true);
-    expect(paramsToSearchState('?my=1').myObjects).toBe(false);
-    expect(paramsToSearchState('?my=yes').myObjects).toBe(false);
-    expect(paramsToSearchState('').myObjects).toBe(false);
+  // ST-8 back-compat (ADR D9): a bookmark or shared link written before ST-8 carries `?my=true`. It must keep
+  // working — and it maps FORWARD into the scope group, so the state has exactly one representation.
+  it('the legacy ?my param still works and maps forward into the scope group', () => {
+    expect(paramsToSearchState('?my=true').myData).toEqual(['MY_OBJECTS']);
+    expect(paramsToSearchState('?my=1').myData).toBeUndefined();
+    expect(paramsToSearchState('?my=yes').myData).toBeUndefined();
+    expect(paramsToSearchState('').myData).toBeUndefined();
+    // an explicit my_data wins over the legacy flag rather than being merged with it
+    expect(paramsToSearchState('?my=true&my_data[]=UPSTREAM').myData).toEqual([
+      'UPSTREAM',
+    ]);
   });
 
-  it('searchUrlStateToFormData → the create request: selected filters + query + myObjects', () => {
+  it('my_data fails closed: unknown scope tokens are dropped, an all-garbage list becomes no scope', () => {
+    expect(paramsToSearchState('?my_data[]=UPSTREAM,NONSENSE').myData).toEqual([
+      'UPSTREAM',
+    ]);
+    expect(paramsToSearchState('?my_data[]=NONSENSE').myData).toBeUndefined();
+  });
+
+  // The depth is a performance guarantee, not a preference, so an out-of-range value must degrade to the
+  // server default rather than reach the request — the wire type carries no minimum/maximum precisely so a
+  // stale or hand-edited shareable URL never 400s.
+  it('the per-direction depths fail closed: only integers 1..3 survive', () => {
+    expect(paramsToSearchState('?upstream_depth=2').upstreamDepth).toBe(2);
+    expect(paramsToSearchState('?downstream_depth=3').downstreamDepth).toBe(3);
+    expect(paramsToSearchState('?upstream_depth=99').upstreamDepth).toBeUndefined();
+    expect(paramsToSearchState('?upstream_depth=0').upstreamDepth).toBeUndefined();
+    expect(paramsToSearchState('?upstream_depth=abc').upstreamDepth).toBeUndefined();
+    expect(paramsToSearchState('?upstream_depth=1.5').upstreamDepth).toBeUndefined();
+  });
+
+  it('a depth is only serialised when its direction is selected AND it differs from the default', () => {
+    expect(searchStateToParams(state({ myData: ['UPSTREAM'], upstreamDepth: 1 }))).toBe(
+      'my_data[]=UPSTREAM'
+    );
+    expect(searchStateToParams(state({ myData: ['MY_OBJECTS'], upstreamDepth: 3 }))).toBe(
+      'my_data[]=MY_OBJECTS'
+    );
+    expect(searchStateToParams(state({ myData: ['UPSTREAM'], upstreamDepth: 3 }))).toContain(
+      'upstream_depth=3'
+    );
+  });
+
+  it('searchUrlStateToFormData → the create request: filters + query + the scope group', () => {
     const formData = searchUrlStateToFormData(
-      state({ query: 'q', facets: { tags: [5, 7], entityClasses: [1] }, myObjects: true })
+      state({
+        query: 'q',
+        facets: { tags: [5, 7], entityClasses: [1] },
+        myData: ['MY_OBJECTS'],
+      })
     );
     expect(formData.query).toBe('q');
+    expect(formData.myData).toEqual(['MY_OBJECTS']);
+    // ST-8: `my_objects` is STILL sent when the owned scope is selected. The legacy /api/search session reads
+    // only that field and drives the facet sidebar's Type-filter visibility from it, so dropping it would
+    // silently change a shipped surface (ADR D9 — the session request stays byte-identical to before).
     expect(formData.myObjects).toBe(true);
     expect(formData.filters.tags).toEqual([
       { entityId: 5, selected: true },
@@ -150,7 +194,7 @@ describe('searchUrlState — sort ⇄ URL params (ST-2b / #1836)', () => {
     const s = state({
       query: 'q',
       facets: { tags: [5] },
-      myObjects: true,
+      myData: ['MY_OBJECTS'],
       sort: 'updated_at',
     });
     expect(paramsToSearchState(`?${searchStateToParams(s)}`)).toEqual(s);
@@ -194,7 +238,7 @@ describe('searchUrlState — asset_kinds ⇄ URL params (ST-4 / #1838)', () => {
     const s = state({
       query: 'orders',
       facets: { entityClasses: [1] },
-      myObjects: true,
+      myData: ['MY_OBJECTS'],
       sort: 'updated_at',
       assetKinds: [AssetKind.QUERY_EXAMPLE],
     });
@@ -206,7 +250,7 @@ describe('searchUrlState — asset_kinds ⇄ URL params (ST-4 / #1838)', () => {
       state({
         query: 'q',
         facets: { tags: [5] },
-        myObjects: true,
+        myData: ['MY_OBJECTS'],
         sort: 'name',
         assetKinds: [AssetKind.TERM],
       })

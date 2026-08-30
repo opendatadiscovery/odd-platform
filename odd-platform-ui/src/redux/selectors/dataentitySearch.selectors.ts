@@ -184,5 +184,8 @@ export const getSearchUrlState = createSelector(searchState, (search): SearchUrl
       .map(option => option.entityId as number);
     if (ids.length > 0) facets[name] = ids;
   });
-  return { query: search.query, facets, myObjects: search.myObjects };
+  // ST-8 (#1842): the My-data scope is a URL-ONLY dimension (like `sort` and `asset_kinds`) — it has no redux
+  // facet to mirror, so it is deliberately absent here and re-merged from the live URL by the Search.tsx
+  // mirror. Omitting that merge is the #1858 bug class: any sidebar toggle would silently drop the scope.
+  return { query: search.query, facets };
 });
