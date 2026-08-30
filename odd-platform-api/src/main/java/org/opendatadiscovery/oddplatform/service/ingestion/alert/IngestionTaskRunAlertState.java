@@ -136,7 +136,12 @@ public class IngestionTaskRunAlertState {
     }
 
     private String buildDescription(final IngestionTaskRun taskRun) {
-        return descriptionFormat.formatted(taskRun.getTaskRunName(), taskRun.getStatus());
+        final String description = descriptionFormat.formatted(taskRun.getTaskRunName(), taskRun.getStatus());
+        final String statusReason = taskRun.getStatusReason();
+        if (statusReason == null || statusReason.isBlank()) {
+            return description;
+        }
+        return description + ": " + statusReason;
     }
 
     private AlertPojo buildAlert(final String dataEntityOddrn,
