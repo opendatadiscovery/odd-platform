@@ -295,6 +295,151 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
             .verifyComplete();
     }
 
+    // -------------------------------------------------------------------------------------------------------
+    // Query operators (#1840 / ST-6). Each case seeds a unique scoping token so it cannot collide with the
+    // other cases in the class-shared database, and asserts what a USER sees: which assets come back.
+    // -------------------------------------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("a quoted phrase matches only where the words are adjacent (not both words anywhere)")
+    void searchAssets_quotedPhrase_matchesOnlyAdjacentWords() {
+        final long adjacent = seedDataEntity("phrasealpha customer orders daily");
+        seedDataEntity("phrasealpha orders shipped from customer");   // both words, NOT adjacent
+
+        assetSearchService.searchAssets(form("phrasealpha \"customer orders\""), 30, null)
+            .as(StepVerifier::create)
+            .assertNext(list -> {
+                assertThat(list.getItems())
+                    .as("only the adjacent occurrence matches; before ST-6 the quotes were dropped and BOTH "
+                        + "assets came back")
+                    .singleElement()
+                    .satisfies(a -> assertThat(a.getDataEntity().getId()).isEqualTo(adjacent));
+                assertThat(list.getPageInfo().getTotal()).isEqualTo(1L);
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("a -term EXCLUDES matching assets (before ST-6 it REQUIRED them - the inverse)")
+    void searchAssets_negation_excludesInsteadOfRequiring() {
+        final long kept = seedDataEntity("negbeta customer table");
+        seedDataEntity("negbeta customer test table");
+
+        assetSearchService.searchAssets(form("negbeta customer -test"), 30, null)
+            .as(StepVerifier::create)
+            .assertNext(list -> {
+                assertThat(list.getItems())
+                    .as("the excluded asset is the one that must NOT come back; on the pre-ST-6 build this "
+                        + "query returned exactly the opposite row")
+                    .singleElement()
+                    .satisfies(a -> assertThat(a.getDataEntity().getId()).isEqualTo(kept));
+                assertThat(list.getPageInfo().getTotal()).isEqualTo(1L);
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("`or` returns either branch (before ST-6 it demanded both, so it returned neither)")
+    void searchAssets_or_returnsEitherBranch() {
+        final long alpha = seedDataEntity("orgamma alphaside");
+        final long beta = seedDataEntity("orgamma betaside");
+
+        assetSearchService.searchAssets(form("orgamma alphaside or orgamma betaside"), 30, null)
+            .as(StepVerifier::create)
+            .assertNext(list -> {
+                assertThat(list.getItems())
+                    .extracting(a -> a.getDataEntity().getId())
+                    .as("both branches match; the pre-ST-6 parser ANDed them and returned nothing")
+                    .containsExactlyInAnyOrder(alpha, beta);
+                assertThat(list.getPageInfo().getTotal()).isEqualTo(2L);
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("prefix matching SURVIVES inside an operator query (the published search.md promise)")
+    void searchAssets_prefixMatchingSurvivesInsideAnOperatorQuery() {
+        final long kept = seedDataEntity("prefixdelta customers");
+        seedDataEntity("prefixdelta customers testfixture");
+
+        // `custom` is a PREFIX of the indexed lexeme. websearch_to_tsquery would match neither asset here.
+        assetSearchService.searchAssets(form("prefixdelta custom -testfixture"), 30, null)
+            .as(StepVerifier::create)
+            .assertNext(list -> {
+                assertThat(list.getItems())
+                    .as("the bare term still matches by prefix even though the query carries an operator")
+                    .singleElement()
+                    .satisfies(a -> assertThat(a.getDataEntity().getId()).isEqualTo(kept));
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("an `or` branch that is not index-searchable is dropped, not allowed to void the whole query")
+    void searchAssets_orWithNonIndexableBranch_keepsTheIndexableBranch() {
+        final long kept = seedDataEntity("guardzeta indexable");
+        final long unrelated = seedDataEntity("guardzeta unrelatedneighbour");
+
+        // `-absentword` alone has no positive term (querytree -> 'T'). Guarding the WHOLE union instead of each
+        // branch would collapse this query to the empty tsquery and return NOTHING.
+        assetSearchService.searchAssets(form("guardzeta indexable or -absentword"), 30, null)
+            .as(StepVerifier::create)
+            .assertNext(list -> {
+                assertThat(list.getItems())
+                    .as("the indexable branch still answers")
+                    .extracting(a -> a.getDataEntity().getId())
+                    .contains(kept);
+                // The other half of the guard, and the half a presence-only assertion cannot see: if the
+                // `-absentword` branch were NOT neutralised, `!absentword` would match every row that lacks
+                // the word - the query would degenerate into "almost everything" (and sequentially scan the
+                // whole index to say so). The unrelated neighbour is the canary for that.
+                assertThat(list.getItems())
+                    .as("the non-indexable branch is DROPPED, not evaluated - the query must not degenerate "
+                        + "into a match-everything scan")
+                    .extracting(a -> a.getDataEntity().getId())
+                    .doesNotContain(unrelated);
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("a query with no positive term returns an empty page (never a scan of the whole index)")
+    void searchAssets_negationOnly_returnsEmptyPage() {
+        seedDataEntity("negonlyeta present");
+
+        for (final String query : List.of("-negonlyeta", "-negonlyeta -present", "-a -b")) {
+            assetSearchService.searchAssets(form(query), 30, null)
+                .as(StepVerifier::create)
+                .assertNext(list -> {
+                    assertThat(list.getItems())
+                        .as("query [%s] has nothing positive to search for", query)
+                        .isEmpty();
+                    assertThat(list.getPageInfo().getTotal()).isZero();
+                })
+                .verifyComplete();
+        }
+    }
+
+    @Test
+    @DisplayName("operator-shaped payloads return a page, never a 500 (the IT-003 guard, extended)")
+    void searchAssets_operatorShapedPoison_completesWithoutError() {
+        seedTerm("poisontheta");
+
+        final List<String> payloads = List.of(
+            "\"unbalanced", "trailing-", "or", "-", "- -", "or or", "\"\" \"\"", "-\"", "\"-\"",
+            "?", "{0}", "a\"b", "poisontheta )( -\"\" or", "-poisontheta or \"", "\"a\"\"b\"",
+            "poisontheta or", "or poisontheta", "--", "-- -", "\" or -");
+
+        for (final String poison : payloads) {
+            assetSearchService.searchAssets(form(poison), 30, null)
+                .as(StepVerifier::create)
+                .assertNext(list -> assertThat(list.getItems())
+                    .as("query [%s] must yield a (possibly empty) page, never 42601 / 500", poison)
+                    .isNotNull())
+                .verifyComplete();
+        }
+    }
+
     private static AssetSearchFormData form(final String query) {
         return new AssetSearchFormData()
             .query(query)

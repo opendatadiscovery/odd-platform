@@ -827,13 +827,16 @@ public class ReactiveDataEntityRepositoryImpl
 
     @Override
     public Mono<String> getHighlightedResult(final String text, final String query) {
-        final String tsQuery = jooqFTSHelper.tsQuery(query);
-        // Bind text + tsQuery as parameters (never interpolate) so a crafted search query cannot
-        // break out of the ts_headline / to_tsquery literal - mirrors the safe ftsCondition /
-        // ftsRankField sinks in JooqFTSHelper which already use field("... to_tsquery(?) ...", ...).
-        final var select = DSL.select(field(
-            "ts_headline('english', ?, to_tsquery(?), 'HighlightAll=true')",
-            String.class, text, tsQuery));
+        // Highlight with the SAME tsquery that matched (#1840): the shared sink now understands quoted phrases,
+        // -exclusions and `or`, so building a second, plainer query here would highlight words the row was not
+        // actually matched on - the result row's "why you see it" affordance would start lying. `text` stays a
+        // bind and the query text never reaches SQL as literal, so a crafted query cannot break out.
+        // The text-search config is left implicit on BOTH sides (it was hardcoded 'english' here while the
+        // tsquery and the indexed vectors - concatVectorFields' to_tsvector(...) - all use the database default),
+        // so highlighting and matching cannot diverge on a deployment that sets a different default.
+        final var select = DSL.select(DSL.field(
+            "ts_headline({0}, {1}, 'HighlightAll=true')",
+            String.class, DSL.val(text), jooqFTSHelper.tsQueryExpression(query)));
         return jooqReactiveOperations.mono(select)
             .map(Record1::value1);
     }

@@ -2464,6 +2464,15 @@ components:
       properties:
         query:
           type: string
+          description: >-
+            The free-text query. Bare words match as PREFIXES and are combined with AND, so `cust order`
+            matches an asset named "Customers Orders". Three operators refine that: `"a quoted phrase"`
+            matches the words adjacently and exactly; a `-word` (or `-"a phrase"`) EXCLUDES matches, exactly;
+            and the bare word `or` makes alternatives, binding more loosely than AND (`a or b -c` is
+            `a OR (b AND NOT c)`). Operators narrow a query -- they never turn off prefix matching on the
+            bare words around them. A query with no positive term (`-test` alone) returns no results.
+            Metacharacters are not searchable literals: they are treated as word separators, and a query made
+            only of them returns an empty result rather than an error.
         my_objects:
           type: boolean
           deprecated: true
