@@ -1,5 +1,5 @@
 import type { Asset, AssetSearchApiSearchAssetsRequest } from 'generated-sources';
-import type { PageInfo } from 'redux/interfaces';
+import type { AssetSearchPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { assetSearchApi } from 'lib/api';
@@ -13,16 +13,24 @@ import { assetSearchApi } from 'lib/api';
  * returned `Asset[]` order is the server-side ranking and is rendered verbatim.
  */
 export const searchAssets = handleResponseAsyncThunk<
-  { items: Asset[]; pageInfo: PageInfo<string> },
+  { items: Asset[]; pageInfo: AssetSearchPageInfo },
   AssetSearchApiSearchAssetsRequest
 >(
   actions.searchAssetsActionType,
   async params => {
     const { items, pageInfo } = await assetSearchApi.searchAssets(params);
 
+    // `total` and the scope-truncation signal are carried, not dropped: since ST-8 retired the tab strip the
+    // results header is the ONLY place the match count is shown, and a truncated impact set MUST be labelled.
     return {
       items: items ?? [],
-      pageInfo: { hasNext: pageInfo.hasNext, lastId: pageInfo.nextCursor },
+      pageInfo: {
+        hasNext: pageInfo.hasNext,
+        lastId: pageInfo.nextCursor,
+        total: pageInfo.total,
+        scopeTruncated: pageInfo.scopeTruncated,
+        scopeTruncationReason: pageInfo.scopeTruncationReason,
+      },
     };
   },
   {}

@@ -122,7 +122,6 @@
   "Discussions": "Discussions",
   "Domains": "Domaines",
   "Downstream": "Aval",
-  "Downstream dependents": "Dépendants en aval",
   "Duration": "Durée",
   "ENUMS": "ÉNUMÉRATIONS",
   "EXTERNAL DESCRIPTION": "DESCRIPTION EXTERNE",
@@ -353,7 +352,6 @@
   "Updating filters": "Mise à jour des filtres",
   "Upper groups": "Groupes supérieurs",
   "Upstream": "Amont",
-  "Upstream dependents": "Dépendants en amont",
   "Use": "Utiliser",
   "Used by": "Utilisé par",
   "User": "Utilisateur",
@@ -675,5 +673,16 @@
   "Enter search name": "Saisissez le nom de la recherche",
   "Search saved": "Recherche enregistrée",
   "Saved search updated": "Recherche enregistrée mise à jour",
-  "Saved search deleted": "Recherche enregistrée supprimée"
+  "Saved search deleted": "Recherche enregistrée supprimée",
+  "My data": "Mes données",
+  "Upstream of my data": "En amont de mes données",
+  "Downstream of my data": "En aval de mes données",
+  "Upstream depth": "Profondeur en amont",
+  "Downstream depth": "Profondeur en aval",
+  "Query examples have no owner, so they are excluded from My data.": "Les exemples de requête n'ont pas de propriétaire, ils sont donc exclus de Mes données.",
+  "Link your user to an Owner on the main page to filter by the assets you own.": "Associez votre utilisateur à un Propriétaire sur la page principale pour filtrer selon les actifs que vous possédez.",
+  "{{total}} results": "{{total}} résultats",
+  "{{total}}+ results (partial)": "{{total}}+ résultats (partiel)",
+  "Your My data scope could not be resolved in time, so it was not applied. Reduce the depth or narrow your filters.": "La portée Mes données n'a pas pu être résolue à temps, elle n'a donc pas été appliquée. Réduisez la profondeur ou affinez vos filtres.",
+  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "Seule une partie de la portée de lignée Mes données a été parcourue. Réduisez la profondeur ou ajoutez des filtres pour obtenir un ensemble complet, ou ouvrez un actif dans la vue Lignée pour voir tout son rayon d'impact."
 }

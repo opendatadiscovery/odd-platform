@@ -122,7 +122,6 @@
   "Discussions": "Discussões",
   "Domains": "Domínios",
   "Downstream": "Fluxo de saída",
-  "Downstream dependents": "Dependentes do Fluxo de saída",
   "Duration": "Duração",
   "ENUMS": "ENUMERAÇÕES",
   "EXTERNAL DESCRIPTION": "DESCRIÇÕES EXTERNAS",
@@ -353,7 +352,6 @@
   "Updating filters": "Atualizando filtros",
   "Upper groups": "Grupos superiores",
   "Upstream": "Fluxo de entrada",
-  "Upstream dependents": "Dependentes do Fluxo de entrada",
   "Use": "Usar",
   "Used by": "Usado por",
   "User": "Usuário",
@@ -675,5 +673,16 @@
   "Enter search name": "Digite o nome da busca",
   "Search saved": "Busca salva",
   "Saved search updated": "Busca salva atualizada",
-  "Saved search deleted": "Busca salva excluída"
+  "Saved search deleted": "Busca salva excluída",
+  "My data": "Meus dados",
+  "Upstream of my data": "Fluxo de entrada dos meus dados",
+  "Downstream of my data": "Fluxo de saída dos meus dados",
+  "Upstream depth": "Profundidade do fluxo de entrada",
+  "Downstream depth": "Profundidade do fluxo de saída",
+  "Query examples have no owner, so they are excluded from My data.": "Exemplos de consulta não têm proprietário, portanto são excluídos de Meus dados.",
+  "Link your user to an Owner on the main page to filter by the assets you own.": "Vincule seu usuário a um Proprietário na página principal para filtrar pelos ativos que você possui.",
+  "{{total}} results": "{{total}} resultados",
+  "{{total}}+ results (partial)": "{{total}}+ resultados (parcial)",
+  "Your My data scope could not be resolved in time, so it was not applied. Reduce the depth or narrow your filters.": "Não foi possível resolver o escopo de Meus dados a tempo, portanto ele não foi aplicado. Reduza a profundidade ou restrinja seus filtros.",
+  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "Apenas parte do escopo de linhagem de Meus dados foi pesquisada. Reduza a profundidade ou adicione filtros para obter um conjunto completo, ou abra um ativo na visão de Linhagem para ver todo o seu raio de impacto."
 }

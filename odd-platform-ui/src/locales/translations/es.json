@@ -122,7 +122,6 @@
   "Discussions": "Discusiones",
   "Domains": "Dominios",
   "Downstream": "Flujo de salida",
-  "Downstream dependents": "Dependientes del Flujo de salida",
   "Duration": "Duración",
   "ENUMS": "ENUMS",
   "EXTERNAL DESCRIPTION": "DESCRIPCIONES EXTERNAS",
@@ -353,7 +352,6 @@
   "Updating filters": "Actualizando filtros",
   "Upper groups": "Grupos superiores",
   "Upstream": "Flujo de entrada",
-  "Upstream dependents": "Dependientes del Flujo de entrada",
   "Use": "Utilizar",
   "Used by": "Utilizado por",
   "User": "Usuario",
@@ -675,5 +673,16 @@
   "Enter search name": "Introduzca el nombre de la búsqueda",
   "Search saved": "Búsqueda guardada",
   "Saved search updated": "Búsqueda guardada actualizada",
-  "Saved search deleted": "Búsqueda guardada eliminada"
+  "Saved search deleted": "Búsqueda guardada eliminada",
+  "My data": "Mis datos",
+  "Upstream of my data": "Flujo de entrada de mis datos",
+  "Downstream of my data": "Flujo de salida de mis datos",
+  "Upstream depth": "Profundidad del flujo de entrada",
+  "Downstream depth": "Profundidad del flujo de salida",
+  "Query examples have no owner, so they are excluded from My data.": "Los ejemplos de consulta no tienen propietario, por lo que se excluyen de Mis datos.",
+  "Link your user to an Owner on the main page to filter by the assets you own.": "Vincule su usuario a un Propietario en la página principal para filtrar por los activos que le pertenecen.",
+  "{{total}} results": "{{total}} resultados",
+  "{{total}}+ results (partial)": "{{total}}+ resultados (parcial)",
+  "Your My data scope could not be resolved in time, so it was not applied. Reduce the depth or narrow your filters.": "No se pudo resolver a tiempo el ámbito de Mis datos, por lo que no se aplicó. Reduzca la profundidad o acote sus filtros.",
+  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "Solo se buscó una parte del ámbito de ascendencia de Mis datos. Reduzca la profundidad o añada filtros para obtener un conjunto completo, o abra un activo en la vista de Ascendencia para ver todo su radio de impacto."
 }

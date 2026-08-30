@@ -2,7 +2,6 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import get from 'lodash/get';
 import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum, Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -11,7 +10,6 @@ import {
   getAssetSearchFetchingStatuses,
   getAssetSearchResults,
   getAssetSearchResultsPageInfo,
-  getDataEntityClassesDict,
   getSearchCreatingStatuses,
   getSearchEntityClass,
   getSearchFacetsSynced,
@@ -20,8 +18,6 @@ import {
   getSearchUpdateStatuses,
 } from 'redux/selectors';
 import { fetchFavoritesStatus, searchAssets } from 'redux/thunks';
-import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
-import type { SearchClass } from 'redux/interfaces';
 import {
   AppErrorPage,
   Button,
@@ -37,7 +33,7 @@ import {
 import { favoriteAssetId } from 'components/Favorites/lib';
 import TableHeader from './TableHeader/TableHeader';
 import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
-import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
+import SearchResultsHeader from './SearchResultsHeader/SearchResultsHeader';
 import SearchSortMenu from './SearchSortMenu/SearchSortMenu';
 import SavedSearches from './SavedSearches';
 import ResultItem from './ResultItem/ResultItem';
@@ -58,7 +54,13 @@ const Results: React.FC = () => {
   // `/api/search/assets`). The facet sidebar + the All / My-Objects tabs still read the DE-session slice below,
   // so rebinding the list does NOT orphan them (W1).
   const searchResults = useAppSelector(getAssetSearchResults);
-  const { hasNext, lastId: nextCursor } = useAppSelector(getAssetSearchResultsPageInfo);
+  const {
+    hasNext,
+    lastId: nextCursor,
+    total,
+    scopeTruncated,
+    scopeTruncationReason,
+  } = useAppSelector(getAssetSearchResultsPageInfo);
   const { isLoading: isAssetSearchLoading, isNotLoaded: isAssetSearchNotLoaded } =
     useAppSelector(getAssetSearchFetchingStatuses);
   const assetSearchError = useAppSelector(getAssetSearchError);
@@ -66,7 +68,6 @@ const Results: React.FC = () => {
   // The DE-session slice: still the source for the facet sidebar + the All / My-Objects tabs (W1).
   const searchId = useAppSelector(getSearchId);
   const searchClass = useAppSelector(getSearchEntityClass);
-  const dataEntityClassesDict = useAppSelector(getDataEntityClassesDict);
   const searchTotals = useAppSelector(getSearchTotals);
   const searchFiltersSynced = useAppSelector(getSearchFacetsSynced);
   const { isLoading: isSearchCreating } = useAppSelector(getSearchCreatingStatuses);
@@ -122,38 +123,16 @@ const Results: React.FC = () => {
     );
   }, [searchResults, dispatch]);
 
-  // All / My-Objects tab switch — unchanged mechanism: it writes the `entityClasses` pseudo-facet (`all` clears
-  // My-Objects; `my` sets it), which mirrors to `?my=` and re-queries. Kept as-is (My-Objects retirement = ST-8).
-  const onSearchClassChange = React.useCallback(
-    (tabValue: SearchClass | undefined) => {
-      const newSearchClass = tabValue ? get(dataEntityClassesDict, `${tabValue}`) : null;
-      const facetOptionId = newSearchClass?.id ?? tabValue;
-      const facetOptionName = newSearchClass?.name ?? tabValue?.toString();
-
-      dispatch(
-        changeDataEntitySearchFacet({
-          facetName: 'entityClasses',
-          facetOptionId,
-          facetOptionName,
-          facetOptionState: true,
-          facetSingle: true,
-        })
-      );
-    },
-    [dataEntityClassesDict, dispatch]
-  );
+  // ST-8 (#1842) — the All / My-Objects tab strip is RETIRED. ST-4 removed the seven class tabs (class
+  // selection became the Asset-type + Data-entity-type sidebar filters) and this slice removes the last one:
+  // "my objects" is now one option in the My-data scope group, alongside its two lineage directions. A
+  // one-tab strip is not a control, so the whole surface (and its tab-change handler, which wrote the `my`
+  // pseudo-facet) is gone rather than left rendering a single tab.
 
   const isFirstLoading = isAssetSearchLoading && searchResults.length === 0;
 
   return (
     <Grid sx={{ mt: 2 }}>
-      <SearchResultsTabs
-        showTabsSkeleton={isSearchCreating}
-        isHintUpdating={isSearchUpdating}
-        totals={searchTotals}
-        searchClass={searchClass}
-        onSearchClassChange={onSearchClassChange}
-      />
       <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_CREATE}>
         {showDEGBtn && (
           <DataEntityGroupForm
@@ -176,6 +155,15 @@ const Results: React.FC = () => {
           <SearchSortMenu />
         </Grid>
       )}
+      {/* ST-8 — the match count + the scope-truncation warning. Deliberately OUTSIDE the `!routerSearchId`
+          gate above: the retired tab strip rendered unconditionally, so gating the count would silently
+          remove it from the legacy /search/{sessionId} route that ADR D9 keeps alive (IT-125 exercises it). */}
+      <SearchResultsHeader
+        total={total}
+        isLoading={isFirstLoading}
+        scopeTruncated={scopeTruncated}
+        scopeTruncationReason={scopeTruncationReason}
+      />
       <S.ListContainer id='results-list'>
         <TableHeader />
         {isFirstLoading && <SearchResultsSkeleton />}

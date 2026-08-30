@@ -6,7 +6,7 @@ import type { AssetSearchState } from 'redux/interfaces';
 const initialState: AssetSearchState = {
   results: {
     items: [],
-    pageInfo: { hasNext: true },
+    pageInfo: { hasNext: true, total: 0 },
   },
 };
 
@@ -20,7 +20,7 @@ export const assetSearchSlice = createSlice({
       // change) — clear the list so the skeleton shows and the incoming page REPLACES cleanly. A cursor
       // request (the next page in an infinite scroll) keeps the accumulated list.
       if (!action.meta.arg.cursor) {
-        return { results: { items: [], pageInfo: { hasNext: true } } };
+        return { results: { items: [], pageInfo: { hasNext: true, total: 0 } } };
       }
       return state;
     });
