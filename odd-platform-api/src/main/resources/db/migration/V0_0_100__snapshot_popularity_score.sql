@@ -3,12 +3,13 @@
 -- ST-5's third and final substrate: a popularity dimension the unified cross-kind search can rank/filter by
 -- (consumed by #1861's "Most popular" sort and ST-9's Popular numeric-range facet). ADR unified-asset-search D5
 -- +its rev-3 SRE correction (adrs/.../SEARCH-CAPABILITIES-DESIGN.md §2): index a SNAPSHOTTED / BUCKETED
--- popularity_score, NOT the live data_entity.view_count. view_count is a known write-contention hotspot
--- (concepts.yaml:564 — the UPDATE on the hottest read is row-locked O(reads)); denormalising it LIVE onto the
--- search index would couple index writes to read volume (every page-view would dirty an index row). Instead we
--- store a periodic SNAPSHOT, refreshed by AssetPopularitySnapshotJob on a cadence — and DELIBERATELY add NO
--- trigger on view_count, so the read hot path stays completely decoupled from the search index (the whole point
--- of this slice). Approximate popularity ordering is fine for browse (D5).
+-- popularity_score, NOT the live data_entity.view_count. view_count is a known write-contention hotspot: the
+-- detail-page read row-locks the entity to bump it (ReactiveDataEntityRepositoryImpl.incrementViewCount is an
+-- UPDATE ... SET view_count = view_count + 1 on the hottest read), so denormalising it LIVE onto the search
+-- index would couple index writes to read volume (every page-view would dirty an index row). Instead we store
+-- a periodic SNAPSHOT, refreshed by AssetPopularitySnapshotJob on a cadence — and DELIBERATELY add NO trigger
+-- on view_count, so the read hot path stays completely decoupled from the search index (the whole point of
+-- this slice). Approximate popularity ordering is fine for browse (D5).
 --
 -- Bucketing: a log2 band of view_count (least(20, floor(log2(view_count+1)))). Bucketing keeps the index stable
 -- (a view_count of 1000->1005 stays in the same bucket, so the periodic refresh rarely re-writes an index row)

@@ -113,8 +113,8 @@ class AssetPopularitySnapshotTest extends BaseIntegrationTest {
 
         // In ONE REPEATABLE READ transaction: a synchronous trigger on the view_count write would be visible to the
         // second read; the async snapshot job (a separate connection/tx) is invisible under REPEATABLE READ. So an
-        // unchanged reading here proves the view_count write itself does not touch popularity_score (R-C4 / KL3),
-        // immune to a background refresh firing mid-test.
+        // unchanged reading here proves the view_count write itself does not touch popularity_score, and the
+        // assertion is immune to a background refresh firing mid-test.
         try (final Connection connection = pgConnectionFactory.getConnection()) {
             connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
