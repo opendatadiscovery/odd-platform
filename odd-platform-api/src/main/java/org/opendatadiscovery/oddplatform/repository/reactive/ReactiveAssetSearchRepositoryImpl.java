@@ -14,6 +14,7 @@ import org.jooq.Select;
 import org.jooq.SelectFieldOrAsterisk;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchCursor;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchPageRow;
@@ -104,6 +105,23 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
             .from(searchFrom())
             .where(conditions(state, assetKinds, owner));
         return jooqReactiveOperations.mono(query).map(r -> r.value1().longValue());
+    }
+
+    @Override
+    public Mono<Integer> refreshPopularityScores() {
+        // Popularity is a periodic SNAPSHOT off the read hot path (ADR D5): recompute the bucketed score from the
+        // live view_count via the SAME asset_popularity_bucket() the V0_0_100 backfill uses (single source of truth),
+        // for data-entity rows only (non-DE rows have no view_count and keep 0), writing ONLY rows whose bucket
+        // actually changed (IS DISTINCT FROM) so a no-op refresh writes nothing and index churn stays minimal.
+        final Field<Short> bucket = DSL.field(
+            "asset_popularity_bucket({0})", SQLDataType.SMALLINT, DATA_ENTITY.VIEW_COUNT);
+        final var query = DSL.update(ASSET_SEARCH_ENTRYPOINT)
+            .set(ASSET_SEARCH_ENTRYPOINT.POPULARITY_SCORE, bucket)
+            .from(DATA_ENTITY)
+            .where(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.DATA_ENTITY.getValue()))
+            .and(ASSET_SEARCH_ENTRYPOINT.ASSET_ID.eq(DATA_ENTITY.ID))
+            .and(ASSET_SEARCH_ENTRYPOINT.POPULARITY_SCORE.isDistinctFrom(bucket));
+        return jooqReactiveOperations.mono(query);
     }
 
     // One keyset seek branch: the shared eligibility conditions AND a single range predicate, ordered + limited

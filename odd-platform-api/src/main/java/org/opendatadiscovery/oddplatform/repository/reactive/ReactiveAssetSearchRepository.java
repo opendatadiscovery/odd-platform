@@ -46,4 +46,18 @@ public interface ReactiveAssetSearchRepository {
      * so its cost is constant vs page depth and does not affect the keyset deep-page guarantee).
      */
     Mono<Long> count(FacetStateDto state, List<String> assetKinds, OwnerPojo owner);
+
+    /**
+     * Re-snapshots the denormalised {@code popularity_score} on {@code asset_search_entrypoint} from the current
+     * {@code data_entity.view_count} (ST-5c / #1839, ADR unified-asset-search D5). Popularity is a periodic
+     * SNAPSHOT — NOT live-maintained on the view-count write path — so this is called only by
+     * {@link org.opendatadiscovery.oddplatform.service.job.AssetPopularitySnapshotJob} on a cadence, never on the
+     * read hot path; there is deliberately no trigger coupling {@code view_count} to the index. It writes the
+     * bucketed score ({@code asset_popularity_bucket(view_count)}) for data-entity rows only (non-DE rows have no
+     * view_count and keep 0), and touches ONLY rows whose bucket actually changed ({@code IS DISTINCT FROM}), so a
+     * no-op refresh writes nothing and index churn stays minimal.
+     *
+     * @return the number of union rows whose {@code popularity_score} changed
+     */
+    Mono<Integer> refreshPopularityScores();
 }
