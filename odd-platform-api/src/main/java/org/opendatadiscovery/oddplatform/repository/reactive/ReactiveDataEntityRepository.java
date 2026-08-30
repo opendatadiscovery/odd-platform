@@ -86,6 +86,17 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
 
     Flux<DataEntityDto> listByOwner(final long ownerId, final Integer page, final Integer size);
 
+    /**
+     * ST-8 (#1842) — map the My-data walk's neighbour ODDRNs to data-entity ids, excluding the ones the owner
+     * already owns.
+     *
+     * <p>The exclusion is a SQL semi-anti-join, not a client-side {@code removeAll}, precisely so the owned set
+     * is never materialised (the walk must stay independent of how much the caller owns). Dropping the anchors
+     * matches the semantics the shipped catalog-overview panels already have — "upstream of my data" means the
+     * things feeding mine, not mine.
+     */
+    Flux<Long> listIdsByOddrnsExcludingOwnedBy(final Collection<String> oddrns, final long ownerId);
+
     Flux<DataEntityDto> listPopular(final int page, final int size);
 
     Flux<DataEntityDimensionsDto> listByTerm(final long termId, final String query, final Integer entityClassId,

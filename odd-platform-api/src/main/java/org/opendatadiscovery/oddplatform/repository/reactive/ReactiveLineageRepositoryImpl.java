@@ -12,6 +12,7 @@ import org.jooq.Field;
 import org.jooq.InsertValuesStep3;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
@@ -33,6 +34,7 @@ import static org.jooq.impl.DSL.one;
 import static org.jooq.impl.DSL.val;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
+import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 
 @Repository
 @RequiredArgsConstructor
@@ -145,6 +147,71 @@ public class ReactiveLineageRepositoryImpl implements ReactiveLineageRepository 
             .where(DATA_ENTITY.ID.in(rootIds).and(LINEAGE.IS_DELETED.isFalse()));
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(LineagePojo.class));
+    }
+
+    /**
+     * ST-8 (#1842) hop 1 — the neighbour oddrns one lineage hop from the caller's owned set.
+     *
+     * <p>The owned set is an inlined SUBQUERY, never a materialised id list: the My-data walk must not cap or
+     * even enumerate the caller's ownership, because {@code MY_OBJECTS} itself stays uncapped (an owner of tens
+     * of thousands of assets keeps seeing all of them), and a huge owned set must not consume the traversal
+     * budget before the first hop runs.
+     *
+     * <p>DOWNSTREAM anchors on {@code parent_oddrn} (the PK's leading column); UPSTREAM anchors on
+     * {@code child_oddrn}, which is why V0_0_101 adds an index there — measured 880 ms seq scan vs 22 ms
+     * indexed on a 50k-edge graph. Ordered + limited so a budget cut leaves a deterministic prefix.
+     */
+    @Override
+    public Flux<String> getNeighbourOddrnsFromOwnedSet(final long ownerId,
+                                                       final LineageStreamKind streamKind,
+                                                       final int limit) {
+        if (limit <= 0) {
+            return Flux.empty();
+        }
+        final Field<String> anchor = anchorField(streamKind);
+        final Field<String> neighbour = neighbourField(streamKind);
+        final var query = DSL.selectDistinct(neighbour)
+            .from(LINEAGE)
+            .where(anchor.in(DSL.select(DATA_ENTITY.ODDRN)
+                .from(DATA_ENTITY)
+                .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                .where(OWNERSHIP.OWNER_ID.eq(ownerId))))
+            .and(LINEAGE.IS_DELETED.isFalse())
+            .orderBy(neighbour)
+            .limit(DSL.val(limit));
+        return jooqReactiveOperations.flux(query).map(Record1::value1);
+    }
+
+    /**
+     * ST-8 (#1842) hops 2..n — the neighbour oddrns one hop from an already budget-bounded frontier.
+     * Same ordering + limit contract as hop 1.
+     */
+    @Override
+    public Flux<String> getNeighbourOddrns(final Collection<String> frontierOddrns,
+                                           final LineageStreamKind streamKind,
+                                           final int limit) {
+        if (CollectionUtils.isEmpty(frontierOddrns) || limit <= 0) {
+            return Flux.empty();
+        }
+        final Field<String> anchor = anchorField(streamKind);
+        final Field<String> neighbour = neighbourField(streamKind);
+        final var query = DSL.selectDistinct(neighbour)
+            .from(LINEAGE)
+            .where(anchor.in(frontierOddrns))
+            .and(LINEAGE.IS_DELETED.isFalse())
+            .orderBy(neighbour)
+            .limit(DSL.val(limit));
+        return jooqReactiveOperations.flux(query).map(Record1::value1);
+    }
+
+    // DOWNSTREAM walks parent -> child, so it anchors on the parent; UPSTREAM walks child -> parent. Same
+    // convention as lineageCte below, kept in one place so the two traversals can never disagree.
+    private static Field<String> anchorField(final LineageStreamKind streamKind) {
+        return streamKind == LineageStreamKind.DOWNSTREAM ? LINEAGE.PARENT_ODDRN : LINEAGE.CHILD_ODDRN;
+    }
+
+    private static Field<String> neighbourField(final LineageStreamKind streamKind) {
+        return streamKind == LineageStreamKind.DOWNSTREAM ? LINEAGE.CHILD_ODDRN : LINEAGE.PARENT_ODDRN;
     }
 
     private CommonTableExpression<Record> lineageCte(final Collection<String> oddrns,

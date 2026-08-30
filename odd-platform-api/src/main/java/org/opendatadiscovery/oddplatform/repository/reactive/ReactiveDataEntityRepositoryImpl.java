@@ -534,6 +534,30 @@ public class ReactiveDataEntityRepositoryImpl
             .map(dataEntityDtoMapper::mapDtoRecordFromCTE);
     }
 
+    /**
+     * ST-8 (#1842) — the My-data walk's ODDRN -> id step, with the owner's own entities anti-joined out.
+     *
+     * <p>Both halves are SQL: the ownership exclusion is a NOT IN sub-select rather than a client-side
+     * {@code removeAll}, so the caller's owned set is never materialised (the whole point of the ST-8 walk is
+     * that {@code MY_OBJECTS} stays uncapped while only the lineage expansion is budgeted). Read-time
+     * eligibility (hollow / deleted / excluded-from-search) is deliberately NOT applied here — the ranked
+     * search query already owns that predicate, and duplicating it would create a second copy to drift.
+     */
+    @Override
+    public Flux<Long> listIdsByOddrnsExcludingOwnedBy(final Collection<String> oddrns, final long ownerId) {
+        if (CollectionUtils.isEmpty(oddrns)) {
+            return Flux.empty();
+        }
+        final var select = DSL.select(DATA_ENTITY.ID)
+            .from(DATA_ENTITY)
+            .where(DATA_ENTITY.ODDRN.in(oddrns))
+            .andNotExists(DSL.selectOne()
+                .from(OWNERSHIP)
+                .where(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                .and(OWNERSHIP.OWNER_ID.eq(ownerId)));
+        return jooqReactiveOperations.flux(select).map(Record1::value1);
+    }
+
     @Override
     public Flux<DataEntityDimensionsDto> listByTerm(final long termId,
                                                     final String queryString,
