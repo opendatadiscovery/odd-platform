@@ -2493,14 +2493,17 @@ components:
           description: >-
             How many lineage hops upstream the UPSTREAM scope walks from the owned set. Default 1, hard
             ceiling 3. Applies only when UPSTREAM is selected. Deliberately carries no `minimum`/`maximum`:
-            an out-of-range or non-integer value is CLAMPED to the range server-side rather than rejected,
-            so a shareable URL degrades instead of 400-ing (the `sort` precedent).
+            an out-of-range INTEGER (0, -7, 99) is CLAMPED into [1,3] server-side rather than rejected, so a
+            stale or hand-edited shareable URL degrades instead of 400-ing (the `sort` precedent). A value of
+            the wrong JSON TYPE ("abc") is still rejected by the deserialiser like any typed field — the UI
+            cannot produce one, because the URL parser drops a non-numeric depth before the request is built.
         downstream_depth:
           type: integer
           format: int32
           description: >-
             How many lineage hops downstream the DOWNSTREAM scope walks from the owned set. Default 1, hard
-            ceiling 3, independently settable from upstream_depth (ADR D4). Same clamp-not-reject rule.
+            ceiling 3, independently settable from upstream_depth (ADR D4). Same clamp-in-range rule, and the
+            same wrong-JSON-type caveat, as upstream_depth.
         sort:
           type: string
           description: >-
