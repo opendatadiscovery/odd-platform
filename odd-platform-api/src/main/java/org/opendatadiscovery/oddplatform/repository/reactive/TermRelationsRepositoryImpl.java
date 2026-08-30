@@ -220,10 +220,12 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
 
     @Override
     public Mono<TermToTermPojo> deleteTermToLinkedTermRelation(final Long linkedTermId, final Long termId) {
+        // A manual link is undirected and may be stored in either orientation (and, if linked from
+        // both pages, in both). Remove it regardless of which side is assigned/target.
         final var query = DSL.deleteFrom(TERM_TO_TERM)
-            .where(TERM_TO_TERM.ASSIGNED_TERM_ID.eq(linkedTermId)
-                .and(TERM_TO_TERM.TARGET_TERM_ID.eq(termId))
-                .and(TERM_TO_TERM.IS_DESCRIPTION_LINK.isFalse()))
+            .where(TERM_TO_TERM.IS_DESCRIPTION_LINK.isFalse()
+                .and(TERM_TO_TERM.ASSIGNED_TERM_ID.eq(linkedTermId).and(TERM_TO_TERM.TARGET_TERM_ID.eq(termId))
+                    .or(TERM_TO_TERM.ASSIGNED_TERM_ID.eq(termId).and(TERM_TO_TERM.TARGET_TERM_ID.eq(linkedTermId)))))
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(TermToTermPojo.class));

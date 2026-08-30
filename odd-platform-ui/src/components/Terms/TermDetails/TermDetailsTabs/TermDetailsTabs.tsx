@@ -37,7 +37,14 @@ const TermDetailsTabs: React.FC = () => {
         link: termDetailsPath(termId, 'query-examples'),
       },
     ],
-    [termId, termDetails?.entitiesUsingCount, termDetails?.columnsUsingCount, t]
+    [
+      termId,
+      termDetails?.entitiesUsingCount,
+      termDetails?.columnsUsingCount,
+      termDetails?.linkedTermsUsingCount,
+      termDetails?.queryExampleUsingCount,
+      t,
+    ]
   );
 
   const selectedTab = useSetSelectedTab(tabs);
