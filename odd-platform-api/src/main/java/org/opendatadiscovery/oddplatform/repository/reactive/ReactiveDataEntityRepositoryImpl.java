@@ -23,6 +23,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDomainInfoDto;
@@ -542,6 +543,15 @@ public class ReactiveDataEntityRepositoryImpl
      * that {@code MY_OBJECTS} stays uncapped while only the lineage expansion is budgeted). Read-time
      * eligibility (hollow / deleted / excluded-from-search) is deliberately NOT applied here — the ranked
      * search query already owns that predicate, and duplicating it would create a second copy to drift.
+     *
+     * <p><b>The oddrn set is bound as ONE array, not as an IN list.</b> The walk hands this method up to
+     * {@code MAX_SCOPE_NODES} (10 000) oddrns, and {@code field.in(collection)} renders 10 000 individual
+     * bind markers — the parse-and-plan-a-10k-element-predicate shape that
+     * {@code ReactiveAssetSearchRepositoryImpl}'s scope predicate already documents as the thing to avoid.
+     * Measured on the Phase-D perf stand (postgres 13.2, 120 000 indexed assets, a scope at the 10 000-node
+     * cap): the IN-list form cost a median 215 ms per request. {@code = ANY(array)} is NOT the fix either —
+     * PG13 evaluates a scalar array operation linearly per candidate row — so this uses the same
+     * {@code IN (SELECT unnest(?))} sub-select the ranked query uses, which the planner can hash.
      */
     @Override
     public Flux<Long> listIdsByOddrnsExcludingOwnedBy(final Collection<String> oddrns, final long ownerId) {
@@ -550,7 +560,8 @@ public class ReactiveDataEntityRepositoryImpl
         }
         final var select = DSL.select(DATA_ENTITY.ID)
             .from(DATA_ENTITY)
-            .where(DATA_ENTITY.ODDRN.in(oddrns))
+            .where(DSL.condition("{0} in (select unnest({1}))", DATA_ENTITY.ODDRN,
+                DSL.val(oddrns.toArray(String[]::new), SQLDataType.VARCHAR.getArrayDataType())))
             .andNotExists(DSL.selectOne()
                 .from(OWNERSHIP)
                 .where(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
