@@ -323,8 +323,17 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
         // list. `= ANY(array)` is a scalar array operation Postgres evaluates LINEARLY PER CANDIDATE ROW, and
         // PG13 has no hashed-ScalarArrayOp optimisation, so a 10k-id scope over a 200k-row catalog measured
         // 54 443 ms — versus 249 ms for the sub-select form. It is also applied to ASSET_SEARCH_ENTRYPOINT's
-        // own asset_id, not the left-joined DATA_ENTITY.ID: for a DE row they are the same value, and keeping
-        // the predicate off the join is what preserves the FTS-bitmap-driven plan.
+        // own asset_id, not the left-joined DATA_ENTITY.ID: for a DE row they are the same value, so the join
+        // is unnecessary for this predicate and removing it keeps the FTS bitmap as the driver IN THE MEASURED
+        // QUERY.
+        //
+        // SCOPE OF THAT EVIDENCE, stated precisely so the next reader does not over-trust it: the measurement
+        // was taken on the isolated predicate against a 200k-row fixture, not on the COMPLETE query this
+        // method builds (three left joins, kind guards, facet semi-joins, sort, keyset pagination). The
+        // rendered SQL shape is guaranteed rather than measured — `DSL.condition(String, QueryPart...)` is
+        // jOOQ's plain-SQL template API, which substitutes binds and emits the template verbatim, so no jOOQ
+        // rewrite can turn this into `= ANY(array)`. What is NOT yet confirmed is that the FTS bitmap still
+        // drives once every other clause is present at catalog scale. Tracked as TST-063.
         if (scope != null && scope.active()) {
             final List<Condition> dataEntityBranches = new ArrayList<>();
             if (scope.myObjects()) {
