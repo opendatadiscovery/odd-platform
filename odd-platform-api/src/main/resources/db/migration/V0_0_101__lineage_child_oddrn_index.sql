@@ -26,3 +26,23 @@
 -- CONCURRENTLY cannot run in one. This matches every other index in this migration set.
 
 CREATE INDEX IF NOT EXISTS lineage_child_oddrn ON lineage (child_oddrn);
+
+-- ---------------------------------------------------------------------------------------------------------
+-- The OWNERSHIP side of the same walk. Indexing only the lineage side would have left the other half of
+-- every My-data query on a sequential scan.
+--
+-- Both `ownership` and `term_ownership` are looked up by OWNER — the My-Objects semi-join
+-- (`... WHERE owner_id = ?`) and the first lineage hop's anchor subquery — but in both tables `owner_id` is
+-- the SECOND column of the only composite index (`ownership(data_entity_id, owner_id)`,
+-- `term_ownership(term_id, owner_id)`), so a predicate on `owner_id` alone cannot range-start on either.
+--
+-- MEASURED (same probe method as above, postgres:13.2-alpine, 400 000 ownership rows over 500 owners):
+--     SELECT data_entity_id FROM ownership WHERE owner_id = ?
+--       before -> Parallel Seq Scan            107.1 ms
+--       after  -> Bitmap Index Scan              4.9 ms      (22x)
+--
+-- This runs on EVERY search that selects a My-data scope, so it is the same class of finding as the
+-- child_oddrn index above and belongs in the same migration.
+
+CREATE INDEX IF NOT EXISTS ownership_owner_id ON ownership (owner_id);
+CREATE INDEX IF NOT EXISTS term_ownership_owner_id ON term_ownership (owner_id);
