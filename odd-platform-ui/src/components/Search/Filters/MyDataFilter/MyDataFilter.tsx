@@ -1,6 +1,6 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Grid, Link as MuiLink, Typography } from '@mui/material';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { searchPath } from 'routes';
 import {
@@ -90,18 +90,24 @@ const MyDataFilter: React.FC = () => {
   }
 
   // Signed in but not bound to an Owner: the capability exists and the fix is one page away — hiding the
-  // control would hide the fix, so it renders disabled and says why.
+  // control would hide the fix, so the group still renders, greyed out, and names the remedy. The remedy is a
+  // LINK, not a sentence: naming a fix the reader then has to go hunting for is only half of not-hiding it,
+  // and the owner-association request form lives on the main page (`Overview`, route `/`).
   if (!isOwnerBound) {
     return (
-      <Grid container sx={{ mt: 2 }}>
+      <Grid container sx={{ mt: 2 }} data-testid='my-data-filter-unbound'>
         <Typography variant='h5' color='texts.hint'>
           {t('My data')}
         </Typography>
+        {/* Two WHOLE sentences, not a sentence spliced around a link: this codebase has no `<Trans>` (checked
+            — zero usages), and fragment concatenation freezes English word order for all 7 locales. Each key
+            below is a complete, independently translatable unit, and the link is its own call to action. */}
         <Typography variant='subtitle2' color='texts.info' sx={{ mt: 0.5 }}>
-          {t(
-            'Link your user to an Owner on the main page to filter by the assets you own.'
-          )}
+          {t('Link your user to an Owner to filter by the assets you own.')}
         </Typography>
+        <MuiLink component={Link} to='/' variant='subtitle2' sx={{ mt: 0.5 }}>
+          {t('Request an Owner association on the main page')}
+        </MuiLink>
       </Grid>
     );
   }

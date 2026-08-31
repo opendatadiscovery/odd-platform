@@ -51,7 +51,21 @@ public class MyDataScopeResolverImpl implements MyDataScopeResolver {
      * separate, deliberate exploration, so they cannot share a ceiling.
      */
     public static final int MAX_DEPTH = 3;
-    /** The traversal budget, shared across directions — the cap DataHub's Impact Analysis publishes. */
+    /**
+     * The traversal budget, shared across directions — the cap DataHub's Impact Analysis publishes.
+     *
+     * <p><b>It counts rows TRAVERSED, not distinct nodes admitted.</b> A hop's SQL is
+     * {@code SELECT DISTINCT <neighbour> ... LIMIT remaining + 1}; it does not (and cannot cheaply) exclude
+     * the visited set, since that set can itself hold ten thousand oddrns and binding it back as a
+     * {@code NOT IN} list is the very per-row scan the scope predicate was measured to avoid. So in a graph
+     * with heavy hop-to-hop overlap a hop can return more rows than the remaining budget while most of them
+     * are already visited, and the walk reports {@code NODE_CAP} with the distinct-node count still under
+     * 10 000. That is deliberate and it errs in the safe direction — over-declaring truncation makes the UI
+     * say "partial" about a set that is complete, whereas the opposite would present a partial impact set as
+     * complete, which is the failure this whole mechanism exists to prevent. It is stated here rather than
+     * silently accepted because "traversed" and "admitted" are not the same number and a reader will assume
+     * they are.
+     */
     public static final int MAX_SCOPE_NODES = 10_000;
     /** Circuit breaker only; never shapes the returned set (see the class note). */
     public static final Duration WALL_CLOCK_BUDGET = Duration.ofSeconds(5);

@@ -7,10 +7,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
+import org.opendatadiscovery.oddplatform.dto.AssetSearchCursor;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchPageRow;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchScope;
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
+import org.opendatadiscovery.oddplatform.dto.SearchSortDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
@@ -167,6 +169,60 @@ class AssetSearchScopePredicateTest extends BaseIntegrationTest {
             .hasSize(3);
     }
 
+    @Test
+    @DisplayName("KEYSET paging under a My-data scope: page-by-page equals the single page, no dup and no skip")
+    void keysetPaging_underScope_isContinuous() {
+        // The scope predicate and the keyset seek are two independent WHERE fragments composed into one query.
+        // The failure this guards is composition, not either half alone: if the scope semi-join disturbed the
+        // seek's range-start (or vice versa) a scoped search would silently duplicate or skip rows as the user
+        // scrolls — a filter that promises "assets I own" losing some of them past the first page. The pre-work
+        // note on #1842 called cursor stability under the lineage intersection out by name.
+        final String q = "scopeseek" + token();
+        final long ownerId = seedOwner();
+        // Five in-scope rows with DISTINCT names (the sort key) plus one out-of-scope row that must never
+        // appear on any page, so the assertion catches a scope that leaks under paging as well as one that skips.
+        final List<Long> mine = new java.util.ArrayList<>();
+        for (final String suffix : List.of("sa", "sb", "sc", "sd", "se")) {
+            final long id = seedDataEntityNamed(q, suffix);
+            own(ownerId, id);
+            mine.add(id);
+        }
+        seedDataEntityNamed(q, "zz");            // matches the query, is NOT owned — the leak foil
+
+        final AssetSearchScope scope = scope(ownerId, true, false, Set.of());
+        final List<Long> singlePage = keysetPage(q, scope, null, 50).stream()
+            .map(AssetSearchPageRow::assetId)
+            .toList();
+        assertThat(singlePage)
+            .as("the unpaged scoped result is exactly the five owned rows, name-ordered")
+            .containsExactlyElementsOf(mine);
+
+        // Now walk it two at a time through real cursors, exactly as the service does.
+        final List<Long> walked = new java.util.ArrayList<>();
+        AssetSearchCursor cursor = null;
+        for (int guard = 0; guard < 10; guard++) {
+            final List<AssetSearchPageRow> rows = keysetPage(q, scope, cursor, 3);   // size 2 + the hasNext probe
+            if (rows.isEmpty()) {
+                break;
+            }
+            final boolean hasNext = rows.size() > 2;
+            final List<AssetSearchPageRow> pageRows = hasNext ? rows.subList(0, 2) : rows;
+            pageRows.forEach(r -> walked.add(r.assetId()));
+            if (!hasNext) {
+                break;
+            }
+            final AssetSearchPageRow last = pageRows.get(pageRows.size() - 1);
+            cursor = AssetSearchCursor.decode(
+                AssetSearchCursor.keyset(SearchSortDto.NAME, last.sortValue(), last.sortValueNull(),
+                    last.assetKind(), last.assetId()).encode(), SearchSortDto.NAME).orElseThrow();
+        }
+
+        assertThat(walked)
+            .as("paging through the scoped search yields the single-page order exactly — no row seen twice, "
+                + "none lost between pages, and the unowned foil never leaks in")
+            .containsExactlyElementsOf(singlePage);
+    }
+
     // ---- helpers -------------------------------------------------------------------------------------------
 
     private static AssetSearchScope scope(final long ownerId, final boolean myObjects,
@@ -180,12 +236,42 @@ class AssetSearchScopePredicateTest extends BaseIntegrationTest {
             .block();
     }
 
+    // The NAME sort is the seekable one with the simplest total order, so a paging break shows up as a plain
+    // list-equality failure rather than a tie-breaking argument.
+    private List<AssetSearchPageRow> keysetPage(final String query, final AssetSearchScope scope,
+                                                final AssetSearchCursor cursor, final int limit) {
+        return assetSearchRepository.keysetPage(nameSortedState(query), List.of(), scope, cursor, limit)
+            .collectList()
+            .block();
+    }
+
     private static FacetStateDto state(final String query) {
         return new FacetStateDto(java.util.Map.of(), query, false, null);
     }
 
+    private static FacetStateDto nameSortedState(final String query) {
+        return new FacetStateDto(java.util.Map.of(), query, false, SearchSortDto.NAME.name());
+    }
+
     private static String token() {
         return UUID.randomUUID().toString().substring(0, 8).replaceAll("[^a-z]", "x");
+    }
+
+    // Same fixture with a CONTROLLED name. The FTS vector prefix-matches, so the name must still START with
+    // the query token to stay in the result set; the suffix is what fixes the row's position under the NAME
+    // sort, which is what a paging assertion needs.
+    private long seedDataEntityNamed(final String searchToken, final String suffix) {
+        final DataEntityPojo pojo = new DataEntityPojo()
+            .setOddrn("//scopepredicate/de/" + UUID.randomUUID())
+            .setExternalName(searchToken + "_" + suffix)
+            .setEntityClassIds(new Integer[] {DATA_SET})
+            .setTypeId(1)
+            .setHollow(false)
+            .setStatus(DataEntityStatusDto.UNASSIGNED.getId())
+            .setExcludeFromSearch(false);
+        final DataEntityPojo created = dataEntityRepository.bulkCreate(List.of(pojo)).blockLast();
+        searchEntrypointRepository.updateDataEntityVectors(created.getId()).block();
+        return created.getId();
     }
 
     private long seedDataEntity(final String name) {
