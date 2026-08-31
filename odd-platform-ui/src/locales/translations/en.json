@@ -680,9 +680,11 @@
   "Upstream depth": "Upstream depth",
   "Downstream depth": "Downstream depth",
   "Query examples have no owner, so they are excluded from My data.": "Query examples have no owner, so they are excluded from My data.",
-  "Link your user to an Owner on the main page to filter by the assets you own.": "Link your user to an Owner on the main page to filter by the assets you own.",
   "{{total}} results": "{{total}} results",
   "{{total}}+ results (partial)": "{{total}}+ results (partial)",
-  "Your My data scope could not be resolved in time, so it was not applied. Reduce the depth or narrow your filters.": "Your My data scope could not be resolved in time, so it was not applied. Reduce the depth or narrow your filters.",
-  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius."
+  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.",
+  "Your My data lineage scope could not be resolved in time, so its results are missing from this list. Reduce the depth or narrow your filters.": "Your My data lineage scope could not be resolved in time, so its results are missing from this list. Reduce the depth or narrow your filters.",
+  "1 result": "1 result",
+  "Link your user to an Owner to filter by the assets you own.": "Link your user to an Owner to filter by the assets you own.",
+  "Request an Owner association on the main page": "Request an Owner association on the main page"
 }

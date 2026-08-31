@@ -680,9 +680,11 @@
   "Upstream depth": "上游深度",
   "Downstream depth": "下游深度",
   "Query examples have no owner, so they are excluded from My data.": "查询示例没有所有者，因此不包含在“我的数据”中。",
-  "Link your user to an Owner on the main page to filter by the assets you own.": "请在主页将您的用户关联到所有者，以便按您拥有的资产进行筛选。",
   "{{total}} results": "{{total}} 个结果",
   "{{total}}+ results (partial)": "{{total}}+ 个结果（部分）",
-  "Your My data scope could not be resolved in time, so it was not applied. Reduce the depth or narrow your filters.": "无法及时解析“我的数据”范围，因此未应用该范围。请降低深度或缩小筛选范围。",
-  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "仅搜索了“我的数据”血统范围的一部分。请降低深度或添加筛选条件以获得完整结果，或在血统视图中打开某个资产以查看其完整影响范围。"
+  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "仅搜索了“我的数据”血统范围的一部分。请降低深度或添加筛选条件以获得完整结果，或在血统视图中打开某个资产以查看其完整影响范围。",
+  "Your My data lineage scope could not be resolved in time, so its results are missing from this list. Reduce the depth or narrow your filters.": "未能及时解析“我的数据”血缘范围，因此其结果未包含在此列表中。请降低深度或缩小筛选范围。",
+  "1 result": "1 条结果",
+  "Link your user to an Owner to filter by the assets you own.": "将您的用户关联到负责人，即可按您拥有的资产进行筛选。",
+  "Request an Owner association on the main page": "在主页申请负责人关联"
 }

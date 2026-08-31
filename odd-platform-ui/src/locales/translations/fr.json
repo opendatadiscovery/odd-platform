@@ -680,9 +680,11 @@
   "Upstream depth": "Profondeur en amont",
   "Downstream depth": "Profondeur en aval",
   "Query examples have no owner, so they are excluded from My data.": "Les exemples de requête n'ont pas de propriétaire, ils sont donc exclus de Mes données.",
-  "Link your user to an Owner on the main page to filter by the assets you own.": "Associez votre utilisateur à un Propriétaire sur la page principale pour filtrer selon les actifs que vous possédez.",
   "{{total}} results": "{{total}} résultats",
   "{{total}}+ results (partial)": "{{total}}+ résultats (partiel)",
-  "Your My data scope could not be resolved in time, so it was not applied. Reduce the depth or narrow your filters.": "La portée Mes données n'a pas pu être résolue à temps, elle n'a donc pas été appliquée. Réduisez la profondeur ou affinez vos filtres.",
-  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "Seule une partie de la portée de lignée Mes données a été parcourue. Réduisez la profondeur ou ajoutez des filtres pour obtenir un ensemble complet, ou ouvrez un actif dans la vue Lignée pour voir tout son rayon d'impact."
+  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "Seule une partie de la portée de lignée Mes données a été parcourue. Réduisez la profondeur ou ajoutez des filtres pour obtenir un ensemble complet, ou ouvrez un actif dans la vue Lignée pour voir tout son rayon d'impact.",
+  "Your My data lineage scope could not be resolved in time, so its results are missing from this list. Reduce the depth or narrow your filters.": "La portée de lignage « Mes données » n'a pas pu être résolue à temps ; ses résultats sont donc absents de cette liste. Réduisez la profondeur ou affinez vos filtres.",
+  "1 result": "1 résultat",
+  "Link your user to an Owner to filter by the assets you own.": "Associez votre utilisateur à un Propriétaire pour filtrer sur les actifs qui vous appartiennent.",
+  "Request an Owner association on the main page": "Demander une association de Propriétaire sur la page principale"
 }

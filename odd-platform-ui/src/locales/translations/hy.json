@@ -680,9 +680,11 @@
   "Upstream depth": "Վերբեռնման խորությունը",
   "Downstream depth": "Ներբեռնման խորությունը",
   "Query examples have no owner, so they are excluded from My data.": "Հարցումների օրինակները սեփականատեր չունեն, ուստի բացառվում են «Իմ տվյալներից»։",
-  "Link your user to an Owner on the main page to filter by the assets you own.": "Գլխավոր էջում կապեք ձեր հաշիվը Օգտատիրոջ հետ՝ ձեր տիրապետած ակտիվներով ֆիլտրելու համար։",
   "{{total}} results": "{{total}} արդյունք",
   "{{total}}+ results (partial)": "{{total}}+ արդյունք (մասնակի)",
-  "Your My data scope could not be resolved in time, so it was not applied. Reduce the depth or narrow your filters.": "«Իմ տվյալները» ընդգրկույթը հնարավոր չեղավ որոշել ժամանակին, ուստի այն չկիրառվեց։ Նվազեցրեք խորությունը կամ նեղացրեք ֆիլտրերը։",
-  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "«Իմ տվյալները» ծագման ընդգրկույթի միայն մի մասն է որոնվել։ Նվազեցրեք խորությունը կամ ավելացրեք ֆիլտրեր՝ ամբողջական արդյունքի համար, կամ բացեք ակտիվը Ծագման տեսքում՝ ազդեցության ողջ շառավիղը տեսնելու համար։"
+  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "«Իմ տվյալները» ծագման ընդգրկույթի միայն մի մասն է որոնվել։ Նվազեցրեք խորությունը կամ ավելացրեք ֆիլտրեր՝ ամբողջական արդյունքի համար, կամ բացեք ակտիվը Ծագման տեսքում՝ ազդեցության ողջ շառավիղը տեսնելու համար։",
+  "Your My data lineage scope could not be resolved in time, so its results are missing from this list. Reduce the depth or narrow your filters.": "«Իմ տվյալների» ծագումնաբանության շրջանակը չհաջողվեց ժամանակին որոշել, ուստի դրա արդյունքները բացակայում են այս ցանկից: Նվազեցրեք խորությունը կամ նեղացրեք զտիչները:",
+  "1 result": "1 արդյունք",
+  "Link your user to an Owner to filter by the assets you own.": "Կապեք ձեր օգտատիրոջը Սեփականատիրոջ հետ՝ ձեր տիրապետած ակտիվներով զտելու համար:",
+  "Request an Owner association on the main page": "Հայցել Սեփականատիրոջ կապ գլխավոր էջում"
 }

@@ -680,9 +680,11 @@
   "Upstream depth": "Глибина верхнього рівня",
   "Downstream depth": "Глибина нижнього рівня",
   "Query examples have no owner, so they are excluded from My data.": "Приклади запитів не мають власника, тому їх виключено з «Моїх даних».",
-  "Link your user to an Owner on the main page to filter by the assets you own.": "Прив'яжіть свого користувача до Власника на головній сторінці, щоб фільтрувати за активами, якими ви володієте.",
   "{{total}} results": "{{total}} результатів",
   "{{total}}+ results (partial)": "{{total}}+ результатів (частково)",
-  "Your My data scope could not be resolved in time, so it was not applied. Reduce the depth or narrow your filters.": "Не вдалося вчасно визначити область «Мої дані», тому її не застосовано. Зменште глибину або звузьте фільтри.",
-  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "Пошук охопив лише частину області родоводу «Мої дані». Зменште глибину або додайте фільтри для повного набору, або відкрийте актив у поданні Родовід, щоб побачити весь радіус впливу."
+  "Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.": "Пошук охопив лише частину області родоводу «Мої дані». Зменште глибину або додайте фільтри для повного набору, або відкрийте актив у поданні Родовід, щоб побачити весь радіус впливу.",
+  "Your My data lineage scope could not be resolved in time, so its results are missing from this list. Reduce the depth or narrow your filters.": "Не вдалося вчасно визначити область родоводу «Мої дані», тому її результати відсутні в цьому списку. Зменште глибину або звузьте фільтри.",
+  "1 result": "1 результат",
+  "Link your user to an Owner to filter by the assets you own.": "Прив'яжіть свого користувача до Власника, щоб фільтрувати за активами, якими ви володієте.",
+  "Request an Owner association on the main page": "Надіслати запит на зв'язок із Власником на головній сторінці"
 }

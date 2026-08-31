@@ -24,6 +24,14 @@ interface SearchResultsHeaderProps {
  * consumers" and concludes they have told everyone has been misled by a partial set presented as a total. So
  * a truncated total is never printed bare: the count is qualified (`17+`, "partial") and a persistent strip
  * (not a toast — it must live as long as the claim is on screen) names the cause and the remedy.
+ *
+ * **Both truncation reasons qualify the count, for the same reason.** `NODE_CAP` returns a deterministic
+ * prefix of the scope; `TIMEOUT` applies the lineage directions as "matches nothing" so they contribute no
+ * rows at all (the MY_OBJECTS half, if selected, still does). In BOTH cases the true result set is a strict
+ * SUPERSET of what is shown, so `N+` is the honest marker for both and only the strip's wording differs. An
+ * earlier revision excluded TIMEOUT from the qualifier and printed a bare `0 results` beside a warning — the
+ * exact false-complete claim this component exists to prevent, since "Downstream of my data -> 0 results"
+ * reads as "nothing depends on my assets".
  */
 const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({
   total,
@@ -32,16 +40,19 @@ const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({
   scopeTruncationReason,
 }) => {
   const { t } = useTranslation();
-  // TIMEOUT means no scope was applied at all, so there is no partial count to qualify — only a warning.
-  const isPartialCount = Boolean(scopeTruncated) && scopeTruncationReason !== 'TIMEOUT';
+  // Any truncation means the true set is larger than what was searched, so the count is never printed bare.
+  const isPartialCount = Boolean(scopeTruncated);
 
   return (
     <Grid container direction='column' sx={{ mt: 1 }}>
       {!isLoading && (
         <Typography variant='subtitle1' data-testid='search-results-count'>
+          {/* eslint-disable-next-line no-nested-ternary */}
           {isPartialCount
             ? t('{{total}}+ results (partial)', { total })
-            : t('{{total}} results', { total })}
+            : total === 1
+              ? t('1 result')
+              : t('{{total}} results', { total })}
         </Typography>
       )}
       {scopeTruncated && (
@@ -56,7 +67,7 @@ const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({
           <Typography variant='subtitle2' color='warning.main'>
             {scopeTruncationReason === 'TIMEOUT'
               ? t(
-                  'Your My data scope could not be resolved in time, so it was not applied. Reduce the depth or narrow your filters.'
+                  'Your My data lineage scope could not be resolved in time, so its results are missing from this list. Reduce the depth or narrow your filters.'
                 )
               : t(
                   'Only part of your My data lineage scope was searched. Reduce the depth or add filters for a complete set, or open an asset in the Lineage view for its full blast radius.'
