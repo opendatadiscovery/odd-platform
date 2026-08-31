@@ -38,7 +38,7 @@ const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({
   return (
     <Grid container direction='column' sx={{ mt: 1 }}>
       {!isLoading && (
-        <Typography variant='subtitle1' data-qa='search-results-count'>
+        <Typography variant='subtitle1' data-testid='search-results-count'>
           {isPartialCount
             ? t('{{total}}+ results (partial)', { total })
             : t('{{total}} results', { total })}
@@ -50,7 +50,7 @@ const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({
           alignItems='center'
           wrap='nowrap'
           sx={{ mt: 0.5 }}
-          data-qa='search-scope-truncated'
+          data-testid='search-scope-truncated'
         >
           <AlertIcon sx={{ mr: 0.5 }} />
           <Typography variant='subtitle2' color='warning.main'>
