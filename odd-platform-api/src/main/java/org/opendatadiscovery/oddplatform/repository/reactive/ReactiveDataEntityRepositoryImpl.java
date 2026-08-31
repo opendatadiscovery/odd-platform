@@ -23,7 +23,6 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDomainInfoDto;
@@ -544,14 +543,19 @@ public class ReactiveDataEntityRepositoryImpl
      * eligibility (hollow / deleted / excluded-from-search) is deliberately NOT applied here — the ranked
      * search query already owns that predicate, and duplicating it would create a second copy to drift.
      *
-     * <p><b>The oddrn set is bound as ONE array, not as an IN list.</b> The walk hands this method up to
-     * {@code MAX_SCOPE_NODES} (10 000) oddrns, and {@code field.in(collection)} renders 10 000 individual
-     * bind markers — the parse-and-plan-a-10k-element-predicate shape that
-     * {@code ReactiveAssetSearchRepositoryImpl}'s scope predicate already documents as the thing to avoid.
-     * Measured on the Phase-D perf stand (postgres 13.2, 120 000 indexed assets, a scope at the 10 000-node
-     * cap): the IN-list form cost a median 215 ms per request. {@code = ANY(array)} is NOT the fix either —
-     * PG13 evaluates a scalar array operation linearly per candidate row — so this uses the same
-     * {@code IN (SELECT unnest(?))} sub-select the ranked query uses, which the planner can hash.
+     * <p><b>The plain {@code .in(collection)} is correct HERE, and the ranked query's array-bind note must
+     * not be copied into it.</b> That note ({@code ReactiveAssetSearchRepositoryImpl}, condition (5)) is
+     * about matching ~10 000 ids against a 120 000-row FTS bitmap, where a hashable semi-join wins and a
+     * scalar array operation is a per-row disaster. This method is the opposite access pattern: up to 10 000
+     * EXACT lookups on a unique btree index, where a list of constants known at plan time is exactly what the
+     * planner wants. Measured on the Phase-D perf stand (postgres 13.2, 120 000 assets, the same 10 000
+     * oddrns, EXPLAIN ANALYZE, three runs each):
+     * <pre>
+     *   .in(collection)          -> planning 19-24 ms, execution 115-149 ms   (~150 ms)
+     *   IN (SELECT unnest(?))    -> planning  7    ms, execution 207-217 ms   (~220 ms)
+     * </pre>
+     * The array bind saves ~15 ms of planning and costs ~80 ms of execution — a net ~70 ms LOSS. It was
+     * tried, measured, and reverted; do not re-apply it by analogy.
      */
     @Override
     public Flux<Long> listIdsByOddrnsExcludingOwnedBy(final Collection<String> oddrns, final long ownerId) {
@@ -560,8 +564,7 @@ public class ReactiveDataEntityRepositoryImpl
         }
         final var select = DSL.select(DATA_ENTITY.ID)
             .from(DATA_ENTITY)
-            .where(DSL.condition("{0} in (select unnest({1}))", DATA_ENTITY.ODDRN,
-                DSL.val(oddrns.toArray(String[]::new), SQLDataType.VARCHAR.getArrayDataType())))
+            .where(DATA_ENTITY.ODDRN.in(oddrns))
             .andNotExists(DSL.selectOne()
                 .from(OWNERSHIP)
                 .where(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
