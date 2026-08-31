@@ -24,10 +24,6 @@ public record MyDataScopeResult(Set<Long> neighbourDataEntityIds, boolean trunca
         return new MyDataScopeResult(Set.of(), false, null);
     }
 
-    public static MyDataScopeResult of(final Set<Long> ids) {
-        return new MyDataScopeResult(ids, false, null);
-    }
-
     public static MyDataScopeResult truncated(final Set<Long> ids, final String reason) {
         return new MyDataScopeResult(ids, true, reason);
     }

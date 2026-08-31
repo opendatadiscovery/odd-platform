@@ -255,6 +255,86 @@ class MyDataScopeResolverTest extends BaseIntegrationTest {
     }
 
     /** Seed a simple chain: each argument is the parent of the next. */
+    @Test
+    @DisplayName("the budget spent EXACTLY at a hop boundary stops the walk and reports NODE_CAP")
+    void resolve_budgetExhaustedAtHopBoundary_truncates() {
+        // The sibling of the "cap bit mid-hop" case above, and a DIFFERENT code path: there the cap is detected
+        // because a hop returned more rows than the budget allowed; here hop 1 fits the budget EXACTLY, so the
+        // walk is allowed to recurse and hop 2 finds nothing left to spend. Without the boundary check the
+        // second hop would query with a limit of 0 (or worse, negative) and the grandchild could leak into a
+        // result the caller believes is complete. The user-visible contract is the same either way: a partial
+        // impact set must SAY it is partial.
+        final String p = "edge" + UUID.randomUUID().toString().substring(0, 8);
+        final long a = seedDataEntity(p + "a");
+        seedDataEntity(p + "c0");
+        seedDataEntity(p + "c1");
+        seedDataEntity(p + "g0");
+        lineageRepository.batchInsertLineages(List.of(
+            edge(oddrn(p + "a"), oddrn(p + "c0")),
+            edge(oddrn(p + "a"), oddrn(p + "c1")),
+            edge(oddrn(p + "c0"), oddrn(p + "g0")))).collectList().block();
+        final long ownerId = seedOwner();
+        own(ownerId, a);
+
+        // Budget 2, depth 2: hop 1 admits exactly c0 + c1 (== the budget, so NOT flagged mid-hop), then hop 2
+        // is entered with nothing left.
+        final MyDataScopeResolver capped = new MyDataScopeResolverImpl(
+            lineageRepository, dataEntityRepository, 2, Duration.ofSeconds(30));
+
+        capped.resolve(ownerId, Set.of(MyDataScopeDto.DOWNSTREAM), 1, 2)
+            .as(StepVerifier::create)
+            .assertNext(result -> {
+                assertThat(result.neighbourDataEntityIds())
+                    .as("the two first-hop children are in scope")
+                    .hasSize(2);
+                assertThat(result.truncated())
+                    .as("the walk stopped because the budget ran out AT the hop boundary — the caller must be "
+                        + "told, or they read a partial impact set as a complete one")
+                    .isTrue();
+                assertThat(result.truncationReason()).isEqualTo(MyDataScopeResult.REASON_NODE_CAP);
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("the wall-clock circuit breaker returns TIMEOUT with NO scope — fail-closed, never unscoped")
+    void resolve_wallClockBudgetExceeded_returnsTimeoutWithEmptyScope() {
+        // The published `scopeTruncationReason` description documents TIMEOUT as a distinct outcome from
+        // NODE_CAP: "the traversal exceeded its wall-clock circuit breaker and NO scope was applied". Until now
+        // that sentence had no test behind it. What makes it safe is the EMPTINESS combined with the flag:
+        // AssetSearchServiceImpl turns an empty-but-selected lineage scope into a false condition, so a timed-out
+        // scope narrows to nothing rather than silently returning the whole catalog as if unscoped.
+        final String p = "slow" + UUID.randomUUID().toString().substring(0, 8);
+        final long a = seedDataEntity(p + "a");
+        seedDataEntity(p + "b");
+        lineageRepository.batchInsertLineages(List.of(edge(oddrn(p + "a"), oddrn(p + "b"))))
+            .collectList().block();
+        final long ownerId = seedOwner();
+        own(ownerId, a);
+
+        // A 1ms budget cannot survive a real database round trip, so the breaker is guaranteed to trip. It is
+        // the seam's whole purpose: exercise the circuit breaker without a five-second test.
+        final MyDataScopeResolver impatient = new MyDataScopeResolverImpl(
+            lineageRepository, dataEntityRepository, 10_000, Duration.ofMillis(1));
+
+        impatient.resolve(ownerId, Set.of(MyDataScopeDto.DOWNSTREAM), 1, 1)
+            .as(StepVerifier::create)
+            .assertNext(result -> {
+                assertThat(result.truncated())
+                    .as("a timed-out traversal is a partial result and must say so")
+                    .isTrue();
+                assertThat(result.truncationReason())
+                    .as("TIMEOUT is distinguishable from NODE_CAP because the client advice differs: reduce "
+                        + "depth / narrow filters, versus a deterministic prefix that re-runs identically")
+                    .isEqualTo(MyDataScopeResult.REASON_TIMEOUT);
+                assertThat(result.neighbourDataEntityIds())
+                    .as("FAIL-CLOSED: no scope is applied, which narrows to nothing downstream — the one "
+                        + "outcome that must never happen is a timeout quietly returning the whole catalog")
+                    .isEmpty();
+            })
+            .verifyComplete();
+    }
+
     private void seedEdges(final String... chain) {
         final List<LineagePojo> edges = new java.util.ArrayList<>();
         for (int i = 0; i < chain.length - 1; i++) {
