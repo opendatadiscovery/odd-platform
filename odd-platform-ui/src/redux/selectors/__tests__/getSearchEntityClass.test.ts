@@ -16,7 +16,7 @@ import type { RootState } from 'redux/interfaces';
  * that it no longer masquerades as an entity class.
  */
 const state = (myObjects: boolean, totals: Record<string, unknown>): RootState =>
-  ({ dataEntitySearch: { myObjects, totals } } as unknown as RootState);
+  ({ dataEntitySearch: { myObjects, totals } }) as unknown as RootState;
 
 const CLASS_TOTALS = {
   all: 12,
@@ -48,6 +48,8 @@ describe('getSearchEntityClass (ST-8 / #1842)', () => {
 
   it("never returns the retired 'my' pseudo-class, whatever the state", () => {
     expect(getSearchEntityClass(state(true, CLASS_TOTALS))).not.toBe('my');
-    expect(getSearchEntityClass(state(true, { all: 0, myObjectsTotal: 0 }))).not.toBe('my');
+    expect(getSearchEntityClass(state(true, { all: 0, myObjectsTotal: 0 }))).not.toBe(
+      'my'
+    );
   });
 });

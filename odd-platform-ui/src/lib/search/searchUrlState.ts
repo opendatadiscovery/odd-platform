@@ -198,7 +198,8 @@ export function searchStateToParams(state: SearchUrlState): string {
   });
   // ST-8: only `my_data` is WRITTEN — a legacy `?my=true` read earlier round-trips forward into it, so the
   // canonical URL has exactly one representation of the scope and old links normalise on first write.
-  if (state.myData && state.myData.length > 0) params[SEARCH_MY_DATA_PARAM] = state.myData;
+  if (state.myData && state.myData.length > 0)
+    params[SEARCH_MY_DATA_PARAM] = state.myData;
   // Depths are emitted only when they differ from the default AND their direction is actually selected, so a
   // default search stays a clean URL and the round-trip is byte-identical.
   if (

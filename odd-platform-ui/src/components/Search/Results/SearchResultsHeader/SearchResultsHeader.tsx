@@ -42,17 +42,16 @@ const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({
   const { t } = useTranslation();
   // Any truncation means the true set is larger than what was searched, so the count is never printed bare.
   const isPartialCount = Boolean(scopeTruncated);
+  const countLabel = (): string => {
+    if (isPartialCount) return t('{{total}}+ results (partial)', { total });
+    return total === 1 ? t('1 result') : t('{{total}} results', { total });
+  };
 
   return (
     <Grid container direction='column' sx={{ mt: 1 }}>
       {!isLoading && (
         <Typography variant='subtitle1' data-testid='search-results-count'>
-          {/* eslint-disable-next-line no-nested-ternary */}
-          {isPartialCount
-            ? t('{{total}}+ results (partial)', { total })
-            : total === 1
-              ? t('1 result')
-              : t('{{total}} results', { total })}
+          {countLabel()}
         </Typography>
       )}
       {scopeTruncated && (

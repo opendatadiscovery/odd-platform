@@ -165,7 +165,13 @@ const DepthSelect: React.FC<DepthSelectProps> = ({ id, label, value, onChange })
     <Typography variant='body2' sx={{ mr: 1, whiteSpace: 'nowrap' }}>
       {label}
     </Typography>
-    <AppSelect id={id} dataQAId={id} fullWidth={false} value={value} sx={{ minWidth: 72 }}>
+    <AppSelect
+      id={id}
+      dataQAId={id}
+      fullWidth={false}
+      value={value}
+      sx={{ minWidth: 72 }}
+    >
       {MY_DATA_DEPTH_OPTIONS.map(depth => (
         <AppMenuItem key={depth} value={depth} onClick={() => onChange(depth)}>
           {depth}

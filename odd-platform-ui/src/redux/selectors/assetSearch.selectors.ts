@@ -1,9 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import type {
-  AssetSearchPageInfo,
-  AssetSearchState,
-  RootState,
-} from 'redux/interfaces';
+import type { AssetSearchPageInfo, AssetSearchState, RootState } from 'redux/interfaces';
 import {
   createErrorSelector,
   createStatusesSelector,

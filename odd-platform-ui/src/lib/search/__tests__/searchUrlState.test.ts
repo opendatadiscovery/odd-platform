@@ -133,9 +133,9 @@ describe('searchUrlState — facets + My-data ⇄ URL params (ST-1b / ST-8 / D10
     expect(searchStateToParams(state({ myData: ['MY_OBJECTS'], upstreamDepth: 3 }))).toBe(
       'my_data[]=MY_OBJECTS'
     );
-    expect(searchStateToParams(state({ myData: ['UPSTREAM'], upstreamDepth: 3 }))).toContain(
-      'upstream_depth=3'
-    );
+    expect(
+      searchStateToParams(state({ myData: ['UPSTREAM'], upstreamDepth: 3 }))
+    ).toContain('upstream_depth=3');
   });
 
   it('searchUrlStateToFormData → the create request: filters + query + the scope group', () => {
