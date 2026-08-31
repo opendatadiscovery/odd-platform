@@ -227,13 +227,16 @@ export const dataEntitiesSearchSlice = createSlice({
         }
       }
 
-      const myObjects =
-        facetName === 'entityClasses' ? facetOptionId === 'my' : state.myObjects;
+      // ST-8 (#1842): the `entityClasses`/`'my'` special-case that used to live here is gone with the
+      // My-Objects TAB that was its only writer. It is not merely dead — it was a trap: `entityClasses` is
+      // now the URL-driven Data-entity-type filter, so had any generic facet control ever dispatched it,
+      // `myObjects` would have been silently reset to false and the user's owned scope dropped from the
+      // legacy session. The owned scope is owned by the URL (searchUrlStateToFormData -> the session
+      // create) and is simply preserved through a facet mutation.
 
       return {
         ...state,
         isFacetsStateSynced: false,
-        myObjects,
         facetState: {
           ...state.facetState,
           [facetName]: {

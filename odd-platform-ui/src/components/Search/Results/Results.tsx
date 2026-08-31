@@ -51,8 +51,8 @@ const Results: React.FC = () => {
   const { searchId: routerSearchId } = useSearchRouteParams();
 
   // ST-4 — the RESULTS list is the cross-kind asset search (rebound from `/api/search` to the stateless
-  // `/api/search/assets`). The facet sidebar + the All / My-Objects tabs still read the DE-session slice below,
-  // so rebinding the list does NOT orphan them (W1).
+  // `/api/search/assets`). The facet sidebar still reads the DE-session slice below, so rebinding the list
+  // does NOT orphan it (W1).
   const searchResults = useAppSelector(getAssetSearchResults);
   const {
     hasNext,
@@ -65,7 +65,8 @@ const Results: React.FC = () => {
     useAppSelector(getAssetSearchFetchingStatuses);
   const assetSearchError = useAppSelector(getAssetSearchError);
 
-  // The DE-session slice: still the source for the facet sidebar + the All / My-Objects tabs (W1).
+  // The DE-session slice: still the source for the facet sidebar (W1). The tab strip it also used to
+  // drive is gone (ST-8); `searchClass` now only decides whether the Create-Data-Entity-Group button shows.
   const searchId = useAppSelector(getSearchId);
   const searchClass = useAppSelector(getSearchEntityClass);
   const searchTotals = useAppSelector(getSearchTotals);
@@ -81,7 +82,7 @@ const Results: React.FC = () => {
   );
 
   // The cross-kind request is derived straight from the URL (the search's source of truth — ADR D10): query +
-  // facets + sort + my_objects + the new asset_kinds. Page 1 is owned by the settle-effect; scroll extends it.
+  // facets + sort + asset_kinds + the ST-8 My-data scope and its per-direction depths. Page 1 is owned by the settle-effect; scroll extends it.
   const assetSearchFormData = React.useMemo(
     () => searchUrlStateToAssetSearchFormData(paramsToSearchState(location.search)),
     [location.search]
@@ -94,7 +95,7 @@ const Results: React.FC = () => {
     dispatch(searchAssets({ cursor: nextCursor, size, assetSearchFormData }));
   }, [hasNext, nextCursor, size, assetSearchFormData, dispatch]);
 
-  // Fetch page 1 once the DE session (facet sidebar + tabs) has settled for the current URL — the same timing
+  // Fetch page 1 once the DE session (the facet sidebar) has settled for the current URL — the same timing
   // gate the DE results used, so the list and the sidebar stay in lockstep. A new URL (query / facet / sort /
   // asset-type) re-creates the session → synced flips → this re-fires page 1 (which REPLACES) for the new state.
   React.useEffect(() => {

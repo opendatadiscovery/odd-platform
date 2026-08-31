@@ -109,8 +109,19 @@ export const getSearchFacetsByType = (facetName: OptionalFacetNames) =>
     search => values(search.facets[facetName]?.items) || emptyArr
   );
 
+/**
+ * The single entity class the DE session is scoped to, or `'all'`.
+ *
+ * <p>ST-8 (#1842) removed the `myObjects -> 'my'` short-circuit this used to open with. It existed to serve
+ * the **My-Objects result TAB**, which was one option in a one-of-N strip and therefore mutually exclusive
+ * with a class selection by construction. ST-8 retires that strip: "My Objects" is now one option in the
+ * sidebar's My-data group, three rows from the **Data entity type** filter, so "My Objects + Datasets" is an
+ * ordinary combination. Keeping the short-circuit made an unrelated filter silently suppress the `Type` facet
+ * (`Filters.tsx`) and the Create-Data-Entity-Group button (`Results.tsx`) whenever the owned scope was
+ * ticked. `search.myObjects` still rides the legacy `/api/search` session request unchanged (ADR D9) — it
+ * simply no longer masquerades as an entity class here.
+ */
 export const getSearchEntityClass = createSelector(searchState, search => {
-  if (search.myObjects) return 'my' as SearchClass;
   const selectedClass = findKey(
     omit(search.totals, ['all', 'myObjectsTotal']),
     filterItem => filterItem?.selected
