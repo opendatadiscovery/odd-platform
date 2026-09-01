@@ -327,13 +327,28 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
         // is unnecessary for this predicate and removing it keeps the FTS bitmap as the driver IN THE MEASURED
         // QUERY.
         //
-        // SCOPE OF THAT EVIDENCE, stated precisely so the next reader does not over-trust it: the measurement
-        // was taken on the isolated predicate against a 200k-row fixture, not on the COMPLETE query this
-        // method builds (three left joins, kind guards, facet semi-joins, sort, keyset pagination). The
-        // rendered SQL shape is guaranteed rather than measured — `DSL.condition(String, QueryPart...)` is
-        // jOOQ's plain-SQL template API, which substitutes binds and emits the template verbatim, so no jOOQ
-        // rewrite can turn this into `= ANY(array)`. What is NOT yet confirmed is that the FTS bitmap still
-        // drives once every other clause is present at catalog scale. Tracked as TST-063.
+        // CONFIRMED ON THE SHIPPED QUERY, not just on the isolated predicate. The 54s/249ms numbers above were
+        // measured on probe SQL; the open question was whether the FTS bitmap still DRIVES once this method's
+        // three left joins, kind guards, facet semi-joins, sort and keyset pagination are all present at
+        // catalog scale. It does. Measured on a running LOGIN_FORM platform at 120 000 indexed assets with
+        // `auto_explain` capturing the plan PostgreSQL actually executed, scope genuinely resolved
+        // (scopeTruncated=true, NODE_CAP, total=10000):
+        //
+        //   ->  Bitmap Heap Scan on asset_search_entrypoint            (actual time=99.1..216.0 rows=10000)
+        //         ->  Bitmap Index Scan on asset_search_entrypoint_search_vector_gin_idx
+        //                                                              (actual time=74.9 rows=120000)
+        //               Index Cond: (search_vector @@ to_tsquery(...))
+        //
+        // The GIN index drives, 120 000 candidates come back, and this scope is applied as a FILTER on the
+        // bitmap heap scan that narrows them to exactly 10 000 — not a separate join, not a per-row rescan.
+        // Ranked page 507.77 ms. The rendered SQL shape is additionally guaranteed rather than merely
+        // measured: `DSL.condition(String, QueryPart...)` is jOOQ's plain-SQL template API, which substitutes
+        // binds and emits the template verbatim, so no jOOQ rewrite can turn this into `= ANY(array)`.
+        //
+        // Two things the next reader should carry forward. (1) The dominant remaining cost is the pre-existing
+        // `count(*)` (median 274 ms), which every search pays with or without a scope — PLT-260, not this
+        // predicate. (2) These figures are PER REQUEST, and the resolver re-runs on every infinite-scroll
+        // page, so they are per scroll page rather than once per search.
         if (scope != null && scope.active()) {
             final List<Condition> dataEntityBranches = new ArrayList<>();
             if (scope.myObjects()) {

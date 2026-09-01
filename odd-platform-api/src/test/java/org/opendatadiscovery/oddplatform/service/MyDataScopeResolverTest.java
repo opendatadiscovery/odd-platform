@@ -93,6 +93,14 @@ class MyDataScopeResolverTest extends BaseIntegrationTest {
             "the two directions are INDEPENDENT: upstream 2 + downstream 1 in one request", u1, u2, d1);
         assertScope(ownerId, Set.of(MyDataScopeDto.UPSTREAM), MyDataScopeResolverImpl.MAX_DEPTH + 5, 1,
             "a depth above the ceiling is CLAMPED, never rejected — a stale shareable URL must degrade", u1, u2);
+        // The clamp is two-sided and both sides are reachable from a hand-edited URL, so both are asserted.
+        // Only the upper bound was covered before; `Math.max(requested, 1)` was correct but unpinned, and an
+        // edit that dropped it would have turned depth 0 into "walk nothing" (a silently empty lineage scope)
+        // and a negative depth into the same — failing OPEN on a filter whose whole job is to narrow.
+        assertScope(ownerId, Set.of(MyDataScopeDto.UPSTREAM), 0, 1,
+            "depth 0 CLAMPS UP to the default of 1 — it must not resolve to an empty walk", u1);
+        assertScope(ownerId, Set.of(MyDataScopeDto.UPSTREAM), -7, 1,
+            "a negative depth clamps up to 1 as well — the URL parser is not the only line of defence", u1);
     }
 
     @Test
