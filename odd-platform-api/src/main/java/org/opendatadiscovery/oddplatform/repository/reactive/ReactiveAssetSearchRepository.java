@@ -3,8 +3,8 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchCursor;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchPageRow;
+import org.opendatadiscovery.oddplatform.dto.AssetSearchScope;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,6 +18,10 @@ import reactor.core.publisher.Mono;
  * <p>Pagination is by KEYSET seek for the index-backed browse sorts and OFFSET for the non-seekable relevance
  * sort (ST-5b / #1839, ADR unified-asset-search D12 + ADR-0021). Both return {@link AssetSearchPageRow} — the
  * ref plus the active sort's value, so the service mints the next cursor from the last row.
+ *
+ * <p>The My-data narrowing (ST-8 / #1842) arrives as an {@link AssetSearchScope} rather than an owner: the
+ * owned half stays an uncapped semi-join evaluated here in SQL, while only the budgeted lineage half is passed
+ * in as ids. A {@code null} scope means no My-data narrowing at all.
  */
 public interface ReactiveAssetSearchRepository {
 
@@ -31,21 +35,21 @@ public interface ReactiveAssetSearchRepository {
      *
      * @param cursor the keyset position of the last row of the previous page, or {@code null} for the first page
      */
-    Flux<AssetSearchPageRow> keysetPage(FacetStateDto state, List<String> assetKinds, OwnerPojo owner,
+    Flux<AssetSearchPageRow> keysetPage(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
                                         AssetSearchCursor cursor, int limit);
 
     /**
      * An offset page for the relevance sort ({@code ts_rank} is computed per query, not a stored seekable column,
      * so it cannot be keyset-paged — ADR D12). The service bounds {@code offset} by the relevance depth cap.
      */
-    Flux<AssetSearchPageRow> relevancePage(FacetStateDto state, List<String> assetKinds, OwnerPojo owner,
+    Flux<AssetSearchPageRow> relevancePage(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
                                            int offset, int limit);
 
     /**
      * The total number of matches for the same predicates as the page queries (display metadata; offset-independent,
      * so its cost is constant vs page depth and does not affect the keyset deep-page guarantee).
      */
-    Mono<Long> count(FacetStateDto state, List<String> assetKinds, OwnerPojo owner);
+    Mono<Long> count(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope);
 
     /**
      * Re-snapshots the denormalised {@code popularity_score} on {@code asset_search_entrypoint} from the current

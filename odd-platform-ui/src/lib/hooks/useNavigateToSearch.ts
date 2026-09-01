@@ -14,18 +14,22 @@ import { searchPath } from 'routes';
  * the working `/search?…` flow, where filtering works. The navigate construction mirrors `Search.tsx`'s
  * own facet→URL mirror so a navigator-written URL and a mirror-written URL are byte-identical.
  */
+/**
+ * The canonical param-URL for a (partial) search state — the single construction both the imperative
+ * navigator below and any `<Link to=…>` share, so a hook-written URL, a link-written URL and the `Search.tsx`
+ * mirror's URL are byte-identical (the mirror's equality loop-guard depends on that).
+ */
+export function buildSearchLink(state: Partial<SearchUrlState> = {}): string {
+  const params = searchStateToParams({ query: '', facets: {}, ...state });
+  return `${searchPath()}${params ? `?${params}` : ''}`;
+}
+
 export default function useNavigateToSearch() {
   const navigate = useNavigate();
 
   return useCallback(
     (state: Partial<SearchUrlState> = {}) => {
-      const params = searchStateToParams({
-        query: '',
-        facets: {},
-        myObjects: false,
-        ...state,
-      });
-      navigate(`${searchPath()}${params ? `?${params}` : ''}`);
+      navigate(buildSearchLink(state));
     },
     [navigate]
   );

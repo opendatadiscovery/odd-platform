@@ -16,6 +16,7 @@ import { clearDataEntitySearchFacets } from 'redux/slices/dataEntitySearch.slice
 import { searchPath } from 'routes';
 import { paramsToSearchState, searchStateToParams } from 'lib/search/searchUrlState';
 import AssetTypeFilter from './AssetTypeFilter/AssetTypeFilter';
+import MyDataFilter from './MyDataFilter/MyDataFilter';
 import DataEntityTypeFilter from './DataEntityTypeFilter/DataEntityTypeFilter';
 import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';
 import SingleFilterItem from './FilterItem/SingleFilterItem/SingleFilterItem';
@@ -28,13 +29,15 @@ const Filters: React.FC = () => {
   const location = useLocation();
 
   // The single "Clear All": clear the redux facets (Datasource / Type / Owner / Tag / Groups / Statuses AND
-  // the entity-class Data-entity-type filter) AND the URL-only `asset_kinds` (which is not a redux facet).
-  // Query, sort and My-Objects are preserved (they are not filters). One navigate to the clean URL avoids a
-  // mirror race with the redux clear.
+  // the entity-class Data-entity-type filter) AND the URL-only filters that are not redux facets —
+  // `asset_kinds` and, since ST-8 (#1842), the My-data scope + its per-direction depths. Query and sort are
+  // preserved because they are not filters; the My-data scope IS one (it sits in this very panel), so unlike
+  // the old My-Objects tab it is cleared. One navigate to the clean URL avoids a mirror race with the redux
+  // clear.
   const handleClearAll = React.useCallback(() => {
     dispatch(clearDataEntitySearchFacets());
-    const { query, sort, myObjects } = paramsToSearchState(location.search);
-    const params = searchStateToParams({ query, facets: {}, myObjects, sort });
+    const { query, sort } = paramsToSearchState(location.search);
+    const params = searchStateToParams({ query, facets: {}, sort });
     navigate(`${searchPath()}${params ? `?${params}` : ''}`);
   }, [dispatch, navigate, location.search]);
 
@@ -62,6 +65,9 @@ const Filters: React.FC = () => {
             Data entity type (entity classes). Both narrow the cross-kind results; cleared by the single Clear All. */}
         <AssetTypeFilter />
         <DataEntityTypeFilter />
+        {/* ST-8 (#1842) — the My-data scope group (owned / upstream / downstream), which replaces the retired
+            My-Objects result tab. Hides itself entirely under auth.type=DISABLED. */}
+        <MyDataFilter />
         <SingleFilterItem
           key='ds'
           facetName='datasources'

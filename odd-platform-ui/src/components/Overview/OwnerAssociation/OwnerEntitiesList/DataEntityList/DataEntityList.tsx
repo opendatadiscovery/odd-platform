@@ -1,5 +1,7 @@
-import { Typography } from '@mui/material';
+import { Link as MuiLink, Typography } from '@mui/material';
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { type DataEntityRef } from 'generated-sources';
 import {
   EntityClassItem,
@@ -16,6 +18,12 @@ interface OverviewDataEntityProps {
   entityListIcon?: JSX.Element;
   isFetching: boolean;
   isNotFetched: boolean;
+  /**
+   * ST-8 (#1842 / ADR D8) — where this panel's "View all" goes. The panels are quick-jump widgets whose full
+   * list is a pre-filtered search, so the link is the canonical param URL for the matching My-data scope.
+   * Omitted = no link (the panel is informational only), which is how every panel behaved before ST-8.
+   */
+  viewAllTo?: string;
 }
 
 const DataEntityList: React.FC<OverviewDataEntityProps> = ({
@@ -24,8 +32,11 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
   entityListIcon,
   isFetching,
   isNotFetched,
-}) =>
-  isNotFetched ? null : (
+  viewAllTo,
+}) => {
+  const { t } = useTranslation();
+
+  return isNotFetched ? null : (
     <S.DataEntityListContainer item lg={3}>
       <S.SectionCaption variant='h4' sx={{ mb: 2 }}>
         {entityListIcon}
@@ -66,7 +77,13 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
           <EmptyContentPlaceholder fullPage={false} />
         ) : null}
       </S.ListLinksContainer>
+      {viewAllTo && dataEntitiesList.length > 0 && (
+        <MuiLink component={Link} to={viewAllTo} variant='subtitle2' sx={{ mt: 1 }}>
+          {t('View all')}
+        </MuiLink>
+      )}
     </S.DataEntityListContainer>
   );
+};
 
 export default DataEntityList;

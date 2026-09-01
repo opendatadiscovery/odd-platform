@@ -55,7 +55,8 @@ const Search: React.FC = () => {
     navigate(searchPath());
   }, [dispatch, navigate]);
 
-  // ST-1 / ADR D10 — the URL is the source of truth for the whole search (query + facets + myObjects). ST-1b
+  // ST-1 / ADR D10 — the URL is the source of truth for the whole search (query + facets + the My-data
+  // scope + sort + asset kinds). ST-1b
   // makes it authoritative for FACETS too: the reader CREATEs a fresh session per distinct URL state, because
   // the server's search() runs removeUnselected (a REPLACE), so the URL's selected id set is the complete,
   // authoritative facet spec — a plain updateFacets MERGEs a delta and could never REMOVE a facet the URL
@@ -92,17 +93,22 @@ const Search: React.FC = () => {
   // census fix). The server response sets synced=true, so the mirror never re-fires on repopulation (no
   // loop); the normalised equality guard skips a redundant navigate. The reader above then runs the new URL.
   const writeStateToUrl = useDebouncedCallback(() => {
-    // ST-2b / ST-4 — the mirror rebuilds the URL from the redux facet state, which carries none of `sort`,
-    // `asset_kinds`, or `entityClasses` (sort + asset_kinds are URL-only; entityClasses is URL-driven by
-    // DataEntityTypeFilter because the single-class DE-session facet would collapse a multi-class selection).
-    // Merge all three back from the live URL so a sidebar facet toggle PRESERVES the active ordering, the
-    // Asset-type selection, AND the Data-entity-type selection instead of silently dropping/collapsing them.
+    // ST-2b / ST-4 / ST-8 — the mirror rebuilds the URL from the redux facet state, which carries none of
+    // `sort`, `asset_kinds`, `entityClasses`, or the My-data scope (sort / asset_kinds / my_data + its depths
+    // are URL-only; entityClasses is URL-driven by DataEntityTypeFilter because the single-class DE-session
+    // facet would collapse a multi-class selection). Merge them ALL back from the live URL so a sidebar facet
+    // toggle PRESERVES the active ordering, the Asset-type selection, the Data-entity-type selection AND the
+    // My-data scope instead of silently dropping/collapsing them. A URL-only param missing from this object
+    // is the #1858 bug class: it survives a page load and then vanishes the moment any facet is toggled.
     const live = paramsToSearchState(location.search);
     const nextParams = searchStateToParams({
       ...searchUrlState,
       facets: { ...searchUrlState.facets, entityClasses: live.facets.entityClasses },
       sort: live.sort,
       assetKinds: live.assetKinds,
+      myData: live.myData,
+      upstreamDepth: live.upstreamDepth,
+      downstreamDepth: live.downstreamDepth,
     });
     if (nextParams !== location.search.replace(/^\?/, '')) {
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);

@@ -6,11 +6,10 @@ import {
   type SearchUrlState,
 } from '../searchUrlState';
 
-/** a full SearchUrlState from a partial (defaults: no facets, not my-objects, no sort) */
+/** a full SearchUrlState from a partial (defaults: no facets, no My-data scope, no sort) */
 const state = (partial: Partial<SearchUrlState> = {}): SearchUrlState => ({
   query: '',
   facets: {},
-  myObjects: false,
   ...partial,
 });
 
@@ -18,18 +17,52 @@ const state = (partial: Partial<SearchUrlState> = {}): SearchUrlState => ({
  * ST-3 (ADR D11) — a saved search stores exactly a `SearchFormData`, and REAPPLY rebuilds the shareable
  * param URL from it via `searchStateToParams(searchFormDataToUrlState(spec))`. `searchFormDataToUrlState`
  * is the inverse of `searchUrlStateToFormData`; this proves the round-trip is loss-free for every field the
- * URL carries (query + facets + myObjects + sort) and that a malformed / defensively-empty spec degrades to
- * the empty search instead of throwing (there is no error boundary — a throw white-screens the app, IT-006).
+ * URL carries (query + facets + the My-data scope + its depths + sort) and that a malformed /
+ * defensively-empty spec degrades to the empty search instead of throwing (there is no error boundary — a
+ * throw white-screens the app, IT-006).
+ *
+ * <p>This is the REAPPLY direction, and it is where a silent scope loss actually bites: a user saves a search,
+ * reopens it, and quietly gets a different result set. ST-8 (#1842) therefore proves both that the new scope
+ * group survives the round-trip AND that a spec stored before ST-8 — which carries only the legacy
+ * `my_objects` boolean — still reapplies as the owned scope.
  */
 describe('searchFormDataToUrlState — SearchFormData → URL state (ST-3 / D11)', () => {
   it('round-trips a representative URL state through the form-data spec (identity)', () => {
     const s = state({
       query: 'sales orders',
-      myObjects: true,
+      myData: ['MY_OBJECTS', 'DOWNSTREAM'],
+      downstreamDepth: 2,
       sort: 'updated_at',
       facets: { datasources: [1, 2], tags: [7], statuses: [3] },
     });
     expect(searchFormDataToUrlState(searchUrlStateToFormData(s))).toEqual(s);
+  });
+
+  it('a spec saved BEFORE ST-8 (my_objects only) reapplies as the owned scope', () => {
+    const legacySpec: SearchFormData = { query: 'x', myObjects: true, filters: {} };
+    expect(searchFormDataToUrlState(legacySpec).myData).toEqual(['MY_OBJECTS']);
+    const legacyUnset: SearchFormData = { query: 'x', myObjects: false, filters: {} };
+    expect(searchFormDataToUrlState(legacyUnset).myData).toBeUndefined();
+  });
+
+  it('a stored scope wins over the legacy flag, and unknown stored tokens fail closed', () => {
+    const spec = {
+      query: 'x',
+      myObjects: true,
+      myData: ['UPSTREAM', 'NONSENSE'],
+      filters: {},
+    } as SearchFormData;
+    expect(searchFormDataToUrlState(spec).myData).toEqual(['UPSTREAM']);
+  });
+
+  it('an out-of-range stored depth degrades to the default rather than reaching the request', () => {
+    const spec = {
+      query: 'x',
+      myData: ['UPSTREAM'],
+      upstreamDepth: 99,
+      filters: {},
+    } as SearchFormData;
+    expect(searchFormDataToUrlState(spec).upstreamDepth).toBeUndefined();
   });
 
   it('round-trips the empty (browse) state — identity', () => {

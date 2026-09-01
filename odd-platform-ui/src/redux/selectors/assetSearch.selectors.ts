@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import type { AssetSearchState, PageInfo, RootState } from 'redux/interfaces';
+import type { AssetSearchPageInfo, AssetSearchState, RootState } from 'redux/interfaces';
 import {
   createErrorSelector,
   createStatusesSelector,
@@ -21,5 +21,5 @@ export const getAssetSearchResults = createSelector(
 
 export const getAssetSearchResultsPageInfo = createSelector(
   assetSearchState,
-  (search): PageInfo<string> => search.results.pageInfo
+  (search): AssetSearchPageInfo => search.results.pageInfo
 );

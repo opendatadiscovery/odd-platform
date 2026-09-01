@@ -3,7 +3,7 @@ export { default as useScrollBarWidth } from './useScrollBarWidth';
 export { default as useActivityHeaderIcon } from 'lib/hooks/useActivityHeaderIcon';
 export { default as useAppDateTime } from './useAppDateTime';
 export { default as useQueryParams } from './useQueryParams';
-export { default as useNavigateToSearch } from './useNavigateToSearch';
+export { default as useNavigateToSearch, buildSearchLink } from './useNavigateToSearch';
 export { default as useCollapse } from './useCollapse';
 export { default as usePrevious } from './usePrevious';
 export { default as useRecordRecentlyViewed } from './useRecordRecentlyViewed';

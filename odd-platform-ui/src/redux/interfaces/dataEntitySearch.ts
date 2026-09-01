@@ -46,4 +46,6 @@ export type FacetOptionsByName = Partial<
   >
 >;
 
-export type SearchClass = number | 'all' | 'my';
+// ST-8 (#1842): `'my'` is gone. It was the My-Objects TAB's pseudo-class; that tab is retired and the owned
+// scope is now an ordinary sidebar filter, so a class is either a real entity-class id or `'all'`.
+export type SearchClass = number | 'all';

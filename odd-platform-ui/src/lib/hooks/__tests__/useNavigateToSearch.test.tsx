@@ -45,7 +45,19 @@ describe('useNavigateToSearch — canonical param-URL navigation (ADR D10 / #183
     expect(navigateWith({ query: 'orders' })).toHaveBeenCalledWith('/search?q=orders');
   });
 
-  it('carries the My-Objects flag', () => {
-    expect(navigateWith({ myObjects: true })).toHaveBeenCalledWith('/search?my=true');
+  // ST-8 (#1842): the navigator now carries the My-data SCOPE GROUP, not the retired My-Objects boolean.
+  // This is the exact construction the three catalog-overview panels use for their "View all" deep-links, so
+  // it must stay byte-identical to what the Search.tsx mirror writes — a divergence here silently defeats the
+  // mirror's equality loop-guard.
+  it('carries a My-data scope', () => {
+    expect(navigateWith({ myData: ['MY_OBJECTS'] })).toHaveBeenCalledWith(
+      '/search?my_data[]=MY_OBJECTS'
+    );
+  });
+
+  it('carries a lineage scope with its per-direction depth', () => {
+    expect(
+      navigateWith({ myData: ['DOWNSTREAM'], downstreamDepth: 2 })
+    ).toHaveBeenCalledWith('/search?downstream_depth=2&my_data[]=DOWNSTREAM');
   });
 });

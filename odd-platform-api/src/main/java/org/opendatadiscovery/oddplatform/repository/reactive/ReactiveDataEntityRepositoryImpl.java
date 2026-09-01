@@ -534,6 +534,44 @@ public class ReactiveDataEntityRepositoryImpl
             .map(dataEntityDtoMapper::mapDtoRecordFromCTE);
     }
 
+    /**
+     * ST-8 (#1842) — the My-data walk's ODDRN -> id step, with the owner's own entities anti-joined out.
+     *
+     * <p>Both halves are SQL: the ownership exclusion is a NOT IN sub-select rather than a client-side
+     * {@code removeAll}, so the caller's owned set is never materialised (the whole point of the ST-8 walk is
+     * that {@code MY_OBJECTS} stays uncapped while only the lineage expansion is budgeted). Read-time
+     * eligibility (hollow / deleted / excluded-from-search) is deliberately NOT applied here — the ranked
+     * search query already owns that predicate, and duplicating it would create a second copy to drift.
+     *
+     * <p><b>The plain {@code .in(collection)} is correct HERE, and the ranked query's array-bind note must
+     * not be copied into it.</b> That note ({@code ReactiveAssetSearchRepositoryImpl}, condition (5)) is
+     * about matching ~10 000 ids against a 120 000-row FTS bitmap, where a hashable semi-join wins and a
+     * scalar array operation is a per-row disaster. This method is the opposite access pattern: up to 10 000
+     * EXACT lookups on a unique btree index, where a list of constants known at plan time is exactly what the
+     * planner wants. Measured on the Phase-D perf stand (postgres 13.2, 120 000 assets, the same 10 000
+     * oddrns, EXPLAIN ANALYZE, three runs each):
+     * <pre>
+     *   .in(collection)          -> planning 19-24 ms, execution 115-149 ms   (~150 ms)
+     *   IN (SELECT unnest(?))    -> planning  7    ms, execution 207-217 ms   (~220 ms)
+     * </pre>
+     * The array bind saves ~15 ms of planning and costs ~80 ms of execution — a net ~70 ms LOSS. It was
+     * tried, measured, and reverted; do not re-apply it by analogy.
+     */
+    @Override
+    public Flux<Long> listIdsByOddrnsExcludingOwnedBy(final Collection<String> oddrns, final long ownerId) {
+        if (CollectionUtils.isEmpty(oddrns)) {
+            return Flux.empty();
+        }
+        final var select = DSL.select(DATA_ENTITY.ID)
+            .from(DATA_ENTITY)
+            .where(DATA_ENTITY.ODDRN.in(oddrns))
+            .andNotExists(DSL.selectOne()
+                .from(OWNERSHIP)
+                .where(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                .and(OWNERSHIP.OWNER_ID.eq(ownerId)));
+        return jooqReactiveOperations.flux(select).map(Record1::value1);
+    }
+
     @Override
     public Flux<DataEntityDimensionsDto> listByTerm(final long termId,
                                                     final String queryString,

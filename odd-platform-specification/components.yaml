@@ -445,14 +445,29 @@ components:
         nextCursor:
           type: string
           description: Opaque forward-only pagination token; pass it back as the cursor query param. Absent on the last page.
+        scopeTruncated:
+          type: boolean
+          description: >-
+            True when the My-data lineage expansion (ST-8 / #1842) hit a bound, so the result set is a SUBSET
+            of the true scope. The client MUST surface this — an impact-analysis result presented as complete
+            when it is partial is a false governance claim. Absent or false means the scope was fully resolved.
+        scopeTruncationReason:
+          type: string
+          description: >-
+            Why the scope was truncated, present only when scopeTruncated is true. NODE_CAP — the traversal
+            reached its node budget; the returned set is a deterministic prefix, so the same request always
+            yields the same subset (a shareable URL re-runs identically). TIMEOUT — the traversal exceeded its
+            wall-clock circuit breaker and NO scope was applied; this outcome is load-dependent and the client
+            must tell the user to reduce depth or narrow the filters rather than present a partial set.
       required:
         - total
         - hasNext
 
     AssetSearchFormData:
       description: >-
-        The cross-kind search request — the shared SearchFormData (query + filters + sort + my_objects)
-        plus an optional asset_kinds filter that narrows to specific kinds (empty / absent = all kinds).
+        The cross-kind search request — the shared SearchFormData (query + filters + sort + the My-data scope
+        group + the deprecated my_objects) plus an optional asset_kinds filter that narrows to specific kinds
+        (empty / absent = all kinds).
       allOf:
         - $ref: '#/components/schemas/SearchFormData'
         - type: object
@@ -2451,6 +2466,44 @@ components:
           type: string
         my_objects:
           type: boolean
+          deprecated: true
+          description: >-
+            DEPRECATED (ST-8 / #1842) — superseded by my_data. Kept working for existing clients, saved
+            searches and bookmarked URLs: when my_data is absent, `my_objects: true` is read as
+            `my_data: ["MY_OBJECTS"]`. When my_data is present it wins and this field is ignored.
+        my_data:
+          type: array
+          items:
+            type: string
+          description: >-
+            The My-data scope group (ST-8 / #1842, ADR unified-asset-search D4). Tokens, case-insensitive:
+            MY_OBJECTS (assets the caller owns — data entities via `ownership`, terms via `term_ownership`;
+            query examples have no ownership model and are excluded), UPSTREAM (the data entities the owned
+            set depends on) and DOWNSTREAM (the data entities that depend on the owned set). Multiple tokens
+            are UNIONed. Empty or absent means no scope narrowing. Deliberately a plain string array rather
+            than a strict enum, for the same reason `sort` is a plain string: an unrecognised token degrades
+            gracefully (it is dropped) instead of failing the request, so a hand-edited or stale shareable
+            URL can never 400. The scope resolves server-side from the authenticated principal only — no
+            owner identity is ever accepted from the request. With no resolvable owner the result is empty,
+            never unscoped. HONOURED BY the cross-kind `POST /api/search/assets`; the legacy `/api/search`
+            session reads only `my_objects` and ignores this field.
+        upstream_depth:
+          type: integer
+          format: int32
+          description: >-
+            How many lineage hops upstream the UPSTREAM scope walks from the owned set. Default 1, hard
+            ceiling 3. Applies only when UPSTREAM is selected. Deliberately carries no `minimum`/`maximum`:
+            an out-of-range INTEGER (0, -7, 99) is CLAMPED into [1,3] server-side rather than rejected, so a
+            stale or hand-edited shareable URL degrades instead of 400-ing (the `sort` precedent). A value of
+            the wrong JSON TYPE ("abc") is still rejected by the deserialiser like any typed field — the UI
+            cannot produce one, because the URL parser drops a non-numeric depth before the request is built.
+        downstream_depth:
+          type: integer
+          format: int32
+          description: >-
+            How many lineage hops downstream the DOWNSTREAM scope walks from the owned set. Default 1, hard
+            ceiling 3, independently settable from upstream_depth (ADR D4). Same clamp-in-range rule, and the
+            same wrong-JSON-type caveat, as upstream_depth.
         sort:
           type: string
           description: >-
