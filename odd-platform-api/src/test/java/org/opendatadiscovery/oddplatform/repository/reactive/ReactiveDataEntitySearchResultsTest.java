@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
+import org.opendatadiscovery.oddplatform.dto.SearchFilterId;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
@@ -38,6 +39,8 @@ class ReactiveDataEntitySearchResultsTest extends BaseIntegrationTest {
     private ReactiveDataEntityRepository dataEntityRepository;
     @Autowired
     private ReactiveSearchEntrypointRepository searchEntrypointRepository;
+    @Autowired
+    private ReactiveSearchFacetRepository searchFacetRepository;
 
     @Test
     @DisplayName("a query returns exactly the matching entities and the count agrees")
@@ -239,6 +242,83 @@ class ReactiveDataEntitySearchResultsTest extends BaseIntegrationTest {
         return dataEntityRepository.findByState(state, page, size, null)
             .map(items -> items.stream().map(dto -> dto.getDataEntity().getExternalName()).toList())
             .block();
+    }
+
+    // -------------------------------------------------------------------------------------------------------
+    // Query operators (#1840 / ST-6). ST-6 made JooqFTSHelper the product's single query grammar, which is only
+    // true if the surfaces that answer ONE search agree with each other. The result LIST, the result TOTAL and
+    // the sidebar class FACET are three different queries over two different builders; they share the sink, so
+    // an operator query must partition them identically. If one of them ever stops going through
+    // tsQueryExpression, these two cases are what goes red.
+    // -------------------------------------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("a quoted phrase: the list, the total and the sidebar class facet all agree (#1840)")
+    void operatorPhrase_listCountAndClassFacetAgree() {
+        seedSearchable("r7phrase customer orders daily", DataEntityStatusDto.UNASSIGNED, false, false);
+        seedSearchable("r7phrase orders shipped from customer", DataEntityStatusDto.UNASSIGNED, false, false);
+        seedSearchable("r7phrase customer test table", DataEntityStatusDto.UNASSIGNED, false, false);
+
+        final FacetStateDto state = queryState("r7phrase \"customer orders\"");
+
+        dataEntityRepository.findByState(state, 1, 30, null)
+            .as(StepVerifier::create)
+            .assertNext(items -> assertThat(items)
+                .extracting(dto -> dto.getDataEntity().getExternalName())
+                .as("only the adjacent occurrence matches the phrase")
+                .containsExactly("r7phrase customer orders daily"))
+            .verifyComplete();
+
+        dataEntityRepository.countByState(state)
+            .as(StepVerifier::create)
+            .assertNext(count -> assertThat(count)
+                .as("the total is computed by a different query than the list - it must still see the phrase")
+                .isEqualTo(1L))
+            .verifyComplete();
+
+        assertThat(dataSetFacetCount(state))
+            .as("the sidebar class facet is a THIRD query, in another repository - a count badge that "
+                + "disagreed with the rows it counts is the defect the shared sink exists to prevent")
+            .isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("a -exclusion: the list, the total and the sidebar class facet all agree (#1840)")
+    void operatorNegation_listCountAndClassFacetAgree() {
+        seedSearchable("r7neg customer orders daily", DataEntityStatusDto.UNASSIGNED, false, false);
+        seedSearchable("r7neg orders shipped from customer", DataEntityStatusDto.UNASSIGNED, false, false);
+        seedSearchable("r7neg customer test table", DataEntityStatusDto.UNASSIGNED, false, false);
+
+        final FacetStateDto state = queryState("r7neg customer -test");
+
+        dataEntityRepository.findByState(state, 1, 30, null)
+            .as(StepVerifier::create)
+            .assertNext(items -> assertThat(items)
+                .extracting(dto -> dto.getDataEntity().getExternalName())
+                .as("the excluded row is the one that must NOT come back; before ST-6 this query returned "
+                    + "exactly that row and nothing else")
+                .containsExactlyInAnyOrder("r7neg customer orders daily", "r7neg orders shipped from customer"))
+            .verifyComplete();
+
+        dataEntityRepository.countByState(state)
+            .as(StepVerifier::create)
+            .assertNext(count -> assertThat(count).as("the total agrees with the listing").isEqualTo(2L))
+            .verifyComplete();
+
+        assertThat(dataSetFacetCount(state))
+            .as("and so does the sidebar class facet")
+            .isEqualTo(2L);
+    }
+
+    /** The DATA_SET row of the sidebar's entity-class facet for this query - the count badge's source. */
+    private long dataSetFacetCount(final FacetStateDto state) {
+        return searchFacetRepository.getEntityClassFacetForDataEntity(state)
+            .block()
+            .entrySet().stream()
+            .filter(e -> e.getKey().getEntityId() == DATA_SET)
+            .map(Map.Entry::getValue)
+            .findFirst()
+            .orElse(0L);
     }
 
     private static FacetStateDto queryState(final String query) {

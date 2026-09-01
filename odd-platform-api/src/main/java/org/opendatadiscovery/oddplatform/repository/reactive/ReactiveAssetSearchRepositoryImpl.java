@@ -267,9 +267,11 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
                                        final AssetSearchScope scope) {
         final List<Condition> conditions = new ArrayList<>();
 
-        // (1) FTS — only for a non-blank query. A blank/absent query means "browse" (no FTS predicate). A
-        // metacharacter query is stripped to word tokens by the shared injection-safe helper before it reaches
-        // to_tsquery, so it degrades to a (possibly empty) match and never raises 42601 / 500 (#1756 / IT-003).
+        // (1) FTS — only for a non-blank query. A blank/absent query means "browse" (no FTS predicate). The
+        // shared injection-safe helper compiles the query to a tsquery out of Postgres constructors that cannot
+        // raise — to_tsquery over the metacharacter-stripping sanitiser for bare terms, phraseto_tsquery for a
+        // "quoted phrase", plainto_tsquery for a -exclusion — with the user's text always a BIND, so any input
+        // degrades to a (possibly empty) match and never raises 42601 / 500 (#1756 / #1840 / IT-003).
         if (StringUtils.isNotBlank(state.getQuery())) {
             conditions.add(jooqFTSHelper.ftsCondition(ASSET_SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
         }
