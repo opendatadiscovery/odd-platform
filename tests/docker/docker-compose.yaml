@@ -8,7 +8,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DATABASE=${POSTGRES_DATABASE}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER}']
       interval: 5s
       timeout: 5s
       retries: 30
@@ -32,7 +32,7 @@ services:
     # injector, and a one-shot injector that starts before the platform can
     # answer it just dies.
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health"]
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:8080/actuator/health']
       interval: 5s
       timeout: 5s
       retries: 60

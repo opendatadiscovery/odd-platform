@@ -14,7 +14,7 @@ This environment consists of:
 
 * Docker Engine 19.03.0+
 * `docker compose` v2 (any version), or `docker-compose` 1.27.0+ — the stack waits on service
-  healthchecks (`depends_on: condition: service_healthy`), which older `docker-compose` releases ignore
+  healthchecks (`depends_on: condition: service_healthy`), which older `docker-compose` releases do not support
 
 ## Step 1: Configuring and running ODD Platform with a metadata sample in it
 
@@ -30,11 +30,12 @@ This environment consists of:
 
 Run **from the project root folder** `docker-compose -f docker/demo.yaml up -d odd-platform-enricher`.
 
-**The first run takes a minute or so before anything appears.** The Platform applies its whole database
-migration set against an empty database before it can serve a request, and the enricher deliberately waits
-for the Platform's healthcheck rather than racing it — so the command does not return until the Platform is
-ready and the sample has been injected. An empty catalog while you wait is expected; an empty catalog after
-the command returns is not.
+**The first run takes a minute or so.** The Platform applies its whole database migration set against an
+empty database before it can serve a request, and the enricher deliberately waits for the Platform's
+healthcheck rather than racing it — so the command blocks until the Platform is ready. It then returns, and
+the enricher spends a few more seconds injecting the sample, so give the catalog a moment before you judge
+it. If it is still empty a minute later, the enricher will say why:
+`docker-compose -f docker/demo.yaml logs odd-platform-enricher`.
 
 ### Result
 
