@@ -7,6 +7,11 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
 
   odd-platform:
     image: ghcr.io/opendatadiscovery/odd-platform:latest
@@ -19,9 +24,19 @@ services:
       - SPRING_CUSTOM-DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_CUSTOM-DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     ports:
       - 8080:8080
+    # Same readiness gate as docker/demo.yaml: this stand mounts the same
+    # injector, and a one-shot injector that starts before the platform can
+    # answer it just dies.
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 30s
 
   odd-platform-enricher:
     image: python:3.9.12-alpine3.15
@@ -36,4 +51,5 @@ services:
       - PLATFORM_HOST_URL=${PLATFORM_HOST_URL}
       - PYTHONUNBUFFERED=1
     depends_on:
-      - odd-platform
+      odd-platform:
+        condition: service_healthy
