@@ -7,6 +7,7 @@ import { searchPath } from 'routes';
 import { getSearchQuery } from 'redux/selectors';
 import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
 import SearchSuggestionsAutocomplete from 'components/shared/elements/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
+import SearchSyntaxHint from './SearchSyntaxHint';
 
 interface AppSearchProps {
   placeholder?: string;
@@ -57,18 +58,32 @@ const MainSearchInput: FC<AppSearchProps> = ({
   const mainSearchPlaceholder = t('main search placeholder');
 
   return (
-    <Box sx={{ width: '100%', maxWidth: '640px' }}>
-      <SearchSuggestionsAutocomplete
-        linkedOption
-        inputParams={{
-          variant: 'search-lg',
-          placeholder: placeholder ?? mainSearchPlaceholder,
-          searchAdornmentHandler: handleSearch,
-          onKeyDownHandler: handleKeyDown,
-        }}
-        disableSuggestions={disableSuggestions}
-        searchQuery={searchQuery}
-      />
+    // The syntax hint sits beside the input rather than inside it: the adornment slot already carries the
+    // search action, and an icon inside the field competes with the caret. flex + a 1fr input keeps the box
+    // exactly as wide as before on both entry points (the home hero and the Search page).
+    <Box
+      sx={{
+        width: '100%',
+        maxWidth: '640px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1,
+      }}
+    >
+      <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+        <SearchSuggestionsAutocomplete
+          linkedOption
+          inputParams={{
+            variant: 'search-lg',
+            placeholder: placeholder ?? mainSearchPlaceholder,
+            searchAdornmentHandler: handleSearch,
+            onKeyDownHandler: handleKeyDown,
+          }}
+          disableSuggestions={disableSuggestions}
+          searchQuery={searchQuery}
+        />
+      </Box>
+      <SearchSyntaxHint />
     </Box>
   );
 };

@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,6 @@ import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Predicate.not;
 import static org.jooq.impl.DSL.coalesce;
-import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
@@ -47,6 +47,18 @@ public class JooqFTSHelper {
     // changes or is evicted. The characters that can raise 42601 (postgres 13) are  ! & ' ( ) : < |  ;
     // strip the full tsquery operator set (also * > \) so only word tokens reach to_tsquery. See #1756.
     private static final Pattern TSQUERY_SPECIAL_CHARS = Pattern.compile("[!&'()*:<>|\\\\]");
+
+    // A query uses an operator when it carries a double quote (a phrase), a `-` at a token boundary with a term
+    // after it (an exclusion -- NOT `my-table` / `e-mail` / `2024-01-01` / a trailing dash), or the bare word
+    // `or` (NOT `oracle` / `ORdering` / `sales_or_ops`). Verified case-by-case against websearch_to_tsquery.
+    private static final Pattern QUERY_OPERATORS =
+        Pattern.compile("\"|(?:^|\\s)-\\s*\\S|(?:^|\\s)(?i:or)(?=\\s|$)");
+
+    private static final String OR_OPERATOR = "or";
+
+    // Above this many operator-produced leaves the generated SQL (and its bind count, which Postgres caps at
+    // 65535) would grow with the query, so an over-long operator query fails closed instead.
+    private static final int MAX_OPERATOR_LEAVES = 64;
 
     public Insert<? extends Record> buildVectorUpsert(
         final Select<? extends Record> vectorSelect,
@@ -107,9 +119,7 @@ public class JooqFTSHelper {
 
     public Condition ftsCondition(final Field<?> vectorField,
                                   final String plainQuery) {
-        final String query = tsQuery(plainQuery);
-        final Field<Object> conditionField = field("? @@ to_tsquery(?)", vectorField, query);
-        return condition(conditionField.toString());
+        return DSL.condition("{0} @@ {1}", vectorField, tsQueryExpression(plainQuery));
     }
 
     public List<Condition> facetStateConditions(
@@ -161,12 +171,167 @@ public class JooqFTSHelper {
 
     public Field<?> ftsRankField(final Field<?> vectorField, final String plainQuery) {
         requireNonNull(vectorField);
-        final String query = tsQuery(plainQuery);
-        return field(
-            "ts_rank(?, to_tsquery(?))",
-            vectorField,
-            query
-        );
+        return DSL.field("ts_rank({0}, {1})", vectorField, tsQueryExpression(plainQuery));
+    }
+
+    /**
+     * The SQL expression that produces the {@code tsquery} a user's search string means -- the single place the
+     * product's query grammar is defined. Every FTS surface (the unified cross-kind search, the legacy session
+     * search, terms, query examples, lookup tables, autocomplete suggestions, the facet counts and the
+     * {@code ts_headline} highlights) builds its query here, so they cannot drift into two dialects.
+     *
+     * <p>Three websearch-style operators are supported: a {@code "quoted phrase"}, a {@code -negated} term, and
+     * the bare word {@code or}. They are compiled COMPOSITIONALLY out of tsquery primitives rather than by
+     * handing the raw string to {@code websearch_to_tsquery}, because that function performs no prefix matching
+     * -- and this product publishes the opposite promise ("the search box ... matches the remaining words as
+     * prefixes", docs/data-discovery/search.md). Composing lets an operator NARROW a query without revoking the
+     * promise: {@code cust -test} still prefix-matches {@code cust}, where websearch_to_tsquery finds nothing.
+     *
+     * <p>The rule a user sees: BARE WORDS MATCH AS PREFIXES; A QUOTED PHRASE AND AN EXCLUDED WORD MATCH EXACTLY.
+     *
+     * <p>Injection safety is unchanged in kind and stronger in practice: every leaf comes from a Postgres
+     * constructor that cannot raise on metacharacters -- {@code to_tsquery} over the existing {@link #tsQuery}
+     * sanitiser for bare terms, {@code phraseto_tsquery} for phrases, {@code plainto_tsquery} for exclusions --
+     * and every user-supplied value is a BIND, never rendered into SQL text (#1756 / #1840).
+     */
+    public Field<Object> tsQueryExpression(final String plainQuery) {
+        final List<List<Field<Object>>> groups = operatorGroups(plainQuery);
+        if (groups == null) {
+            return prefixTsQuery(plainQuery);
+        }
+        Field<Object> expression = null;
+        for (final List<Field<Object>> group : groups) {
+            final Field<Object> conjunction = conjoin(group);
+            if (conjunction == null) {
+                continue;
+            }
+            // Guard EACH OR-BRANCH, not the whole expression. A branch with no positive term (`-test`, and the
+            // subtle `<stop word> -test`) is not index-searchable -- Postgres falls back to a sequential scan of
+            // the entire search index -- and querytree() returns 'T' for exactly that shape. Collapsing such a
+            // branch to the empty tsquery drops it, because the empty tsquery is the IDENTITY for `||` and `&&`.
+            // Guarding the whole expression instead would make `customer or -test` return NOTHING, when the
+            // `customer` branch alone is a perfectly good index scan (measured on postgres:13.2-alpine).
+            final Field<Object> guarded = DSL.field(
+                "(CASE WHEN querytree({0}) = 'T' THEN CAST('' AS tsquery) ELSE {1} END)",
+                Object.class, conjunction, conjunction);
+            expression = expression == null
+                ? guarded
+                : DSL.field("({0} || {1})", Object.class, expression, guarded);
+        }
+        // Every branch was empty (`or` alone, `""`, an all-stop-word query): match nothing, never 500.
+        return expression == null ? emptyTsQuery() : expression;
+    }
+
+    private static Field<Object> conjoin(final List<Field<Object>> leaves) {
+        Field<Object> conjunction = null;
+        for (final Field<Object> leaf : leaves) {
+            conjunction = conjunction == null
+                ? leaf
+                : DSL.field("({0} && {1})", Object.class, conjunction, leaf);
+        }
+        return conjunction;
+    }
+
+    /**
+     * Tokenises a query that uses at least one operator into OR-separated groups of AND-ed leaves ({@code AND}
+     * binds tighter than {@code or}, matching {@code websearch_to_tsquery}). Returns {@code null} when the query
+     * uses no operator -- the caller then takes the untouched pre-existing prefix path -- or when the query would
+     * produce more than {@link #MAX_OPERATOR_LEAVES} leaves.
+     *
+     * <p>The scan is a single left-to-right pass, and ORDER MATTERS: a quoted span is consumed FIRST, so
+     * {@code "customer or orders"} stays one phrase instead of being split on the {@code or} inside it, and the
+     * {@code -} in {@code "customer -orders"} is phrase text rather than a negation.
+     */
+    private List<List<Field<Object>>> operatorGroups(final String plainQuery) {
+        if (plainQuery == null || !QUERY_OPERATORS.matcher(plainQuery).find()) {
+            return null;
+        }
+        final List<List<Field<Object>>> groups = new ArrayList<>();
+        final int length = plainQuery.length();
+        List<Field<Object>> group = new ArrayList<>();
+        StringBuilder bareTerms = new StringBuilder();
+        int operatorLeaves = 0;
+        int i = 0;
+        while (i < length) {
+            if (Character.isWhitespace(plainQuery.charAt(i))) {
+                i++;
+                continue;
+            }
+            boolean negated = false;
+            if (plainQuery.charAt(i) == '-') {
+                // websearch negates the FOLLOWING term whether or not whitespace intervenes (`foo -bar` and
+                // `foo - bar` both negate); a dash with no term after it is a literal and is dropped.
+                int next = i + 1;
+                while (next < length && Character.isWhitespace(plainQuery.charAt(next))) {
+                    next++;
+                }
+                if (next >= length) {
+                    break;
+                }
+                negated = true;
+                i = next;
+            }
+            if (plainQuery.charAt(i) == '"') {
+                final int close = plainQuery.indexOf('"', i + 1);
+                final String phrase = close < 0
+                    ? plainQuery.substring(i + 1)
+                    : plainQuery.substring(i + 1, close);
+                i = close < 0 ? length : close + 1;
+                if (!phrase.isBlank()) {
+                    group.add(phraseLeaf(phrase, negated));
+                    operatorLeaves++;
+                }
+                continue;
+            }
+            int end = i;
+            while (end < length && !Character.isWhitespace(plainQuery.charAt(end))) {
+                end++;
+            }
+            final String token = plainQuery.substring(i, end);
+            i = end;
+            if (!negated && OR_OPERATOR.equalsIgnoreCase(token)) {
+                appendBareTerms(group, bareTerms);
+                groups.add(group);
+                group = new ArrayList<>();
+                bareTerms = new StringBuilder();
+                operatorLeaves++;
+                continue;
+            }
+            if (negated) {
+                group.add(DSL.field("(!! plainto_tsquery({0}))", Object.class, DSL.val(token)));
+                operatorLeaves++;
+            } else {
+                bareTerms.append(bareTerms.length() == 0 ? "" : " ").append(token);
+            }
+        }
+        appendBareTerms(group, bareTerms);
+        groups.add(group);
+        // Past the cap the generated SQL (and its bind count) would grow with an adversarial query, so stop.
+        // FAIL CLOSED -- never fall back to the plain path here: that path reads `-test` as a REQUIRED term,
+        // i.e. the exact inversion this feature exists to fix, and it would apply silently. NO groups (rather
+        // than one empty group) so the caller yields the bare empty tsquery instead of guarding a constant.
+        return operatorLeaves > MAX_OPERATOR_LEAVES ? List.of() : groups;
+    }
+
+    private void appendBareTerms(final List<Field<Object>> group, final StringBuilder bareTerms) {
+        if (bareTerms.length() > 0) {
+            // The bare terms of an operator query go through the SAME sanitiser + to_tsquery call the
+            // non-operator path uses, so prefix parity is structural rather than something a test has to catch.
+            group.add(prefixTsQuery(bareTerms.toString()));
+        }
+    }
+
+    private static Field<Object> phraseLeaf(final String phrase, final boolean negated) {
+        final Field<Object> leaf = DSL.field("phraseto_tsquery({0})", Object.class, DSL.val(phrase));
+        return negated ? DSL.field("(!! {0})", Object.class, leaf) : leaf;
+    }
+
+    private Field<Object> prefixTsQuery(final String plainQuery) {
+        return DSL.field("to_tsquery({0})", Object.class, DSL.val(tsQuery(plainQuery)));
+    }
+
+    private static Field<Object> emptyTsQuery() {
+        return DSL.field("CAST('' AS tsquery)", Object.class);
     }
 
     public String tsQuery(final String plainQuery) {

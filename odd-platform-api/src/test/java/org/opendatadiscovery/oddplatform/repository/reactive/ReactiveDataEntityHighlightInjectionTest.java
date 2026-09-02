@@ -23,8 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * scalar call with no table reads, so no catalog seeding is required) and exercise the <b>text</b> argument
  * — the path this fix uniquely protects: a single quote or a classic injection payload in the highlight text
  * is returned verbatim (treated as data), where the pre-fix raw interpolation would break the SQL literal.
- * The {@code query} argument is also bound here; it is additionally operator-stripped upstream by
- * {@code JooqFTSHelper.tsQuery} (#1788), so binding it is defence in depth.
+ * The {@code query} argument is not bound directly: since #1840 it is compiled by
+ * {@code JooqFTSHelper.tsQueryExpression} into the same tsquery the match used, out of Postgres constructors
+ * that cannot raise, each carrying the user's text as its own bind — so it never reaches SQL as literal either.
  *
  * @validates F-017
  * @regresses GHSA-rjp9-9vgm-q94c (PLT-109)
@@ -69,6 +70,47 @@ class ReactiveDataEntityHighlightInjectionTest extends BaseIntegrationTest {
         dataEntityRepository.getHighlightedResult(injectionPayload, "orders")
             .as(StepVerifier::create)
             .assertNext(highlighted -> assertThat(highlighted).isEqualTo(injectionPayload))
+            .expectComplete()
+            .verify(Duration.ofSeconds(10));
+    }
+
+    // -------------------------------------------------------------------------------------------------------
+    // Query operators (#1840 / ST-6). getHighlightedResult is the result row's "why you see it" affordance, and
+    // ST-6 moved it onto the SAME compiled tsquery the match used.
+    //
+    // What these two cases pin, stated precisely: that an operator query reaches ts_headline as a valid
+    // composed tsquery and comes back as sane markup. They are NOT a dialect discriminator, and it is worth
+    // recording why rather than implying more than they prove: ts_headline marks up every lexeme MENTIONED in
+    // the tsquery, irrespective of structure, so `'custom' <-> 'order'` and `'custom':* & 'order':*` produce
+    // byte-identical output -- and so do `!'test' && 'custom':*` and `'custom':* & 'test':*` (measured on
+    // postgres 13.2; a NEGATED term is highlighted too). The shared-expression property is therefore held by
+    // construction -- one call to jooqFTSHelper.tsQueryExpression in getHighlightedResult -- and read there,
+    // not asserted here.
+    // -------------------------------------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("a quoted phrase is highlighted through the same compiled tsquery that matched (#1840)")
+    void getHighlightedResult_quotedPhrase_highlightsThroughTheSharedExpression() {
+        dataEntityRepository.getHighlightedResult("customer orders daily", "\"customer orders\"")
+            .as(StepVerifier::create)
+            .assertNext(highlighted -> assertThat(highlighted).isEqualTo("<b>customer</b> <b>orders</b> daily"))
+            .expectComplete()
+            .verify(Duration.ofSeconds(10));
+    }
+
+    @Test
+    @DisplayName("a -exclusion query reaches ts_headline as a valid composed tsquery (#1840)")
+    void getHighlightedResult_negation_returnsSaneMarkupForAComposedQuery() {
+        // NOT named "an excluded term is not marked up": that is FALSE in general, and this case cannot show
+        // it either way. `customer -test` compiles to `!'test' && to_tsquery('customer:*')`, and the document
+        // seeded here simply carries no `test` -- so the single marked term is a property of the DOCUMENT, not
+        // of the negation. ts_headline WOULD mark the negated term if the document contained one (measured;
+        // see the block comment above), which is why the manual says an excluded word is still highlighted.
+        // What this case does pin is the part that can regress: the composed expression reaches ts_headline
+        // as a valid tsquery and comes back as sane markup rather than raising.
+        dataEntityRepository.getHighlightedResult("customer table", "customer -test")
+            .as(StepVerifier::create)
+            .assertNext(highlighted -> assertThat(highlighted).isEqualTo("<b>customer</b> table"))
             .expectComplete()
             .verify(Duration.ofSeconds(10));
     }
