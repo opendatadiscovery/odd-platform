@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { AssetKind, type FavoriteAsset } from 'generated-sources';
-import {
-  favoriteAssetDescription,
-  favoriteAssetName,
-  favoriteAssetNamespace,
-} from '../lib';
+import { favoriteAssetName } from '../lib';
 
 /**
- * The per-kind field resolution behind the Favorites tab's rich rows (#1815 / PRD-0002 A5). The
- * favorites payload embeds the full per-kind ref, so the row resolves namespace + description live,
- * degrading where a kind has none — a Query Example has no namespace, a Data Entity ref carries no
- * description (its namespace/created-at await the payload-enrichment slice).
+ * The per-kind NAME resolution used wherever a favorited asset is rendered — the Catalog Overview
+ * Favorites panel, the search result rows, and Recently Viewed.
+ *
+ * ST-7 (#1841) retired the Favorites tab, and with it the only consumers of `favoriteAssetNamespace`,
+ * `favoriteAssetDescription`, `favoriteAssetUpdatedAt` and `FAVORITES_TABLE_COLS` (the tab's rich-row
+ * columns). Those helpers were deleted with the tab, so their cases here went with them: the subject no
+ * longer exists, which is the only legitimate reason to drop a test. `favoriteAssetName` has live
+ * consumers and keeps its coverage.
  */
 
 const termAsset = {
@@ -38,22 +38,6 @@ const dataEntityAsset = {
 } as unknown as FavoriteAsset;
 
 describe('favorites/lib per-kind field resolution', () => {
-  it('namespace: present for a Term, absent for a Query Example and a Data Entity', () => {
-    expect(favoriteAssetNamespace(termAsset)).toBe('Marketing');
-    expect(favoriteAssetNamespace(queryExampleAsset)).toBeUndefined();
-    expect(favoriteAssetNamespace(dataEntityAsset)).toBeUndefined();
-  });
-
-  it('description: a Term definition, a Query Example query, nothing for a Data Entity', () => {
-    expect(favoriteAssetDescription(termAsset)).toBe(
-      'A customer who stopped using the product.'
-    );
-    expect(favoriteAssetDescription(queryExampleAsset)).toBe(
-      'SELECT * FROM users WHERE active'
-    );
-    expect(favoriteAssetDescription(dataEntityAsset)).toBeUndefined();
-  });
-
   it('name: the existing per-kind resolution still holds (QE falls back to its definition)', () => {
     expect(favoriteAssetName(termAsset)).toBe('Churn');
     expect(favoriteAssetName(queryExampleAsset)).toBe('Active users last 30 days');

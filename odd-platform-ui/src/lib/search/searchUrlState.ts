@@ -65,6 +65,27 @@ export const SEARCH_SORT_PARAM = 'sort';
  * kind selection is a URL-only param (like `sort`) carried verbatim into `AssetSearchFormData.asset_kinds`.
  */
 export const SEARCH_ASSET_KINDS_PARAM = 'asset_kinds';
+/**
+ * The Favorites-scope param (ST-7 / #1841) — narrows the cross-kind results to the caller's own starred
+ * assets. A URL-only param like {@link SEARCH_SORT_PARAM} and {@link SEARCH_ASSET_KINDS_PARAM}, NOT a redux
+ * facet: favorites has no server-aggregated counts and no `SearchFacetNames` key, and it rides
+ * `AssetSearchFormData` (the unified path) rather than the shared `SearchFormData`.
+ *
+ * Spelled `yes` / `no` in the URL (human-readable, and what the Catalog Overview panel deep-links to);
+ * absent = no narrowing. It maps to the wire's optional boolean in
+ * {@link searchUrlStateToAssetSearchFormData}.
+ *
+ * BEING URL-ONLY IS LOAD-BEARING: `Search.tsx`'s facet→URL mirror rebuilds the URL from the redux facet
+ * state, which carries none of these params, so `favorites` MUST be merged back there alongside `sort` and
+ * `assetKinds` — otherwise any sidebar facet toggle silently drops an active Favorites filter (the #1858
+ * dropped-selection class).
+ */
+export const SEARCH_FAVORITES_PARAM = 'favorites';
+
+/** The two meaningful values of {@link SEARCH_FAVORITES_PARAM}; absent is the third (no narrowing) state. */
+export type SearchFavoritesValue = 'yes' | 'no';
+
+const SEARCH_FAVORITES_VALUES: SearchFavoritesValue[] = ['yes', 'no'];
 
 /** The set of valid `asset_kinds` tokens — a parse-time allow-list so an unknown kind fails closed (dropped). */
 const VALID_ASSET_KINDS = new Set<string>(Object.values(AssetKind));
@@ -165,6 +186,8 @@ export interface SearchUrlState {
   sort?: SearchSortValue;
   /** the selected asset-type kinds (ST-4); undefined / empty = all kinds */
   assetKinds?: AssetKind[];
+  /** the Favorites scope (ST-7); undefined = no favorites narrowing */
+  favorites?: SearchFavoritesValue;
 }
 
 /**
@@ -222,6 +245,9 @@ export function searchStateToParams(state: SearchUrlState): string {
   if (state.assetKinds && state.assetKinds.length > 0) {
     params[SEARCH_ASSET_KINDS_PARAM] = state.assetKinds;
   }
+  // Serialised only when a narrowing is active (like `sort`): absent = no favorites filter, so the default
+  // state stays a clean URL and the round-trip is byte-identical.
+  if (state.favorites) params[SEARCH_FAVORITES_PARAM] = state.favorites;
   return stringify(params, QUERY_STRING_OPTIONS);
 }
 
@@ -315,7 +341,17 @@ export function paramsToSearchState(search: string): SearchUrlState {
     );
     const assetKinds = kindList.length > 0 ? kindList : undefined;
 
-    return { query, facets, myData, upstreamDepth, downstreamDepth, sort, assetKinds };
+    // `favorites` fail-closed (mirrors `sort`): keep only the two known tokens, drop anything else to
+    // undefined (→ no narrowing). A garbage `?favorites=` never reaches the request.
+    const rawFavorites = parsed[SEARCH_FAVORITES_PARAM];
+    const favoritesStr = typeof rawFavorites === 'string' ? rawFavorites : undefined;
+    const favorites = SEARCH_FAVORITES_VALUES.includes(
+      favoritesStr as SearchFavoritesValue
+    )
+      ? (favoritesStr as SearchFavoritesValue)
+      : undefined;
+
+    return { query, facets, myData, upstreamDepth, downstreamDepth, sort, assetKinds, favorites };
   } catch {
     return empty;
   }
@@ -365,6 +401,9 @@ export function searchUrlStateToAssetSearchFormData(
     ...searchUrlStateToFormData(state),
     assetKinds:
       state.assetKinds && state.assetKinds.length > 0 ? state.assetKinds : undefined,
+    // `yes`/`no` → the wire's optional boolean. Absent stays absent: `favorites: false` is a REAL filter
+    // (only assets the caller has NOT starred), so an absent scope must never be sent as `false`.
+    favorites: state.favorites === undefined ? undefined : state.favorites === 'yes',
   };
 }
 

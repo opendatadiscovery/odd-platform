@@ -8,7 +8,7 @@ import { fetchFavoritesList } from 'redux/thunks';
 import { getFavoritesList } from 'redux/selectors';
 import { EmptyContentPlaceholder, FavoriteStar } from 'components/shared/elements';
 import { StarIcon, AlertIcon } from 'components/shared/icons';
-import { favoritesPath } from 'routes';
+import { buildSearchLink } from 'lib/hooks';
 import {
   favoriteAssetId,
   favoriteAssetLink,
@@ -17,6 +17,14 @@ import {
 import * as S from '../DataEntityList/DataEntityListStyles';
 
 const COLUMN_SIZE = 5;
+
+/**
+ * ST-7 (#1841) — "View all" now deep-links to the Catalog search pre-filtered to favorites, because the
+ * bespoke /favorites tab is retired. Built with the canonical serialiser rather than a literal string: a
+ * hand-written URL diverges byte-wise from what Search.tsx's facet->URL mirror produces, and the mirror
+ * would immediately rewrite it — dropping the filter the link exists to apply.
+ */
+const favoritesSearchLink = buildSearchLink({ favorites: 'yes' });
 
 /**
  * The Favorites column of the Recommended section (#1815 / PRD-0002 A2). Renders in the SAME column
@@ -92,7 +100,13 @@ const FavoritesColumn: React.FC = () => {
         )}
       </S.ListLinksContainer>
       {items.length > 0 && (
-        <MuiLink component={Link} to={favoritesPath()} variant='subtitle2' sx={{ mt: 1 }}>
+        <MuiLink
+          component={Link}
+          to={favoritesSearchLink}
+          variant='subtitle2'
+          sx={{ mt: 1 }}
+          data-qa='favorites-view-all'
+        >
           {t('View all')}
         </MuiLink>
       )}

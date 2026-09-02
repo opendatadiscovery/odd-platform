@@ -266,6 +266,64 @@ describe('searchUrlState — asset_kinds ⇄ URL params (ST-4 / #1838)', () => {
 });
 
 /** ST-2b — the per-context default + the fail-closed active-sort resolution the dropdown displays. */
+describe('searchUrlState — favorites ⇄ URL params (ST-7 / #1841)', () => {
+  it('round-trips the favorites scope through the URL (identity), both directions', () => {
+    expect(paramsToSearchState('?favorites=yes')).toEqual(state({ favorites: 'yes' }));
+    expect(paramsToSearchState('?favorites=no')).toEqual(state({ favorites: 'no' }));
+    expect(searchStateToParams(state({ favorites: 'yes' }))).toBe('favorites=yes');
+  });
+
+  it('omits the param when the scope is unset → the default state stays a clean URL', () => {
+    expect(searchStateToParams(state())).toBe('');
+    expect(paramsToSearchState('')).toEqual(state());
+  });
+
+  it('fails closed: any value other than yes/no is dropped (never a partial narrowing)', () => {
+    // A garbage value must not silently become a filter — it degrades to "no narrowing", the same
+    // fail-closed posture `sort` and `asset_kinds` take.
+    expect(paramsToSearchState('?favorites=true').favorites).toBeUndefined();
+    expect(paramsToSearchState('?favorites=1').favorites).toBeUndefined();
+    expect(paramsToSearchState('?favorites=YES').favorites).toBeUndefined();
+    expect(paramsToSearchState('?favorites=').favorites).toBeUndefined();
+    expect(paramsToSearchState('?favorites=%00').favorites).toBeUndefined();
+  });
+
+  it('is preserved alongside a faceted, sorted, kind-narrowed query (parse+serialise identity)', () => {
+    // Round-trip the STATE (the sibling ST-4 case's shape) rather than a hand-written URL string: it
+    // asserts full state equality instead of one direction, and it cannot be broken by getting the
+    // serialiser's array syntax wrong in the fixture.
+    const s = state({
+      query: 'orders',
+      facets: { owners: [3], tags: [1, 2] },
+      // ST-8 replaced the `myObjects` boolean on SearchUrlState with the `myData` scope group; this case
+      // now round-trips the favorites scope alongside it, so the two independent axes are pinned together.
+      myData: ['MY_OBJECTS'],
+      sort: 'name',
+      assetKinds: [AssetKind.DATA_ENTITY],
+      favorites: 'yes',
+    });
+    expect(paramsToSearchState(`?${searchStateToParams(s)}`)).toEqual(s);
+  });
+
+  it('maps yes/no → the wire boolean, and keeps ABSENT absent (never an implicit false)', () => {
+    // The distinction is load-bearing: `favorites: false` is a REAL filter (only assets the caller has NOT
+    // starred). Sending it for an unset scope would silently narrow every default search.
+    expect(
+      searchUrlStateToAssetSearchFormData(state({ favorites: 'yes' })).favorites
+    ).toBe(true);
+    expect(
+      searchUrlStateToAssetSearchFormData(state({ favorites: 'no' })).favorites
+    ).toBe(false);
+    expect(searchUrlStateToAssetSearchFormData(state()).favorites).toBeUndefined();
+  });
+
+  it('is NOT carried onto the legacy SearchFormData — the unified path owns it (ADR D9)', () => {
+    expect(searchUrlStateToFormData(state({ favorites: 'yes' }))).not.toHaveProperty(
+      'favorites'
+    );
+  });
+});
+
 describe('sort defaults + fail-closed resolution (ST-2b)', () => {
   it('defaultSortForContext: relevance when there is a query, status priority when browsing', () => {
     expect(defaultSortForContext('orders')).toBe('relevance');

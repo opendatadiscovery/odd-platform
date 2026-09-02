@@ -16,6 +16,7 @@ import { clearDataEntitySearchFacets } from 'redux/slices/dataEntitySearch.slice
 import { searchPath } from 'routes';
 import { paramsToSearchState, searchStateToParams } from 'lib/search/searchUrlState';
 import AssetTypeFilter from './AssetTypeFilter/AssetTypeFilter';
+import FavoritesFilter from './FavoritesFilter/FavoritesFilter';
 import MyDataFilter from './MyDataFilter/MyDataFilter';
 import DataEntityTypeFilter from './DataEntityTypeFilter/DataEntityTypeFilter';
 import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';
@@ -68,6 +69,11 @@ const Filters: React.FC = () => {
         {/* ST-8 (#1842) — the My-data scope group (owned / upstream / downstream), which replaces the retired
             My-Objects result tab. Hides itself entirely under auth.type=DISABLED. */}
         <MyDataFilter />
+        {/* ST-7 (#1841) — the Favorites scope. Rendered unconditionally, unlike My-data above: under
+            auth.type=DISABLED favorites still work (as one shared instance-wide bucket, which the control
+            says), whereas a My-data scope has no owner to resolve. It is also the only in-app route to
+            "everything I starred" now that the /favorites tab is retired. */}
+        <FavoritesFilter />
         <SingleFilterItem
           key='ds'
           facetName='datasources'

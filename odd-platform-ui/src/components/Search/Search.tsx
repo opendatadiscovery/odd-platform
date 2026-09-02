@@ -93,13 +93,19 @@ const Search: React.FC = () => {
   // census fix). The server response sets synced=true, so the mirror never re-fires on repopulation (no
   // loop); the normalised equality guard skips a redundant navigate. The reader above then runs the new URL.
   const writeStateToUrl = useDebouncedCallback(() => {
-    // ST-2b / ST-4 / ST-8 — the mirror rebuilds the URL from the redux facet state, which carries none of
-    // `sort`, `asset_kinds`, `entityClasses`, or the My-data scope (sort / asset_kinds / my_data + its depths
-    // are URL-only; entityClasses is URL-driven by DataEntityTypeFilter because the single-class DE-session
-    // facet would collapse a multi-class selection). Merge them ALL back from the live URL so a sidebar facet
-    // toggle PRESERVES the active ordering, the Asset-type selection, the Data-entity-type selection AND the
-    // My-data scope instead of silently dropping/collapsing them. A URL-only param missing from this object
-    // is the #1858 bug class: it survives a page load and then vanishes the moment any facet is toggled.
+    // ST-2b / ST-4 / ST-7 / ST-8 — the mirror rebuilds the URL from the redux facet state, which carries
+    // none of `sort`, `asset_kinds`, `favorites`, `entityClasses`, or the My-data scope (all URL-only, except
+    // entityClasses which is URL-driven by DataEntityTypeFilter because the single-class DE-session facet
+    // would collapse a multi-class selection). Merge them ALL back from the live URL so a sidebar facet
+    // toggle PRESERVES the active ordering, the Asset-type selection, the Data-entity-type selection, the
+    // Favorites scope AND the My-data scope instead of silently dropping/collapsing them.
+    //
+    // EVERY URL-ONLY PARAM MUST BE LISTED HERE. Omitting one is invisible in review and at runtime: the
+    // filter survives a page load and then vanishes the moment any unrelated facet is toggled, with no error.
+    // That is the #1858 bug class, which ST-7 and ST-8 both re-derived independently while adding to this
+    // object — so the next slice that adds a URL-only param should expect to land here too. IT-148 pins the
+    // favorites case; the My-data case is pinned by ST-8's own IT.
+
     const live = paramsToSearchState(location.search);
     const nextParams = searchStateToParams({
       ...searchUrlState,
@@ -109,6 +115,7 @@ const Search: React.FC = () => {
       myData: live.myData,
       upstreamDepth: live.upstreamDepth,
       downstreamDepth: live.downstreamDepth,
+      favorites: live.favorites,
     });
     if (nextParams !== location.search.replace(/^\?/, '')) {
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);
