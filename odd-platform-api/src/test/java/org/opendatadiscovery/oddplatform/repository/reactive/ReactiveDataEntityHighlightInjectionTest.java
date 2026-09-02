@@ -99,11 +99,15 @@ class ReactiveDataEntityHighlightInjectionTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("an excluded term is not marked up - the row is highlighted on what it matched (#1840)")
-    void getHighlightedResult_negation_marksOnlyTheMatchedTerm() {
-        // `customer -test` compiles to `!'test' && to_tsquery('customer:*')`. The document here carries no
-        // `test`, so only the positive term is marked. (ts_headline WOULD mark a negated term if the document
-        // contained one -- see the block comment above; that is a property of ts_headline, not of the sink.)
+    @DisplayName("a -exclusion query reaches ts_headline as a valid composed tsquery (#1840)")
+    void getHighlightedResult_negation_returnsSaneMarkupForAComposedQuery() {
+        // NOT named "an excluded term is not marked up": that is FALSE in general, and this case cannot show
+        // it either way. `customer -test` compiles to `!'test' && to_tsquery('customer:*')`, and the document
+        // seeded here simply carries no `test` -- so the single marked term is a property of the DOCUMENT, not
+        // of the negation. ts_headline WOULD mark the negated term if the document contained one (measured;
+        // see the block comment above), which is why the manual says an excluded word is still highlighted.
+        // What this case does pin is the part that can regress: the composed expression reaches ts_headline
+        // as a valid tsquery and comes back as sane markup rather than raising.
         dataEntityRepository.getHighlightedResult("customer table", "customer -test")
             .as(StepVerifier::create)
             .assertNext(highlighted -> assertThat(highlighted).isEqualTo("<b>customer</b> table"))
