@@ -4,7 +4,7 @@ import os
 import requests
 import sys
 import time
-from typing import Union, Dict, Any, Tuple, List
+from typing import Union, Dict, Any, NoReturn, Tuple, List
 
 
 def env_int(name: str, default: int) -> int:
@@ -16,6 +16,15 @@ def env_int(name: str, default: int) -> int:
     except ValueError:
         print(f"{name}={raw!r} is not a number, using {default}")
         return default
+
+
+def die(message: str) -> NoReturn:
+    # Every FATAL path ends here rather than in a raise: a give-up message that names
+    # the cause and the remedy is worth nothing wrapped in a Python traceback, which
+    # is what an operator saw before. Same shape validate_samples() already uses.
+    print("")
+    print(message)
+    sys.exit(1)
 
 
 def env_flag(name: str) -> bool:
@@ -102,7 +111,7 @@ def wait_until_healthy() -> None:
         print(f"Platform's not healthy yet (HTTP {hc_response.status_code})")
         time.sleep(REACH_RETRY_DELAY_SECONDS)
 
-    raise Exception(
+    die(
         f"Couldn't reach the platform at {platform_host_url} in {REACH_TRIES_NUMBER} tries "
         f"(~{REACH_TRIES_NUMBER * REACH_RETRY_DELAY_SECONDS}s). A first start is slow because the "
         f"platform applies its whole database migration set against an empty database before it "
@@ -111,15 +120,37 @@ def wait_until_healthy() -> None:
     )
 
 
+def api_json(response: requests.Response, what: str) -> Dict[str, Any]:
+    # `requests` FOLLOWS redirects by default, so a status check alone is not a
+    # guard: an auth-gated platform answers /api/** with 302 -> /login, requests
+    # follows it, and the login PAGE comes back as a perfectly good 200 text/html.
+    # The old code checked only the (redirected) status and then called .json(),
+    # which raised JSONDecodeError("Expecting value: line 1 column 1") out of the
+    # module - a traceback where a sentence belonged.
+    if response.history:
+        die(
+            f"Couldn't {what}: the platform redirected to {response.url}. That is what an "
+            f"auth-gated platform does to an unauthenticated caller, and the injector sends no "
+            f"credentials - point it at a platform running auth.type=DISABLED (the demo default), "
+            f"or inject with a collector token instead."
+        )
+
+    if response.status_code != 200:
+        die(f"Couldn't {what}: HTTP {response.status_code} {response.text[:500]}")
+
+    try:
+        return response.json()
+    except ValueError:
+        content_type = response.headers.get("Content-Type", "no Content-Type")
+        die(f"Couldn't {what}: HTTP 200 carried {content_type}, not JSON: {response.text[:200]!r}")
+
+
 def fetch_existing_datasources() -> List[Dict[str, Any]]:
     response = requests.get(
         url=f"{platform_host_url}/api/datasources?page=1&size=1000",
     )
 
-    if response.status_code != 200:
-        raise Exception(f"Couldn't fetch data sources: HTTP {response.status_code} {response.text[:500]}")
-
-    return response.json()['items']
+    return api_json(response, "fetch data sources")['items']
 
 
 def create_data_source_and_retrieve_token(ds: Dict[str, Union[str, bool]]) -> str:
@@ -129,11 +160,7 @@ def create_data_source_and_retrieve_token(ds: Dict[str, Union[str, bool]]) -> st
         headers={"Content-Type": "application/json"}
     )
 
-    if response.status_code != 200:
-        raise Exception(f"Couldn't create data source {ds}: "
-                        f"HTTP {response.status_code} {response.text[:500]}")
-
-    return response.json()['token']['value']
+    return api_json(response, f"create data source {ds['oddrn']}")['token']['value']
 
 
 def inject_data(data: Dict[str, Any], token: str):
@@ -142,6 +169,14 @@ def inject_data(data: Dict[str, Any], token: str):
         headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
         json=data
     )
+
+    # A redirect must fail here too, and loudly: requests follows it, the login page
+    # answers 200, and an unguarded status check would report a successful injection
+    # for a sample that was never delivered - success reported while under-delivering,
+    # which is the one thing this script must never do again.
+    if response.history:
+        raise Exception(f"redirected to {response.url} - the platform requires authentication "
+                        f"and the injector sends no credentials")
 
     if response.status_code != 200:
         raise Exception(f"HTTP {response.status_code} {response.text[:500]}")
