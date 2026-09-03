@@ -967,7 +967,9 @@ paths:
         ranked query over the unified asset_search_entrypoint index and returns a keyset-paginated,
         relevance-ranked list of polymorphic assets, each routing to its own kind's detail. Honors the shared
         SearchFormData contract (query + filters + sort + my_objects) plus an optional asset_kinds filter
-        (empty = all kinds). Pagination is forward-only by opaque cursor (ST-5b, ADR-0021): omit the cursor
+        (empty = all kinds) and an optional favorites filter that narrows to the caller's own starred assets
+        (absent = no favorites narrowing; the identity comes from the security context, never the request).
+        Pagination is forward-only by opaque cursor (ST-5b, ADR-0021): omit the cursor
         for the first page, then pass back page_info.next_cursor to fetch the next page — deep pages stay
         index-fast and stable under concurrent writes (the index-backed browse sorts seek by keyset; the
         relevance sort keeps a bounded offset). Additive — /api/search and the per-kind searches are

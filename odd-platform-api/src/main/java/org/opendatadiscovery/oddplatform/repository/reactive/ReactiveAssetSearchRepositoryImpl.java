@@ -22,6 +22,7 @@ import org.opendatadiscovery.oddplatform.dto.AssetSearchScope;
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
+import org.opendatadiscovery.oddplatform.dto.FavoritesScopeDto;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 import org.opendatadiscovery.oddplatform.dto.SearchSortDto;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
@@ -33,6 +34,7 @@ import reactor.core.publisher.Mono;
 import static org.opendatadiscovery.oddplatform.model.Tables.ASSET_SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
+import static org.opendatadiscovery.oddplatform.model.Tables.FAVORITE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
@@ -50,10 +52,10 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
 
     @Override
     public Flux<AssetSearchPageRow> keysetPage(final FacetStateDto state, final List<String> assetKinds,
-                                               final AssetSearchScope scope, final AssetSearchCursor cursor,
-                                               final int limit) {
+                                               final AssetSearchScope scope, final FavoritesScopeDto favorites,
+                                               final AssetSearchCursor cursor, final int limit) {
         final SearchSortDto sort = effectiveSort(state);
-        final List<Condition> base = conditions(state, assetKinds, scope);
+        final List<Condition> base = conditions(state, assetKinds, scope, favorites);
         final List<OrderField<?>> order = orderFields(state);
         // Also select the active sort's value so the service can mint the next cursor from the last row.
         final Collection<? extends SelectFieldOrAsterisk> columns = List.of(
@@ -86,13 +88,14 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
 
     @Override
     public Flux<AssetSearchPageRow> relevancePage(final FacetStateDto state, final List<String> assetKinds,
-                                                  final AssetSearchScope scope, final int offset, final int limit) {
+                                                  final AssetSearchScope scope, final FavoritesScopeDto favorites,
+                                                  final int offset, final int limit) {
         // ts_rank is computed per query, not a stored seekable column → relevance keeps OFFSET (the service
         // bounds `offset` by the relevance depth cap). ADR unified-asset-search D12.
         final var query = DSL
             .select(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND, ASSET_SEARCH_ENTRYPOINT.ASSET_ID)
             .from(searchFrom())
-            .where(conditions(state, assetKinds, scope))
+            .where(conditions(state, assetKinds, scope, favorites))
             .orderBy(orderFields(state))
             .limit(DSL.val(limit))
             .offset(DSL.val(offset));
@@ -102,10 +105,10 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
 
     @Override
     public Mono<Long> count(final FacetStateDto state, final List<String> assetKinds,
-                            final AssetSearchScope scope) {
+                            final AssetSearchScope scope, final FavoritesScopeDto favorites) {
         final var query = DSL.selectCount()
             .from(searchFrom())
-            .where(conditions(state, assetKinds, scope));
+            .where(conditions(state, assetKinds, scope, favorites));
         return jooqReactiveOperations.mono(query).map(r -> r.value1().longValue());
     }
 
@@ -264,7 +267,7 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
     }
 
     private List<Condition> conditions(final FacetStateDto state, final List<String> assetKinds,
-                                       final AssetSearchScope scope) {
+                                       final AssetSearchScope scope, final FavoritesScopeDto favorites) {
         final List<Condition> conditions = new ArrayList<>();
 
         // (1) FTS — only for a non-blank query. A blank/absent query means "browse" (no FTS predicate). The
@@ -375,6 +378,50 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
                         .where(TERM_OWNERSHIP.OWNER_ID.eq(scope.ownerId()))))
                 : DSL.falseCondition();
             conditions.add(dataEntityScoped.or(termScoped));
+        }
+
+        // (5b) favorites (ST-7 / #1841) — narrow to (or away from) the caller's own starred set. A SEPARATE
+        // axis from the My-data scope at (5), not a case of it: that one keys on the internal Owner
+        // (AssetSearchScope.ownerId, resolved via AuthIdentityProvider), this one on the login identity
+        // (oidc_username, provider) via CurrentUserIdentityResolver. The platform keeps those two identity
+        // models apart deliberately — a user with no Owner association still has favorites — so folding this
+        // into AssetSearchScope would conflate them. Unlike (5) it is also CROSS-KIND and needs no kind
+        // guard: `favorite` is keyed on the polymorphic
+        // (asset_kind, asset_id) pair, the same pair asset_search_entrypoint carries, so one correlated
+        // predicate is correct for Data Entities, Terms and Query Examples alike.
+        //
+        // EXISTS / NOT EXISTS rather than IN / NOT IN: it lets the planner choose a semi-/anti-join, and
+        // NOT EXISTS is NULL-safe where NOT IN is not. Deliberately NO join is added to searchFrom(): every
+        // other query keeps its exact plan.
+        //
+        // MEASURED, not assumed (EXPLAIN ANALYZE on the GENERATED sql, 50k entrypoint rows / 60k favorites):
+        //   favorites=true  -> Nested Loop semi-join, 5.9 ms. The planner drives FROM favorite via the
+        //                      PARTIAL index favorite_identity_created_active_idx and probes the entrypoint
+        //                      PK once per favorite. It does NOT use favorite_identity_asset_key: that index
+        //                      has the right columns but is not partial, so deleted_at would need
+        //                      rechecking, while the partial index satisfies it outright. An earlier version
+        //                      of this comment asserted the opposite — the measurement corrected it.
+        //   favorites=false -> Anti Join. SELECTIVE query 6.7 ms (Merge Anti Join, fine). BROAD query
+        //                      matching ~the whole corpus: 4.8 s vs 180 ms for the same query unfiltered —
+        //                      a ~27x cliff. Cause is a ~50x GIN row misestimate (planner 1000, actual
+        //                      50001) that makes a nestloop anti-join look cheap; the inner side is then
+        //                      materialised (loops=1) and filtered in memory, ~10M comparisons. Adding a
+        //                      partial index on the exact 4-tuple was TESTED and did not help — the
+        //                      misestimate, not the index, is the driver. Tracked as PLT-258.
+        //                      Low exposure today: favorites=false has no UI control (ST-7 ships a toggle),
+        //                      so it is reachable only by a hand-built URL or the API.
+        //
+        // The identity comes from the security context via CurrentUserIdentityResolver (never the request), so
+        // a caller can only narrow by their own bucket; under auth.type=DISABLED it is the shared sentinel.
+        if (favorites != null) {
+            final Condition favorited = DSL.exists(DSL.selectOne()
+                .from(FAVORITE)
+                .where(FAVORITE.OIDC_USERNAME.eq(favorites.oidcUsername()))
+                .and(FAVORITE.PROVIDER.eq(favorites.provider()))
+                .and(FAVORITE.DELETED_AT.isNull())
+                .and(FAVORITE.ASSET_KIND.eq(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND))
+                .and(FAVORITE.ASSET_ID.eq(ASSET_SEARCH_ENTRYPOINT.ASSET_ID)));
+            conditions.add(favorites.favorited() ? favorited : DSL.not(favorited));
         }
 
         // (6) shared sidebar facets — namespace / owner / tag / group / status / datasource carried on

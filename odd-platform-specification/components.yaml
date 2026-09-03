@@ -467,7 +467,8 @@ components:
       description: >-
         The cross-kind search request — the shared SearchFormData (query + filters + sort + the My-data scope
         group + the deprecated my_objects) plus an optional asset_kinds filter that narrows to specific kinds
-        (empty / absent = all kinds).
+        (empty / absent = all kinds) and an optional favorites filter scoped to the caller's own starred
+        assets. The My-data and favorites scopes are independent axes and compose freely.
       allOf:
         - $ref: '#/components/schemas/SearchFormData'
         - type: object
@@ -476,6 +477,17 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/AssetKind'
+            favorites:
+              type: boolean
+              description: >-
+                Narrows the result set by the caller's own favorites (ST-7 / #1841). `true` returns only
+                assets the caller has starred; `false` returns only assets they have not; **absent means no
+                favorites narrowing at all** — which is why this is an optional boolean rather than an enum,
+                and why it must never be defaulted to `false` by a client. Applies uniformly to every asset
+                kind, because a favorite is keyed on the polymorphic (asset_kind, asset_id) pair.
+                The identity is taken from the security context only — never from this request — so a caller
+                can never read another user's favorites; under `auth.type=DISABLED` there is no principal and
+                all callers share one instance-wide bucket.
 
     RecentlyViewedAssetList:
       type: object

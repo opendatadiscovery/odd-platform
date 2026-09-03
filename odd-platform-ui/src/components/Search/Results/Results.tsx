@@ -88,6 +88,16 @@ const Results: React.FC = () => {
     [location.search]
   );
 
+  // ST-7 (#1841) — with the Favorites scope on, an empty result is almost always "you have not starred
+  // anything (matching this)", not "the catalog has nothing". The retired Favorites tab used its empty state
+  // to TEACH the star to a first-time user; a bare "No matches found" here would drop that teaching on the
+  // floor, which is how retiring a surface quietly loses a feature. Reuses the tab's exact string (already
+  // translated in all 7 locales).
+  const isFavoritesScope = React.useMemo(
+    () => paramsToSearchState(location.search).favorites === 'yes',
+    [location.search]
+  );
+
   const fetchNextPage = React.useCallback(() => {
     // ST-5b keyset: the first page is fired by the settle-effect (no cursor); scroll extends it by passing
     // back the server's opaque nextCursor. No cursor yet (or no further pages) ⇒ nothing to fetch.
@@ -192,7 +202,11 @@ const Results: React.FC = () => {
             <EmptyContentPlaceholder
               isContentLoaded={!isAssetSearchLoading}
               isContentEmpty={!searchResults.length}
-              text={t('No matches found')}
+              text={
+                isFavoritesScope
+                  ? t('Star an asset to pin it here.')
+                  : t('No matches found')
+              }
             />
           </>
         )}

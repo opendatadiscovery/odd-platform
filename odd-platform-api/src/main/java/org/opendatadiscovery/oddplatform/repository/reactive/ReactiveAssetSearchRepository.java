@@ -5,6 +5,7 @@ import org.opendatadiscovery.oddplatform.dto.AssetSearchCursor;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchPageRow;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchScope;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
+import org.opendatadiscovery.oddplatform.dto.FavoritesScopeDto;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -33,23 +34,25 @@ public interface ReactiveAssetSearchRepository {
      * range-starts (ST-5b step-0 spike). {@code cursor == null} = the first page (no seek). The caller fetches
      * {@code limit + 1} to derive {@code hasNext} + the next cursor.
      *
-     * @param cursor the keyset position of the last row of the previous page, or {@code null} for the first page
+     * @param cursor    the keyset position of the last row of the previous page, or {@code null} for the first page
+     * @param favorites the caller's favorites narrowing, or {@code null} for none (ST-7 / #1841)
      */
     Flux<AssetSearchPageRow> keysetPage(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
-                                        AssetSearchCursor cursor, int limit);
+                                        FavoritesScopeDto favorites, AssetSearchCursor cursor, int limit);
 
     /**
      * An offset page for the relevance sort ({@code ts_rank} is computed per query, not a stored seekable column,
      * so it cannot be keyset-paged — ADR D12). The service bounds {@code offset} by the relevance depth cap.
      */
     Flux<AssetSearchPageRow> relevancePage(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
-                                           int offset, int limit);
+                                           FavoritesScopeDto favorites, int offset, int limit);
 
     /**
      * The total number of matches for the same predicates as the page queries (display metadata; offset-independent,
      * so its cost is constant vs page depth and does not affect the keyset deep-page guarantee).
      */
-    Mono<Long> count(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope);
+    Mono<Long> count(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
+                     FavoritesScopeDto favorites);
 
     /**
      * Re-snapshots the denormalised {@code popularity_score} on {@code asset_search_entrypoint} from the current
