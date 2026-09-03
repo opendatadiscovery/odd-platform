@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.9"
 services:
   database:
     image: postgres:13.2-alpine
@@ -9,6 +9,11 @@ services:
       - POSTGRES_DATABASE=${POSTGRES_DATABASE}
     ports:
       - 5432:5432
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 30
 
   odd-platform:
     image: ghcr.io/opendatadiscovery/odd-platform:latest
@@ -18,9 +23,20 @@ services:
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     ports:
       - 8080:8080
+    # A first start applies the whole migration set against an empty database, so
+    # readiness is a minute or so away. `curl -f` follows Spring's own verdict:
+    # it fails on a refused connection while the port is unbound, and on the 503
+    # the health endpoint serves until the platform is UP.
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:8080/actuator/health']
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 30s
 
   odd-platform-enricher:
     image: python:3.9.12-alpine3.15
@@ -34,7 +50,8 @@ services:
       - PLATFORM_HOST_URL=${PLATFORM_HOST_URL}
       - PYTHONUNBUFFERED=1
     depends_on:
-      - odd-platform
+      odd-platform:
+        condition: service_healthy
 
   sample-postgresql:
     image: postgres:13.2-alpine
@@ -58,4 +75,7 @@ services:
       - SAMPLE_POSTGRES_DATABASE=${SAMPLE_POSTGRES_DATABASE}
       - SAMPLE_POSTGRES_PASSWORD=${SAMPLE_POSTGRES_PASSWORD}
     depends_on:
-      - sample-postgresql
+      sample-postgresql:
+        condition: service_started
+      odd-platform:
+        condition: service_healthy

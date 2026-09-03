@@ -1,5 +1,5 @@
 {
-  "data_source_oddrn": "//s3/cloud",
+  "data_source_oddrn": "//s3/cloud/aws",
   "items": [
     {
       "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw",
