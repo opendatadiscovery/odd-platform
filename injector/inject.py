@@ -2,12 +2,47 @@ import glob
 import json
 import os
 import requests
+import sys
 import time
-from typing import Union, Dict, Any, Tuple, List
+from typing import Union, Dict, Any, NoReturn, Tuple, List
 
-REACH_TRIES_NUMBER = 20
+
+def env_int(name: str, default: int) -> int:
+    raw = os.getenv(name)
+    if not raw:
+        return default
+    try:
+        return int(raw)
+    except ValueError:
+        print(f"{name}={raw!r} is not a number, using {default}")
+        return default
+
+
+def die(message: str) -> NoReturn:
+    # Every FATAL path ends here rather than in a raise: a give-up message that names
+    # the cause and the remedy is worth nothing wrapped in a Python traceback, which
+    # is what an operator saw before. Same shape validate_samples() already uses.
+    print("")
+    print(message)
+    sys.exit(1)
+
+
+def env_flag(name: str) -> bool:
+    # Anything other than an explicit truthy word is false. A plain
+    # `os.getenv(name) or False` reads *any* non-empty string as true, so
+    # DATA_SOURCES_ONLY=false used to mean "data sources only".
+    return (os.getenv(name) or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+# A cold first start is slow: the platform applies its whole migration set
+# against an empty database before it serves anything. Under docker-compose the
+# enricher waits for the platform's healthcheck and this budget is never
+# reached; it is what keeps the script safe when it is run on its own.
+REACH_TRIES_NUMBER = env_int("REACH_TRIES_NUMBER", 60)
+REACH_RETRY_DELAY_SECONDS = env_int("REACH_RETRY_DELAY_SECONDS", 5)
+REACH_TIMEOUT_SECONDS = 5
 SAMPLE_PATH = os.getenv("SAMPLE_PATH") or "/samples"
-DATA_SOURCES_ONLY = os.getenv("DATA_SOURCES_ONLY") or False
+DATA_SOURCES_ONLY = env_flag("DATA_SOURCES_ONLY")
 
 platform_host_url = os.environ["PLATFORM_HOST_URL"]
 print(f"Platform host url: {platform_host_url}")
@@ -24,15 +59,98 @@ def read_datasources_json() -> List[Dict[str, Any]]:
         return json.loads(f.read())
 
 
+def read_samples() -> List[Tuple[str, str, Dict[str, Any]]]:
+    payload_files = sorted(glob.glob(f"{SAMPLE_PATH}/samples/*.json"))
+    return [(payload_file,) + read_sample_json(payload_file) for payload_file in payload_files]
+
+
+def validate_samples(samples: List[Tuple[str, str, Dict[str, Any]]],
+                     data_sources: Dict[str, Dict[str, Union[str, bool]]]) -> None:
+    # Every sample must name a data source that datasources.json defines: an
+    # unmatched sample is never created and never injected, so the catalog ends
+    # up quietly smaller than the sample set promises. The reverse is not an
+    # error - a data source nothing references is unused, but it loses nothing.
+    unknown = [(payload_file, ds_oddrn) for payload_file, ds_oddrn, _ in samples
+               if ds_oddrn not in data_sources]
+
+    if not unknown:
+        return
+
+    print("")
+    print(f"{len(unknown)} of {len(samples)} samples name a data source that is not defined in "
+          f"{SAMPLE_PATH}/datasources/datasources.json:")
+    for payload_file, ds_oddrn in unknown:
+        print(f"  - {payload_file} wants {ds_oddrn}")
+    print("Nothing has been injected. Either add the data source or correct the sample's "
+          "data_source_oddrn, then run again.")
+    sys.exit(1)
+
+
+def wait_until_healthy() -> None:
+    for attempt in range(1, REACH_TRIES_NUMBER + 1):
+        print(f"Waiting for the platform to be able to receive requests: "
+              f"attempt {attempt} of {REACH_TRIES_NUMBER}")
+
+        try:
+            hc_response = requests.get(f"{platform_host_url}/actuator/health",
+                                       timeout=REACH_TIMEOUT_SECONDS)
+        except requests.exceptions.RequestException as e:
+            print(f"Couldn't reach the platform: {e}")
+            time.sleep(REACH_RETRY_DELAY_SECONDS)
+            continue
+
+        try:
+            status = hc_response.json().get('status')
+        except ValueError:
+            # Still booting: something is listening, but it isn't the health endpoint yet.
+            status = None
+
+        if status == 'UP':
+            return
+
+        print(f"Platform's not healthy yet (HTTP {hc_response.status_code})")
+        time.sleep(REACH_RETRY_DELAY_SECONDS)
+
+    die(
+        f"Couldn't reach the platform at {platform_host_url} in {REACH_TRIES_NUMBER} tries "
+        f"(~{REACH_TRIES_NUMBER * REACH_RETRY_DELAY_SECONDS}s). A first start is slow because the "
+        f"platform applies its whole database migration set against an empty database before it "
+        f"serves anything - check the platform's own logs to see whether it is still starting. If "
+        f"it simply needs longer here, raise REACH_TRIES_NUMBER or REACH_RETRY_DELAY_SECONDS."
+    )
+
+
+def api_json(response: requests.Response, what: str) -> Dict[str, Any]:
+    # `requests` FOLLOWS redirects by default, so a status check alone is not a
+    # guard: an auth-gated platform answers /api/** with 302 -> /login, requests
+    # follows it, and the login PAGE comes back as a perfectly good 200 text/html.
+    # The old code checked only the (redirected) status and then called .json(),
+    # which raised JSONDecodeError("Expecting value: line 1 column 1") out of the
+    # module - a traceback where a sentence belonged.
+    if response.history:
+        die(
+            f"Couldn't {what}: the platform redirected to {response.url}. That is what an "
+            f"auth-gated platform does to an unauthenticated caller, and the injector sends no "
+            f"credentials - point it at a platform running auth.type=DISABLED (the demo default), "
+            f"or inject with a collector token instead."
+        )
+
+    if response.status_code != 200:
+        die(f"Couldn't {what}: HTTP {response.status_code} {response.text[:500]}")
+
+    try:
+        return response.json()
+    except ValueError:
+        content_type = response.headers.get("Content-Type", "no Content-Type")
+        die(f"Couldn't {what}: HTTP 200 carried {content_type}, not JSON: {response.text[:200]!r}")
+
+
 def fetch_existing_datasources() -> List[Dict[str, Any]]:
     response = requests.get(
         url=f"{platform_host_url}/api/datasources?page=1&size=1000",
     )
 
-    if response.status_code != 200:
-        raise Exception(f"Couldn't fetch data sources")
-
-    return response.json()['items']
+    return api_json(response, "fetch data sources")['items']
 
 
 def create_data_source_and_retrieve_token(ds: Dict[str, Union[str, bool]]) -> str:
@@ -42,10 +160,7 @@ def create_data_source_and_retrieve_token(ds: Dict[str, Union[str, bool]]) -> st
         headers={"Content-Type": "application/json"}
     )
 
-    if response.status_code != 200:
-        raise Exception(f"Couldn't create data source {ds}")
-
-    return response.json()['token']['value']
+    return api_json(response, f"create data source {ds['oddrn']}")['token']['value']
 
 
 def inject_data(data: Dict[str, Any], token: str):
@@ -55,45 +170,34 @@ def inject_data(data: Dict[str, Any], token: str):
         json=data
     )
 
+    # A redirect must fail here too, and loudly: requests follows it, the login page
+    # answers 200, and an unguarded status check would report a successful injection
+    # for a sample that was never delivered - success reported while under-delivering,
+    # which is the one thing this script must never do again.
+    if response.history:
+        raise Exception(f"redirected to {response.url} - the platform requires authentication "
+                        f"and the injector sends no credentials")
+
     if response.status_code != 200:
-        raise Exception(f"Couldn't inject data for {data['data_source_oddrn']}")
+        raise Exception(f"HTTP {response.status_code} {response.text[:500]}")
 
 
 data_sources_grouped = {ds["oddrn"]: ds for ds in read_datasources_json()}
+samples = read_samples()
 
-healthy = False
-for i in range(0, REACH_TRIES_NUMBER):
-    print(f"Waiting for the platform to be able to receive requests: {REACH_TRIES_NUMBER - i}")
+# Before the wait, not after: a sample set that cannot be delivered should cost a
+# second, not the whole readiness budget.
+validate_samples(samples, data_sources_grouped)
 
-    try:
-        hc_response = requests.get(f"{platform_host_url}/actuator/health")
-    except requests.exceptions.ConnectionError:
-        print("Couldn't reach the platform")
-        time.sleep(2)
-        continue
+wait_until_healthy()
 
-    if hc_response.json().get('status') != 'UP':
-        print("Platform's not healthy yet")
-        time.sleep(2)
-        continue
-
-    healthy = True
-    break
-
-if not healthy:
-    raise Exception(f"Couldn't reach the platform in {REACH_TRIES_NUMBER} tries")
-
-print("Starting to injecting metadata")
+print("Starting to inject metadata")
 existing_datasources_grouped = {ds['oddrn']: ds for ds in fetch_existing_datasources()}
 
-payload_files = sorted(glob.glob(f"{SAMPLE_PATH}/samples/*.json"))
+failures: List[Tuple[str, str, str]] = []
 
-for payload_file in payload_files:
-    ds_oddrn, metadata = read_sample_json(payload_file)
-    ds_form = data_sources_grouped.get(ds_oddrn)
-    if not ds_form:
-        print(f"Skipping {ds_oddrn}. Define DataSourceFormData in order to inject from the json file")
-        continue
+for payload_file, ds_oddrn, metadata in samples:
+    ds_form = data_sources_grouped[ds_oddrn]
 
     ds_token = "None"
     if ds_form['oddrn'] in existing_datasources_grouped:
@@ -106,6 +210,14 @@ for payload_file in payload_files:
         try:
             inject_data(metadata, ds_token)
             print(f"{ds_oddrn}: Data source has been injected with JSON sample from {payload_file}")
-        except:
-            print(f"Couldn't inject data for {ds_oddrn} from {payload_file}. "
-                  f"Possibly the 'ingestion.filter.enabled' property is set to 'true'")
+        except Exception as e:
+            failures.append((payload_file, ds_oddrn, str(e)))
+            print(f"Couldn't inject data for {ds_oddrn} from {payload_file}: {e}")
+
+if failures:
+    print("")
+    print(f"{len(failures)} of {len(samples)} samples were NOT injected - the catalog is incomplete:")
+    for payload_file, ds_oddrn, error in failures:
+        print(f"  - {payload_file} ({ds_oddrn}): {error}")
+    print("The message above is the platform's own response. If it mentions authentication, check "
+          "whether auth.ingestion.filter.enabled is on; the sample data carries no ingestion token.")
