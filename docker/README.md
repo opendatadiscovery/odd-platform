@@ -14,7 +14,9 @@ This environment consists of:
 
 * Docker Engine 19.03.0+
 * `docker compose` v2 (any version), or `docker-compose` 1.27.0+ — the stack waits on service
-  healthchecks (`depends_on: condition: service_healthy`), which older `docker-compose` releases do not support
+  healthchecks (`depends_on: condition: service_healthy`), which older `docker-compose` releases do not support.
+  The commands on this page are written for the `docker-compose` binary; with the v2 plugin they run
+  unchanged as `docker compose …`.
 
 ## Step 1: Configuring and running ODD Platform with a metadata sample in it
 
