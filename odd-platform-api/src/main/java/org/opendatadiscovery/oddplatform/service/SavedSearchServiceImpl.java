@@ -1,13 +1,20 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.JSONB;
+import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
+import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearch;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchList;
-import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.auth.CurrentUserIdentityResolver;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.exception.UniqueConstraintException;
@@ -23,6 +30,12 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class SavedSearchServiceImpl implements SavedSearchService {
     private static final int MAX_PAGE_SIZE = 100;
+    /** The wire names of the two enum-/type-sensitive fields a stored spec is sanitised on before binding. */
+    private static final String ASSET_KINDS_FIELD = "asset_kinds";
+    private static final String FAVORITES_FIELD = "favorites";
+    private static final Set<String> KNOWN_ASSET_KINDS = Arrays.stream(AssetKind.values())
+        .map(AssetKind::getValue)
+        .collect(Collectors.toUnmodifiableSet());
 
     private final CurrentUserIdentityResolver currentUserIdentityResolver;
     private final ReactiveSavedSearchRepository savedSearchRepository;
@@ -91,25 +104,68 @@ public class SavedSearchServiceImpl implements SavedSearchService {
             .updatedAt(dateTimeMapper.mapUTCDateTime(pojo.getUpdatedAt()));
     }
 
-    private JSONB serializeSpec(final SearchFormData spec) {
+    private JSONB serializeSpec(final AssetSearchFormData spec) {
         return JSONB.jsonb(JSONSerDeUtils.serializeJson(spec));
     }
 
     /**
-     * Fail-closed read: a corrupt or unreadable stored spec must never surface as a 500 while listing the
-     * user's saved searches — it degrades to an empty spec (the search that reapplies it then behaves like a
-     * fresh browse). We only ever write a valid {@link SearchFormData}, so this is a safety net, not a path.
+     * The stored spec is the full {@link AssetSearchFormData} (#1878 / ADR D11 — one canonical spec, two
+     * surfaces): rows saved before the widening carry neither {@code asset_kinds} nor {@code favorites} and read
+     * back with both {@code null} (= no narrowing), so they reapply exactly as before.
+     *
+     * <p>Two layers of fail-closed, deliberately different in grain:
+     * <ul>
+     *   <li><b>Per token</b> — {@code asset_kinds} is an enum list and {@code favorites} a boolean; a stored
+     *   token that no longer exists (a renamed / removed {@link AssetKind}) or a value of the wrong type must
+     *   cost the saved search that one field, NOT the whole search. So the jsonb is read as a tree and those
+     *   two fields are sanitised before binding: unknown kinds are dropped, a non-array {@code asset_kinds} or
+     *   a non-boolean {@code favorites} is removed. This is the posture {@code sort} and {@code my_data}
+     *   already have (an unknown token degrades gracefully instead of failing the request).</li>
+     *   <li><b>Whole document</b> — malformed / unreadable jsonb still degrades to an empty spec (the search
+     *   that reapplies it behaves like a fresh browse) and never surfaces as a 500 while listing.</li>
+     * </ul>
      */
-    private SearchFormData deserializeSpec(final JSONB spec) {
+    private AssetSearchFormData deserializeSpec(final JSONB spec) {
         if (spec == null) {
-            return new SearchFormData();
+            return new AssetSearchFormData();
         }
         try {
-            final SearchFormData parsed = JSONSerDeUtils.deserializeJson(spec.data(), SearchFormData.class);
-            return parsed != null ? parsed : new SearchFormData();
-        } catch (final RuntimeException e) {
+            final JsonNode tree = JSONSerDeUtils.readTree(spec.data());
+            if (tree == null || !tree.isObject()) {
+                return new AssetSearchFormData();
+            }
+            sanitiseSpecTree((ObjectNode) tree);
+            final AssetSearchFormData parsed = JSONSerDeUtils.treeToValue(tree, AssetSearchFormData.class);
+            return parsed != null ? parsed : new AssetSearchFormData();
+        } catch (final Exception e) {
             log.warn("Unreadable saved-search spec; returning an empty spec (fail-closed): {}", e.getMessage());
-            return new SearchFormData();
+            return new AssetSearchFormData();
+        }
+    }
+
+    /** Drop unknown {@code asset_kinds} tokens and a mistyped {@code favorites} — field-level, never the spec. */
+    private void sanitiseSpecTree(final ObjectNode spec) {
+        final JsonNode kinds = spec.get(ASSET_KINDS_FIELD);
+        if (kinds != null && !kinds.isNull()) {
+            if (kinds.isArray()) {
+                final ArrayNode kept = spec.arrayNode();
+                for (final JsonNode kind : kinds) {
+                    if (kind.isTextual() && KNOWN_ASSET_KINDS.contains(kind.asText())) {
+                        kept.add(kind);
+                    } else {
+                        log.warn("Saved-search spec carries an unknown asset kind {}; dropping it", kind);
+                    }
+                }
+                spec.set(ASSET_KINDS_FIELD, kept);
+            } else {
+                log.warn("Saved-search spec carries a non-list asset_kinds ({}); dropping it", kinds.getNodeType());
+                spec.remove(ASSET_KINDS_FIELD);
+            }
+        }
+        final JsonNode favorites = spec.get(FAVORITES_FIELD);
+        if (favorites != null && !favorites.isNull() && !favorites.isBoolean()) {
+            log.warn("Saved-search spec carries a non-boolean favorites ({}); dropping it", favorites.getNodeType());
+            spec.remove(FAVORITES_FIELD);
         }
     }
 

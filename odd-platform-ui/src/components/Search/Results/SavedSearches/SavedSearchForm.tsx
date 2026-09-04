@@ -11,7 +11,10 @@ import {
   getSavedSearchCreatingStatuses,
   getSavedSearchUpdatingStatuses,
 } from 'redux/selectors';
-import { paramsToSearchState, searchUrlStateToFormData } from 'lib/search/searchUrlState';
+import {
+  paramsToSearchState,
+  searchUrlStateToAssetSearchFormData,
+} from 'lib/search/searchUrlState';
 
 interface SavedSearchFormProps {
   // The trigger element — cloned with an onClick that opens the dialog (the DialogWrapper contract).
@@ -26,9 +29,11 @@ interface SavedSearchFormValues {
 
 /**
  * ST-3 / ADR D11 — one component does create-OR-rename for a saved search, mirroring NamespaceForm
- * (react-hook-form + Controller + Input inside a DialogWrapper). CREATE captures the CURRENT main search
- * (query + facets + myObjects + sort) as a SearchFormData from the canonical param URL (D10). RENAME edits
- * only the name and preserves the item's stored spec — a rename never re-captures the live URL.
+ * (react-hook-form + Controller + Input inside a DialogWrapper). CREATE captures the CURRENT main search —
+ * the COMPLETE one: query + facets + the My-data scope + sort + asset kinds + favorites — as the same
+ * `AssetSearchFormData` the search request sends, from the canonical param URL (D10 / D11; #1878 closed the gap
+ * where the saved spec was the narrower `SearchFormData` and silently dropped the last two). RENAME edits only
+ * the name and preserves the item's stored spec — a rename never re-captures the live URL.
  */
 const SavedSearchForm: React.FC<SavedSearchFormProps> = ({ btnEl, savedSearch }) => {
   const { t } = useTranslation();
@@ -67,7 +72,11 @@ const SavedSearchForm: React.FC<SavedSearchFormProps> = ({ btnEl, savedSearch })
               name: trimmedName,
               // Capture the CURRENT main search from the URL — the canonical source of truth (D10).
               // NOT the getSearchUrlState selector: it omits `sort`, which would drop the active ordering.
-              spec: searchUrlStateToFormData(paramsToSearchState(location.search)),
+              // The FULL request projection (#1878): `searchUrlStateToFormData` would drop asset_kinds +
+              // favorites exactly the way the old contract did.
+              spec: searchUrlStateToAssetSearchFormData(
+                paramsToSearchState(location.search)
+              ),
             },
           })
         )

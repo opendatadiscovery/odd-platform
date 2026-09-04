@@ -1,15 +1,18 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.jooq.JSONB;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
+import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearch;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.auth.CurrentUserIdentityResolver;
 import org.opendatadiscovery.oddplatform.dto.security.UserDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -98,6 +101,90 @@ class SavedSearchServiceImplTest {
             })
             .verifyComplete();
         verify(repository).list("alice", "google", 0, 100);
+    }
+
+    /**
+     * #1878 (ADR D11 — one canonical spec, two surfaces): the persisted spec is the FULL AssetSearchFormData, so
+     * the two URL-only dimensions survive create -> stored jsonb -> read back. `favorites=false` is a REAL
+     * filter (only un-starred assets) and must round-trip as false, never be normalised away. On main before the
+     * widening the payload type could not even carry the fields (a compile-RED, the honest RED for a contract
+     * widening); the behaviour RED is the web test's 201-without-the-keys.
+     */
+    @Test
+    void create_persistsAssetKindsAndFavorites_andReadsThemBack() {
+        identity();
+        when(repository.existsByName("alice", "google", "stars", null)).thenReturn(Mono.just(false));
+        final ArgumentCaptor<JSONB> stored = ArgumentCaptor.forClass(JSONB.class);
+        when(repository.create(eq("alice"), eq("google"), eq("stars"), stored.capture()))
+            .thenAnswer(inv -> Mono.just(pojo(1L, "stars", stored.getValue().data())));
+
+        final SavedSearchFormData form = new SavedSearchFormData().name("stars").spec(new AssetSearchFormData()
+            .query("orders").sort("name").favorites(false).assetKinds(List.of(AssetKind.TERM, AssetKind.DATA_ENTITY)));
+
+        StepVerifier.create(service.create(form))
+            .assertNext(saved -> {
+                assertThat(saved.getSpec().getQuery()).isEqualTo("orders");
+                assertThat(saved.getSpec().getSort()).isEqualTo("name");
+                assertThat(saved.getSpec().getFavorites()).isFalse();
+                assertThat(saved.getSpec().getAssetKinds()).containsExactly(AssetKind.TERM, AssetKind.DATA_ENTITY);
+            })
+            .verifyComplete();
+        // The jsonb itself carries the two wire keys — the contract gap #1878 describes was exactly their absence.
+        assertThat(stored.getValue().data()).contains("\"asset_kinds\":[\"TERM\",\"DATA_ENTITY\"]")
+            .contains("\"favorites\":false");
+    }
+
+    /**
+     * A row saved BEFORE the widening carries neither key: it must read back with both null (= no narrowing)
+     * and reapply exactly as it did — compatibility is a requirement, not a hope (#1878 R5).
+     */
+    @Test
+    void list_rowSavedBeforeTheWidening_readsBackWithNoNarrowing() {
+        identity();
+        when(repository.list("alice", "google", 0, 30))
+            .thenReturn(Flux.just(pojo(2L, "old", "{\"query\":\"orders\",\"sort\":\"name\",\"filters\":{}}")));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(1L));
+
+        StepVerifier.create(service.list(1, 30))
+            .assertNext(list -> {
+                final AssetSearchFormData spec = list.getItems().get(0).getSpec();
+                assertThat(spec.getQuery()).isEqualTo("orders");
+                assertThat(spec.getSort()).isEqualTo("name");
+                assertThat(spec.getAssetKinds()).isNull();
+                assertThat(spec.getFavorites()).isNull();
+            })
+            .verifyComplete();
+    }
+
+    /**
+     * Fail-closed PER TOKEN, not per spec (#1878 R6-BE): a stored asset kind that no longer exists, or a
+     * favorites value of the wrong type, costs the saved search that one field — the query and the rest of the
+     * search survive. Before this change the whole spec would have degraded to empty (the enum deserialiser
+     * throws), which for a saved search is data loss dressed as safety. Mirrors the `sort` / `my_data` posture.
+     */
+    @Test
+    void list_unknownKindTokenOrMistypedFavorites_dropsTheFieldNotTheSearch() {
+        identity();
+        final String staleKind =
+            "{\"query\":\"q\",\"asset_kinds\":[\"BOGUS\",\"TERM\"],\"favorites\":\"yes\",\"filters\":{}}";
+        final String kindsNotAList =
+            "{\"query\":\"q2\",\"asset_kinds\":\"TERM\",\"favorites\":true,\"filters\":{}}";
+        when(repository.list("alice", "google", 0, 30)).thenReturn(Flux.just(
+            pojo(3L, "stale-kind", staleKind), pojo(4L, "kinds-not-a-list", kindsNotAList)));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(2L));
+
+        StepVerifier.create(service.list(1, 30))
+            .assertNext(list -> {
+                final AssetSearchFormData stale = list.getItems().get(0).getSpec();
+                assertThat(stale.getQuery()).isEqualTo("q");
+                assertThat(stale.getAssetKinds()).containsExactly(AssetKind.TERM);
+                assertThat(stale.getFavorites()).isNull();
+                final AssetSearchFormData notAList = list.getItems().get(1).getSpec();
+                assertThat(notAList.getQuery()).isEqualTo("q2");
+                assertThat(notAList.getAssetKinds()).isNull();
+                assertThat(notAList.getFavorites()).isTrue();
+            })
+            .verifyComplete();
     }
 
     @Test
@@ -191,7 +278,7 @@ class SavedSearchServiceImplTest {
     }
 
     private static SavedSearchFormData form(final String name, final String query) {
-        return new SavedSearchFormData().name(name).spec(new SearchFormData().query(query));
+        return new SavedSearchFormData().name(name).spec(new AssetSearchFormData().query(query));
     }
 
     private static SavedSearchPojo pojo(final Long id, final String name, final String specJson) {

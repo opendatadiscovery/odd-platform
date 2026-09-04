@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearch;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchList;
-import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.service.SavedSearchService;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
@@ -96,7 +96,7 @@ class SavedSearchControllerTest {
     }
 
     private static SavedSearchFormData form(final String name) {
-        return new SavedSearchFormData().name(name).spec(new SearchFormData());
+        return new SavedSearchFormData().name(name).spec(new AssetSearchFormData());
     }
 
     private static MockServerWebExchange exchange() {

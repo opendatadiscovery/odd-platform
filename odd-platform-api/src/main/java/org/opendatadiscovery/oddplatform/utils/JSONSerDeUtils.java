@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -51,6 +52,20 @@ public class JSONSerDeUtils {
         } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Parse JSON text into a tree on the shared (snake_case) mapper, for callers that must SANITISE a stored
+     * document field-by-field before binding it to a typed model — e.g. a persisted jsonb whose enum tokens may
+     * have gone stale (#1878: a saved-search spec). Throws {@link JsonProcessingException} on malformed text.
+     */
+    public static JsonNode readTree(final String data) throws JsonProcessingException {
+        return OBJECT_MAPPER.readTree(data);
+    }
+
+    /** Bind a (sanitised) tree to a typed model on the shared mapper — the second half of {@link #readTree}. */
+    public static <T> T treeToValue(final JsonNode node, final Class<T> clazz) throws JsonProcessingException {
+        return OBJECT_MAPPER.treeToValue(node, clazz);
     }
 
     public static <T> String serializeJson(final T object) {
