@@ -130,13 +130,13 @@ public class SavedSearchServiceImpl implements SavedSearchService {
             return new AssetSearchFormData();
         }
         try {
+            // readTree never returns null (empty content is a MissingNode, which is not an object).
             final JsonNode tree = JSONSerDeUtils.readTree(spec.data());
-            if (tree == null || !tree.isObject()) {
+            if (!tree.isObject()) {
                 return new AssetSearchFormData();
             }
             sanitiseSpecTree((ObjectNode) tree);
-            final AssetSearchFormData parsed = JSONSerDeUtils.treeToValue(tree, AssetSearchFormData.class);
-            return parsed != null ? parsed : new AssetSearchFormData();
+            return JSONSerDeUtils.treeToValue(tree, AssetSearchFormData.class);
         } catch (final Exception e) {
             log.warn("Unreadable saved-search spec; returning an empty spec (fail-closed): {}", e.getMessage());
             return new AssetSearchFormData();

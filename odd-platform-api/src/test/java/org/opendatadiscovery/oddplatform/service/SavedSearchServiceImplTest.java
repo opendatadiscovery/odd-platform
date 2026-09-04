@@ -166,15 +166,19 @@ class SavedSearchServiceImplTest {
     void list_unknownKindTokenOrMistypedFavorites_dropsTheFieldNotTheSearch() {
         identity();
         final String staleKind =
-            "{\"query\":\"q\",\"asset_kinds\":[\"BOGUS\",\"TERM\"],\"favorites\":\"yes\",\"filters\":{}}";
+            "{\"query\":\"q\",\"asset_kinds\":[\"BOGUS\",7,\"TERM\"],\"favorites\":\"yes\",\"filters\":{}}";
         final String kindsNotAList =
             "{\"query\":\"q2\",\"asset_kinds\":\"TERM\",\"favorites\":true,\"filters\":{}}";
+        final String explicitNulls =
+            "{\"query\":\"q3\",\"asset_kinds\":null,\"favorites\":null,\"filters\":{}}";
         when(repository.list("alice", "google", 0, 30)).thenReturn(Flux.just(
-            pojo(3L, "stale-kind", staleKind), pojo(4L, "kinds-not-a-list", kindsNotAList)));
-        when(repository.count("alice", "google")).thenReturn(Mono.just(2L));
+            pojo(3L, "stale-kind", staleKind), pojo(4L, "kinds-not-a-list", kindsNotAList),
+            pojo(5L, "explicit-nulls", explicitNulls)));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(3L));
 
         StepVerifier.create(service.list(1, 30))
             .assertNext(list -> {
+                // an unknown token AND a non-string element are both dropped; the known one survives
                 final AssetSearchFormData stale = list.getItems().get(0).getSpec();
                 assertThat(stale.getQuery()).isEqualTo("q");
                 assertThat(stale.getAssetKinds()).containsExactly(AssetKind.TERM);
@@ -183,6 +187,11 @@ class SavedSearchServiceImplTest {
                 assertThat(notAList.getQuery()).isEqualTo("q2");
                 assertThat(notAList.getAssetKinds()).isNull();
                 assertThat(notAList.getFavorites()).isTrue();
+                // explicit JSON nulls (what the server itself writes for an unset field) bind to null, untouched
+                final AssetSearchFormData nulls = list.getItems().get(2).getSpec();
+                assertThat(nulls.getQuery()).isEqualTo("q3");
+                assertThat(nulls.getAssetKinds()).isNull();
+                assertThat(nulls.getFavorites()).isNull();
             })
             .verifyComplete();
     }
