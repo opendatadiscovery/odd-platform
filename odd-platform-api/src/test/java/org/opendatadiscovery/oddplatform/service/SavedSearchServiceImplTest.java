@@ -187,6 +187,29 @@ class SavedSearchServiceImplTest {
             .verifyComplete();
     }
 
+    /**
+     * A stored spec that parses but is not a JSON object (an array, a scalar) has no fields to sanitise or bind:
+     * it degrades to the empty spec like unreadable text does — never a 500, never a throw in the list path.
+     */
+    @Test
+    void list_storedSpecThatIsNotAnObject_degradesToEmptySpec_neverThrows() {
+        identity();
+        when(repository.list("alice", "google", 0, 30)).thenReturn(Flux.just(
+            pojo(5L, "array", "[\"TERM\"]"), pojo(6L, "scalar", "\"orders\"")));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(2L));
+
+        StepVerifier.create(service.list(1, 30))
+            .assertNext(list -> {
+                assertThat(list.getItems()).hasSize(2);
+                for (final SavedSearch item : list.getItems()) {
+                    assertThat(item.getSpec()).isNotNull();
+                    assertThat(item.getSpec().getQuery()).isNull();
+                    assertThat(item.getSpec().getAssetKinds()).isNull();
+                }
+            })
+            .verifyComplete();
+    }
+
     @Test
     void list_unreadableStoredSpec_failsClosedToEmptySpec_neverThrows() {
         identity();
