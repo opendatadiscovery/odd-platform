@@ -532,8 +532,7 @@ components:
         max_views:
           type: integer
           format: int64
-          nullable: true
-          description: The highest view count in this band (2^(score+1) - 2). Null on the top band (score 20), which is open above 1,048,575 views.
+          description: The highest view count in this band (2^(score+1) - 2). ABSENT on the top band (score 20), which is open above 1,048,575 views — an open end is the field's absence, never a sentinel.
         count:
           type: integer
           format: int64
