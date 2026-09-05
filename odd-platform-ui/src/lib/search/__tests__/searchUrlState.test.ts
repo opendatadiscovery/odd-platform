@@ -324,6 +324,97 @@ describe('searchUrlState — favorites ⇄ URL params (ST-7 / #1841)', () => {
   });
 });
 
+describe('searchUrlState — popularity range ⇄ URL params (ST-9 / #1843)', () => {
+  it('round-trips a closed, an open-ended and a never-viewed range through the URL (identity)', () => {
+    expect(paramsToSearchState('?popularity_min=4&popularity_max=9')).toEqual(
+      state({ popularity: { min: 4, max: 9 } })
+    );
+    expect(searchStateToParams(state({ popularity: { min: 4, max: 9 } }))).toBe(
+      'popularity_max=9&popularity_min=4'
+    );
+    // an open end is simply absent — never serialised as the rail's current extreme (a bookmark must not freeze it)
+    expect(paramsToSearchState('?popularity_min=4')).toEqual(
+      state({ popularity: { min: 4 } })
+    );
+    expect(searchStateToParams(state({ popularity: { max: 2 } }))).toBe(
+      'popularity_max=2'
+    );
+    // THE FALSY-ZERO TRAP: 0 is a real bound ("never viewed") and must survive both directions
+    expect(paramsToSearchState('?popularity_min=0&popularity_max=0')).toEqual(
+      state({ popularity: { min: 0, max: 0 } })
+    );
+    expect(searchStateToParams(state({ popularity: { min: 0, max: 0 } }))).toBe(
+      'popularity_max=0&popularity_min=0'
+    );
+  });
+
+  it('omits both params when there is no range → the default state stays a clean URL', () => {
+    expect(searchStateToParams(state())).toBe('');
+    expect(paramsToSearchState('').popularity).toBeUndefined();
+  });
+
+  it('fails closed: a non-integer bound drops the WHOLE range; out-of-range integers are CLAMPED; an inverted range is dropped', () => {
+    expect(paramsToSearchState('?popularity_min=abc').popularity).toBeUndefined();
+    expect(
+      paramsToSearchState('?popularity_min=4&popularity_max=x').popularity
+    ).toBeUndefined();
+    expect(paramsToSearchState('?popularity_min=4.5').popularity).toBeUndefined();
+    expect(paramsToSearchState('?popularity_min=').popularity).toBeUndefined();
+    // clamped into [0, 20] — the chip then names the band the request actually runs
+    expect(paramsToSearchState('?popularity_min=99').popularity).toEqual({ min: 20 });
+    expect(paramsToSearchState('?popularity_max=-5').popularity).toEqual({ max: 0 });
+    // contradictory → no range (the UI never sends one; the server's own rule for a direct client is "empty")
+    expect(
+      paramsToSearchState('?popularity_min=10&popularity_max=2').popularity
+    ).toBeUndefined();
+    // a repeated scalar param: query-string keeps the LAST value (its bracket-separator format reserves arrays for
+    // `key[]`), so this is not junk but a plain "last wins" — the parser's array branch guards the stored-spec path
+    expect(paramsToSearchState('?popularity_min=1&popularity_min=2').popularity).toEqual({
+      min: 2,
+    });
+    // never throws on garbage
+    expect(() =>
+      paramsToSearchState('?popularity_min=%00&popularity_max=%FF')
+    ).not.toThrow();
+  });
+
+  it('is preserved alongside a faceted, sorted, kind-narrowed, scoped query (parse+serialise identity)', () => {
+    const s = state({
+      query: 'orders',
+      facets: { owners: [3], tags: [1, 2] },
+      myData: ['MY_OBJECTS'],
+      sort: 'popularity',
+      assetKinds: [AssetKind.DATA_ENTITY],
+      favorites: 'yes',
+      popularity: { min: 2, max: 6 },
+    });
+    expect(paramsToSearchState(`?${searchStateToParams(s)}`)).toEqual(s);
+  });
+
+  it('rides the cross-kind request as the same {min, max} scores, and stays ABSENT when unset', () => {
+    expect(
+      searchUrlStateToAssetSearchFormData(state({ popularity: { min: 4, max: 9 } }))
+        .popularity
+    ).toEqual({ min: 4, max: 9 });
+    expect(
+      searchUrlStateToAssetSearchFormData(state({ popularity: { min: 0, max: 0 } }))
+        .popularity
+    ).toEqual({ min: 0, max: 0 });
+    expect(searchUrlStateToAssetSearchFormData(state()).popularity).toBeUndefined();
+  });
+
+  it('is NOT carried onto the legacy SearchFormData — the unified path owns it (ADR D9)', () => {
+    expect(
+      searchUrlStateToFormData(state({ popularity: { min: 1 } }))
+    ).not.toHaveProperty('popularity');
+  });
+
+  it('accepts the fifth sort token, popularity', () => {
+    expect(paramsToSearchState('?sort=popularity').sort).toBe('popularity');
+    expect(searchStateToParams(state({ sort: 'popularity' }))).toBe('sort=popularity');
+  });
+});
+
 describe('sort defaults + fail-closed resolution (ST-2b)', () => {
   it('defaultSortForContext: relevance when there is a query, status priority when browsing', () => {
     expect(defaultSortForContext('orders')).toBe('relevance');

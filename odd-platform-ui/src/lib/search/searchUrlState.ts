@@ -87,6 +87,35 @@ export type SearchFavoritesValue = 'yes' | 'no';
 
 const SEARCH_FAVORITES_VALUES: SearchFavoritesValue[] = ['yes', 'no'];
 
+/**
+ * The Popularity range params (ST-9 / #1843, ADR unified-asset-search D5) — a closed, inclusive range over the
+ * snapshotted popularity SCORE of a data entity: the 15-minute bucketed view-count band on the unified index,
+ * 0..20 (score s = views in [2^s − 1, 2^(s+1) − 2]; the server's facet response carries every band's exact view
+ * boundaries, which is what the user is shown — never the score). Two scalar URL-only params like the My-data
+ * depths (`?popularity_min=4&popularity_max=9`); an absent bound is open; absent both = no range. URL-only for the
+ * same reason `favorites` is: no server-aggregated facet in the legacy session, and it rides `AssetSearchFormData`.
+ *
+ * FAIL CLOSED, mirroring the server's `PopularityRangeDto`: a non-integer bound drops the WHOLE range (no filter —
+ * the junk is ignored on load and normalises away on the next mirror write, like `asset_kinds` junk); an
+ * out-of-range integer is CLAMPED into [0, 20] (the depth precedent — the chip then names the clamped band the
+ * request actually runs); an inverted range (min > max after clamping) is dropped whole. The UI never SENDS an
+ * inverted range, so the server's contradictory-⇒-empty rule is reachable by direct API clients only.
+ *
+ * BEING URL-ONLY IS LOAD-BEARING: `Search.tsx`'s facet→URL mirror MUST merge these two params back (the #1858
+ * dropped-selection class — see the comment there).
+ */
+export const SEARCH_POPULARITY_MIN_PARAM = 'popularity_min';
+export const SEARCH_POPULARITY_MAX_PARAM = 'popularity_max';
+/** The score domain — mirrors `PopularityBands.MIN_SCORE/MAX_SCORE` server-side. */
+export const POPULARITY_MIN_SCORE = 0;
+export const POPULARITY_MAX_SCORE = 20;
+
+/** A popularity range in scores; at least one bound is set (a range with neither is represented as `undefined`). */
+export interface SearchPopularityRange {
+  min?: number;
+  max?: number;
+}
+
 /** The set of valid `asset_kinds` tokens — a parse-time allow-list so an unknown kind fails closed (dropped). */
 const VALID_ASSET_KINDS = new Set<string>(Object.values(AssetKind));
 
@@ -109,13 +138,20 @@ export const SEARCH_FACET_PARAMS: SearchFacetNames[] = [
 export type SearchUrlFacets = Partial<Record<SearchFacetNames, number[]>>;
 
 /**
- * The named orderings the global sort dropdown offers (ST-2b / #1836) — the four the server-side `sort` contract ships
- * (ST-2a / `SearchSortDto`): relevance, status priority, recently updated, name. "Most popular" is intentionally NOT
- * here (deferred to ST-5 — it needs the snapshotted popularity score; the live view-count signal is trivially
- * inflatable). The token is sent verbatim as `SearchFormData.sort` and matched case-insensitively server-side; an
- * unknown/absent value falls back to the per-context default (relevance for a text query, status priority for browse).
+ * The named orderings the global sort dropdown offers (ST-2b / #1836) — the server-side `sort` contract's tokens
+ * (ST-2a / `SearchSortDto`): relevance, status priority, recently updated, name, and — since ST-9 (#1843), on the
+ * ST-5c popularity snapshot — most popular (it was deliberately absent until that snapshot existed, because the
+ * live view-count signal is trivially inflatable and a write hotspot). The token is sent verbatim as
+ * `SearchFormData.sort` and matched case-insensitively server-side; an unknown/absent value falls back to the
+ * per-context default (relevance for a text query, status priority for browse). `popularity` is honoured by the
+ * cross-kind `/api/search/assets`; the legacy `/api/search` session resolves it to that same default.
  */
-export type SearchSortValue = 'relevance' | 'status_priority' | 'updated_at' | 'name';
+export type SearchSortValue =
+  | 'relevance'
+  | 'status_priority'
+  | 'updated_at'
+  | 'name'
+  | 'popularity';
 
 export interface SearchSortOption {
   value: SearchSortValue;
@@ -128,6 +164,7 @@ export const SEARCH_SORT_OPTIONS: SearchSortOption[] = [
   { value: 'status_priority', labelKey: 'Status priority' },
   { value: 'updated_at', labelKey: 'Recently updated' },
   { value: 'name', labelKey: 'Name' },
+  { value: 'popularity', labelKey: 'Most popular' },
 ];
 
 export const SEARCH_SORT_VALUES: SearchSortValue[] = SEARCH_SORT_OPTIONS.map(
@@ -188,6 +225,8 @@ export interface SearchUrlState {
   assetKinds?: AssetKind[];
   /** the Favorites scope (ST-7); undefined = no favorites narrowing */
   favorites?: SearchFavoritesValue;
+  /** the Popularity range in scores (ST-9); undefined = no popularity narrowing */
+  popularity?: SearchPopularityRange;
 }
 
 /**
@@ -248,6 +287,11 @@ export function searchStateToParams(state: SearchUrlState): string {
   // Serialised only when a narrowing is active (like `sort`): absent = no favorites filter, so the default
   // state stays a clean URL and the round-trip is byte-identical.
   if (state.favorites) params[SEARCH_FAVORITES_PARAM] = state.favorites;
+  // ST-9 — each bound only when set. `!== undefined`, not truthiness: a bound of 0 ("never viewed") is a real value.
+  if (state.popularity?.min !== undefined)
+    params[SEARCH_POPULARITY_MIN_PARAM] = state.popularity.min;
+  if (state.popularity?.max !== undefined)
+    params[SEARCH_POPULARITY_MAX_PARAM] = state.popularity.max;
   return stringify(params, QUERY_STRING_OPTIONS);
 }
 
@@ -269,6 +313,40 @@ function parseDepth(raw: unknown): number | undefined {
   return Number.isInteger(depth) && depth >= 1 && depth <= MY_DATA_MAX_DEPTH
     ? depth
     : undefined;
+}
+
+/**
+ * One popularity bound, FAIL CLOSED: `undefined` = absent (open); `null` = invalid (the caller drops the whole
+ * range); otherwise an integer clamped into [0, 20]. Only a string (the URL) or a number (a stored spec) can be a
+ * bound — an array (a repeated param) or an object is junk.
+ */
+function parsePopularityBound(raw: unknown): number | null | undefined {
+  if (raw === undefined || raw === null || raw === '') return undefined;
+  if (typeof raw !== 'string' && typeof raw !== 'number') return null;
+  const score = Number(raw);
+  if (!Number.isInteger(score)) return null;
+  return Math.max(POPULARITY_MIN_SCORE, Math.min(POPULARITY_MAX_SCORE, score));
+}
+
+/**
+ * The popularity range from two raw bounds (URL params or a stored spec's fields) — the ONE fail-closed reading
+ * both surfaces share, so a URL and a saved search can never disagree about what a range means (ADR D11). Junk in
+ * either bound, or an inverted range, yields `undefined` (no range) rather than a partial or contradictory filter.
+ * Never throws (IT-006: no error boundary in odd-platform-ui).
+ */
+export function parsePopularity(
+  rawMin: unknown,
+  rawMax: unknown
+): SearchPopularityRange | undefined {
+  const min = parsePopularityBound(rawMin);
+  const max = parsePopularityBound(rawMax);
+  if (min === null || max === null) return undefined;
+  if (min === undefined && max === undefined) return undefined;
+  if (min !== undefined && max !== undefined && min > max) return undefined;
+  return {
+    ...(min !== undefined ? { min } : {}),
+    ...(max !== undefined ? { max } : {}),
+  };
 }
 
 export function paramsToSearchState(search: string): SearchUrlState {
@@ -351,6 +429,12 @@ export function paramsToSearchState(search: string): SearchUrlState {
       ? (favoritesStr as SearchFavoritesValue)
       : undefined;
 
+    // ST-9 — the popularity range, fail-closed (see parsePopularity): junk or an inverted pair → no range.
+    const popularity = parsePopularity(
+      parsed[SEARCH_POPULARITY_MIN_PARAM],
+      parsed[SEARCH_POPULARITY_MAX_PARAM]
+    );
+
     return {
       query,
       facets,
@@ -360,6 +444,7 @@ export function paramsToSearchState(search: string): SearchUrlState {
       sort,
       assetKinds,
       favorites,
+      popularity,
     };
   } catch {
     return empty;
@@ -413,6 +498,9 @@ export function searchUrlStateToAssetSearchFormData(
     // `yes`/`no` → the wire's optional boolean. Absent stays absent: `favorites: false` is a REAL filter
     // (only assets the caller has NOT starred), so an absent scope must never be sent as `false`.
     favorites: state.favorites === undefined ? undefined : state.favorites === 'yes',
+    // ST-9 — the range rides the wire as the same {min, max} scores; absent stays absent (no key, so the
+    // server never sees an empty object it would have to treat as "no range").
+    popularity: state.popularity,
   };
 }
 
@@ -488,9 +576,19 @@ export function assetSearchFormDataToUrlState(
   const rawFavorites: unknown = formData?.favorites;
   const favorites: SearchFavoritesValue | undefined =
     rawFavorites === true ? 'yes' : rawFavorites === false ? 'no' : undefined;
+  // ST-9 — the stored range through the SAME fail-closed reading the URL uses (a stored spec is as untrusted as
+  // a URL): a non-object, a non-integer bound, or an inverted pair → no range, never a throw. A row saved before
+  // ST-9 carries no `popularity` and reapplies exactly as it did.
+  const rawRange: unknown = formData?.popularity;
+  const range =
+    rawRange && typeof rawRange === 'object' && !Array.isArray(rawRange)
+      ? (rawRange as { min?: unknown; max?: unknown })
+      : undefined;
+  const popularity = range ? parsePopularity(range.min, range.max) : undefined;
   return {
     ...base,
     ...(assetKinds.length > 0 ? { assetKinds } : {}),
     ...(favorites ? { favorites } : {}),
+    ...(popularity ? { popularity } : {}),
   };
 }

@@ -689,5 +689,21 @@
   "Request an Owner association on the main page": "Request an Owner association on the main page",
   "Words match from the start, so \"cust ord\" finds \"Customers Orders\". Refine with \"a quoted phrase\" for words that must be next to each other, -word to exclude, and or for alternatives. Operators narrow a search - they never turn off start-of-word matching on the other words.": "Words match from the start, so \"cust ord\" finds \"Customers Orders\". Refine with \"a quoted phrase\" for words that must be next to each other, -word to exclude, and or for alternatives. Operators narrow a search - they never turn off start-of-word matching on the other words.",
   "Favorites only": "Favorites only",
-  "Favorites (shared) only": "Favorites (shared) only"
+  "Favorites (shared) only": "Favorites (shared) only",
+  "Popularity": "Popularity",
+  "Data entities only": "Data entities only",
+  "Terms and query examples have no view count, so they are excluded while a Popularity range is active.": "Terms and query examples have no view count, so they are excluded while a Popularity range is active.",
+  "Based on each data entity's view count, grouped into ranges and refreshed every 15 minutes.": "Based on each data entity's view count, grouped into ranges and refreshed every 15 minutes.",
+  "Never viewed": "Never viewed",
+  "{{min}} – {{max}} views": "{{min}} – {{max}} views",
+  "{{min}}+ views": "{{min}}+ views",
+  "up to {{max}} views": "up to {{max}} views",
+  "No views recorded yet": "No views recorded yet",
+  "No data entities match your other filters": "No data entities match your other filters",
+  "Most popular": "Most popular",
+  "Popularity: {{range}}": "Popularity: {{range}}",
+  "Distribution of data entities by view count": "Distribution of data entities by view count",
+  "Minimum views": "Minimum views",
+  "Maximum views": "Maximum views",
+  "All {{total}} data entities have {{band}} views": "All {{total}} data entities have {{band}} views"
 }

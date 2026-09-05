@@ -19,6 +19,7 @@ import AssetTypeFilter from './AssetTypeFilter/AssetTypeFilter';
 import FavoritesFilter from './FavoritesFilter/FavoritesFilter';
 import MyDataFilter from './MyDataFilter/MyDataFilter';
 import DataEntityTypeFilter from './DataEntityTypeFilter/DataEntityTypeFilter';
+import PopularityFilter from './PopularityFilter/PopularityFilter';
 import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';
 import SingleFilterItem from './FilterItem/SingleFilterItem/SingleFilterItem';
 import * as S from './FiltersStyles';
@@ -31,7 +32,8 @@ const Filters: React.FC = () => {
 
   // The single "Clear All": clear the redux facets (Datasource / Type / Owner / Tag / Groups / Statuses AND
   // the entity-class Data-entity-type filter) AND the URL-only filters that are not redux facets —
-  // `asset_kinds` and, since ST-8 (#1842), the My-data scope + its per-direction depths. Query and sort are
+  // `asset_kinds`, since ST-8 (#1842) the My-data scope + its per-direction depths, the Favorites scope, and
+  // since ST-9 (#1843) the Popularity range (none of them survive the rebuild below). Query and sort are
   // preserved because they are not filters; the My-data scope IS one (it sits in this very panel), so unlike
   // the old My-Objects tab it is cleared. One navigate to the clean URL avoids a mirror race with the redux
   // clear.
@@ -93,6 +95,11 @@ const Filters: React.FC = () => {
         <MultipleFilterItem key='tg' facetName='tags' name={t('Tag')} />
         <MultipleFilterItem key='gr' facetName='groups' name={t('Groups')} />
         <MultipleFilterItem key='st' facetName='statuses' name={t('Statuses')} />
+        {/* ST-9 (#1843) — the Popularity range, the first non-categorical facet. It sits with the GLOBAL facets,
+            not with the two personal scopes above: popularity is catalog-wide (the same for every user, no identity
+            involved), so it never degrades under auth.type=DISABLED and carries no "(shared)" suffix. Its params are
+            URL-only and merged back by the Search.tsx mirror; cleared by the single Clear All. */}
+        <PopularityFilter />
         <S.FacetsLoaderContainer container sx={{ mt: 2 }}>
           {(isSearchUpdating || isDatasourceListFetching) && (
             <AppCircularProgress size={16} text={t('Updating filters')} />

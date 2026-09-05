@@ -56,7 +56,7 @@ const Search: React.FC = () => {
   }, [dispatch, navigate]);
 
   // ST-1 / ADR D10 — the URL is the source of truth for the whole search (query + facets + the My-data
-  // scope + sort + asset kinds). ST-1b
+  // scope + sort + asset kinds + the Popularity range). ST-1b
   // makes it authoritative for FACETS too: the reader CREATEs a fresh session per distinct URL state, because
   // the server's search() runs removeUnselected (a REPLACE), so the URL's selected id set is the complete,
   // authoritative facet spec — a plain updateFacets MERGEs a delta and could never REMOVE a facet the URL
@@ -102,9 +102,9 @@ const Search: React.FC = () => {
     //
     // EVERY URL-ONLY PARAM MUST BE LISTED HERE. Omitting one is invisible in review and at runtime: the
     // filter survives a page load and then vanishes the moment any unrelated facet is toggled, with no error.
-    // That is the #1858 bug class, which ST-7 and ST-8 both re-derived independently while adding to this
+    // That is the #1858 bug class, which ST-7, ST-8 and ST-9 all re-derived independently while adding to this
     // object — so the next slice that adds a URL-only param should expect to land here too. IT-148 pins the
-    // favorites case; the My-data case is pinned by ST-8's own IT.
+    // favorites case; the My-data case is pinned by ST-8's own IT; the Popularity range by IT-156 (ST-9).
 
     const live = paramsToSearchState(location.search);
     const nextParams = searchStateToParams({
@@ -116,6 +116,7 @@ const Search: React.FC = () => {
       upstreamDepth: live.upstreamDepth,
       downstreamDepth: live.downstreamDepth,
       favorites: live.favorites,
+      popularity: live.popularity,
     });
     if (nextParams !== location.search.replace(/^\?/, '')) {
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);

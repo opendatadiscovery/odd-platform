@@ -89,12 +89,19 @@ const OwnerEntitiesList: FC = () => {
       <S.DataEntityContainer container>
         <FavoritesColumn />
         <RecentlyViewedColumn />
+        {/* ST-9 (#1843 / ADR D8) — the Popular tile becomes a deep-link widget too: "View all" opens the catalog
+            search sorted by popularity (most viewed first) and narrowed to data entities that have been viewed
+            (popularity_min=1 — which also keeps terms / query examples, score 0, out of the list). The tile itself
+            still ranks by the LIVE exact view count while the search uses the 15-minute band snapshot, so within one
+            band the two orders can differ — documented in the manual's Popularity section; converging the tile onto
+            the snapshot is a separate change. */}
         <DataEntityList
           dataEntitiesList={popularEntities}
           entityListName={t('Popular')}
           entityListIcon={<PopularIcon />}
           isFetching={isPopularFetching}
           isNotFetched={isPopularNotFetched}
+          viewAllTo={buildSearchLink({ sort: 'popularity', popularity: { min: 1 } })}
         />
         {isOwnerBound && (
           <>

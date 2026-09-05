@@ -689,5 +689,21 @@
   "Request an Owner association on the main page": "在主页申请负责人关联",
   "Words match from the start, so \"cust ord\" finds \"Customers Orders\". Refine with \"a quoted phrase\" for words that must be next to each other, -word to exclude, and or for alternatives. Operators narrow a search - they never turn off start-of-word matching on the other words.": "搜索词按词首匹配，因此输入 \"cust ord\" 即可找到 \"Customers Orders\"。可用 \"带引号的短语\" 精确匹配相邻词组，用 -词 排除，用 or 表示任选其一。运算符只会缩小搜索范围，绝不会关闭其他词的词首匹配。",
   "Favorites only": "仅收藏",
-  "Favorites (shared) only": "仅收藏（共享）"
+  "Favorites (shared) only": "仅收藏（共享）",
+  "Popularity": "热度",
+  "Data entities only": "仅数据实体",
+  "Terms and query examples have no view count, so they are excluded while a Popularity range is active.": "术语和查询示例没有浏览次数，因此在热度范围生效时会被排除。",
+  "Based on each data entity's view count, grouped into ranges and refreshed every 15 minutes.": "基于每个数据实体的浏览次数，按范围分组，每 15 分钟刷新一次。",
+  "Never viewed": "从未浏览",
+  "{{min}} – {{max}} views": "{{min}} – {{max}} 次浏览",
+  "{{min}}+ views": "{{min}}+ 次浏览",
+  "up to {{max}} views": "最多 {{max}} 次浏览",
+  "No views recorded yet": "尚未记录任何浏览",
+  "No data entities match your other filters": "没有数据实体符合您的其他筛选条件",
+  "Most popular": "最热门",
+  "Popularity: {{range}}": "热度：{{range}}",
+  "Distribution of data entities by view count": "按浏览次数划分的数据实体分布",
+  "Minimum views": "最少浏览次数",
+  "Maximum views": "最多浏览次数",
+  "All {{total}} data entities have {{band}} views": "全部 {{total}} 个数据实体的浏览次数均为 {{band}}"
 }

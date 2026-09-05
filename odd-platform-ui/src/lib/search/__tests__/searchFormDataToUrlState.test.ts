@@ -81,7 +81,9 @@ describe('searchFormDataToUrlState — SearchFormData → URL state (ST-3 / D11)
   });
 
   it('fails closed on an unknown sort token → dropped to undefined (the per-context default)', () => {
-    const spec: SearchFormData = { query: 'x', sort: 'popularity', filters: {} };
+    // The fixture was `'popularity'` until ST-9 (#1843) made that a KNOWN token; `'garbage'` is the
+    // searchUrlState.test.ts idiom for "not in the allow-list" — the assertion is unchanged.
+    const spec: SearchFormData = { query: 'x', sort: 'garbage', filters: {} };
     expect(searchFormDataToUrlState(spec).sort).toBeUndefined();
   });
 
@@ -139,9 +141,15 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
     sort: 'name',
     assetKinds: ['TERM', 'QUERY_EXAMPLE'],
     favorites: 'yes',
+    // ST-9 (#1843) — the tenth dimension; a bound of 0 is a real value (the falsy-zero trap), so pin both ends.
+    popularity: { min: 1, max: 5 },
   };
 
-  /** The nine wire keys of AssetSearchFormData at #1878 — a regenerated tenth key must fail this, by design. */
+  /**
+   * The wire keys of AssetSearchFormData — nine at #1878, ten since ST-9 (#1843) added `popularity`. A regenerated
+   * eleventh key must fail this, by design: it means a dimension reached the request object without saved-search
+   * support (the LSN-042 class).
+   */
   const WIRE_KEYS = [
     'asset_kinds',
     'downstream_depth',
@@ -149,6 +157,7 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
     'filters',
     'my_data',
     'my_objects',
+    'popularity',
     'query',
     'sort',
     'upstream_depth',
@@ -173,6 +182,41 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
   it('the wire carries exactly the known dimensions — a dimension regenerated onto the request object without saved-search support fails here', () => {
     const wire = AssetSearchFormDataToJSON(searchUrlStateToAssetSearchFormData(full));
     expect(Object.keys(wire).sort()).toEqual(WIRE_KEYS);
+  });
+
+  it('a popularity range survives capture → stored spec → reapply, including a bound of 0 and an open end (ST-9)', () => {
+    // [0,0] is "never viewed": both bounds are 0 — the value a truthiness check would drop.
+    const neverViewed = { ...full, popularity: { min: 0, max: 0 } };
+    expect(roundTrip(neverViewed)).toEqual(neverViewed);
+    // an open upper end stays open (no max on the wire, none on reapply)
+    const atLeast = { ...full, popularity: { min: 4 } };
+    expect(roundTrip(atLeast)).toEqual(atLeast);
+    const upTo = { ...full, popularity: { max: 2 } };
+    expect(roundTrip(upTo)).toEqual(upTo);
+  });
+
+  it('a stored popularity range is read through the same fail-closed rules as the URL — inverted, junk or out of range never reaches the request (ST-9)', () => {
+    const at = (popularity: unknown) =>
+      assetSearchFormDataToUrlState({
+        query: 'q',
+        filters: {},
+        popularity,
+      } as unknown as AssetSearchFormData);
+    // inverted → no range (the server answers empty for a LIVE inverted request; a stored one reapplies as no filter —
+    // and the server's own read-side sanitiser drops it too, so the two surfaces agree)
+    expect(at({ min: 10, max: 2 })).toEqual(state({ query: 'q' }));
+    // a non-integer bound poisons the whole range
+    expect(at({ min: 'abc', max: 5 })).toEqual(state({ query: 'q' }));
+    // out of range is CLAMPED, mirroring the server
+    expect(at({ min: -3, max: 99 })).toEqual(
+      state({ query: 'q', popularity: { min: 0, max: 20 } })
+    );
+    // a non-object is junk, never a throw
+    expect(() => at('4..9')).not.toThrow();
+    expect(at('4..9')).toEqual(state({ query: 'q' }));
+    expect(at([4, 9])).toEqual(state({ query: 'q' }));
+    // an empty object is "no range" (never DE-scopes)
+    expect(at({})).toEqual(state({ query: 'q' }));
   });
 
   it('favorites=no is a real filter (only un-starred assets) and survives as such', () => {

@@ -689,5 +689,21 @@
   "Request an Owner association on the main page": "Надіслати запит на зв'язок із Власником на головній сторінці",
   "Words match from the start, so \"cust ord\" finds \"Customers Orders\". Refine with \"a quoted phrase\" for words that must be next to each other, -word to exclude, and or for alternatives. Operators narrow a search - they never turn off start-of-word matching on the other words.": "Слова збігаються від початку, тож \"cust ord\" знаходить \"Customers Orders\". Уточніть за допомогою \"фрази в лапках\" для слів, що мають стояти поруч, -слово для виключення та or для альтернатив. Оператори звужують пошук - вони ніколи не вимикають збіг за початком інших слів.",
   "Favorites only": "Лише обране",
-  "Favorites (shared) only": "Лише обране (спільне)"
+  "Favorites (shared) only": "Лише обране (спільне)",
+  "Popularity": "Популярність",
+  "Data entities only": "Лише сутності даних",
+  "Terms and query examples have no view count, so they are excluded while a Popularity range is active.": "Терміни та приклади запитів не мають лічильника переглядів, тому вони виключаються, поки діє діапазон Популярності.",
+  "Based on each data entity's view count, grouped into ranges and refreshed every 15 minutes.": "На основі кількості переглядів кожної сутності даних, згрупованої в діапазони та оновлюваної кожні 15 хвилин.",
+  "Never viewed": "Ніколи не переглядалось",
+  "{{min}} – {{max}} views": "{{min}} – {{max}} переглядів",
+  "{{min}}+ views": "{{min}}+ переглядів",
+  "up to {{max}} views": "до {{max}} переглядів",
+  "No views recorded yet": "Переглядів ще не зафіксовано",
+  "No data entities match your other filters": "Жодна сутність даних не відповідає іншим вашим фільтрам",
+  "Most popular": "Найпопулярніші",
+  "Popularity: {{range}}": "Популярність: {{range}}",
+  "Distribution of data entities by view count": "Розподіл сутностей даних за кількістю переглядів",
+  "Minimum views": "Мінімум переглядів",
+  "Maximum views": "Максимум переглядів",
+  "All {{total}} data entities have {{band}} views": "Усі {{total}} сутностей даних мають {{band}} переглядів"
 }

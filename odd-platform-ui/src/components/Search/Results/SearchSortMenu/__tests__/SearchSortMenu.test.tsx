@@ -25,6 +25,7 @@ beforeAll(() => {
           'Status priority': 'Status priority',
           'Recently updated': 'Recently updated',
           Name: 'Name',
+          'Most popular': 'Most popular',
         },
       },
     },
@@ -81,16 +82,18 @@ describe('SearchSortMenu (ST-2b / #1836)', () => {
     expect(screen.getByRole('combobox')).toHaveTextContent('Relevance');
   });
 
-  it('offers the four canonical orderings and, on select, writes ?sort= preserving the query', async () => {
+  it('offers the five canonical orderings and, on select, writes ?sort= preserving the query', async () => {
     const user = userEvent.setup();
     renderAt('/search?q=orders');
 
     await user.click(screen.getByRole('combobox'));
+    // four at ST-2b; "Most popular" joined with ST-9 (#1843) on the ST-5c popularity snapshot
     expect(screen.getAllByRole('option').map(o => o.textContent)).toEqual([
       'Relevance',
       'Status priority',
       'Recently updated',
       'Name',
+      'Most popular',
     ]);
 
     await user.click(screen.getByRole('option', { name: 'Name' }));
