@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
 
-// The bar strip above the slider: one bar per rail stop, heights relative to the largest count. Bars inside the
+// The bar strip above the slider: one bar per rail stop, heights sqrt-scaled relative to the largest count. Bars inside the
 // current selection use the platform's element colour; the rest stay neutral, so the selected bands read at a glance.
 export const Bars = styled('div')(({ theme }) => ({
   display: 'flex',

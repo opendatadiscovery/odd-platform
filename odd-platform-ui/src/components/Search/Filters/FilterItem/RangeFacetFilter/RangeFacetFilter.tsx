@@ -98,6 +98,10 @@ const RangeFacetFilter: React.FC<RangeFacetFilterProps> = ({
 
   const hasSelection = selected?.min !== undefined || selected?.max !== undefined;
   const canSlide = !disabledReason && stops.length >= 2;
+  // Bar heights are square-root scaled: a real catalog's view counts are heavy-tailed (the never-viewed band
+  // holds more than half the entities), and on a linear scale every other band collapses to a hairline —
+  // seen on a 126k-asset corpus in the pixel review. sqrt keeps the order of the bars and the exact counts stay
+  // in each bar's title / the strip's aria text.
   const maxCount = Math.max(0, ...stops.map(stop => stop.count ?? 0));
   const showBars = canSlide && maxCount > 0;
 
@@ -139,7 +143,7 @@ const RangeFacetFilter: React.FC<RangeFacetFilterProps> = ({
                 <S.Bar
                   key={stop.value}
                   $active={idx >= position[0] && idx <= position[1]}
-                  $heightPct={((stop.count ?? 0) / maxCount) * 100}
+                  $heightPct={Math.sqrt((stop.count ?? 0) / maxCount) * 100}
                   title={`${stop.ariaText}: ${stop.count ?? 0}`}
                 />
               ))}
