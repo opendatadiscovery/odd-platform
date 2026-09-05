@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.PopularityRange;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearch;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchList;
@@ -109,5 +110,54 @@ public class SavedSearchControllerWebTest extends BaseIntegrationTest {
 
         webTestClient.delete().uri("/api/saved_searches/" + created.getId()).exchange()
             .expectStatus().isNoContent();
+    }
+
+    /**
+     * ST-9 (#1843): the popularity range is the tenth dimension the stored spec must hold — present on the 201 body
+     * and on the list read-back, a bound of 0 included; a CONTRADICTORY stored range is normalised to absent on read
+     * (the live search answers empty for it, a saved search must reapply as a search it can still run).
+     */
+    @Test
+    void savedSearch_keepsThePopularityRange_andNormalisesAContradictoryOne() {
+        final SavedSearch created = create("ctrib066 popularity", new PopularityRange().min(0).max(5));
+        assertThat(created.getSpec().getPopularity()).isNotNull();
+        assertThat(created.getSpec().getPopularity().getMin()).isZero();
+        assertThat(created.getSpec().getPopularity().getMax()).isEqualTo(5);
+
+        final SavedSearchList list = webTestClient.get()
+            .uri("/api/saved_searches?page=1&size=100")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(SavedSearchList.class)
+            .returnResult()
+            .getResponseBody();
+        final SavedSearch listed = list.getItems().stream()
+            .filter(item -> item.getId().equals(created.getId())).findFirst().orElseThrow();
+        assertThat(listed.getSpec().getPopularity().getMin()).isZero();
+        assertThat(listed.getSpec().getPopularity().getMax()).isEqualTo(5);
+
+        final SavedSearch inverted = create("ctrib066 inverted", new PopularityRange().min(10).max(2));
+        assertThat(inverted.getSpec().getPopularity()).as("an inverted range reads back ABSENT").isNull();
+
+        webTestClient.delete().uri("/api/saved_searches/" + created.getId()).exchange().expectStatus().isNoContent();
+        webTestClient.delete().uri("/api/saved_searches/" + inverted.getId()).exchange().expectStatus().isNoContent();
+    }
+
+    private SavedSearch create(final String name, final PopularityRange popularity) {
+        final SavedSearchFormData form = new SavedSearchFormData()
+            .name(name)
+            .spec(new AssetSearchFormData().query("orders").filters(new SearchFormDataFilters())
+                .popularity(popularity));
+        final SavedSearch created = webTestClient.post()
+            .uri("/api/saved_searches")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(form)
+            .exchange()
+            .expectStatus().isCreated()
+            .expectBody(SavedSearch.class)
+            .returnResult()
+            .getResponseBody();
+        assertThat(created).isNotNull();
+        return created;
     }
 }

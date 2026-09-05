@@ -7,11 +7,14 @@ import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.PopularityRange;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormDataFilters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Web-layer contract for {@code POST /api/search/assets} (CTRIB-056 / #1838 ST-4). The
@@ -66,5 +69,89 @@ public class AssetSearchControllerWebTest extends BaseIntegrationTest {
             .exchange()
             .expectStatus().isOk()
             .expectBody(AssetList.class);
+    }
+
+    /**
+     * ST-9 (#1843): the popularity range binds through the same override — a closed range, a contradictory one
+     * (200 with an EMPTY page, never a 4xx/5xx: a contradictory filter matches nothing) and an empty object (no
+     * bound = no narrowing: the total equals the request without the field).
+     */
+    @Test
+    void searchAssets_withPopularityRange_returns200_contradictoryIsEmpty_emptyObjectIsAbsent() {
+        webTestClient.post()
+            .uri("/api/search/assets?size=30")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new AssetSearchFormData().query("").filters(new SearchFormDataFilters())
+                .popularity(new PopularityRange().min(4).max(9)))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AssetList.class);
+
+        final AssetList contradictory = webTestClient.post()
+            .uri("/api/search/assets?size=30")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new AssetSearchFormData().query("").filters(new SearchFormDataFilters())
+                .popularity(new PopularityRange().min(10).max(2)))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AssetList.class)
+            .returnResult().getResponseBody();
+        assertThat(contradictory).isNotNull();
+        assertThat(contradictory.getItems()).isEmpty();
+        assertThat(contradictory.getPageInfo().getTotal()).isZero();
+
+        final AssetList unfiltered = webTestClient.post()
+            .uri("/api/search/assets?size=30")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new AssetSearchFormData().query("").filters(new SearchFormDataFilters()))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AssetList.class)
+            .returnResult().getResponseBody();
+        final AssetList emptyRange = webTestClient.post()
+            .uri("/api/search/assets?size=30")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new AssetSearchFormData().query("").filters(new SearchFormDataFilters())
+                .popularity(new PopularityRange()))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AssetList.class)
+            .returnResult().getResponseBody();
+        assertThat(emptyRange.getPageInfo().getTotal())
+            .as("popularity: {} is the same as absent — no narrowing, no DE-scoping")
+            .isEqualTo(unfiltered.getPageInfo().getTotal());
+    }
+
+    /**
+     * ST-9 (#1843): the facet endpoint answers 200 with exactly 21 buckets (scores 0..20, the top one open) through
+     * the full web + validation stack — the same HV000151 class the search override guards against (the new override
+     * declares zero parameter constraints too). Asserted on the RAW JSON (jsonPath), which pins the wire shape a
+     * browser client reads — snake_case {@code min_views} / {@code max_views}, the open top band as a JSON null —
+     * rather than decoding through a test-side ObjectMapper that lacks the JsonNullable module the server has.
+     */
+    @Test
+    void getAssetSearchPopularityFacet_returns200_with21Buckets() {
+        webTestClient.post()
+            .uri("/api/search/assets/facets/popularity")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new AssetSearchFormData().query("").filters(new SearchFormDataFilters())
+                .popularity(new PopularityRange().min(3).max(4)))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.buckets.length()").isEqualTo(21)
+            .jsonPath("$.buckets[0].score").isEqualTo(0)
+            .jsonPath("$.buckets[0].min_views").isEqualTo(0)
+            .jsonPath("$.buckets[0].max_views").isEqualTo(0)
+            .jsonPath("$.buckets[4].score").isEqualTo(4)
+            .jsonPath("$.buckets[4].min_views").isEqualTo(15)
+            .jsonPath("$.buckets[4].max_views").isEqualTo(30)
+            .jsonPath("$.buckets[20].score").isEqualTo(20)
+            .jsonPath("$.buckets[20].min_views").isEqualTo(1_048_575)
+            // the open top band: the wire carries NO upper bound (absent or a JSON null — never a sentinel, never a
+            // wrapper object; the app registers no JsonNullable module, so the contract avoids `nullable: true`)
+            .jsonPath("$.buckets[20]").value(bucket ->
+                assertThat(((java.util.Map<?, ?>) bucket).get("max_views")).as("the top band is open").isNull())
+            .jsonPath("$.buckets[*].count").value(counts -> assertThat((java.util.List<?>) counts).hasSize(21));
     }
 }

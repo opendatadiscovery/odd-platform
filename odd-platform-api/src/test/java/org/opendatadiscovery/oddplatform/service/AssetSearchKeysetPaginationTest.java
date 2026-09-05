@@ -168,6 +168,92 @@ class AssetSearchKeysetPaginationTest extends BaseIntegrationTest {
         }
     }
 
+    /**
+     * ST-9 (#1843) — the "Most popular" sort joins the fail-closed cursor contract: a POPULARITY token whose value
+     * does not parse as the NOT NULL smallint, or which claims the (structurally impossible) null tail, fails closed to
+     * the first page — never a 500 from {@code Short.parseShort} in the seek, never a seek on another column's NULL
+     * tail. Both tokens are minted by the encoder itself (it does not validate), so this is the decode side that
+     * guards. Found by the CTRIB-066 round-1 plan-check: without the two {@code AssetSearchCursor} changes the first
+     * token 500s and the second seeks {@code UPDATED_AT IS NULL}.
+     */
+    @Test
+    @DisplayName("popularity: a tampered cursor (unparseable value / a null-tail claim) fails closed to the first page")
+    void keyset_popularity_tamperedCursorsFailClosed() {
+        seedDataEntityWithStatus("kspoptamper", DataEntityStatusDto.STABLE.getId());
+        seedDataEntityWithStatus("kspoptamper", DataEntityStatusDto.DRAFT.getId());
+
+        final AssetSearchFormData form = browse("kspoptamper", "POPULARITY");
+        final List<Long> firstPage = deIds(assetSearchService.searchAssets(form, 30, null).block().getItems());
+
+        final String unparseable =
+            AssetSearchCursor.keyset(SearchSortDto.POPULARITY, "abc", false, "DATA_ENTITY", 1L).encode();
+        final String nullTail =
+            AssetSearchCursor.keyset(SearchSortDto.POPULARITY, null, true, "DATA_ENTITY", 1L).encode();
+        for (final String badCursor : List.of(unparseable, nullTail)) {
+            final AssetList page = assetSearchService.searchAssets(form, 30, badCursor).block();
+            assertThat(page).as("a tampered POPULARITY cursor returns a result, never an error").isNotNull();
+            assertThat(deIds(page.getItems()))
+                .as("a tampered POPULARITY cursor fails closed to the first page")
+                .isEqualTo(firstPage);
+        }
+    }
+
+    @Test
+    @DisplayName("popularity: keyset paging (size 2) equals the single-page order, no dup/skip; non-DE (score 0) tail")
+    void keyset_popularity_pagingEqualsSinglePage() {
+        // Distinct scores are not needed for the continuity oracle — the id tiebreaker inside the 0 band already
+        // exercises the equal-value branches — but AssetSearchPopularityIntegrationTest covers the ordered case.
+        seedDataEntityWithStatus("kspopular", DataEntityStatusDto.STABLE.getId());
+        seedDataEntityWithStatus("kspopular", DataEntityStatusDto.DRAFT.getId());
+        seedDataEntityWithStatus("kspopular", DataEntityStatusDto.UNASSIGNED.getId());
+        seedTerm("kspopular");
+
+        assertPagingEqualsSinglePage(browse("kspopular", "POPULARITY"), 2);
+    }
+
+    /**
+     * ST-9 (#1843): the POPULARITY seek shape — the same UNION-of-ranges the other browse sorts use, over the
+     * (popularity_score DESC NULLS LAST, asset_kind ASC, asset_id DESC) composite V0_0_100 built for it — range-starts
+     * on the index with NO scan-and-discard. Like its siblings this EXPLAINs a hand-written SQL that mirrors the
+     * generated seek (the generated plan itself is captured on the built SUT in the CTRIB-066 test ledger); the
+     * spelling matters: a bare DESC would be NULLS FIRST and miss the index.
+     */
+    @Test
+    @DisplayName("the POPULARITY keyset seek range-starts on asset_search_entrypoint_popularity_idx (no Filter)")
+    void keysetSeek_popularity_unionOfRangesRangeStarts() {
+        execute("INSERT INTO asset_search_entrypoint (asset_kind, asset_id, popularity_score, status_priority) "
+            + "SELECT 'DATA_ENTITY', g, (g % 21)::smallint, 3 "
+            + "FROM generate_series(4000000, 4030000) g ON CONFLICT DO NOTHING");
+        execute("ANALYZE asset_search_entrypoint");
+
+        final var cur = jooqReactiveOperations.mono(DSL.resultQuery(
+            "SELECT popularity_score AS ps, asset_id AS ai FROM asset_search_entrypoint "
+                + "WHERE asset_id BETWEEN 4000000 AND 4030000 "
+                + "ORDER BY popularity_score DESC NULLS LAST, asset_kind ASC, asset_id DESC OFFSET 20000 LIMIT 1"))
+            .block();
+        final short ps = ((Number) cur.get("ps")).shortValue();
+        final long ai = ((Number) cur.get("ai")).longValue();
+
+        final String order = "ORDER BY popularity_score DESC NULLS LAST, asset_kind ASC, asset_id DESC LIMIT 30";
+        final String unionPlan = explain(
+            "SELECT asset_kind, asset_id FROM ("
+                + "  (SELECT asset_kind, asset_id, popularity_score FROM asset_search_entrypoint "
+                + "     WHERE popularity_score < " + ps + " " + order + ")"
+                + "  UNION ALL "
+                + "  (SELECT asset_kind, asset_id, popularity_score FROM asset_search_entrypoint "
+                + "     WHERE popularity_score = " + ps + " AND asset_kind > 'DATA_ENTITY' " + order + ")"
+                + "  UNION ALL "
+                + "  (SELECT asset_kind, asset_id, popularity_score FROM asset_search_entrypoint "
+                + "     WHERE popularity_score = " + ps + " AND asset_kind = 'DATA_ENTITY' AND asset_id < " + ai
+                + "     " + order + ")"
+                + ") u " + order);
+        assertThat(unionPlan)
+            .as("the POPULARITY seek is served by index range-starts on the popularity composite, "
+                + "no scan-and-discard%n%s", unionPlan)
+            .contains("asset_search_entrypoint_popularity_idx")
+            .doesNotContain("Rows Removed by Filter");
+    }
+
     // ---------------------------------------------------------------------------------------------------
     // Relevance depth-cap (R-B2) — the offset ceiling returns the empty terminal, never an unbounded scan
     // ---------------------------------------------------------------------------------------------------

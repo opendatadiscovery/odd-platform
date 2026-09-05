@@ -1,6 +1,8 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -8,6 +10,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetPageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.PopularityBucket;
+import org.opendatadiscovery.oddplatform.api.contract.model.PopularityFacet;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.auth.CurrentUserIdentityResolver;
@@ -19,6 +23,8 @@ import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FavoritesScopeDto;
 import org.opendatadiscovery.oddplatform.dto.MyDataScopeDto;
 import org.opendatadiscovery.oddplatform.dto.MyDataScopeResult;
+import org.opendatadiscovery.oddplatform.dto.PopularityBands;
+import org.opendatadiscovery.oddplatform.dto.PopularityRangeDto;
 import org.opendatadiscovery.oddplatform.dto.SearchSortDto;
 import org.opendatadiscovery.oddplatform.mapper.FacetStateMapper;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAssetSearchRepository;
@@ -57,10 +63,10 @@ public class AssetSearchServiceImpl implements AssetSearchService {
                                         final String cursorToken) {
         final int cappedSize = Math.min(Math.max(size == null ? 1 : size, 1), MAX_PAGE_SIZE);
 
-        final FacetStateDto state =
-            FacetStateDto.removeUnselected(facetStateMapper.mapForm(toSearchFormData(formData)));
-        final List<String> assetKinds = formData.getAssetKinds() == null ? List.of()
-            : formData.getAssetKinds().stream().map(AssetKind::getValue).toList();
+        final FacetStateDto state = facetState(formData);
+        final List<String> assetKinds = assetKinds(formData);
+        // ST-9 (#1843) — the popularity range, clamped + validated once here; null = no narrowing (also for `{}`).
+        final PopularityRangeDto popularity = PopularityRangeDto.of(formData.getPopularity()).orElse(null);
 
         // Resolve the sort ONCE here so the cursor scope, the keyset-vs-offset choice, and the repository ORDER BY
         // all agree; the cursor decodes fail-closed against it (a foreign/malformed cursor → the first page).
@@ -68,27 +74,73 @@ public class AssetSearchServiceImpl implements AssetSearchService {
             SearchSortDto.resolveEffective(state.getSort(), StringUtils.isNotBlank(state.getQuery()));
         final AssetSearchCursor cursor = AssetSearchCursor.decode(cursorToken, sort).orElse(null);
 
-        // ST-7 (#1841) — the favorites narrowing is resolved FIRST and the whole search then runs INSIDE
-        // that resolution, rather than beside it: the My-data branch below owns an early-return, so a second
-        // reactive resolution placed after it would be skipped on that path. Absent `favorites` means no
-        // narrowing at all — no identity is resolved and nothing extra is queried. CurrentUserIdentityResolver
-        // never completes empty (it falls back to the shared DISABLED sentinel), so unlike the My-data scope
-        // this needs no empty-page short-circuit.
-        //
-        // These are two INDEPENDENT axes and compose freely: My-data keys on the internal Owner, favorites on
-        // the login identity (oidc_username, provider). A user with no Owner association still has favorites.
-        if (formData.getFavorites() == null) {
-            return scopedSearch(formData, state, assetKinds, null, sort, cursor, cappedSize);
-        }
-        return currentUserIdentityResolver.resolve()
-            .flatMap(identity -> scopedSearch(formData, state, assetKinds,
-                FavoritesScopeDto.of(identity, formData.getFavorites()), sort, cursor, cappedSize));
+        return scoped(formData, Mono.fromSupplier(() -> new AssetList(List.of(), new AssetPageInfo(0L, false))),
+            (scope, favorites, resolved) ->
+                resolvePage(state, assetKinds, scope, favorites, popularity, sort, cursor, cappedSize)
+                    .map(list -> resolved == null ? list : withTruncation(list, resolved)));
     }
 
-    private Mono<AssetList> scopedSearch(final AssetSearchFormData formData, final FacetStateDto state,
-                                         final List<String> assetKinds, final FavoritesScopeDto favorites,
-                                         final SearchSortDto sort, final AssetSearchCursor cursor,
-                                         final int cappedSize) {
+    @Override
+    public Mono<PopularityFacet> popularityFacet(final AssetSearchFormData formData) {
+        // ST-9 (#1843) — the same scoping as the results (favorites + My-data), the same shared predicates, with
+        // the request's OWN popularity range ignored (the repository never sees it here): the bars show what the
+        // user can still slide back to. A My-data scope with no resolvable owner yields the all-zero facet, mirroring
+        // the empty page the results return on that path.
+        final FacetStateDto state = facetState(formData);
+        final List<String> assetKinds = assetKinds(formData);
+        return scoped(formData, Mono.fromSupplier(() -> toFacet(Map.of())),
+            (scope, favorites, resolved) -> assetSearchRepository
+                .popularityHistogram(state, assetKinds, scope, favorites)
+                .map(this::toFacet));
+    }
+
+    /** The shared facet state (the legacy session's model, reused byte-identically — see toSearchFormData). */
+    private FacetStateDto facetState(final AssetSearchFormData formData) {
+        return FacetStateDto.removeUnselected(facetStateMapper.mapForm(toSearchFormData(formData)));
+    }
+
+    private static List<String> assetKinds(final AssetSearchFormData formData) {
+        return formData.getAssetKinds() == null ? List.of()
+            : formData.getAssetKinds().stream().map(AssetKind::getValue).toList();
+    }
+
+    /**
+     * A query that runs INSIDE the resolved narrowings: {@code scope} is the My-data scope or {@code null},
+     * {@code favorites} the caller's favorites scope or {@code null}, {@code resolved} the My-data resolution (for
+     * the truncation stamp) or {@code null} when no My-data scope is selected.
+     */
+    @FunctionalInterface
+    private interface ScopedQuery<T> {
+        Mono<T> run(AssetSearchScope scope, FavoritesScopeDto favorites, MyDataScopeResult resolved);
+    }
+
+    /**
+     * Resolve the two personal narrowings ONCE, then run {@code query} inside them — shared by the results and the
+     * popularity facet (ST-9) so the bars can never describe a list the user will not get.
+     *
+     * <p>ST-7 (#1841) — the favorites narrowing is resolved FIRST and the whole query then runs INSIDE that
+     * resolution, rather than beside it: the My-data branch owns an early-return, so a second reactive resolution
+     * placed after it would be skipped on that path. Absent `favorites` means no narrowing at all — no identity is
+     * resolved and nothing extra is queried. CurrentUserIdentityResolver never completes empty (it falls back to
+     * the shared DISABLED sentinel), so unlike the My-data scope this needs no empty short-circuit.
+     *
+     * <p>These are two INDEPENDENT axes and compose freely: My-data keys on the internal Owner, favorites on the
+     * login identity (oidc_username, provider). A user with no Owner association still has favorites.
+     *
+     * @param noOwnerResult what to answer when a My-data scope is selected but no owner resolves (e.g. auth disabled)
+     */
+    private <T> Mono<T> scoped(final AssetSearchFormData formData, final Mono<T> noOwnerResult,
+                               final ScopedQuery<T> query) {
+        if (formData.getFavorites() == null) {
+            return myDataScoped(formData, null, noOwnerResult, query);
+        }
+        return currentUserIdentityResolver.resolve()
+            .flatMap(identity -> myDataScoped(formData, FavoritesScopeDto.of(identity, formData.getFavorites()),
+                noOwnerResult, query));
+    }
+
+    private <T> Mono<T> myDataScoped(final AssetSearchFormData formData, final FavoritesScopeDto favorites,
+                                     final Mono<T> noOwnerResult, final ScopedQuery<T> query) {
         // ST-8 (#1842) — the My-data scope group, generalising the my_objects boolean. `my_data` wins when
         // present; otherwise a legacy `my_objects: true` is read as [MY_OBJECTS], so existing saved searches
         // and bookmarked ?my=true URLs keep working unchanged (ADR D9).
@@ -108,12 +160,24 @@ public class AssetSearchServiceImpl implements AssetSearchService {
                             scopes.contains(MyDataScopeDto.MY_OBJECTS),
                             scopes.contains(MyDataScopeDto.UPSTREAM) || scopes.contains(MyDataScopeDto.DOWNSTREAM),
                             resolved.neighbourDataEntityIds());
-                        return resolvePage(state, assetKinds, scope, favorites, sort, cursor, cappedSize)
-                            .map(list -> withTruncation(list, resolved));
+                        return query.run(scope, favorites, resolved);
                     }))
-                .switchIfEmpty(Mono.just(new AssetList(List.of(), new AssetPageInfo(0L, false))));
+                .switchIfEmpty(noOwnerResult);
         }
-        return resolvePage(state, assetKinds, null, favorites, sort, cursor, cappedSize);
+        return query.run(null, favorites, null);
+    }
+
+    // The 21 fixed buckets (scores 0..20) with their view boundaries, filled from the sparse per-score counts.
+    private PopularityFacet toFacet(final Map<Short, Long> counts) {
+        final List<PopularityBucket> buckets = new ArrayList<>(PopularityBands.MAX_SCORE + 1);
+        for (int score = PopularityBands.MIN_SCORE; score <= PopularityBands.MAX_SCORE; score++) {
+            buckets.add(new PopularityBucket()
+                .score(score)
+                .minViews(PopularityBands.minViews(score))
+                .maxViews(PopularityBands.maxViews(score))
+                .count(counts.getOrDefault((short) score, 0L)));
+        }
+        return new PopularityFacet().buckets(buckets);
     }
 
     // The truncation state is a property of the SCOPE, not of the page, so it is stamped once on the way out
@@ -136,27 +200,27 @@ public class AssetSearchServiceImpl implements AssetSearchService {
 
     private Mono<AssetList> resolvePage(final FacetStateDto state, final List<String> assetKinds,
                                         final AssetSearchScope scope, final FavoritesScopeDto favorites,
-                                        final SearchSortDto sort, final AssetSearchCursor cursor,
-                                        final int cappedSize) {
+                                        final PopularityRangeDto popularity, final SearchSortDto sort,
+                                        final AssetSearchCursor cursor, final int cappedSize) {
         final boolean relevance = sort == SearchSortDto.RELEVANCE;
         final int relevanceOffset = relevance && cursor != null ? cursor.offset() : 0;
 
         if (relevance && relevanceOffset >= RELEVANCE_MAX_DEPTH) {
             // Depth-cap terminal: an empty page with hasNext=false and no nextCursor (ADR D12). total is still
             // the match count (display only). Never an unbounded scan.
-            return assetSearchRepository.count(state, assetKinds, scope, favorites)
+            return assetSearchRepository.count(state, assetKinds, scope, favorites, popularity)
                 .map(total -> new AssetList(List.of(), new AssetPageInfo(total, false)));
         }
 
         // Fetch one extra row to derive hasNext + the next cursor without a second query.
         final int fetchLimit = cappedSize + 1;
         final var pageFlux = relevance
-            ? assetSearchRepository.relevancePage(state, assetKinds, scope, favorites, relevanceOffset,
+            ? assetSearchRepository.relevancePage(state, assetKinds, scope, favorites, popularity, relevanceOffset,
                 fetchLimit)
-            : assetSearchRepository.keysetPage(state, assetKinds, scope, favorites, cursor, fetchLimit);
+            : assetSearchRepository.keysetPage(state, assetKinds, scope, favorites, popularity, cursor, fetchLimit);
 
         return Mono.zip(pageFlux.collectList(),
-                assetSearchRepository.count(state, assetKinds, scope, favorites))
+                assetSearchRepository.count(state, assetKinds, scope, favorites, popularity))
             .flatMap(pageAndCount -> {
                 final List<AssetSearchPageRow> rows = pageAndCount.getT1();
                 final long total = pageAndCount.getT2();
@@ -186,8 +250,8 @@ public class AssetSearchServiceImpl implements AssetSearchService {
 
     // AssetSearchFormData is a flat allOf-generated DTO (it does NOT extend SearchFormData) but carries the exact
     // SearchFormData shape (query + my_objects + sort + the same SearchFormDataFilters). Adapt it so the shared
-    // FacetStateMapper.mapForm is reused verbatim; the extra asset_kinds and favorites dimensions are read
-    // separately above (neither exists on SearchFormData — they are unified-path-only, ADR D9).
+    // FacetStateMapper.mapForm is reused verbatim; the extra asset_kinds, favorites and popularity dimensions are
+    // read separately above (none exists on SearchFormData — they are unified-path-only, ADR D9).
     private static SearchFormData toSearchFormData(final AssetSearchFormData formData) {
         // my_data + the depths are deliberately NOT projected here: FacetStateDto is the LEGACY /api/search
         // session's state, which does not read them (ST-8 keeps that endpoint's behaviour byte-identical —

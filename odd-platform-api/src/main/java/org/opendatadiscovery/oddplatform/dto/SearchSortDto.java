@@ -16,7 +16,15 @@ public enum SearchSortDto {
     RELEVANCE,
     STATUS_PRIORITY,
     UPDATED_AT,
-    NAME;
+    NAME,
+    /**
+     * "Most popular" (ST-9 / #1843, ADR unified-asset-search D5 / D12): the snapshotted {@code popularity_score}
+     * DESC — the 15-minute bucketed view-count band on the unified index, never the live counter — with terms and
+     * query examples (no view count, score 0) last. Honoured by the cross-kind {@code /api/search/assets} only; the
+     * legacy {@code /api/search} session resolves it to the per-context default, exactly as an unknown token
+     * ({@code ReactiveDataEntityRepositoryImpl.getSearchResultOrderFields}).
+     */
+    POPULARITY;
 
     public static Optional<SearchSortDto> fromString(final String value) {
         if (value == null || value.isBlank()) {

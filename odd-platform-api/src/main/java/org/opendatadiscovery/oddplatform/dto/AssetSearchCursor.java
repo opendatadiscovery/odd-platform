@@ -125,10 +125,11 @@ public final class AssetSearchCursor {
                 return Optional.empty();
             }
             final boolean valueNull = Boolean.TRUE.equals(m.get("vn"));
-            if (valueNull && sort == SearchSortDto.STATUS_PRIORITY) {
-                // status_priority is NOT NULL — a null-tail (vn) cursor is structurally impossible for it, so a
-                // tampered one must fail closed here rather than reach the seek and silently query a different
-                // column's NULL tail (R-B4 fail-closed; the null tail is a nullable-sort-only concept).
+            if (valueNull && (sort == SearchSortDto.STATUS_PRIORITY || sort == SearchSortDto.POPULARITY)) {
+                // status_priority and popularity_score are NOT NULL — a null-tail (vn) cursor is structurally
+                // impossible for them, so a tampered one must fail closed here rather than reach the seek and
+                // silently query a different column's NULL tail (R-B4 fail-closed; the null tail is a
+                // nullable-sort-only concept). POPULARITY joined this guard with ST-9 (#1843).
                 return Optional.empty();
             }
             final String value = valueNull ? null : (m.get("v") == null ? null : String.valueOf(m.get("v")));
@@ -148,7 +149,7 @@ public final class AssetSearchCursor {
     private static boolean parsesForSort(final SearchSortDto sort, final String value) {
         try {
             switch (sort) {
-                case STATUS_PRIORITY -> Short.parseShort(value);
+                case STATUS_PRIORITY, POPULARITY -> Short.parseShort(value); // both NOT NULL smallint columns
                 case UPDATED_AT -> LocalDateTime.parse(value);
                 default -> {
                     // NAME: any string is a valid sort value.

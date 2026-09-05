@@ -197,6 +197,43 @@ class SavedSearchServiceImplTest {
     }
 
     /**
+     * ST-9 (#1843): a stored popularity range is read back exactly as the live search would apply it, or not at all —
+     * a non-object is dropped; a non-integer bound is dropped field-level; an INVERTED range (min > max after the
+     * same clamp the live request applies) is dropped whole so the UI's reapply and the API agree; a bound of 0 and
+     * an empty object survive untouched.
+     */
+    @Test
+    void list_storedPopularityRange_isNormalisedFieldLevel_neverTheSearch() {
+        identity();
+        final String inverted = "{\"query\":\"p1\",\"popularity\":{\"min\":10,\"max\":2},\"filters\":{}}";
+        final String notAnObject = "{\"query\":\"p2\",\"popularity\":\"4..9\",\"filters\":{}}";
+        final String badBound = "{\"query\":\"p3\",\"popularity\":{\"min\":\"abc\",\"max\":5},\"filters\":{}}";
+        final String zero = "{\"query\":\"p4\",\"popularity\":{\"min\":0,\"max\":0},\"filters\":{}}";
+        final String clampedNotInverted = "{\"query\":\"p5\",\"popularity\":{\"min\":99,\"max\":25},\"filters\":{}}";
+        when(repository.list("alice", "google", 0, 30)).thenReturn(Flux.just(
+            pojo(11L, "inverted", inverted), pojo(12L, "not-an-object", notAnObject),
+            pojo(13L, "bad-bound", badBound), pojo(14L, "zero", zero), pojo(15L, "clamped", clampedNotInverted)));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(5L));
+
+        StepVerifier.create(service.list(1, 30))
+            .assertNext(list -> {
+                assertThat(list.getItems().get(0).getSpec().getPopularity()).as("inverted → absent").isNull();
+                assertThat(list.getItems().get(0).getSpec().getQuery()).isEqualTo("p1");
+                assertThat(list.getItems().get(1).getSpec().getPopularity()).as("not an object → absent").isNull();
+                final var badBoundSpec = list.getItems().get(2).getSpec().getPopularity();
+                assertThat(badBoundSpec).as("the bad bound is dropped, the good one kept").isNotNull();
+                assertThat(badBoundSpec.getMin()).isNull();
+                assertThat(badBoundSpec.getMax()).isEqualTo(5);
+                final var zeroSpec = list.getItems().get(3).getSpec().getPopularity();
+                assertThat(zeroSpec.getMin()).as("0 is a real bound").isZero();
+                assertThat(zeroSpec.getMax()).isZero();
+                final var clamped = list.getItems().get(4).getSpec().getPopularity();
+                assertThat(clamped).as("99 and 25 both clamp to 20 — not inverted, kept as stored").isNotNull();
+            })
+            .verifyComplete();
+    }
+
+    /**
      * A stored spec that parses but is not a JSON object (an array, a scalar) has no fields to sanitise or bind:
      * it degrades to the empty spec like unreadable text does — never a 500, never a throw in the list path.
      */

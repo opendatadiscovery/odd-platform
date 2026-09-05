@@ -22,6 +22,15 @@ class SearchSortDtoTest {
     }
 
     @Test
+    void resolvesPopularity_theFifthToken() {
+        assertThat(SearchSortDto.fromString("popularity")).contains(SearchSortDto.POPULARITY);
+        assertThat(SearchSortDto.fromString(" POPULARITY ")).contains(SearchSortDto.POPULARITY);
+        // a stored-column sort: effective with AND without a query (never folds to relevance)
+        assertThat(SearchSortDto.resolveEffective("popularity", true)).isEqualTo(SearchSortDto.POPULARITY);
+        assertThat(SearchSortDto.resolveEffective("popularity", false)).isEqualTo(SearchSortDto.POPULARITY);
+    }
+
+    @Test
     void failsClosedOnUnknownNullOrBlank() {
         assertThat(SearchSortDto.fromString("garbage")).isEmpty();
         assertThat(SearchSortDto.fromString(null)).isEmpty();

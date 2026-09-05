@@ -1,11 +1,13 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.List;
+import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchCursor;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchPageRow;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchScope;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FavoritesScopeDto;
+import org.opendatadiscovery.oddplatform.dto.PopularityRangeDto;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -23,6 +25,11 @@ import reactor.core.publisher.Mono;
  * <p>The My-data narrowing (ST-8 / #1842) arrives as an {@link AssetSearchScope} rather than an owner: the
  * owned half stays an uncapped semi-join evaluated here in SQL, while only the budgeted lineage half is passed
  * in as ids. A {@code null} scope means no My-data narrowing at all.
+ *
+ * <p>The popularity narrowing (ST-9 / #1843, ADR D5) arrives as a {@link PopularityRangeDto} — a closed range over the
+ * snapshotted {@code popularity_score}; {@code null} means no popularity narrowing. Any range narrows to data entities
+ * only (terms / query examples carry no view count). {@link #popularityHistogram} is the facet's distribution: the
+ * same predicates with the range itself left out, grouped by score.
  */
 public interface ReactiveAssetSearchRepository {
 
@@ -35,24 +42,38 @@ public interface ReactiveAssetSearchRepository {
      * {@code limit + 1} to derive {@code hasNext} + the next cursor.
      *
      * @param cursor    the keyset position of the last row of the previous page, or {@code null} for the first page
-     * @param favorites the caller's favorites narrowing, or {@code null} for none (ST-7 / #1841)
+     * @param favorites  the caller's favorites narrowing, or {@code null} for none (ST-7 / #1841)
+     * @param popularity the popularity range, or {@code null} for none (ST-9 / #1843)
      */
     Flux<AssetSearchPageRow> keysetPage(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
-                                        FavoritesScopeDto favorites, AssetSearchCursor cursor, int limit);
+                                        FavoritesScopeDto favorites, PopularityRangeDto popularity,
+                                        AssetSearchCursor cursor, int limit);
 
     /**
      * An offset page for the relevance sort ({@code ts_rank} is computed per query, not a stored seekable column,
      * so it cannot be keyset-paged — ADR D12). The service bounds {@code offset} by the relevance depth cap.
      */
     Flux<AssetSearchPageRow> relevancePage(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
-                                           FavoritesScopeDto favorites, int offset, int limit);
+                                           FavoritesScopeDto favorites, PopularityRangeDto popularity,
+                                           int offset, int limit);
 
     /**
      * The total number of matches for the same predicates as the page queries (display metadata; offset-independent,
      * so its cost is constant vs page depth and does not affect the keyset deep-page guarantee).
      */
     Mono<Long> count(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
-                     FavoritesScopeDto favorites);
+                     FavoritesScopeDto favorites, PopularityRangeDto popularity);
+
+    /**
+     * The popularity distribution of a search (ST-9 / #1843): for the DATA ENTITIES matching every predicate of the
+     * page queries EXCEPT a popularity range (the exclude-own-facet rule — the bars show what the user can still
+     * slide back to), the number of rows per {@code popularity_score}. Only the scores that occur are keys (at most
+     * 21); the service fills the fixed 0..20 buckets. Terms / query examples never contribute — they hold no view
+     * count — so the histogram is kind-restricted even though the page queries are not. Bounded by construction:
+     * one aggregate over the same indexed predicates the count already pays, grouped into ≤ 21 rows.
+     */
+    Mono<Map<Short, Long>> popularityHistogram(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
+                                               FavoritesScopeDto favorites);
 
     /**
      * Re-snapshots the denormalised {@code popularity_score} on {@code asset_search_entrypoint} from the current

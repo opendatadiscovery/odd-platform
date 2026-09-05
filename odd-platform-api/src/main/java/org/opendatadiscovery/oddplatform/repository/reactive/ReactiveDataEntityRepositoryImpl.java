@@ -1011,7 +1011,13 @@ public class ReactiveDataEntityRepositoryImpl
                                                            final DataEntityCTEQueryConfig cteConfig,
                                                            final Table<? extends Record> deCte) {
         final boolean hasQuery = cteConfig.getFts() != null;
+        // ST-9 (#1843): POPULARITY is honoured by the cross-kind /api/search/assets only — this query orders
+        // data_entity rows, which carry no popularity column — so the token resolves to the per-context default
+        // here, byte-identical to an unknown token (relevance with a query, status priority on browse). Without this
+        // guard fromString() would resolve it and the else-branch below would order by status priority even WITH a
+        // query — a silent change to the legacy path's shipped behaviour (ADR D9).
         final SearchSortDto resolvedSort = SearchSortDto.fromString(sort)
+            .filter(requested -> requested != SearchSortDto.POPULARITY)
             .orElse(hasQuery ? SearchSortDto.RELEVANCE : SearchSortDto.STATUS_PRIORITY);
 
         final List<OrderField<?>> orderFields = new ArrayList<>();

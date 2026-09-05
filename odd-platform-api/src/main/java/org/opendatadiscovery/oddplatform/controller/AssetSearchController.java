@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.AssetSearchApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.PopularityFacet;
 import org.opendatadiscovery.oddplatform.service.AssetSearchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,17 @@ public class AssetSearchController implements AssetSearchApi {
                                                         final ServerWebExchange exchange) {
         return assetSearchFormData
             .flatMap(formData -> assetSearchService.searchAssets(formData, size, cursor))
+            .map(ResponseEntity::ok);
+    }
+
+    // ST-9 (#1843) — the Popularity facet's distribution. Same zero-parameter-constraint rule as above (the generated
+    // interface owns @Valid @RequestBody on the body); the param ORDER matches the generated method exactly.
+    @Override
+    public Mono<ResponseEntity<PopularityFacet>> getAssetSearchPopularityFacet(
+        final Mono<AssetSearchFormData> assetSearchFormData,
+        final ServerWebExchange exchange) {
+        return assetSearchFormData
+            .flatMap(assetSearchService::popularityFacet)
             .map(ResponseEntity::ok);
     }
 }

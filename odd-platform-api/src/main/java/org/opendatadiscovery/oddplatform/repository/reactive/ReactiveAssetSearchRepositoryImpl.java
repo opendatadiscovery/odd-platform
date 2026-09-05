@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
@@ -23,6 +24,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.FavoritesScopeDto;
+import org.opendatadiscovery.oddplatform.dto.PopularityRangeDto;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 import org.opendatadiscovery.oddplatform.dto.SearchSortDto;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
@@ -53,9 +55,10 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
     @Override
     public Flux<AssetSearchPageRow> keysetPage(final FacetStateDto state, final List<String> assetKinds,
                                                final AssetSearchScope scope, final FavoritesScopeDto favorites,
-                                               final AssetSearchCursor cursor, final int limit) {
+                                               final PopularityRangeDto popularity, final AssetSearchCursor cursor,
+                                               final int limit) {
         final SearchSortDto sort = effectiveSort(state);
-        final List<Condition> base = conditions(state, assetKinds, scope, favorites);
+        final List<Condition> base = conditions(state, assetKinds, scope, favorites, popularity);
         final List<OrderField<?>> order = orderFields(state);
         // Also select the active sort's value so the service can mint the next cursor from the last row.
         final Collection<? extends SelectFieldOrAsterisk> columns = List.of(
@@ -89,13 +92,14 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
     @Override
     public Flux<AssetSearchPageRow> relevancePage(final FacetStateDto state, final List<String> assetKinds,
                                                   final AssetSearchScope scope, final FavoritesScopeDto favorites,
-                                                  final int offset, final int limit) {
+                                                  final PopularityRangeDto popularity, final int offset,
+                                                  final int limit) {
         // ts_rank is computed per query, not a stored seekable column → relevance keeps OFFSET (the service
         // bounds `offset` by the relevance depth cap). ADR unified-asset-search D12.
         final var query = DSL
             .select(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND, ASSET_SEARCH_ENTRYPOINT.ASSET_ID)
             .from(searchFrom())
-            .where(conditions(state, assetKinds, scope, favorites))
+            .where(conditions(state, assetKinds, scope, favorites, popularity))
             .orderBy(orderFields(state))
             .limit(DSL.val(limit))
             .offset(DSL.val(offset));
@@ -105,11 +109,38 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
 
     @Override
     public Mono<Long> count(final FacetStateDto state, final List<String> assetKinds,
-                            final AssetSearchScope scope, final FavoritesScopeDto favorites) {
+                            final AssetSearchScope scope, final FavoritesScopeDto favorites,
+                            final PopularityRangeDto popularity) {
         final var query = DSL.selectCount()
             .from(searchFrom())
-            .where(conditions(state, assetKinds, scope, favorites));
+            .where(conditions(state, assetKinds, scope, favorites, popularity));
         return jooqReactiveOperations.mono(query).map(r -> r.value1().longValue());
+    }
+
+    @Override
+    public Mono<Map<Short, Long>> popularityHistogram(final FacetStateDto state, final List<String> assetKinds,
+                                                      final AssetSearchScope scope,
+                                                      final FavoritesScopeDto favorites) {
+        // ST-9 (#1843), ADR D5 "the histogram is a bucketed aggregate over the filtered set, bounded": the score IS
+        // the bucket (a log2 band, 0..20 — V0_0_100), so this is a GROUP BY over at most 21 groups, never a
+        // width_bucket re-bucketing. The SAME predicate builder as the page + count — one source of truth — with
+        // the popularity range deliberately left out (exclude-own-facet: dragging a handle must not erase the bars
+        // the user can slide back to) and the kind pinned to data entities (terms / query examples hold score 0
+        // because they have no view count; counting them would pile the whole glossary into "never viewed").
+        //
+        // MEASURED on main's exact code at 126k union rows (CTRIB-066 §4a, postgres:13.2): browse 381–453 ms vs
+        // the shipped count(*) 356–386 ms (1.07–1.17x); FTS (12k matches) 240 ms vs 210 ms (1.15x). A
+        // kind-specialised FROM (data_entity only) measured 267 ms — 30 % cheaper — and was NOT taken: it would
+        // need a second predicate composition beside conditions(), and the shared builder is worth more than
+        // 0.1 s on a request the client fires in parallel with the results and memoises per filter state.
+        final var query = DSL
+            .select(ASSET_SEARCH_ENTRYPOINT.POPULARITY_SCORE, DSL.count())
+            .from(searchFrom())
+            .where(conditions(state, assetKinds, scope, favorites, null))
+            .and(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.DATA_ENTITY.getValue()))
+            .groupBy(ASSET_SEARCH_ENTRYPOINT.POPULARITY_SCORE);
+        return jooqReactiveOperations.flux(query)
+            .collectMap(r -> r.value1(), r -> r.value2().longValue());
     }
 
     @Override
@@ -162,6 +193,11 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
         final Condition strictlyAfterValue;
         final Condition equalValue;
         switch (sort) {
+            case POPULARITY -> { // NOT NULL smallint, DESC → "after" is smaller; no nulls tail (ST-9 / #1843)
+                final short value = Short.parseShort(cursor.sortValue());
+                strictlyAfterValue = ASSET_SEARCH_ENTRYPOINT.POPULARITY_SCORE.lt(value);
+                equalValue = ASSET_SEARCH_ENTRYPOINT.POPULARITY_SCORE.eq(value);
+            }
             case UPDATED_AT -> {
                 final LocalDateTime value = LocalDateTime.parse(cursor.sortValue());
                 strictlyAfterValue = ASSET_SEARCH_ENTRYPOINT.UPDATED_AT.lt(value); // DESC → smaller comes after
@@ -200,6 +236,7 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
         return switch (sort) {
             case UPDATED_AT -> ASSET_SEARCH_ENTRYPOINT.UPDATED_AT;
             case NAME -> DSL.lower(ASSET_SEARCH_ENTRYPOINT.NAME);
+            case POPULARITY -> ASSET_SEARCH_ENTRYPOINT.POPULARITY_SCORE;
             default -> ASSET_SEARCH_ENTRYPOINT.STATUS_PRIORITY; // STATUS_PRIORITY (keyset browse default)
         };
     }
@@ -211,6 +248,7 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
         switch (sort) {
             case UPDATED_AT -> order.add(sortValue.desc().nullsLast());
             case NAME -> order.add(sortValue.asc().nullsLast());
+            case POPULARITY -> order.add(sortValue.desc().nullsLast()); // the index's direction (see orderFields)
             default -> order.add(sortValue.asc()); // STATUS_PRIORITY
         }
         order.add(u.field("asset_kind").asc());
@@ -231,7 +269,7 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
                 final String value = r.get("sv", String.class);
                 yield new AssetSearchPageRow(assetKind, assetId, value, value == null);
             }
-            default -> { // STATUS_PRIORITY
+            default -> { // STATUS_PRIORITY and POPULARITY — both NOT NULL smallint columns
                 final Short value = r.get("sv", Short.class);
                 final String sv = value == null ? null : value.toString();
                 yield new AssetSearchPageRow(assetKind, assetId, sv, value == null);
@@ -267,7 +305,8 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
     }
 
     private List<Condition> conditions(final FacetStateDto state, final List<String> assetKinds,
-                                       final AssetSearchScope scope, final FavoritesScopeDto favorites) {
+                                       final AssetSearchScope scope, final FavoritesScopeDto favorites,
+                                       final PopularityRangeDto popularity) {
         final List<Condition> conditions = new ArrayList<>();
 
         // (1) FTS — only for a non-blank query. A blank/absent query means "browse" (no FTS predicate). The
@@ -467,6 +506,22 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
             conditions.add(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.DATA_ENTITY.getValue()));
         }
 
+        // (8) POPULARITY range (ST-9 / #1843, ADR D5): a closed range over the SNAPSHOTTED popularity_score — the
+        // 15-minute bucketed view-count band V0_0_100 denormalised onto this index; never a query-time read of
+        // data_entity.view_count (the write-contention hotspot D5's SRE correction keeps off the search path).
+        // DATA-ENTITY-SCOPED, the condition-(7) shape: terms / query examples hold score 0 because they have NO view
+        // count — they are uncounted, not unviewed — so a range they cannot satisfy excludes them OUTRIGHT (the
+        // control says "Data entities only"), rather than passing them through or listing every term under "never
+        // viewed". A contradictory range (min > max after the DTO's clamp) matches nothing: a contradictory filter
+        // narrows to nothing, never to everything (the lineage-scope rule at (5)). The predicate needs no index of
+        // its own — measured as a Filter on the browse-order index scan (1–2 ms for a LIMIT-31 page, CTRIB-066 §4a).
+        if (popularity != null) {
+            conditions.add(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.DATA_ENTITY.getValue()));
+            conditions.add(popularity.contradictory()
+                ? DSL.falseCondition()
+                : ASSET_SEARCH_ENTRYPOINT.POPULARITY_SCORE.between(popularity.min(), popularity.max()));
+        }
+
         return conditions;
     }
 
@@ -487,6 +542,13 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
                 // name is stored raw; lower(...) matches asset_search_entrypoint_name_idx (functional on
                 // lower(name)) and preserves ST-4's case-insensitive ordering.
                 order.add(DSL.lower(ASSET_SEARCH_ENTRYPOINT.NAME).asc().nullsLast());
+            case POPULARITY ->
+                // "Most popular" (ST-9 / #1843): the snapshotted score DESC. The column is NOT NULL, yet NULLS LAST
+                // is spelled out because Postgres reads a bare DESC as DESC NULLS FIRST, and the composite
+                // asset_search_entrypoint_popularity_idx (V0_0_100) is (popularity_score DESC NULLS LAST, asset_kind
+                // ASC, asset_id DESC) — the ORDER BY must match the index's direction verbatim or the planner adds
+                // a Sort node (5c's own EXPLAIN oracle pins exactly this spelling). Non-DE rows (score 0) sort last.
+                order.add(ASSET_SEARCH_ENTRYPOINT.POPULARITY_SCORE.desc().nullsLast());
             default ->
                 // STATUS_PRIORITY. The denormalised column is NOT NULL (V0_0_99 stores non-DE rows as
                 // UNASSIGNED-priority 3), so the bare-column ORDER BY matches the status_priority btree.

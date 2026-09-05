@@ -16,6 +16,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearch;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchList;
 import org.opendatadiscovery.oddplatform.auth.CurrentUserIdentityResolver;
+import org.opendatadiscovery.oddplatform.dto.PopularityBands;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.exception.UniqueConstraintException;
 import org.opendatadiscovery.oddplatform.mapper.DateTimeMapper;
@@ -33,6 +34,7 @@ public class SavedSearchServiceImpl implements SavedSearchService {
     /** The wire names of the two enum-/type-sensitive fields a stored spec is sanitised on before binding. */
     private static final String ASSET_KINDS_FIELD = "asset_kinds";
     private static final String FAVORITES_FIELD = "favorites";
+    private static final String POPULARITY_FIELD = "popularity";
     private static final Set<String> KNOWN_ASSET_KINDS = Arrays.stream(AssetKind.values())
         .map(AssetKind::getValue)
         .collect(Collectors.toUnmodifiableSet());
@@ -143,7 +145,10 @@ public class SavedSearchServiceImpl implements SavedSearchService {
         }
     }
 
-    /** Drop unknown {@code asset_kinds} tokens and a mistyped {@code favorites} — field-level, never the spec. */
+    /**
+     * Drop unknown {@code asset_kinds} tokens, a mistyped {@code favorites}, and a malformed or contradictory
+     * {@code popularity} range — field-level, never the spec.
+     */
     private void sanitiseSpecTree(final ObjectNode spec) {
         final JsonNode kinds = spec.get(ASSET_KINDS_FIELD);
         if (kinds != null && !kinds.isNull()) {
@@ -166,6 +171,43 @@ public class SavedSearchServiceImpl implements SavedSearchService {
         if (favorites != null && !favorites.isNull() && !favorites.isBoolean()) {
             log.warn("Saved-search spec carries a non-boolean favorites ({}); dropping it", favorites.getNodeType());
             spec.remove(FAVORITES_FIELD);
+        }
+        sanitisePopularity(spec);
+    }
+
+    /**
+     * ST-9 (#1843): a stored {@code popularity} range is read back exactly as the search would apply it, or not at
+     * all. A non-object is dropped; a non-integer bound is dropped field-level; and an INVERTED range (min > max after
+     * the same clamp the live request applies) is dropped whole — on a live request such a range answers an empty
+     * page, but a saved search must reapply as the search it can still run, so every reader (the UI's reapply, the API
+     * list) agrees: no range. A stored `{}` (no bound) is left as is — it already means "no range".
+     */
+    private void sanitisePopularity(final ObjectNode spec) {
+        final JsonNode popularity = spec.get(POPULARITY_FIELD);
+        if (popularity == null || popularity.isNull()) {
+            return;
+        }
+        if (!popularity.isObject()) {
+            log.warn("Saved-search spec carries a non-object popularity ({}); dropping it", popularity.getNodeType());
+            spec.remove(POPULARITY_FIELD);
+            return;
+        }
+        final ObjectNode range = (ObjectNode) popularity;
+        for (final String bound : new String[] {"min", "max"}) {
+            final JsonNode value = range.get(bound);
+            if (value != null && !value.isNull() && !value.isIntegralNumber()) {
+                log.warn("Saved-search spec carries a non-integer popularity {} ({}); dropping the bound",
+                    bound, value.getNodeType());
+                range.remove(bound);
+            }
+        }
+        final JsonNode lo = range.get("min");
+        final JsonNode hi = range.get("max");
+        if (lo != null && !lo.isNull() && hi != null && !hi.isNull()
+            && PopularityBands.clamp(lo.asInt()) > PopularityBands.clamp(hi.asInt())) {
+            log.warn("Saved-search spec carries a contradictory popularity range ({} > {}); dropping it",
+                lo.asInt(), hi.asInt());
+            spec.remove(POPULARITY_FIELD);
         }
     }
 
