@@ -467,8 +467,9 @@ components:
       description: >-
         The cross-kind search request — the shared SearchFormData (query + filters + sort + the My-data scope
         group + the deprecated my_objects) plus an optional asset_kinds filter that narrows to specific kinds
-        (empty / absent = all kinds) and an optional favorites filter scoped to the caller's own starred
-        assets. The My-data and favorites scopes are independent axes and compose freely.
+        (empty / absent = all kinds), an optional favorites filter scoped to the caller's own starred
+        assets, and an optional popularity range (ST-9 / #1843) over the snapshotted view-count band. The
+        My-data, favorites and popularity narrowings are independent axes and compose freely.
       allOf:
         - $ref: '#/components/schemas/SearchFormData'
         - type: object
@@ -477,6 +478,8 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/AssetKind'
+            popularity:
+              $ref: '#/components/schemas/PopularityRange'
             favorites:
               type: boolean
               description: >-
@@ -488,6 +491,75 @@ components:
                 The identity is taken from the security context only — never from this request — so a caller
                 can never read another user's favorites; under `auth.type=DISABLED` there is no principal and
                 all callers share one instance-wide bucket.
+
+    PopularityRange:
+      type: object
+      description: >-
+        A closed range over the popularity SCORE of a data entity (ST-9 / #1843, ADR unified-asset-search D5):
+        the snapshotted, bucketed view count on the unified search index — score s is the log2 band of the view
+        count, so s covers [2^s - 1, 2^(s+1) - 2] views (0 = never viewed, 1 = 1-2 views, 2 = 3-6, 3 = 7-14,
+        4 = 15-30, 5 = 31-62, ... 20 = 1,048,575 or more). The snapshot is refreshed every 15 minutes; it is never
+        the live view counter. Both bounds are optional and inclusive: an absent bound is open. A request with a
+        range (either bound set) narrows to DATA ENTITIES ONLY — terms and query examples have no view count and
+        are excluded outright rather than treated as never viewed. Fail-closed rules: each bound is clamped into
+        [0, 20] server-side (a stale or hand-edited link degrades instead of 400-ing, the depth precedent); a
+        contradictory range (min > max after clamping) matches nothing (200 with an empty page) on a live request,
+        while a saved search that stored one reads it back as absent; an empty object with no bounds is the same
+        as absent (no range, no narrowing). The per-band counts and the exact view boundaries of every band come
+        from POST /api/search/assets/facets/popularity.
+      properties:
+        min:
+          type: integer
+          format: int32
+          description: The lowest score included (0..20). Absent = no lower bound.
+        max:
+          type: integer
+          format: int32
+          description: The highest score included (0..20). Absent = no upper bound.
+
+    PopularityBucket:
+      type: object
+      description: One popularity band of the distribution — the score, the exact view-count boundaries it covers, and how many data entities of the current (otherwise-filtered) result set sit in it.
+      properties:
+        score:
+          type: integer
+          format: int32
+          description: The band's popularity score, 0..20 — the value PopularityRange bounds refer to.
+        min_views:
+          type: integer
+          format: int64
+          description: The lowest view count in this band (2^score - 1). The label a client should show is built from this boundary, never from a rounded figure.
+        max_views:
+          type: integer
+          format: int64
+          nullable: true
+          description: The highest view count in this band (2^(score+1) - 2). Null on the top band (score 20), which is open above 1,048,575 views.
+        count:
+          type: integer
+          format: int64
+          description: How many data entities matching every OTHER condition of the request fall in this band.
+      required:
+        - score
+        - min_views
+        - count
+
+    PopularityFacet:
+      type: object
+      description: >-
+        The popularity distribution of the current search (ST-9 / #1843): exactly 21 buckets, scores 0..20 in
+        order, each with its view boundaries and its count. Counts are taken over the DATA ENTITIES that match
+        every other condition of the request — the query, asset_kinds, the entity classes, the six shared
+        facets, the My-data scope and the favorites scope — with the request's own popularity range IGNORED (so
+        the bars a client renders show what the user can still slide back to). Terms and query examples never
+        contribute (they have no view count). A request whose other conditions match no data entity returns 21
+        zero counts, never an error.
+      properties:
+        buckets:
+          type: array
+          items:
+            $ref: '#/components/schemas/PopularityBucket'
+      required:
+        - buckets
 
     RecentlyViewedAssetList:
       type: object
@@ -2529,10 +2601,15 @@ components:
           type: string
           description: >-
             The named canonical ordering for the result set — one of RELEVANCE, STATUS_PRIORITY,
-            UPDATED_AT, NAME (case-insensitive). Absent or unrecognised values fall back to a
+            UPDATED_AT, NAME, POPULARITY (case-insensitive). Absent or unrecognised values fall back to a
             per-context default (relevance for an active text query, status priority for empty
             browse). Deliberately a plain string rather than a strict enum so an unknown value
-            degrades gracefully to the default instead of failing the request.
+            degrades gracefully to the default instead of failing the request. POPULARITY (ST-9 /
+            #1843) orders most-viewed first by the snapshotted popularity score — the 15-minute
+            bucketed view-count band on the unified index, never the live counter — with terms and
+            query examples (no view count) last; it is HONOURED BY the cross-kind POST /api/search/assets
+            only. On the legacy /api/search session it resolves to the per-context default, exactly as an
+            unknown token does — that path orders data_entity rows, which carry no popularity column.
         filters:
           type: object
           properties:

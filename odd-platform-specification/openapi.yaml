@@ -967,8 +967,10 @@ paths:
         ranked query over the unified asset_search_entrypoint index and returns a keyset-paginated,
         relevance-ranked list of polymorphic assets, each routing to its own kind's detail. Honors the shared
         SearchFormData contract (query + filters + sort + my_objects) plus an optional asset_kinds filter
-        (empty = all kinds) and an optional favorites filter that narrows to the caller's own starred assets
-        (absent = no favorites narrowing; the identity comes from the security context, never the request).
+        (empty = all kinds), an optional favorites filter that narrows to the caller's own starred assets
+        (absent = no favorites narrowing; the identity comes from the security context, never the request),
+        and an optional popularity range (ST-9 / #1843) over the snapshotted view-count band — data entities
+        only while a range is active; absent = no narrowing; sort=POPULARITY orders most-viewed first.
         Pagination is forward-only by opaque cursor (ST-5b, ADR-0021): omit the cursor
         for the first page, then pass back page_info.next_cursor to fetch the next page — deep pages stay
         index-fast and stable under concurrent writes (the index-backed browse sorts seek by keyset; the
@@ -991,6 +993,35 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/AssetList'
+      tags:
+        - asset-search
+
+  /api/search/assets/facets/popularity:
+    post:
+      summary: Popularity distribution of a cross-kind asset search
+      description: >-
+        The histogram behind the Popularity range filter (ST-9 / #1843): for the same request body
+        POST /api/search/assets takes, returns the 21 popularity bands (scores 0..20) with their exact view-count
+        boundaries and the number of data entities of the current result set in each. Every condition of the
+        request applies EXCEPT the request's own popularity range, which is ignored — the standard exclude-own-facet
+        rule, so a client can show what the user can slide back to. Data entities only (terms and query examples
+        have no view count); the My-data and favorites scopes resolve exactly as they do for the results. Stateless
+        and additive like /api/search/assets; the results endpoint never waits for it. A request matching no data
+        entity returns 21 zero counts.
+      operationId: getAssetSearchPopularityFacet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/AssetSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/PopularityFacet'
       tags:
         - asset-search
 
