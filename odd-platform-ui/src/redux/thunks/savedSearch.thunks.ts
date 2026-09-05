@@ -12,8 +12,9 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { savedSearchApi } from 'lib/api';
 
 // ST-3 / ADR D11 — the per-user saved-search CRUD data layer, mirroring the Favorites thunks. Each row's
-// `spec` is a SearchFormData (the same object the URL encodes); REAPPLY / share are pure URL navigation
-// (searchFormDataToUrlState), so there is no server-side "run" call here. Success toasts are localised via
+// `spec` is an AssetSearchFormData (the same object the unified search request sends and the URL encodes —
+// #1878); REAPPLY / share are pure URL navigation (assetSearchFormDataToUrlState), so there is no server-side
+// "run" call here. Success toasts are localised via
 // the i18n singleton (`i18n.t`) because a thunk has no React `t()` hook in scope.
 
 export const fetchSavedSearchList = handleResponseAsyncThunk<

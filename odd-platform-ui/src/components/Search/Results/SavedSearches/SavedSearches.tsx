@@ -6,7 +6,10 @@ import type { SavedSearch } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { deleteSavedSearch, fetchSavedSearchList } from 'redux/thunks';
 import { getSavedSearchList, getSavedSearchListFetchingStatuses } from 'redux/selectors';
-import { searchFormDataToUrlState, searchStateToParams } from 'lib/search/searchUrlState';
+import {
+  assetSearchFormDataToUrlState,
+  searchStateToParams,
+} from 'lib/search/searchUrlState';
 import { searchPath } from 'routes';
 import { AppPopover, AppTooltip, Button, CopyButton } from 'components/shared/elements';
 import { AddIcon, DeleteIcon, EditIcon, SearchIcon } from 'components/shared/icons';
@@ -19,10 +22,12 @@ const PAGE_SIZE = 100;
  * under the `!routerSearchId` guard (there is no shareable spec on the legacy `/search/{sessionId}` route).
  * "Save current search" captures the live URL spec (via SavedSearchForm); the "Saved searches" popover lists
  * the user's saved searches with REAPPLY (navigate to the rebuilt param URL — the Search page re-queries
- * itself, D10), rename, delete and a copy-share-link affordance.
+ * itself, D10), rename, delete and a copy-share-link affordance. The stored spec is the full
+ * `AssetSearchFormData` (#1878), so reapply and the share link rebuild EVERY dimension — including the asset
+ * kinds and the Favorites scope the old `SearchFormData` contract dropped.
  *
- * Defensive by construction: `searchFormDataToUrlState` tolerates a malformed / empty stored spec and never
- * throws, so a bad row can never white-screen the app (no error boundary — IT-006).
+ * Defensive by construction: `assetSearchFormDataToUrlState` tolerates a malformed / empty / pre-#1878 stored
+ * spec and never throws, so a bad row can never white-screen the app (no error boundary — IT-006).
  */
 const SavedSearches: React.FC = () => {
   const { t } = useTranslation();
@@ -38,9 +43,16 @@ const SavedSearches: React.FC = () => {
 
   // REAPPLY: rebuild the canonical param URL from the stored spec and navigate — the Search page re-queries
   // off the new URL (D10). Navigating to the same route with new params re-runs the reader effect there.
+  //
+  // CLOSE FIRST, then navigate (PLT-265): reapply is the one row action that changes the page UNDERNEATH the
+  // menu, so leaving the popover open puts it on top of the results the user just asked for — and, since the
+  // popover is a modal, marks those results `aria-hidden` until it is dismissed. Delete deliberately does NOT
+  // close (the user watches the row go, or removes several); rename opens a dialog over it; Copy link may be
+  // used repeatedly.
   const handleReapply = React.useCallback(
-    (item: SavedSearch) => () => {
-      const params = searchStateToParams(searchFormDataToUrlState(item.spec));
+    (item: SavedSearch, onClose: () => void) => () => {
+      const params = searchStateToParams(assetSearchFormDataToUrlState(item.spec));
+      onClose();
       navigate(`${searchPath()}${params ? `?${params}` : ''}`);
     },
     [navigate]
@@ -54,7 +66,7 @@ const SavedSearches: React.FC = () => {
   );
 
   const shareLink = React.useCallback((item: SavedSearch) => {
-    const params = searchStateToParams(searchFormDataToUrlState(item.spec));
+    const params = searchStateToParams(assetSearchFormDataToUrlState(item.spec));
     return `${window.location.origin}${searchPath()}${params ? `?${params}` : ''}`;
   }, []);
 
@@ -92,72 +104,74 @@ const SavedSearches: React.FC = () => {
           />
         )}
       >
-        <Grid
-          container
-          flexDirection='column'
-          wrap='nowrap'
-          sx={{ width: 320, maxHeight: 400, overflowY: 'auto', py: 0.5 }}
-        >
-          {savedSearches.length === 0 ? (
-            <Typography variant='subtitle2' sx={{ px: 1.5, py: 1 }}>
-              {t('No saved searches yet')}
-            </Typography>
-          ) : (
-            savedSearches.map(item => (
-              <Grid
-                key={item.id}
-                container
-                item
-                wrap='nowrap'
-                alignItems='center'
-                sx={{
-                  px: 1.5,
-                  py: 0.75,
-                  columnGap: 0.5,
-                  '&:hover': { backgroundColor: 'backgrounds.primary' },
-                }}
-              >
-                <AppTooltip title={item.name}>
-                  <Typography
-                    variant='body1'
-                    onClick={handleReapply(item)}
-                    sx={{
-                      flexGrow: 1,
-                      minWidth: 0,
-                      cursor: 'pointer',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {item.name}
-                  </Typography>
-                </AppTooltip>
-                <SavedSearchForm
-                  savedSearch={item}
-                  btnEl={
+        {({ onClose }) => (
+          <Grid
+            container
+            flexDirection='column'
+            wrap='nowrap'
+            sx={{ width: 320, maxHeight: 400, overflowY: 'auto', py: 0.5 }}
+          >
+            {savedSearches.length === 0 ? (
+              <Typography variant='subtitle2' sx={{ px: 1.5, py: 1 }}>
+                {t('No saved searches yet')}
+              </Typography>
+            ) : (
+              savedSearches.map(item => (
+                <Grid
+                  key={item.id}
+                  container
+                  item
+                  wrap='nowrap'
+                  alignItems='center'
+                  sx={{
+                    px: 1.5,
+                    py: 0.75,
+                    columnGap: 0.5,
+                    '&:hover': { backgroundColor: 'backgrounds.primary' },
+                  }}
+                >
+                  <AppTooltip title={item.name}>
+                    <Typography
+                      variant='body1'
+                      onClick={handleReapply(item, onClose)}
+                      sx={{
+                        flexGrow: 1,
+                        minWidth: 0,
+                        cursor: 'pointer',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {item.name}
+                    </Typography>
+                  </AppTooltip>
+                  <SavedSearchForm
+                    savedSearch={item}
+                    btnEl={
+                      <Button
+                        buttonType='linkGray-m'
+                        icon={<EditIcon />}
+                        aria-label={t('Rename')}
+                      />
+                    }
+                  />
+                  <AppTooltip title={t('Copy link')}>
+                    <CopyButton buttonType='linkGray-m' stringToCopy={shareLink(item)} />
+                  </AppTooltip>
+                  <AppTooltip title={t('Delete')}>
                     <Button
                       buttonType='linkGray-m'
-                      icon={<EditIcon />}
-                      aria-label={t('Rename')}
+                      icon={<DeleteIcon />}
+                      aria-label={t('Delete')}
+                      onClick={handleDelete(item)}
                     />
-                  }
-                />
-                <AppTooltip title={t('Copy link')}>
-                  <CopyButton buttonType='linkGray-m' stringToCopy={shareLink(item)} />
-                </AppTooltip>
-                <AppTooltip title={t('Delete')}>
-                  <Button
-                    buttonType='linkGray-m'
-                    icon={<DeleteIcon />}
-                    aria-label={t('Delete')}
-                    onClick={handleDelete(item)}
-                  />
-                </AppTooltip>
-              </Grid>
-            ))
-          )}
-        </Grid>
+                  </AppTooltip>
+                </Grid>
+              ))
+            )}
+          </Grid>
+        )}
       </AppPopover>
     </Grid>
   );

@@ -351,7 +351,16 @@ export function paramsToSearchState(search: string): SearchUrlState {
       ? (favoritesStr as SearchFavoritesValue)
       : undefined;
 
-    return { query, facets, myData, upstreamDepth, downstreamDepth, sort, assetKinds, favorites };
+    return {
+      query,
+      facets,
+      myData,
+      upstreamDepth,
+      downstreamDepth,
+      sort,
+      assetKinds,
+      favorites,
+    };
   } catch {
     return empty;
   }
@@ -408,10 +417,12 @@ export function searchUrlStateToAssetSearchFormData(
 }
 
 /**
- * The inverse of {@link searchUrlStateToFormData}: rebuild the shareable URL state from a persisted
- * `SearchFormData` spec (ST-3 / ADR D11 — a saved search stores exactly a `SearchFormData`). A caller
- * rebuilds the canonical param URL with `searchStateToParams(searchFormDataToUrlState(spec))`, so a saved
- * search REAPPLIES by navigating to that URL and the Search page re-queries itself off it (D10).
+ * The inverse of {@link searchUrlStateToFormData}: rebuild the shareable URL state from the shared
+ * `SearchFormData` half of a persisted spec (ST-3 / ADR D11). Since #1878 a saved search stores the FULL
+ * `AssetSearchFormData`; callers that reapply or share a saved search use {@link assetSearchFormDataToUrlState},
+ * which layers the two URL-only dimensions on top of this. A caller rebuilds the canonical param URL with
+ * `searchStateToParams(...)`, so a saved search REAPPLIES by navigating to that URL and the Search page
+ * re-queries itself off it (D10).
  *
  * FAIL CLOSED, and NEVER throws — there is no error boundary in odd-platform-ui, so an uncaught throw in a
  * caller's render white-screens the whole app (IT-006). A `sort` outside the known tokens is dropped to
@@ -451,5 +462,35 @@ export function searchFormDataToUrlState(formData: SearchFormData): SearchUrlSta
     upstreamDepth: parseDepth(formData.upstreamDepth),
     downstreamDepth: parseDepth(formData.downstreamDepth),
     sort,
+  };
+}
+
+/**
+ * #1878 (ADR D11 — one canonical spec, two surfaces): the inverse of {@link searchUrlStateToAssetSearchFormData},
+ * for a persisted saved-search spec. Rebuilds the complete URL state — the shared half via
+ * {@link searchFormDataToUrlState}, then the two dimensions that live only on `AssetSearchFormData`:
+ * `assetKinds` (filtered through the same `AssetKind` allow-list the URL parse uses, so a stale stored token is
+ * dropped rather than sent) and `favorites` (`true` → `'yes'`, `false` → `'no'` — a REAL filter, only un-starred
+ * assets — and anything else, including the `null` a row saved before #1878 reads back with, → no narrowing).
+ *
+ * FAIL CLOSED and NEVER throws, like its sibling: this runs in a caller's render (IT-006). A row saved before
+ * the widening reapplies exactly as it did — the same URL, no new params.
+ */
+export function assetSearchFormDataToUrlState(
+  formData: AssetSearchFormData
+): SearchUrlState {
+  // A missing spec object (never produced by the API, which always returns at least `{}`) still must not throw.
+  const base = searchFormDataToUrlState(formData ?? ({} as AssetSearchFormData));
+  const rawKinds: unknown = formData?.assetKinds;
+  const assetKinds = (Array.isArray(rawKinds) ? rawKinds : []).filter(
+    (kind): kind is AssetKind => typeof kind === 'string' && VALID_ASSET_KINDS.has(kind)
+  );
+  const rawFavorites: unknown = formData?.favorites;
+  const favorites: SearchFavoritesValue | undefined =
+    rawFavorites === true ? 'yes' : rawFavorites === false ? 'no' : undefined;
+  return {
+    ...base,
+    ...(assetKinds.length > 0 ? { assetKinds } : {}),
+    ...(favorites ? { favorites } : {}),
   };
 }

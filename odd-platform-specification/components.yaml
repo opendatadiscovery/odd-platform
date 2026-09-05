@@ -2575,8 +2575,11 @@ components:
       type: object
       description: >-
         A named, per-user saved search (ST-3 / ADR D11). `spec` is the parametrised search state — the same
-        SearchFormData the URL encodes (query + filters + sort) — so one canonical spec drives both the
-        shareable URL and the saved row. Private to its owner; sharing is the parametrised URL, not a grant.
+        AssetSearchFormData the unified search sends and the URL encodes (query + filters + sort + the My-data
+        scope + asset_kinds + favorites) — so one canonical spec drives both the shareable URL and the saved
+        row, and every URL-only dimension is saveable (#1878: it was SearchFormData, which silently dropped
+        asset_kinds and favorites). Fields a row was saved without read back as null / absent, never as a
+        narrowing. Private to its owner; sharing is the parametrised URL, not a grant.
       properties:
         id:
           type: integer
@@ -2584,7 +2587,7 @@ components:
         name:
           type: string
         spec:
-          $ref: '#/components/schemas/SearchFormData'
+          $ref: '#/components/schemas/AssetSearchFormData'
         created_at:
           type: string
           format: date-time
@@ -2613,14 +2616,17 @@ components:
 
     SavedSearchFormData:
       type: object
-      description: Create/update payload for a saved search — a name plus the search spec to persist.
+      description: >-
+        Create/update payload for a saved search — a name plus the search spec to persist. The spec is the
+        full AssetSearchFormData (#1878), so a client saves exactly the request it runs; an absent favorites /
+        asset_kinds stays absent (no narrowing), never defaults.
       properties:
         name:
           type: string
           minLength: 1
           maxLength: 255
         spec:
-          $ref: '#/components/schemas/SearchFormData'
+          $ref: '#/components/schemas/AssetSearchFormData'
       required:
         - name
         - spec
