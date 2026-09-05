@@ -7,7 +7,10 @@ import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -56,5 +59,28 @@ public class JsonSchemaTest {
             JsonSchemaTest.class.getResourceAsStream(policyPath));
         final Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
         assertThat(errors).isNotEmpty();
+    }
+
+    @Test
+    public void testEveryItemsKeywordDeclaresArrayType() throws IOException {
+        final JsonNode schema = mapper.readTree(
+            JsonSchemaTest.class.getResourceAsStream("/schema/policy_schema.json"));
+        final List<String> pathsWithoutArrayType = new ArrayList<>();
+        collectItemsPathsWithoutArrayType(schema, "#", pathsWithoutArrayType);
+        assertThat(pathsWithoutArrayType).isEmpty();
+    }
+
+    private void collectItemsPathsWithoutArrayType(final JsonNode node, final String path, final List<String> acc) {
+        if (node.isObject()) {
+            if (node.has("items") && !"array".equals(node.path("type").asText())) {
+                acc.add(path);
+            }
+            node.fields().forEachRemaining(
+                field -> collectItemsPathsWithoutArrayType(field.getValue(), path + "/" + field.getKey(), acc));
+        } else if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                collectItemsPathsWithoutArrayType(node.get(i), path + "/" + i, acc);
+            }
+        }
     }
 }
