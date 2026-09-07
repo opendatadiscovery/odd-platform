@@ -1,4 +1,3 @@
-import { Grid } from '@mui/material';
 import styled from 'styled-components';
 
 // The bar strip above the slider: one bar per rail stop, heights sqrt-scaled relative to the largest count. Bars inside the
@@ -32,7 +31,3 @@ export const SliderRow = styled('div')(({ theme }) => ({
   width: '100%',
 }));
 
-export const Presets = styled(Grid)(({ theme }) => ({
-  gap: theme.spacing(1),
-  marginTop: theme.spacing(0.5),
-}));

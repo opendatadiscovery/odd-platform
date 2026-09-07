@@ -102,9 +102,10 @@ const Search: React.FC = () => {
     //
     // EVERY URL-ONLY PARAM MUST BE LISTED HERE. Omitting one is invisible in review and at runtime: the
     // filter survives a page load and then vanishes the moment any unrelated facet is toggled, with no error.
-    // That is the #1858 bug class, which ST-7, ST-8 and ST-9 all re-derived independently while adding to this
-    // object — so the next slice that adds a URL-only param should expect to land here too. IT-148 pins the
-    // favorites case; the My-data case is pinned by ST-8's own IT; the Popularity range by IT-156 (ST-9).
+    // That is the #1858 bug class, which ST-7, ST-8, ST-9 and ST-10 all re-derived independently while adding to
+    // this object — so the next slice that adds a URL-only param should expect to land here too. IT-148 pins the
+    // favorites case; the My-data case is pinned by ST-8's own IT; the Popularity range by IT-156 (ST-9); the
+    // Last-viewed scope by IT-157 (ST-10).
 
     const live = paramsToSearchState(location.search);
     const nextParams = searchStateToParams({
@@ -117,6 +118,7 @@ const Search: React.FC = () => {
       downstreamDepth: live.downstreamDepth,
       favorites: live.favorites,
       popularity: live.popularity,
+      recentlyViewed: live.recentlyViewed,
     });
     if (nextParams !== location.search.replace(/^\?/, '')) {
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);

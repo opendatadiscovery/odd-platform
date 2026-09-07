@@ -1,9 +1,6 @@
 import React from 'react';
-import { Grid, Slider, Typography } from '@mui/material';
-import { AppTooltip, Button } from 'components/shared/elements';
-import { ClearIcon, InformationIcon } from 'components/shared/icons';
-import { Label } from 'components/shared/elements/Input/Input.styles';
-import { Chip } from '../FixedOptionsMultiFilter/FixedOptionsMultiFilterStyles';
+import { Slider } from '@mui/material';
+import RangeFacetShell from '../RangeFacetShell/RangeFacetShell';
 import * as S from './RangeFacetFilterStyles';
 
 /** One stop of the rail — a discrete band the slider snaps to. `label` is the thumb's value label, `ariaText` what a screen reader speaks. */
@@ -47,9 +44,11 @@ export interface RangeFacetFilterProps {
 }
 
 /**
- * The reusable RANGE facet shell (ST-9 / #1843) — the first non-categorical facet in the Filters rail, built once so
- * the datetime-range facets (#1844 / #1845) can instance it with their own stops. It knows nothing about popularity:
- * it renders a heading in the rail's label idiom, an optional qualifier + inline help, a bar per stop, a two-thumb
+ * The numeric RANGE facet body (ST-9 / #1843) — the first non-categorical facet in the Filters rail. Since ST-10
+ * (#1844) the surrounding chrome (heading, inline help, qualifier, presets, chip) lives in {@link RangeFacetShell},
+ * which the datetime facets instance with a picker body instead; this component keeps the bars + slider and its own
+ * public props unchanged. It knows nothing about popularity:
+ * it renders a bar per stop, a two-thumb
  * MUI `Slider` that SNAPS to the stops (`step={null}` + marks — 21 discrete bands are a preset list rendered
  * spatially, so false continuity is avoided), optional preset links, and the standard filter chip with its ×.
  *
@@ -114,27 +113,27 @@ const RangeFacetFilter: React.FC<RangeFacetFilterProps> = ({
     [stops, lastIndex, onCommit]
   );
 
+  // The gate stays HERE, not in the shell, and it has TWO conditions: no reason set AND at least two stops. The
+  // second is not redundant — a one-stop rail with a selection reaches this with no reason at all, and MUI computes
+  // NaN thumb positions for min === max. Passing `children`/`presets` conditionally keeps both shipped states exact.
   return (
-    <Grid container sx={{ mt: 2 }} data-qa={`filter-${filterId}`}>
-      <Grid container alignItems='center' wrap='nowrap'>
-        <Label>{name}</Label>
-        {help && (
-          <AppTooltip checkForOverflow={false} title={help}>
-            {/* the hook lives on a plain span: MUI's styled SvgIcon does not forward unknown DOM props */}
-            <span
-              data-qa={`filter-${filterId}-info`}
-              style={{ display: 'inline-flex', marginLeft: 4 }}
-            >
-              <InformationIcon width={14} height={14} />
-            </span>
-          </AppTooltip>
-        )}
-      </Grid>
-      {qualifier && (
-        <Typography variant='subtitle2' color='texts.info' sx={{ width: '100%' }}>
-          {qualifier}
-        </Typography>
-      )}
+    <RangeFacetShell
+      name={name}
+      filterId={filterId}
+      qualifier={qualifier}
+      help={help}
+      chipText={hasSelection ? chipText : ''}
+      onClear={() => onCommit(undefined)}
+      disabledReason={canSlide ? undefined : disabledReason}
+      presets={
+        canSlide && presets && presets.length > 0
+          ? presets.map(preset => ({
+              label: preset.label,
+              onSelect: () => onCommit({ min: preset.range[0], max: preset.range[1] }),
+            }))
+          : undefined
+      }
+    >
       {canSlide ? (
         <>
           {showBars && (
@@ -170,49 +169,9 @@ const RangeFacetFilter: React.FC<RangeFacetFilterProps> = ({
               data-qa={`filter-${filterId}-slider`}
             />
           </S.SliderRow>
-          {presets && presets.length > 0 && (
-            <S.Presets container>
-              {presets.map(preset => (
-                <Button
-                  key={preset.label}
-                  text={preset.label}
-                  buttonType='linkGray-m'
-                  onClick={() => onCommit({ min: preset.range[0], max: preset.range[1] })}
-                  data-qa={`filter-${filterId}-preset`}
-                />
-              ))}
-            </S.Presets>
-          )}
         </>
-      ) : (
-        disabledReason && (
-          <Typography
-            variant='subtitle2'
-            color='texts.hint'
-            sx={{ width: '100%' }}
-            data-qa={`filter-${filterId}-disabled`}
-          >
-            {disabledReason}
-          </Typography>
-        )
-      )}
-      {hasSelection && (
-        <Grid display='inline-flex' item xs={12} sx={{ my: 0.25, mx: -0.25 }} container>
-          <Chip container data-qa={`filter-${filterId}-chip`}>
-            <Typography noWrap title={chipText}>
-              {chipText}
-            </Typography>
-            <Button
-              sx={{ ml: 0.5 }}
-              buttonType='linkGray-m'
-              icon={<ClearIcon />}
-              onClick={() => onCommit(undefined)}
-              aria-label={`${name}: ${chipText}`}
-            />
-          </Chip>
-        </Grid>
-      )}
-    </Grid>
+      ) : null}
+    </RangeFacetShell>
   );
 };
 

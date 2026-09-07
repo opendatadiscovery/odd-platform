@@ -167,6 +167,10 @@ describe('PopularityFilter (ST-9 / #1843)', () => {
     expect(qa(container, 'chip')).toHaveTextContent('Popularity: 31 – 62 views');
     expect(screen.queryAllByRole('slider')).toHaveLength(0);
     expect(container.innerHTML).not.toContain('NaN');
+    // ST-10 (#1844) — the preset must be ABSENT too. In the shipped component the presets lived INSIDE the
+    // `canSlide` branch, so extracting the chrome into RangeFacetShell could have started rendering them here:
+    // a clickable "Never viewed" under a rail that has no usable slider. Nothing else in this file would notice.
+    expect(screen.queryByRole('button', { name: 'Never viewed' })).toBeNull();
   });
 
   it('renders from the real catalog under a non-English locale (the parity test proves the keys exist; this proves they render)', async () => {
