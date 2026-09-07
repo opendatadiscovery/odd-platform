@@ -7,8 +7,23 @@ import DatePicker, { type DateObject } from 'react-multi-date-picker';
 import { calendarLocale } from 'components/shared/elements/AppDateRangePicker/calendarLocale';
 
 interface AppDateRangePickerProps {
-  defaultRange: { beginDate: Date; endDate: Date };
+  /**
+   * The range the input SHOWS. Optional since ST-10 (#1844): a facet whose window is genuinely unset must show an
+   * EMPTY input, not a plausible-looking range it is not applying — a control that displays a filter it does not
+   * hold is a lie the user has no way to check. Both shipped callers (the Activity and Alerts Period filters)
+   * always pass one, and their behaviour is unchanged.
+   */
+  defaultRange?: { beginDate: Date; endDate: Date };
   label: string;
+  /** shown while {@link defaultRange} is unset — say what picking a range would do */
+  placeholder?: string;
+  /**
+   * Where the calendar opens, in react-multi-date-picker's terms. Left undefined the library picks, which is right
+   * for a control near the top of a page and WRONG in a filter rail: measured at 1280x720, a two-month calendar
+   * opening upward from a control ~350px down the sidebar overflows the viewport top and takes the month header
+   * and its navigation arrows with it. A sidebar caller should open sideways, where the room is.
+   */
+  calendarPosition?: string;
   setCurrentRange?: (rangeStart: Date, rangeEnd: Date) => void;
   /**
    * The footer's quick-range links. Defaults to the shipped four (3 Day / 1 Week / 2 Week / 1 Month), so existing
@@ -21,6 +36,8 @@ interface AppDateRangePickerProps {
 const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
   defaultRange,
   label,
+  placeholder,
+  calendarPosition,
   setCurrentRange,
   ranges: rangesProp,
 }) => {
@@ -28,13 +45,13 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
   const datePickerRef = useRef<any>();
 
   const [isRangeCorrect, setIsRangeCorrect] = useState(true);
-  const [{ rangeStart, rangeEnd }, setRange] = useState({
-    rangeStart: defaultRange.beginDate,
-    rangeEnd: defaultRange.endDate,
-  });
+  const [{ rangeStart, rangeEnd }, setRange] = useState<{
+    rangeStart?: Date;
+    rangeEnd?: Date;
+  }>({ rangeStart: defaultRange?.beginDate, rangeEnd: defaultRange?.endDate });
 
   useEffect(() => {
-    setRange({ rangeStart: defaultRange.beginDate, rangeEnd: defaultRange.endDate });
+    setRange({ rangeStart: defaultRange?.beginDate, rangeEnd: defaultRange?.endDate });
   }, [defaultRange]);
 
   // The four shipped quick ranges. Their labels were English string literals until ST-10 (#1844) — the calendar
@@ -66,7 +83,10 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
   const handleSetRange = useCallback(([beginDate, endDate]: Date[]) => {
     setIsRangeCorrect(true);
     if (!endDate) setIsRangeCorrect(false);
-    setRange({ rangeStart: startOfDay(beginDate), rangeEnd: endOfDay(endDate) });
+    setRange({
+      rangeStart: beginDate && startOfDay(beginDate),
+      rangeEnd: endDate && endOfDay(endDate),
+    });
   }, []);
 
   interface DisableSelectedDateParams {
@@ -77,7 +97,10 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
   const disableSelectedDate = useCallback(
     ({ date, selectedDate }: DisableSelectedDateParams) => {
       const isArray = Array.isArray(selectedDate);
-      if (isArray && selectedDate[0].unix === date.unix) return { disabled: true };
+      // `selectedDate` is EMPTY while no range is set (the optional-defaultRange path), so the index read must be
+      // guarded: an undefined `.unix` here throws inside the calendar's render and, with no error boundary in this
+      // app, blanks the whole page.
+      if (isArray && selectedDate[0] && selectedDate[0].unix === date.unix) return { disabled: true };
 
       return {};
     },
@@ -85,7 +108,7 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
   );
 
   const handleClickDone = useCallback(() => {
-    if (setCurrentRange) {
+    if (setCurrentRange && rangeStart && rangeEnd) {
       setCurrentRange(rangeStart, rangeEnd);
     }
     datePickerRef.current?.closeCalendar();
@@ -107,6 +130,7 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
       <DatePicker
         format='D MMM'
         locale={locale as never}
+        calendarPosition={calendarPosition}
         range
         portal
         arrow={false}
@@ -114,11 +138,14 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
         offsetY={4}
         numberOfMonths={2}
         mapDays={disableSelectedDate}
-        render={<S.AppDateRangeInputIcon />}
+        // The placeholder rides the RENDER element, not the DatePicker: with a custom `render`, the library clones
+        // it with only its own props (value / openCalendar / handleValueChange / locale / separator), so a
+        // `placeholder` handed to DatePicker never reaches the input. Verified by reading the rendered DOM.
+        render={<S.AppDateRangeInputIcon placeholder={placeholder} />}
         onChange={([begin, end]: DateObject[]) => {
           handleSetRange([begin?.toDate(), end?.toDate()]);
         }}
-        value={[rangeStart, rangeEnd]}
+        value={rangeStart && rangeEnd ? [rangeStart, rangeEnd] : []}
         plugins={[appDateRangePickerFooter]}
         ref={datePickerRef}
       />

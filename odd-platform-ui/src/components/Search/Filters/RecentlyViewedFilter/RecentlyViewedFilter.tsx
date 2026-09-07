@@ -2,17 +2,14 @@ import React from 'react';
 import { endOfDay, startOfDay, subDays } from 'date-fns';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import {
-  buildSearchLink,
-  useAppDateTime,
-  useRecentlyViewedHistoryEmpty,
-} from 'lib/hooks';
+import { buildSearchLink, useRecentlyViewedHistoryEmpty } from 'lib/hooks';
 import { useAppInfo } from 'lib/hooks/api';
 import {
   paramsToSearchState,
   type SearchRecentlyViewedScope,
 } from 'lib/search/searchUrlState';
 import AppDateRangePicker from 'components/shared/elements/AppDateRangePicker/AppDateRangePicker';
+import { bcp47 } from 'components/shared/elements/AppDateRangePicker/calendarLocale';
 import RangeFacetShell from '../FilterItem/RangeFacetShell/RangeFacetShell';
 import { presetWindow, windowFromPicker } from './recencyPresets';
 
@@ -40,11 +37,10 @@ import { presetWindow, windowFromPicker } from './recencyPresets';
  * canonical serialiser so a control-written URL is byte-identical to the mirror's. Cleared by the single Clear All.
  */
 const RecentlyViewedFilter: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { data: appInfo } = useAppInfo();
-  const { dataEntityFormattedDateTime } = useAppDateTime();
   const history = useRecentlyViewedHistoryEmpty();
 
   const isShared = appInfo?.authType === 'DISABLED';
@@ -55,9 +51,10 @@ const RecentlyViewedFilter: React.FC = () => {
   const { viewedAfter, viewedBefore } = scope ?? {};
 
   /**
-   * The window the calendar SHOWS. Bounds set -> exactly them; otherwise a visible last-week window that is NOT
-   * applied as a filter (the shipped Period-filter precedent) — the chip is what states the filter, and with no
-   * bounds it reads "any time".
+   * The window the calendar SHOWS — and ONLY when one is actually in force. With no bounds the input stays EMPTY
+   * behind its placeholder, because a date box displaying "1 Sep ~ 7 Sep" while the chip says "any time" states a
+   * filter the search is not applying, and the user has no way to tell which of the two is telling the truth.
+   * (Found by reading the rendered pixels, not by a test: every assertion was green while the box lied.)
    *
    * ORDERED, and that is not defensive tidying: the picker takes whatever it is given as its value and its Done
    * button commits unconditionally, so an inverted seed would commit an inverted window, which the URL rule then
@@ -65,6 +62,10 @@ const RecentlyViewedFilter: React.FC = () => {
    * if left alone: a `viewed_before` older than a week, and a hand-written future `viewed_after`.
    */
   const defaultRange = React.useMemo(() => {
+    if (!viewedAfter && !viewedBefore) return undefined;
+    // One bound set: the other end of the SHOWN range is the open side's natural edge — today for a missing
+    // `before`, a week back for a missing `after` — so the calendar opens somewhere useful without inventing a
+    // filter. The chip, not this, is what states what is applied.
     const end = viewedBefore ? new Date(viewedBefore) : endOfDay(new Date());
     const begin = viewedAfter ? new Date(viewedAfter) : startOfDay(subDays(end, 6));
     return begin <= end
@@ -91,15 +92,34 @@ const RecentlyViewedFilter: React.FC = () => {
   );
 
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+
+  /**
+   * The chip's dates, in the reader's LANGUAGE and their own TIMEZONE.
+   *
+   * Not the app's shared `useAppDateTime`: `date-fns` defaults to en-US and that hook passes no locale, so every
+   * date it renders is English on every locale — which put "від 1 Sep 2026" on the chip directly beneath a
+   * calendar that reads "1 вер." (seen in a `ua` screenshot, invisible to a key-parity sweep). `Intl` with the
+   * catalog key mapped to a real tag is right for all seven, and deliberately does NOT pin a timezone: the whole
+   * point of the window is that the instant is fixed and the DATE is the reader's own.
+   */
+  const formatBound = React.useMemo(() => {
+    const fmt = new Intl.DateTimeFormat(bcp47(i18n.language), {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+    return (iso: string) => fmt.format(new Date(iso));
+  }, [i18n.language]);
+
   const chipText = React.useMemo(() => {
     if (!scope) return '';
-    const from = viewedAfter && dataEntityFormattedDateTime(new Date(viewedAfter));
-    const to = viewedBefore && dataEntityFormattedDateTime(new Date(viewedBefore));
+    const from = viewedAfter && formatBound(viewedAfter);
+    const to = viewedBefore && formatBound(viewedBefore);
     if (from && to) return t('Last viewed: {{from}} - {{to}}', { from, to });
     if (from) return t('Last viewed: since {{from}}', { from });
     if (to) return t('Last viewed: before {{to}}', { to });
     return t('Last viewed: any time');
-  }, [scope, viewedAfter, viewedBefore, dataEntityFormattedDateTime, t]);
+  }, [scope, viewedAfter, viewedBefore, formatBound, t]);
 
   const isEmptyHistory = history === 'empty';
 
@@ -145,6 +165,11 @@ const RecentlyViewedFilter: React.FC = () => {
       {isEmptyHistory ? null : (
         <AppDateRangePicker
           label={t('Custom range')}
+          placeholder={t('Pick two dates')}
+          // Sideways, not up: measured at 1280x720, a two-month calendar opening upward from this control (~350px
+          // down the rail) overflows the viewport top and takes the month header and its arrows with it, so the
+          // user cannot see or change the month. The rail has ~1000px to its right and nothing in it.
+          calendarPosition='right-start'
           ranges={[]}
           defaultRange={defaultRange}
           setCurrentRange={(begin, end) => commit(windowFromPicker(begin, end))}

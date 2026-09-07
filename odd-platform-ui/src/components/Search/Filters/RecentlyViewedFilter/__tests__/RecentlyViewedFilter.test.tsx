@@ -149,6 +149,26 @@ describe('RecentlyViewedFilter (ST-10 / #1844)', () => {
     expect(url).toContain('sort=name');
   });
 
+  // Found by reading the rendered pixels rather than by a failing assertion: the date box used to show a
+  // plausible last-week range while the chip said "any time", i.e. a control displaying a filter the search was
+  // not applying, with no way for the reader to tell which one was true.
+  it('shows NO dates while the window is unset — the box never states a filter that is not applied', () => {
+    const { container } = renderAt('/search?recently_viewed=yes');
+    const input = container.querySelector('input') as HTMLInputElement;
+    expect(input).not.toBeNull();
+    expect(input.value).toBe('');
+    expect(input.placeholder).toBe('Pick two dates');
+  });
+
+  it('and shows exactly the window that IS applied once bounds are set', () => {
+    const { container } = renderAt(
+      '/search?viewed_after=2026-09-01T00:00:00.000Z&viewed_before=2026-09-08T00:00:00.000Z'
+    );
+    const input = container.querySelector('input') as HTMLInputElement;
+    expect(input.value).not.toBe('');
+    expect(input.value).toMatch(/Sep/);
+  });
+
   it('with NO history yet: disabled WITH its reason, and no way to pick a window', () => {
     const { container } = renderAt('/search', 'empty');
     expect(qa(container, 'disabled')).toHaveTextContent(
@@ -185,6 +205,24 @@ describe('RecentlyViewedFilter (ST-10 / #1844)', () => {
       expect(screen.getByText(ua['Any time'])).toBeVisible();
       expect(screen.queryByText(en['Last viewed'])).toBeNull();
       expect(screen.queryByText(en['Assets you have opened'])).toBeNull();
+    } finally {
+      await i18n.changeLanguage('en');
+    }
+  });
+
+  // The chip renders a DATE, and a date is not a catalog key — a key-parity sweep is blind to it. Seen in a `ua`
+  // screenshot as "Останній перегляд: від 1 Sep 2026" beside a calendar that read "1 вер.".
+  it('names the window in the reader language too — a date is not exempt from i18n', async () => {
+    await i18n.changeLanguage('ua');
+    try {
+      const { container } = renderAt('/search?viewed_after=2026-09-15T12:00:00.000Z');
+      const chipText = qa(container, 'chip')?.textContent ?? '';
+      const ukrainianSep = new Intl.DateTimeFormat('uk', { month: 'short' }).format(
+        new Date('2026-09-15T12:00:00.000Z')
+      );
+      expect(chipText).toContain(ua['Last viewed: since {{from}}'].split('{{')[0].trim());
+      expect(chipText).toContain(ukrainianSep);
+      expect(chipText).not.toContain('Sep');
     } finally {
       await i18n.changeLanguage('en');
     }

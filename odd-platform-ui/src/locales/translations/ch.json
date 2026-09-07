@@ -717,6 +717,7 @@
   "Last 30 days": "最近 30 天",
   "Any time": "任何时间",
   "Custom range": "自定义范围",
+  "Pick two dates": "选择两个日期",
   "Last viewed: any time": "最近查看：任何时间",
   "Last viewed: since {{from}}": "最近查看：自 {{from}} 起",
   "Last viewed: {{from}} - {{to}}": "最近查看：{{from}} - {{to}}",

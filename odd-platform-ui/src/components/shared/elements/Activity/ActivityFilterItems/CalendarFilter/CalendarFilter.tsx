@@ -28,14 +28,19 @@ const CalendarFilter = <Q extends CalendarQuery>({
     setQueryParams,
   } = useQueryParams<Q>(defaultQuery);
 
-  // The picker requires a concrete range; when the query leaves the period unset (Alerts default)
-  // fall back to a sensible visible window (last week) WITHOUT writing it to the query — leaving the
-  // actual filter all-time until the user explicitly picks a range.
+  // The period the box SHOWS — and only when one is actually in force. Until ST-10 (#1844) this fell back to a
+  // visible last-week window when the query left the period unset (the Alerts default), which meant the control
+  // displayed "1 Sep ~ 7 Sep" while the filter was all-time: a range the user had not chosen, was not being
+  // filtered by, and had no way to tell apart from one that was. `AppDateRangePicker` now accepts no range and
+  // shows its placeholder instead. Activity always carries begin/endDate, so that surface is unchanged.
   const defaultRange = React.useMemo(
-    () => ({
-      beginDate: beginDate ? toDate(beginDate) : startOfDay(addDays(new Date(), -6)),
-      endDate: endDate ? toDate(endDate) : endOfDay(new Date()),
-    }),
+    () =>
+      beginDate || endDate
+        ? {
+            beginDate: beginDate ? toDate(beginDate) : startOfDay(addDays(new Date(), -6)),
+            endDate: endDate ? toDate(endDate) : endOfDay(new Date()),
+          }
+        : undefined,
     [beginDate, endDate]
   );
 
@@ -54,6 +59,7 @@ const CalendarFilter = <Q extends CalendarQuery>({
     <AppDateRangePicker
       defaultRange={defaultRange}
       label={t('Period')}
+      placeholder={t('Pick two dates')}
       setCurrentRange={setQueryDateParams}
     />
   );

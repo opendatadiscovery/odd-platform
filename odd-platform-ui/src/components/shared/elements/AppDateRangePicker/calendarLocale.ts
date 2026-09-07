@@ -22,7 +22,7 @@
  *
  * Verified 2026-09-06 by formatting January in each: the bare `br` tag yields "Genver". Hence this map.
  */
-const BCP47: Record<string, string> = {
+export const BCP47: Record<string, string> = {
   en: 'en',
   es: 'es',
   fr: 'fr',
@@ -31,6 +31,16 @@ const BCP47: Record<string, string> = {
   ch: 'zh-CN',
   ua: 'uk',
 };
+
+/**
+ * ODD's catalog key as a tag `Intl` actually understands. Exported because the calendar is not the only place a
+ * DATE is rendered next to translated text: ST-10's Last-viewed chip names the window's resolved dates right under
+ * this control, and formatting those through the app's shared date hook renders them in en-US on every locale
+ * (`date-fns` defaults to en-US and `useAppDateTime` passes no `locale`), so a Ukrainian rail would read
+ * "Останній перегляд: від 1 Sep 2026" beside a Ukrainian calendar. That app-wide gap is tracked upstream; this
+ * export is what lets a surface be right today.
+ */
+export const bcp47 = (catalogKey: string): string => BCP47[catalogKey] ?? 'en';
 
 /** The structural shape the picker's `locale` prop needs; declared locally so no transitive import is added. */
 export interface CalendarLocale {
@@ -42,7 +52,7 @@ export interface CalendarLocale {
 }
 
 export function calendarLocale(catalogKey: string): CalendarLocale {
-  const lang = BCP47[catalogKey] ?? 'en';
+  const lang = bcp47(catalogKey);
   // `timeZone: 'UTC'` is LOAD-BEARING, not tidiness: a UTC instant formatted in the browser's own zone can fall on
   // the previous day, so a naive version returns "December" for January west of Greenwich. Pinning the zone and
   // using mid-month / midday reference dates makes the output identical in every timezone.
