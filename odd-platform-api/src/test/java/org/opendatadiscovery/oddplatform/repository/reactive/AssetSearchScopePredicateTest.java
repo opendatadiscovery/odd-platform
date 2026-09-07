@@ -148,7 +148,7 @@ class AssetSearchScopePredicateTest extends BaseIntegrationTest {
             .as("an empty resolved scope is 'nothing matched', NOT 'no filter' — the fail-closed direction")
             .isEmpty();
         assertThat(assetSearchRepository
-            .count(state(q), List.of(), scope(ownerId, false, true, Set.of()), null, null).block())
+            .count(state(q), List.of(), scope(ownerId, false, true, Set.of()), null, null, null).block())
             .as("and the count agrees with the page, so the UI cannot show a non-zero total over zero rows")
             .isZero();
     }
@@ -232,7 +232,7 @@ class AssetSearchScopePredicateTest extends BaseIntegrationTest {
     }
 
     private List<AssetSearchPageRow> page(final String query, final AssetSearchScope scope) {
-        return assetSearchRepository.relevancePage(state(query), List.of(), scope, null, null, 0, 50)
+        return assetSearchRepository.relevancePage(state(query), List.of(), scope, null, null, null, 0, 50)
             .collectList()
             .block();
     }
@@ -241,7 +241,8 @@ class AssetSearchScopePredicateTest extends BaseIntegrationTest {
     // list-equality failure rather than a tie-breaking argument.
     private List<AssetSearchPageRow> keysetPage(final String query, final AssetSearchScope scope,
                                                 final AssetSearchCursor cursor, final int limit) {
-        return assetSearchRepository.keysetPage(nameSortedState(query), List.of(), scope, null, null, cursor, limit)
+        return assetSearchRepository
+            .keysetPage(nameSortedState(query), List.of(), scope, null, null, null, cursor, limit)
             .collectList()
             .block();
     }

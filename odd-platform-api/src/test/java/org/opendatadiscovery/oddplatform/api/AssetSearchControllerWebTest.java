@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.api;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.PopularityRange;
+import org.opendatadiscovery.oddplatform.api.contract.model.RecentlyViewedScope;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormDataFilters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -120,6 +122,63 @@ public class AssetSearchControllerWebTest extends BaseIntegrationTest {
         assertThat(emptyRange.getPageInfo().getTotal())
             .as("popularity: {} is the same as absent — no narrowing, no DE-scoping")
             .isEqualTo(unfiltered.getPageInfo().getTotal());
+    }
+
+    /**
+     * ST-10 (#1844): the recency scope binds through the same override — an empty object (the "any time" switch),
+     * a bounded window, and a CONTRADICTORY one, which must answer 200 with an empty page rather than an error.
+     */
+    @Test
+    void searchAssets_withRecentlyViewedScope_returns200_andContradictoryWindowIsEmpty() {
+        webTestClient.post()
+            .uri("/api/search/assets?size=30")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new AssetSearchFormData().query("").filters(new SearchFormDataFilters())
+                .recentlyViewed(new RecentlyViewedScope()))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AssetList.class);
+
+        webTestClient.post()
+            .uri("/api/search/assets?size=30")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new AssetSearchFormData().query("").filters(new SearchFormDataFilters())
+                .recentlyViewed(new RecentlyViewedScope()
+                    .viewedAfter(OffsetDateTime.parse("2026-09-01T00:00:00Z"))
+                    .viewedBefore(OffsetDateTime.parse("2026-09-30T23:59:59Z"))))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AssetList.class);
+
+        final AssetList contradictory = webTestClient.post()
+            .uri("/api/search/assets?size=30")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(new AssetSearchFormData().query("").filters(new SearchFormDataFilters())
+                .recentlyViewed(new RecentlyViewedScope()
+                    .viewedAfter(OffsetDateTime.parse("2026-09-30T00:00:00Z"))
+                    .viewedBefore(OffsetDateTime.parse("2026-09-01T00:00:00Z"))))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AssetList.class)
+            .returnResult().getResponseBody();
+        assertThat(contradictory).isNotNull();
+        assertThat(contradictory.getItems()).isEmpty();
+        assertThat(contradictory.getPageInfo().getTotal()).isZero();
+    }
+
+    /**
+     * ST-10 (#1844): an unparseable instant is rejected by the request binding as a 4xx — NEVER a 5xx. Measured on
+     * the shipped date-time binding before this slice was built (the same advice serves the new field), and pinned
+     * here so a future change to the error handling cannot turn a client mistake into a server error.
+     */
+    @Test
+    void searchAssets_withUnparseableInstant_is4xxNever5xx() {
+        webTestClient.post()
+            .uri("/api/search/assets?size=30")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("{\"query\":\"\",\"filters\":{},\"recently_viewed\":{\"viewed_after\":\"not-a-date\"}}")
+            .exchange()
+            .expectStatus().is4xxClientError();
     }
 
     /**

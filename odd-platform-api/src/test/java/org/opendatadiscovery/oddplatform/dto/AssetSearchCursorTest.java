@@ -90,6 +90,17 @@ class AssetSearchCursorTest {
         assertThat(AssetSearchCursor.decode(
             AssetSearchCursor.keyset(SearchSortDto.STATUS_PRIORITY, null, true, "DATA_ENTITY", 1L).encode(),
             SearchSortDto.STATUS_PRIORITY)).isEmpty();
+
+        // ST-10 (#1844) — the same two guards for LAST_VIEWED, whose sort value is a timestamp reached through the
+        // recency scope's INNER JOIN. Without the parse guard a tampered value would reach LocalDateTime.parse in
+        // the seek and 500; without the NOT-NULL guard a `vn` token would take the nulls-tail path and silently
+        // seek a DIFFERENT column's NULL tail, quietly returning the wrong page.
+        assertThat(AssetSearchCursor.decode(
+            AssetSearchCursor.keyset(SearchSortDto.LAST_VIEWED, "not-a-timestamp", false, "TERM", 1L).encode(),
+            SearchSortDto.LAST_VIEWED)).isEmpty();
+        assertThat(AssetSearchCursor.decode(
+            AssetSearchCursor.keyset(SearchSortDto.LAST_VIEWED, null, true, "DATA_ENTITY", 1L).encode(),
+            SearchSortDto.LAST_VIEWED)).isEmpty();
     }
 
     private static void roundTripKeyset(final SearchSortDto sort, final String value, final boolean valueNull,

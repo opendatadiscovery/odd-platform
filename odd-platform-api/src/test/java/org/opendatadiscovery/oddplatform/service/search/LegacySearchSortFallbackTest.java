@@ -54,6 +54,32 @@ class LegacySearchSortFallbackTest extends BaseIntegrationTest {
         assertThat(popularity).isEqualTo(relevance);
     }
 
+    /**
+     * ST-10 (#1844) — the same guard for the second unified-only token. The legacy session orders {@code
+     * data_entity} rows and never joins {@code recently_viewed}, so a resolvable-but-unjoinable token would order
+     * by a column that is not in the query. It must read exactly like an unknown one.
+     */
+    @Test
+    @DisplayName("last_viewed is unified-path-only too: on the legacy session it ≡ an unknown token, both contexts")
+    void lastViewedFallsBackOnTheLegacyPath() {
+        final String token = "legacyrv" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        final long stable = seed(token + "a", DataEntityStatusDto.STABLE.getId());
+        final long unassigned = seed(token + "b", DataEntityStatusDto.UNASSIGNED.getId());
+
+        assertThat(legacyOrder(token, "last_viewed"))
+            .as("with a query: relevance, byte-identical to an unknown token")
+            .isEqualTo(legacyOrder(token, "garbage"))
+            .containsExactly(unassigned, stable);
+
+        final String browseToken = "legacyrvbrowse" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        final long browseUnassigned = seed(browseToken + "a", DataEntityStatusDto.UNASSIGNED.getId());
+        final long browseStable = seed(browseToken + "b", DataEntityStatusDto.STABLE.getId());
+        assertThat(legacyOrder(browseToken, "last_viewed"))
+            .as("on browse: status priority, byte-identical to an unknown token")
+            .isEqualTo(legacyOrder(browseToken, "garbage"))
+            .containsExactly(browseStable, browseUnassigned);
+    }
+
     @Test
     @DisplayName("on browse (no query): popularity ≡ an unknown token ≡ status priority")
     void onBrowse_popularityFallsBackToStatusPriority() {

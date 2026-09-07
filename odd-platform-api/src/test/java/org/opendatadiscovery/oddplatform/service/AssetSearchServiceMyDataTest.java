@@ -164,11 +164,11 @@ class AssetSearchServiceMyDataTest {
 
     private void arrangeEmptyPage() {
         when(facetStateMapper.mapForm(any(SearchFormData.class))).thenReturn(FacetStateDto.empty());
-        when(assetSearchRepository.relevancePage(any(), any(), any(), any(), any(), anyInt(), anyInt()))
+        when(assetSearchRepository.relevancePage(any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
             .thenReturn(Flux.empty());
-        when(assetSearchRepository.keysetPage(any(), any(), any(), any(), any(), any(), anyInt()))
+        when(assetSearchRepository.keysetPage(any(), any(), any(), any(), any(), any(), any(), anyInt()))
             .thenReturn(Flux.empty());
-        when(assetSearchRepository.count(any(), any(), any(), any(), any())).thenReturn(Mono.just(0L));
+        when(assetSearchRepository.count(any(), any(), any(), any(), any(), any())).thenReturn(Mono.just(0L));
         when(searchAssetResolver.resolve(any())).thenReturn(Mono.just(List.of()));
     }
 
@@ -186,7 +186,7 @@ class AssetSearchServiceMyDataTest {
 
     private AssetSearchScope capturedScope() {
         final ArgumentCaptor<AssetSearchScope> captor = ArgumentCaptor.forClass(AssetSearchScope.class);
-        verify(assetSearchRepository).count(any(), any(), captor.capture(), any(), any());
+        verify(assetSearchRepository).count(any(), any(), captor.capture(), any(), any(), any());
         return captor.getValue();
     }
 }
