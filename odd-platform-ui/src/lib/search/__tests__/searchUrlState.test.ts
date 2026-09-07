@@ -7,6 +7,8 @@ import {
   searchUrlStateToAssetSearchFormData,
   defaultSortForContext,
   resolveActiveSort,
+  SEARCH_SORT_OPTIONS,
+  SEARCH_SORT_VALUES,
   type SearchUrlState,
 } from '../searchUrlState';
 
@@ -442,5 +444,149 @@ describe('sort defaults + fail-closed resolution (ST-2b)', () => {
     expect(resolveActiveSort(undefined, 123)).toBe('relevance'); // numeric query -> a text query -> relevance
     expect(resolveActiveSort(2024, 'orders')).toBe('relevance'); // numeric sort token -> unknown -> default
     expect(resolveActiveSort('name', 456)).toBe('name'); // a valid sort wins even with a numeric query
+  });
+});
+
+/**
+ * ST-10 (#1844, ADR D3 / D10) — the Last-viewed recency scope in the URL. Three params carry one dimension, and
+ * this suite pins the two rules that make a link mean the same thing to its recipient as it did to its sender:
+ *
+ *  - ONE CANONICAL SPELLING per state (bounds, OR the `recently_viewed=yes` token — never both), because the
+ *    facet→URL mirror in `Search.tsx` compares the string it would write against the one in the bar and rewrites
+ *    on a difference. Two spellings of one state is an infinite rewrite loop, not a cosmetic nit.
+ *  - FAIL CLOSED on anything unparseable, and never GUESS a zone. A bare `YYYY-MM-DD` is the dangerous one: it
+ *    looks obviously fine and `new Date()` accepts it as midnight UTC — a different instant from the day the user
+ *    meant. Dropping the whole dimension shows an unfiltered list (visibly wrong); guessing shows a plausible
+ *    WRONG list (invisibly wrong), and the server 400s on the same input, so the two agree by construction.
+ */
+describe('searchUrlState — the Last viewed recency scope (ST-10 / #1844, D3 + D10)', () => {
+  it('round-trips the unbounded "any time" scope as the ON token, and NEVER alongside a bound', () => {
+    const anyTime = state({ query: 'orders', recentlyViewed: {} });
+    const params = searchStateToParams(anyTime);
+    expect(params).toContain('recently_viewed=yes');
+    expect(params).not.toContain('viewed_after');
+    expect(params).not.toContain('viewed_before');
+    expect(paramsToSearchState(`?${params}`)).toEqual(anyTime);
+  });
+
+  it('round-trips each bounded shape, and drops the ON token once a bound is present', () => {
+    const after = state({ recentlyViewed: { viewedAfter: '2026-09-01T00:00:00.000Z' } });
+    const before = state({
+      recentlyViewed: { viewedBefore: '2026-09-08T00:00:00.000Z' },
+    });
+    const window = state({
+      recentlyViewed: {
+        viewedAfter: '2026-09-01T00:00:00.000Z',
+        viewedBefore: '2026-09-08T00:00:00.000Z',
+      },
+    });
+    [after, before, window].forEach(s => {
+      const params = searchStateToParams(s);
+      expect(params).not.toContain('recently_viewed=yes');
+      expect(paramsToSearchState(`?${params}`)).toEqual(s);
+    });
+  });
+
+  it('is idempotent under a re-serialise — the mirror can never thrash between two spellings', () => {
+    ['?recently_viewed=yes', '?viewed_after=2026-09-01T00:00:00.000Z'].forEach(url => {
+      const once = searchStateToParams(paramsToSearchState(url));
+      const twice = searchStateToParams(paramsToSearchState(`?${once}`));
+      expect(twice).toBe(once);
+    });
+  });
+
+  it('canonicalises an offset-spelled bound to the SAME instant in Z form', () => {
+    // 03:00+03:00 IS midnight UTC — a link written by a client in another zone must resolve to one instant.
+    expect(
+      paramsToSearchState('?viewed_after=2026-09-01T03:00:00%2B03:00').recentlyViewed
+    ).toEqual({ viewedAfter: '2026-09-01T00:00:00.000Z' });
+  });
+
+  it('reads the ON token only in its canonical spelling; any other value leaves the scope off', () => {
+    expect(paramsToSearchState('?recently_viewed=yes').recentlyViewed).toEqual({});
+    ['no', 'true', '1', '', 'YES'].forEach(v => {
+      expect(paramsToSearchState(`?recently_viewed=${v}`).recentlyViewed).toBeUndefined();
+    });
+  });
+
+  it('FAILS CLOSED on a junk bound: no scope at all, rather than a half-applied window', () => {
+    ['not-a-date', 'null', '2026-13-45T00:00:00Z', '%%%'].forEach(junk => {
+      expect(paramsToSearchState(`?viewed_after=${junk}`).recentlyViewed).toBeUndefined();
+    });
+    // ... and it takes the OTHER, perfectly valid bound down with it — a filter the user cannot see is worse
+    // than no filter at all.
+    expect(
+      paramsToSearchState('?viewed_after=junk&viewed_before=2026-09-08T00:00:00.000Z')
+        .recentlyViewed
+    ).toBeUndefined();
+  });
+
+  it('REJECTS a bare YYYY-MM-DD rather than guessing a timezone (the server 400s on it too)', () => {
+    expect(
+      paramsToSearchState('?viewed_after=2026-09-01').recentlyViewed
+    ).toBeUndefined();
+    expect(
+      paramsToSearchState('?viewed_before=2026-09-08').recentlyViewed
+    ).toBeUndefined();
+  });
+
+  it('drops an inverted window from a URL whole — a hand-edited link never narrows to nothing', () => {
+    expect(
+      paramsToSearchState(
+        '?viewed_after=2026-09-08T00:00:00.000Z&viewed_before=2026-09-01T00:00:00.000Z'
+      ).recentlyViewed
+    ).toBeUndefined();
+  });
+
+  it('keeps the rest of the search when the scope is dropped — one bad param, one lost dimension', () => {
+    const parsed = paramsToSearchState('?q=orders&viewed_after=junk&sort=name');
+    expect(parsed.query).toBe('orders');
+    expect(parsed.sort).toBe('name');
+    expect(parsed.recentlyViewed).toBeUndefined();
+  });
+
+  it('carries NO identity: the scope is the whole payload, so a shared link resolves the RECIPIENT history', () => {
+    const params = searchStateToParams(state({ query: 'orders', recentlyViewed: {} }));
+    ['oidc', 'username', 'user', 'provider', 'identity'].forEach(token => {
+      expect(params.toLowerCase()).not.toContain(token);
+    });
+  });
+});
+
+/**
+ * ST-10 — the ordering is COUPLED to the scope on both sides of the wire. `last_viewed` cannot be honoured without
+ * a history to join, so the server drops it; the dropdown must drop it in exactly the same cases or it displays an
+ * ordering the list does not have (the FE/BE disagreement class PLT-254 exists for).
+ */
+describe('searchUrlState — the Recently-viewed ordering is coupled to the scope (ST-10)', () => {
+  it('browse defaults to last_viewed WITH the scope and status_priority without it', () => {
+    expect(defaultSortForContext('', true)).toBe('last_viewed');
+    expect(defaultSortForContext('', false)).toBe('status_priority');
+    expect(defaultSortForContext('')).toBe('status_priority'); // the 2-arg callers are unchanged
+  });
+
+  it('a text query still wins with relevance, scope or no scope', () => {
+    expect(defaultSortForContext('orders', true)).toBe('relevance');
+    expect(resolveActiveSort(undefined, 'orders', true)).toBe('relevance');
+  });
+
+  it('resolveActiveSort honours last_viewed ONLY while the scope is on', () => {
+    expect(resolveActiveSort('last_viewed', '', true)).toBe('last_viewed');
+    // without the scope it is not a known token -> the per-context default, exactly as the server resolves it
+    expect(resolveActiveSort('last_viewed', '', false)).toBe('status_priority');
+    expect(resolveActiveSort('last_viewed', 'orders', false)).toBe('relevance');
+  });
+
+  it('every other ordering is unaffected by the scope', () => {
+    expect(resolveActiveSort('name', '', true)).toBe('name');
+    expect(resolveActiveSort('popularity', '', true)).toBe('popularity');
+    expect(resolveActiveSort('garbage', '', true)).toBe('last_viewed'); // falls to the scoped default
+  });
+
+  it('offers Recently viewed as a known ordering value with its own label key', () => {
+    expect(SEARCH_SORT_VALUES).toContain('last_viewed');
+    expect(SEARCH_SORT_OPTIONS.find(o => o.value === 'last_viewed')?.labelKey).toBe(
+      'Recently viewed'
+    );
   });
 });
