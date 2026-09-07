@@ -33,7 +33,6 @@ public record RecentlyViewedScopeDto(String oidcUsername,
                                      String provider,
                                      LocalDateTime viewedAfter,
                                      LocalDateTime viewedBefore) {
-
     /** The narrowing a wire object asks for, or empty when the request carries none (a {@code null} field). */
     public static Optional<RecentlyViewedScopeDto> of(final UserDto identity, final RecentlyViewedScope wire) {
         if (wire == null) {

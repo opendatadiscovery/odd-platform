@@ -38,12 +38,12 @@ import static org.opendatadiscovery.oddplatform.model.Tables.ASSET_SEARCH_ENTRYP
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.FAVORITE;
-import static org.opendatadiscovery.oddplatform.model.Tables.RECENTLY_VIEWED;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.QUERY_EXAMPLE;
+import static org.opendatadiscovery.oddplatform.model.Tables.RECENTLY_VIEWED;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM_OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
