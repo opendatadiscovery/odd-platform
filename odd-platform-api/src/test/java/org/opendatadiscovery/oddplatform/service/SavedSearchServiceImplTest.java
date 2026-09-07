@@ -253,10 +253,18 @@ class SavedSearchServiceImplTest {
         final String badBound = "{\"query\":\"r3\",\"recently_viewed\":"
             + "{\"viewed_after\":\"not-a-date\",\"viewed_before\":\"2026-09-30T00:00:00Z\"},\"filters\":{}}";
         final String anyTime = "{\"query\":\"r4\",\"recently_viewed\":{},\"filters\":{}}";
+        // The shape a REAL saved search actually stores: the serialiser writes the unset bounds as explicit JSON
+        // nulls rather than omitting them, so `{"viewed_after": null, "viewed_before": null}` is what comes back
+        // off the wire for "any time" (observed on a running stack in the IT-157 saved-search case, where an
+        // oracle expecting a literal `{}` failed against it). It must read as the SAME state as `{}` above:
+        // present, bounds-free. Without this the null-bound branch is the one production takes and no test does.
+        final String explicitNulls = "{\"query\":\"r5\",\"recently_viewed\":"
+            + "{\"viewed_after\":null,\"viewed_before\":null},\"filters\":{}}";
         when(repository.list("alice", "google", 0, 30)).thenReturn(Flux.just(
             pojo(21L, "inverted", inverted), pojo(22L, "not-an-object", notAnObject),
-            pojo(23L, "bad-bound", badBound), pojo(24L, "any-time", anyTime)));
-        when(repository.count("alice", "google")).thenReturn(Mono.just(4L));
+            pojo(23L, "bad-bound", badBound), pojo(24L, "any-time", anyTime),
+            pojo(25L, "explicit-nulls", explicitNulls)));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(5L));
 
         StepVerifier.create(service.list(1, 30))
             .assertNext(list -> {
@@ -279,6 +287,14 @@ class SavedSearchServiceImplTest {
                 assertThat(list.getItems().get(3).getSpec().getRecentlyViewed())
                     .as("an empty scope is a REAL stored state — 'any time' — and must not collapse to absent")
                     .isNotNull();
+
+                final var nullsSpec = list.getItems().get(4).getSpec().getRecentlyViewed();
+                assertThat(nullsSpec)
+                    .as("explicit JSON nulls are the SHIPPED wire shape of 'any time' — present, not absent")
+                    .isNotNull();
+                assertThat(nullsSpec.getViewedAfter()).isNull();
+                assertThat(nullsSpec.getViewedBefore()).isNull();
+                assertThat(list.getItems().get(4).getSpec().getQuery()).isEqualTo("r5");
             })
             .verifyComplete();
     }
