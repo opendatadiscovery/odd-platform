@@ -14,17 +14,44 @@ import { calendarLocale } from '../calendarLocale';
 describe('calendarLocale (ST-10 / #1844)', () => {
   // Read from the library's own shipped gregorian_en — the object this replaces for non-English locales.
   const EN_MONTHS_LONG = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
   const EN_MONTHS_SHORT = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   const EN_WEEKDAYS_LONG = [
-    'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
+    'Saturday',
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
   ];
 
-  it('reproduces the library\'s shipped gregorian_en exactly, including the Saturday-first weekday order', () => {
+  it("reproduces the library's shipped gregorian_en exactly, including the Saturday-first weekday order", () => {
     const en = calendarLocale('en');
     expect(en.months.map(m => m[0])).toEqual(EN_MONTHS_LONG);
     expect(en.months.map(m => m[1])).toEqual(EN_MONTHS_SHORT);

@@ -217,9 +217,15 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
     expect(roundTrip(anyTime)).toEqual(anyTime);
 
     // each open end stays open
-    const since = { ...full, recentlyViewed: { viewedAfter: '2026-09-01T00:00:00.000Z' } };
+    const since = {
+      ...full,
+      recentlyViewed: { viewedAfter: '2026-09-01T00:00:00.000Z' },
+    };
     expect(roundTrip(since)).toEqual(since);
-    const before = { ...full, recentlyViewed: { viewedBefore: '2026-09-01T00:00:00.000Z' } };
+    const before = {
+      ...full,
+      recentlyViewed: { viewedBefore: '2026-09-01T00:00:00.000Z' },
+    };
     expect(roundTrip(before)).toEqual(before);
   });
 
@@ -233,8 +239,12 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
     // INVERTED: both bounds drop, the SCOPE SURVIVES — mirroring the server's sanitiseRecentlyViewed, because a
     // stored spec came from a client that did intend a recency scope. (A URL's inverted window drops the whole
     // dimension instead; that asymmetry is deliberate and is asserted from the URL side in searchUrlState.test.ts.)
-    expect(at({ viewedAfter: new Date('2026-09-07T00:00:00Z'), viewedBefore: new Date('2026-09-01T00:00:00Z') }))
-      .toEqual(state({ query: 'q', recentlyViewed: {} }));
+    expect(
+      at({
+        viewedAfter: new Date('2026-09-07T00:00:00Z'),
+        viewedBefore: new Date('2026-09-01T00:00:00Z'),
+      })
+    ).toEqual(state({ query: 'q', recentlyViewed: {} }));
     // a junk bound poisons the whole scope
     expect(at({ viewedAfter: 'not-a-date' })).toEqual(state({ query: 'q' }));
     // a bare date is zone-ambiguous and rejected, never guessed (the server 400s on it too)

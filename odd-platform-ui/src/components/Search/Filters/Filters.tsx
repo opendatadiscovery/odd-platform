@@ -17,6 +17,7 @@ import { searchPath } from 'routes';
 import { paramsToSearchState, searchStateToParams } from 'lib/search/searchUrlState';
 import AssetTypeFilter from './AssetTypeFilter/AssetTypeFilter';
 import FavoritesFilter from './FavoritesFilter/FavoritesFilter';
+import RecentlyViewedFilter from './RecentlyViewedFilter/RecentlyViewedFilter';
 import MyDataFilter from './MyDataFilter/MyDataFilter';
 import DataEntityTypeFilter from './DataEntityTypeFilter/DataEntityTypeFilter';
 import PopularityFilter from './PopularityFilter/PopularityFilter';
@@ -84,6 +85,10 @@ const Filters: React.FC = () => {
             says), whereas a My-data scope has no owner to resolve. It is also the only in-app route to
             "everything I starred" now that the /favorites tab is retired. */}
         <FavoritesFilter />
+        {/* ST-10 (#1844) — the Last-viewed scope, the third personal narrowing, so it sits with the other two
+            rather than with the global facets below. Unlike My data it renders under auth.type=DISABLED (there is
+            a shared history to scope, and the home panel already shows it); unlike Popularity it is cross-kind. */}
+        <RecentlyViewedFilter />
         <SingleFilterItem
           key='ds'
           facetName='datasources'

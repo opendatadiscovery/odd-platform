@@ -101,10 +101,13 @@ describe('FavoritesFilter (ST-7 / #1841)', () => {
     // the FE-contradicts-BE class. Indeterminate is the honest rendering.
     const { container } = renderAt('/search?favorites=no&q=orders');
     const box = container.querySelector('input[type="checkbox"]') as HTMLInputElement;
-    expect(box.checked, 'not checked — this is not the "only my favorites" state').toBe(false);
-    expect(box.getAttribute('data-indeterminate'), 'but flagged indeterminate, not plain off').toBe(
-      'true'
+    expect(box.checked, 'not checked — this is not the "only my favorites" state').toBe(
+      false
     );
+    expect(
+      box.getAttribute('data-indeterminate'),
+      'but flagged indeterminate, not plain off'
+    ).toBe('true');
   });
 
   it('a click ESCAPES the inverted scope — it clears rather than flipping to yes', async () => {

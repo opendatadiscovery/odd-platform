@@ -7,5 +7,7 @@ export { default as useNavigateToSearch, buildSearchLink } from './useNavigateTo
 export { default as useCollapse } from './useCollapse';
 export { default as usePrevious } from './usePrevious';
 export { default as useRecordRecentlyViewed } from './useRecordRecentlyViewed';
+export { default as useRecentlyViewedHistoryEmpty } from './useRecentlyViewedHistoryEmpty';
+export type { RecentlyViewedHistoryState } from './useRecentlyViewedHistoryEmpty';
 export { default as useTermWiki } from './useTermWiki';
 export * from './api';

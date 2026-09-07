@@ -5,6 +5,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum, Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useRecentlyViewedHistoryEmpty } from 'lib/hooks';
 import {
   getAssetSearchError,
   getAssetSearchFetchingStatuses,
@@ -97,6 +98,29 @@ const Results: React.FC = () => {
     () => paramsToSearchState(location.search).favorites === 'yes',
     [location.search]
   );
+
+  // ST-10 (#1844) — with the recency scope on, an empty list has TWO different meanings and a bare "No matches
+  // found" tells the user neither. The signal is three-valued on purpose: the recently-viewed slice starts at
+  // `total: 0`, so a boolean would announce "you haven't opened any assets yet" to a user who has, for the moment
+  // before the request resolves. Both this and the facet read the SAME hook, so they cannot drift.
+  const isRecencyScope = React.useMemo(
+    () => paramsToSearchState(location.search).recentlyViewed !== undefined,
+    [location.search]
+  );
+  const recencyHistory = useRecentlyViewedHistoryEmpty();
+
+  const emptyText = React.useMemo(() => {
+    if (isRecencyScope) {
+      // While the probe is in flight, say nothing more specific than the generic line — claiming either recency
+      // sentence would be a guess about the user's history.
+      if (recencyHistory === 'loading') return t('No matches found');
+      return recencyHistory === 'empty'
+        ? t("You haven't opened any assets yet. Assets you open will appear here.")
+        : t('Nothing you opened matches this range.');
+    }
+    // ST-7 (#1841) — the retired Favorites tab's teaching empty state.
+    return isFavoritesScope ? t('Star an asset to pin it here.') : t('No matches found');
+  }, [isRecencyScope, recencyHistory, isFavoritesScope, t]);
 
   const fetchNextPage = React.useCallback(() => {
     // ST-5b keyset: the first page is fired by the settle-effect (no cursor); scroll extends it by passing
@@ -202,11 +226,7 @@ const Results: React.FC = () => {
             <EmptyContentPlaceholder
               isContentLoaded={!isAssetSearchLoading}
               isContentEmpty={!searchResults.length}
-              text={
-                isFavoritesScope
-                  ? t('Star an asset to pin it here.')
-                  : t('No matches found')
-              }
+              text={emptyText}
             />
           </>
         )}

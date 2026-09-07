@@ -7,6 +7,7 @@ import { useAppInfo } from 'lib/hooks/api';
 import { fetchRecentlyViewedList } from 'redux/thunks';
 import { getRecentlyViewedList } from 'redux/selectors';
 import { EmptyContentPlaceholder, RecentlyViewedTag } from 'components/shared/elements';
+import { buildSearchLink } from 'lib/hooks';
 import { RecentlyViewedIcon, AlertIcon } from 'components/shared/icons';
 import {
   recentlyViewedAssetId,
@@ -17,12 +18,21 @@ import * as S from '../DataEntityList/DataEntityListStyles';
 
 const COLUMN_SIZE = 5;
 
+/** ST-10 (#1844) — built with the canonical serialiser: a hand-written URL diverges byte-wise from what the
+ * Search page's facet→URL mirror produces, and the mirror would immediately rewrite it, dropping the scope the
+ * link exists to apply. */
+const recencySearchLink = buildSearchLink({ recentlyViewed: {}, sort: 'last_viewed' });
+
 /**
  * The Recently Viewed column of the Recommended section (#1816). Renders in the SAME column form-factor as
  * Favorites / My-Objects / Popular (the shared DataEntityList styles, lg=3) for every audience. Under
  * `auth.type=DISABLED` the history is a shared instance-wide bucket, so the caption is labelled
- * non-possessively "(shared)". Each row carries a remove control; there is no "View all" yet — the full
- * recency view arrives as the Search recency filter (#1815/#1825); this is the 5-item home widget.
+ * non-possessively "(shared)". Each row carries a remove control.
+ *
+ * ST-10 (#1844 / #1832, ADR D8) closes the loop the foundation left open: "View all" deep-links into the catalog
+ * search scoped to this user's history and ordered most-recently-opened first — the tile, continued. The sort is
+ * spelled out even though the scope makes it the default, so the URL says what it means and survives a change to
+ * that default. A filter alone would reproduce the SET but not the ORDER, which is what makes a panel link honest.
  */
 const RecentlyViewedColumn: React.FC = () => {
   const { t } = useTranslation();
@@ -95,6 +105,17 @@ const RecentlyViewedColumn: React.FC = () => {
           />
         )}
       </S.ListLinksContainer>
+      {items.length > 0 && (
+        <MuiLink
+          component={Link}
+          to={recencySearchLink}
+          variant='subtitle2'
+          sx={{ mt: 1 }}
+          data-qa='recently-viewed-view-all'
+        >
+          {t('View all')}
+        </MuiLink>
+      )}
     </S.DataEntityListContainer>
   );
 };

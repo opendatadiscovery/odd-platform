@@ -16,9 +16,10 @@ describe('useAppDateTime().dateTimeWithTimezone', () => {
     expect(out, 'an explicit UTC offset is shown (e.g. "UTC+02:00")').toMatch(
       /UTC[+-]\d{2}:\d{2}/
     );
-    expect(out, 'an absolute calendar value (the year), not a relative "x ago"').toContain(
-      '2026'
-    );
+    expect(
+      out,
+      'an absolute calendar value (the year), not a relative "x ago"'
+    ).toContain('2026');
     expect(out).not.toMatch(/\bago\b/);
   });
 

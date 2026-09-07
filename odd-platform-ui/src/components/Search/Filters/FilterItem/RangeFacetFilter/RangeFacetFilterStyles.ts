@@ -30,4 +30,3 @@ export const SliderRow = styled('div')(({ theme }) => ({
   boxSizing: 'border-box',
   width: '100%',
 }));
-
