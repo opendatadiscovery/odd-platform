@@ -468,8 +468,9 @@ components:
         The cross-kind search request — the shared SearchFormData (query + filters + sort + the My-data scope
         group + the deprecated my_objects) plus an optional asset_kinds filter that narrows to specific kinds
         (empty / absent = all kinds), an optional favorites filter scoped to the caller's own starred
-        assets, and an optional popularity range (ST-9 / #1843) over the snapshotted view-count band. The
-        My-data, favorites and popularity narrowings are independent axes and compose freely.
+        assets, an optional popularity range (ST-9 / #1843) over the snapshotted view-count band, and an
+        optional recently_viewed scope (ST-10 / #1844) over the caller's own viewing history. The My-data,
+        favorites, popularity and recently-viewed narrowings are independent axes and compose freely.
       allOf:
         - $ref: '#/components/schemas/SearchFormData'
         - type: object
@@ -480,6 +481,8 @@ components:
                 $ref: '#/components/schemas/AssetKind'
             popularity:
               $ref: '#/components/schemas/PopularityRange'
+            recently_viewed:
+              $ref: '#/components/schemas/RecentlyViewedScope'
             favorites:
               type: boolean
               description: >-
@@ -491,6 +494,51 @@ components:
                 The identity is taken from the security context only — never from this request — so a caller
                 can never read another user's favorites; under `auth.type=DISABLED` there is no principal and
                 all callers share one instance-wide bucket.
+
+    RecentlyViewedScope:
+      type: object
+      description: >-
+        The caller's own recently-viewed history as a search scope (ST-10 / #1844, ADR unified-asset-search D3):
+        narrows the results to assets THIS caller has opened, optionally within a datetime window over when they
+        last opened each one.
+
+        PRESENCE IS THE SWITCH. An empty object `{}` means "every asset in my history" (any time); adding a bound
+        narrows further. This is the OPPOSITE of PopularityRange, where an empty object means no narrowing at
+        all — the difference is deliberate and is stated in both descriptions so it reads as a decision rather
+        than as drift: a popularity range with no bounds expresses nothing, while a recency scope with no bounds
+        expresses "assets I have opened", which is exactly what the home page's Recently Viewed panel links to.
+
+        Both bounds are inclusive UTC instants; an absent bound is open. A client sends the instants it means —
+        typically the user's local start-of-day and end-of-day converted to UTC — so a shared link reproduces the
+        same result set for a recipient in another time zone, who simply sees those instants as their own local
+        days.
+
+        Applies to EVERY asset kind (data entities, terms, query examples): the history is keyed on the
+        polymorphic (asset_kind, asset_id) pair, and an asset missing from it is genuinely one this caller has
+        not opened — unlike a popularity range, where terms and query examples are merely uncounted.
+
+        The identity is taken from the security context only — never from this request — so a caller can only
+        ever scope by their own history; under `auth.type=DISABLED` there is no principal and all callers share
+        one instance-wide bucket, which the UI labels. A shared or saved search therefore re-resolves to the
+        RECIPIENT's history, never the sender's.
+
+        Fail-closed rules: a contradictory window (viewed_after > viewed_before) matches nothing — 200 with an
+        empty page, never an error; a saved search that stored one reads BOTH bounds back absent, so it reapplies
+        as the search it can still run ("any time") rather than as an empty one; an unparseable instant is
+        rejected by the request binding with 400, never a 500.
+
+        The history the scope can see is bounded by the deployment's housekeeping retention settings
+        (`housekeeping.ttl.recently_viewed_days` and `recently_viewed_max_per_user`), so a window reaching
+        further back than the retention keeps returns only what survives.
+      properties:
+        viewed_after:
+          type: string
+          format: date-time
+          description: Only assets last opened at or after this instant (UTC, inclusive). Absent = no lower bound.
+        viewed_before:
+          type: string
+          format: date-time
+          description: Only assets last opened at or before this instant (UTC, inclusive). Absent = no upper bound.
 
     PopularityRange:
       type: object
@@ -2600,8 +2648,8 @@ components:
           type: string
           description: >-
             The named canonical ordering for the result set — one of RELEVANCE, STATUS_PRIORITY,
-            UPDATED_AT, NAME, POPULARITY (case-insensitive). Absent or unrecognised values fall back to a
-            per-context default (relevance for an active text query, status priority for empty
+            UPDATED_AT, NAME, POPULARITY, LAST_VIEWED (case-insensitive). Absent or unrecognised values fall
+            back to a per-context default (relevance for an active text query, status priority for empty
             browse). Deliberately a plain string rather than a strict enum so an unknown value
             degrades gracefully to the default instead of failing the request. POPULARITY (ST-9 /
             #1843) orders most-viewed first by the snapshotted popularity score — the 15-minute
@@ -2609,6 +2657,13 @@ components:
             query examples (no view count) last; it is HONOURED BY the cross-kind POST /api/search/assets
             only. On the legacy /api/search session it resolves to the per-context default, exactly as an
             unknown token does — that path orders data_entity rows, which carry no popularity column.
+            LAST_VIEWED (ST-10 / #1844) orders most-recently-opened first, by when THIS caller last opened
+            each asset. It is meaningful only while a recently_viewed scope is present, because that scope is
+            what brings the caller's history into the query: WITHOUT it the token resolves to the per-context
+            default, exactly like an unknown one, on the cross-kind path and on the legacy session alike.
+            WITH the scope present it also becomes the BROWSE default — an empty query resolves to
+            LAST_VIEWED instead of STATUS_PRIORITY, so "what I opened" reads as a history — while an active
+            text query still resolves to RELEVANCE.
         filters:
           type: object
           properties:
@@ -2654,8 +2709,10 @@ components:
         AssetSearchFormData the unified search sends and the URL encodes (query + filters + sort + the My-data
         scope + asset_kinds + favorites) — so one canonical spec drives both the shareable URL and the saved
         row, and every URL-only dimension is saveable (#1878: it was SearchFormData, which silently dropped
-        asset_kinds and favorites). Fields a row was saved without read back as null / absent, never as a
-        narrowing. Private to its owner; sharing is the parametrised URL, not a grant.
+        asset_kinds and favorites; the same widening is what lets popularity and recently_viewed round-trip).
+        Fields a row was saved without read back as null / absent, never as a narrowing. A stored
+        recently_viewed whose window is contradictory reads back with both bounds absent — the scope survives
+        as "any time", the search it can still run. Private to its owner; sharing is the parametrised URL, not a grant.
       properties:
         id:
           type: integer

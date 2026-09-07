@@ -971,6 +971,12 @@ paths:
         (absent = no favorites narrowing; the identity comes from the security context, never the request),
         and an optional popularity range (ST-9 / #1843) over the snapshotted view-count band — data entities
         only while a range is active; absent = no narrowing; sort=POPULARITY orders most-viewed first.
+        It also honors an optional recently_viewed scope (ST-10 / #1844) that narrows to the assets THIS caller
+        has opened, optionally within a UTC datetime window: the object's PRESENCE is the switch, so an empty
+        object means "everything in my history" (contrast PopularityRange, where an empty object means no
+        narrowing at all). The scope is cross-kind, the identity comes from the security context and never the
+        request, and sort=LAST_VIEWED — meaningful only while that scope is present, and the browse default
+        there — orders most-recently-opened first.
         Pagination is forward-only by opaque cursor (ST-5b, ADR-0021): omit the cursor
         for the first page, then pass back page_info.next_cursor to fetch the next page — deep pages stay
         index-fast and stable under concurrent writes (the index-backed browse sorts seek by keyset; the
