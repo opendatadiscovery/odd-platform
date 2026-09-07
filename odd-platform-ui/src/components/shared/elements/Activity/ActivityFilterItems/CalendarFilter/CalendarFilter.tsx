@@ -37,7 +37,9 @@ const CalendarFilter = <Q extends CalendarQuery>({
     () =>
       beginDate || endDate
         ? {
-            beginDate: beginDate ? toDate(beginDate) : startOfDay(addDays(new Date(), -6)),
+            beginDate: beginDate
+              ? toDate(beginDate)
+              : startOfDay(addDays(new Date(), -6)),
             endDate: endDate ? toDate(endDate) : endOfDay(new Date()),
           }
         : undefined,

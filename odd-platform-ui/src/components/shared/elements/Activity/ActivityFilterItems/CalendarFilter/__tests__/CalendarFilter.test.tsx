@@ -83,7 +83,10 @@ describe('CalendarFilter — the shared Period control, both shipped surfaces (S
       await user.click(input(container));
       // The calendar renders through react-multi-date-picker's own locale object, which ODD's catalog KEY cannot
       // be handed to directly (see calendarLocale) — before ST-10 every locale got English month names here.
-      const monthNames = new Intl.DateTimeFormat('uk', { month: 'long', timeZone: 'UTC' });
+      const monthNames = new Intl.DateTimeFormat('uk', {
+        month: 'long',
+        timeZone: 'UTC',
+      });
       const september = monthNames.format(new Date(Date.UTC(2026, 8, 1)));
       expect(document.body.textContent).toContain(september);
       expect(document.body.textContent).not.toContain('September');

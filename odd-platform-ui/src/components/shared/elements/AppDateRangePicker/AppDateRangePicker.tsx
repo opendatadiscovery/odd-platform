@@ -100,7 +100,8 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
       // `selectedDate` is EMPTY while no range is set (the optional-defaultRange path), so the index read must be
       // guarded: an undefined `.unix` here throws inside the calendar's render and, with no error boundary in this
       // app, blanks the whole page.
-      if (isArray && selectedDate[0] && selectedDate[0].unix === date.unix) return { disabled: true };
+      if (isArray && selectedDate[0] && selectedDate[0].unix === date.unix)
+        return { disabled: true };
 
       return {};
     },
