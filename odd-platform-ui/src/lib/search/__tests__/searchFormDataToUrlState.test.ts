@@ -143,12 +143,18 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
     favorites: 'yes',
     // ST-9 (#1843) — the tenth dimension; a bound of 0 is a real value (the falsy-zero trap), so pin both ends.
     popularity: { min: 1, max: 5 },
+    // ST-10 (#1844) — the eleventh. Canonical `Z` instants: the wire types these as Date and its ToJSON calls
+    // .toISOString(), so this fixture is what proves the string→Date→string round-trip actually closes.
+    recentlyViewed: {
+      viewedAfter: '2026-08-31T21:00:00.000Z',
+      viewedBefore: '2026-09-06T20:59:59.999Z',
+    },
   };
 
   /**
-   * The wire keys of AssetSearchFormData — nine at #1878, ten since ST-9 (#1843) added `popularity`. A regenerated
-   * eleventh key must fail this, by design: it means a dimension reached the request object without saved-search
-   * support (the LSN-042 class).
+   * The wire keys of AssetSearchFormData — nine at #1878, ten since ST-9 (#1843) added `popularity`, eleven since
+   * ST-10 (#1844) added `recently_viewed`. A regenerated TWELFTH key must fail this, by design: it means a
+   * dimension reached the request object without saved-search support (the LSN-042 class).
    */
   const WIRE_KEYS = [
     'asset_kinds',
@@ -159,6 +165,7 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
     'my_objects',
     'popularity',
     'query',
+    'recently_viewed',
     'sort',
     'upstream_depth',
   ];
@@ -193,6 +200,50 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
     expect(roundTrip(atLeast)).toEqual(atLeast);
     const upTo = { ...full, popularity: { max: 2 } };
     expect(roundTrip(upTo)).toEqual(upTo);
+  });
+
+  it('a recency scope survives capture → stored spec → reapply, including the bounds-free "any time" state (ST-10)', () => {
+    // The round-trip really does cross the Date boundary: ToJSON writes ISO strings, FromJSON rebuilds `Date`
+    // objects, and the projection has to canonicalise them back. A string-only fixture would pass even if the
+    // projection rejected Dates — which is precisely how every saved search with a scope would have silently
+    // reapplied unnarrowed.
+    const spec = searchUrlStateToAssetSearchFormData(full);
+    expect(spec.recentlyViewed?.viewedAfter).toBeInstanceOf(Date);
+    expect(roundTrip(full)).toEqual(full);
+
+    // PRESENCE IS THE SWITCH: an empty scope is a real state ("any time") and must survive as one, not collapse
+    // to "no scope" the way an empty popularity range does.
+    const anyTime = { ...full, recentlyViewed: {} };
+    expect(roundTrip(anyTime)).toEqual(anyTime);
+
+    // each open end stays open
+    const since = { ...full, recentlyViewed: { viewedAfter: '2026-09-01T00:00:00.000Z' } };
+    expect(roundTrip(since)).toEqual(since);
+    const before = { ...full, recentlyViewed: { viewedBefore: '2026-09-01T00:00:00.000Z' } };
+    expect(roundTrip(before)).toEqual(before);
+  });
+
+  it('a stored recency scope is read fail-closed, and an inverted window keeps the scope as "any time" — the ONE place it differs from the URL (ST-10)', () => {
+    const at = (recentlyViewed: unknown) =>
+      assetSearchFormDataToUrlState({
+        query: 'q',
+        filters: {},
+        recentlyViewed,
+      } as unknown as AssetSearchFormData);
+    // INVERTED: both bounds drop, the SCOPE SURVIVES — mirroring the server's sanitiseRecentlyViewed, because a
+    // stored spec came from a client that did intend a recency scope. (A URL's inverted window drops the whole
+    // dimension instead; that asymmetry is deliberate and is asserted from the URL side in searchUrlState.test.ts.)
+    expect(at({ viewedAfter: new Date('2026-09-07T00:00:00Z'), viewedBefore: new Date('2026-09-01T00:00:00Z') }))
+      .toEqual(state({ query: 'q', recentlyViewed: {} }));
+    // a junk bound poisons the whole scope
+    expect(at({ viewedAfter: 'not-a-date' })).toEqual(state({ query: 'q' }));
+    // a bare date is zone-ambiguous and rejected, never guessed (the server 400s on it too)
+    expect(at({ viewedAfter: '2026-09-01' })).toEqual(state({ query: 'q' }));
+    // an Invalid Date object is junk, not a throw
+    expect(at({ viewedAfter: new Date('nope') })).toEqual(state({ query: 'q' }));
+    // a non-object is junk, never a throw
+    expect(() => at('last week')).not.toThrow();
+    expect(at('last week')).toEqual(state({ query: 'q' }));
   });
 
   it('a stored popularity range is read through the same fail-closed rules as the URL — inverted, junk or out of range never reaches the request (ST-9)', () => {

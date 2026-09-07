@@ -77,6 +77,30 @@ describe('SearchSortMenu (ST-2b / #1836)', () => {
     expect(screen.getByRole('combobox')).toHaveTextContent('Relevance');
   });
 
+  it('offers "Recently viewed" ONLY while the recency scope is on, and shows it as the active default there (ST-10)', async () => {
+    const user = userEvent.setup();
+    // WITH the scope: the sixth option appears, and with no ?sort= and no query it is the active default —
+    // mirroring SearchSortDto.resolveEffective server-side, so the control never claims an ordering the list
+    // does not have.
+    const { unmount } = renderAt('/search?recently_viewed=yes');
+    expect(screen.getByRole('combobox')).toHaveTextContent('Recently viewed');
+    await user.click(screen.getByRole('combobox'));
+    expect(screen.getAllByRole('option').map(o => o.textContent)).toEqual([
+      'Relevance',
+      'Status priority',
+      'Recently updated',
+      'Name',
+      'Most popular',
+      'Recently viewed',
+    ]);
+    unmount();
+
+    // WITHOUT the scope a stale ?sort=last_viewed must not be displayed as active — the server would drop it,
+    // so showing it would be a lie about the list's order.
+    renderAt('/search?sort=last_viewed');
+    expect(screen.getByRole('combobox')).toHaveTextContent('Status priority');
+  });
+
   it('does not crash on a boolean-looking query (?q=true parsed as a boolean)', () => {
     renderAt('/search?q=true');
     expect(screen.getByRole('combobox')).toHaveTextContent('Relevance');
@@ -87,7 +111,9 @@ describe('SearchSortMenu (ST-2b / #1836)', () => {
     renderAt('/search?q=orders');
 
     await user.click(screen.getByRole('combobox'));
-    // four at ST-2b; "Most popular" joined with ST-9 (#1843) on the ST-5c popularity snapshot
+    // four at ST-2b; "Most popular" joined with ST-9 (#1843) on the ST-5c popularity snapshot. "Recently viewed"
+    // is NOT here: ST-10 (#1844) offers it only while the recency scope is on, because without the scope the
+    // server drops the token — see the case below.
     expect(screen.getAllByRole('option').map(o => o.textContent)).toEqual([
       'Relevance',
       'Status priority',

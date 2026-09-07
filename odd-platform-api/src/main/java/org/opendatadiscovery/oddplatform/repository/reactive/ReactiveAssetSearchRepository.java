@@ -8,6 +8,7 @@ import org.opendatadiscovery.oddplatform.dto.AssetSearchScope;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FavoritesScopeDto;
 import org.opendatadiscovery.oddplatform.dto.PopularityRangeDto;
+import org.opendatadiscovery.oddplatform.dto.RecentlyViewedScopeDto;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -25,6 +26,14 @@ import reactor.core.publisher.Mono;
  * <p>The My-data narrowing (ST-8 / #1842) arrives as an {@link AssetSearchScope} rather than an owner: the
  * owned half stays an uncapped semi-join evaluated here in SQL, while only the budgeted lineage half is passed
  * in as ids. A {@code null} scope means no My-data narrowing at all.
+ *
+ * <p>The recency narrowing (ST-10 / #1844, ADR D3) arrives as a {@link RecentlyViewedScopeDto} — WHOSE history and
+ * optionally WHEN within it; {@code null} means no recency narrowing. Unlike every other narrowing here it is applied
+ * as an identity-keyed INNER JOIN to {@code recently_viewed} inside {@code searchFrom}, because the SAME join both
+ * filters (the caller has opened this asset) and supplies the {@code LAST_VIEWED} sort key. It is safe as an inner
+ * join: {@code recently_viewed_identity_asset_key} is UNIQUE on {@code (oidc_username, provider, asset_kind,
+ * asset_id)}, so at most one row joins per asset and {@code count} stays exact. It is cross-kind — the join key is the
+ * polymorphic pair — so no kind guard applies.
  *
  * <p>The popularity narrowing (ST-9 / #1843, ADR D5) arrives as a {@link PopularityRangeDto} — a closed range over the
  * snapshotted {@code popularity_score}; {@code null} means no popularity narrowing. Any range narrows to data entities
@@ -47,6 +56,7 @@ public interface ReactiveAssetSearchRepository {
      */
     Flux<AssetSearchPageRow> keysetPage(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
                                         FavoritesScopeDto favorites, PopularityRangeDto popularity,
+                                        RecentlyViewedScopeDto recentlyViewed,
                                         AssetSearchCursor cursor, int limit);
 
     /**
@@ -55,14 +65,15 @@ public interface ReactiveAssetSearchRepository {
      */
     Flux<AssetSearchPageRow> relevancePage(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
                                            FavoritesScopeDto favorites, PopularityRangeDto popularity,
-                                           int offset, int limit);
+                                           RecentlyViewedScopeDto recentlyViewed, int offset, int limit);
 
     /**
      * The total number of matches for the same predicates as the page queries (display metadata; offset-independent,
      * so its cost is constant vs page depth and does not affect the keyset deep-page guarantee).
      */
     Mono<Long> count(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
-                     FavoritesScopeDto favorites, PopularityRangeDto popularity);
+                     FavoritesScopeDto favorites, PopularityRangeDto popularity,
+                     RecentlyViewedScopeDto recentlyViewed);
 
     /**
      * The popularity distribution of a search (ST-9 / #1843): for the DATA ENTITIES matching every predicate of the
@@ -73,7 +84,7 @@ public interface ReactiveAssetSearchRepository {
      * one aggregate over the same indexed predicates the count already pays, grouped into ≤ 21 rows.
      */
     Mono<Map<Short, Long>> popularityHistogram(FacetStateDto state, List<String> assetKinds, AssetSearchScope scope,
-                                               FavoritesScopeDto favorites);
+                                               FavoritesScopeDto favorites, RecentlyViewedScopeDto recentlyViewed);
 
     /**
      * Re-snapshots the denormalised {@code popularity_score} on {@code asset_search_entrypoint} from the current

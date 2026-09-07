@@ -25,6 +25,7 @@ import org.opendatadiscovery.oddplatform.dto.MyDataScopeDto;
 import org.opendatadiscovery.oddplatform.dto.MyDataScopeResult;
 import org.opendatadiscovery.oddplatform.dto.PopularityBands;
 import org.opendatadiscovery.oddplatform.dto.PopularityRangeDto;
+import org.opendatadiscovery.oddplatform.dto.RecentlyViewedScopeDto;
 import org.opendatadiscovery.oddplatform.dto.SearchSortDto;
 import org.opendatadiscovery.oddplatform.mapper.FacetStateMapper;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAssetSearchRepository;
@@ -70,13 +71,14 @@ public class AssetSearchServiceImpl implements AssetSearchService {
 
         // Resolve the sort ONCE here so the cursor scope, the keyset-vs-offset choice, and the repository ORDER BY
         // all agree; the cursor decodes fail-closed against it (a foreign/malformed cursor → the first page).
-        final SearchSortDto sort =
-            SearchSortDto.resolveEffective(state.getSort(), StringUtils.isNotBlank(state.getQuery()));
+        final SearchSortDto sort = SearchSortDto.resolveEffective(state.getSort(),
+            StringUtils.isNotBlank(state.getQuery()), formData.getRecentlyViewed() != null);
         final AssetSearchCursor cursor = AssetSearchCursor.decode(cursorToken, sort).orElse(null);
 
         return scoped(formData, Mono.fromSupplier(() -> new AssetList(List.of(), new AssetPageInfo(0L, false))),
-            (scope, favorites, resolved) ->
-                resolvePage(state, assetKinds, scope, favorites, popularity, sort, cursor, cappedSize)
+            (scope, favorites, recentlyViewed, resolved) ->
+                resolvePage(state, assetKinds, scope, favorites, popularity, recentlyViewed, sort, cursor,
+                        cappedSize)
                     .map(list -> resolved == null ? list : withTruncation(list, resolved)));
     }
 
@@ -89,8 +91,8 @@ public class AssetSearchServiceImpl implements AssetSearchService {
         final FacetStateDto state = facetState(formData);
         final List<String> assetKinds = assetKinds(formData);
         return scoped(formData, Mono.fromSupplier(() -> toFacet(Map.of())),
-            (scope, favorites, resolved) -> assetSearchRepository
-                .popularityHistogram(state, assetKinds, scope, favorites)
+            (scope, favorites, recentlyViewed, resolved) -> assetSearchRepository
+                .popularityHistogram(state, assetKinds, scope, favorites, recentlyViewed)
                 .map(this::toFacet));
     }
 
@@ -111,7 +113,8 @@ public class AssetSearchServiceImpl implements AssetSearchService {
      */
     @FunctionalInterface
     private interface ScopedQuery<T> {
-        Mono<T> run(AssetSearchScope scope, FavoritesScopeDto favorites, MyDataScopeResult resolved);
+        Mono<T> run(AssetSearchScope scope, FavoritesScopeDto favorites, RecentlyViewedScopeDto recentlyViewed,
+                    MyDataScopeResult resolved);
     }
 
     /**
@@ -131,15 +134,25 @@ public class AssetSearchServiceImpl implements AssetSearchService {
      */
     private <T> Mono<T> scoped(final AssetSearchFormData formData, final Mono<T> noOwnerResult,
                                final ScopedQuery<T> query) {
-        if (formData.getFavorites() == null) {
-            return myDataScoped(formData, null, noOwnerResult, query);
+        // ST-10 (#1844) — favorites and recently-viewed are BOTH keyed on the login identity, so the resolver runs
+        // ONCE for either or both. Resolving twice would be two round-trips and, worse, two chances for the two
+        // narrowings to disagree about who the caller is.
+        final boolean needsIdentity =
+            formData.getFavorites() != null || formData.getRecentlyViewed() != null;
+        if (!needsIdentity) {
+            return myDataScoped(formData, null, null, noOwnerResult, query);
         }
         return currentUserIdentityResolver.resolve()
-            .flatMap(identity -> myDataScoped(formData, FavoritesScopeDto.of(identity, formData.getFavorites()),
+            .flatMap(identity -> myDataScoped(
+                formData,
+                formData.getFavorites() == null
+                    ? null : FavoritesScopeDto.of(identity, formData.getFavorites()),
+                RecentlyViewedScopeDto.of(identity, formData.getRecentlyViewed()).orElse(null),
                 noOwnerResult, query));
     }
 
     private <T> Mono<T> myDataScoped(final AssetSearchFormData formData, final FavoritesScopeDto favorites,
+                                     final RecentlyViewedScopeDto recentlyViewed,
                                      final Mono<T> noOwnerResult, final ScopedQuery<T> query) {
         // ST-8 (#1842) — the My-data scope group, generalising the my_objects boolean. `my_data` wins when
         // present; otherwise a legacy `my_objects: true` is read as [MY_OBJECTS], so existing saved searches
@@ -160,11 +173,11 @@ public class AssetSearchServiceImpl implements AssetSearchService {
                             scopes.contains(MyDataScopeDto.MY_OBJECTS),
                             scopes.contains(MyDataScopeDto.UPSTREAM) || scopes.contains(MyDataScopeDto.DOWNSTREAM),
                             resolved.neighbourDataEntityIds());
-                        return query.run(scope, favorites, resolved);
+                        return query.run(scope, favorites, recentlyViewed, resolved);
                     }))
                 .switchIfEmpty(noOwnerResult);
         }
-        return query.run(null, favorites, null);
+        return query.run(null, favorites, recentlyViewed, null);
     }
 
     // The 21 fixed buckets (scores 0..20) with their view boundaries, filled from the sparse per-score counts.
@@ -200,7 +213,8 @@ public class AssetSearchServiceImpl implements AssetSearchService {
 
     private Mono<AssetList> resolvePage(final FacetStateDto state, final List<String> assetKinds,
                                         final AssetSearchScope scope, final FavoritesScopeDto favorites,
-                                        final PopularityRangeDto popularity, final SearchSortDto sort,
+                                        final PopularityRangeDto popularity,
+                                        final RecentlyViewedScopeDto recentlyViewed, final SearchSortDto sort,
                                         final AssetSearchCursor cursor, final int cappedSize) {
         final boolean relevance = sort == SearchSortDto.RELEVANCE;
         final int relevanceOffset = relevance && cursor != null ? cursor.offset() : 0;
@@ -208,19 +222,20 @@ public class AssetSearchServiceImpl implements AssetSearchService {
         if (relevance && relevanceOffset >= RELEVANCE_MAX_DEPTH) {
             // Depth-cap terminal: an empty page with hasNext=false and no nextCursor (ADR D12). total is still
             // the match count (display only). Never an unbounded scan.
-            return assetSearchRepository.count(state, assetKinds, scope, favorites, popularity)
+            return assetSearchRepository.count(state, assetKinds, scope, favorites, popularity, recentlyViewed)
                 .map(total -> new AssetList(List.of(), new AssetPageInfo(total, false)));
         }
 
         // Fetch one extra row to derive hasNext + the next cursor without a second query.
         final int fetchLimit = cappedSize + 1;
         final var pageFlux = relevance
-            ? assetSearchRepository.relevancePage(state, assetKinds, scope, favorites, popularity, relevanceOffset,
-                fetchLimit)
-            : assetSearchRepository.keysetPage(state, assetKinds, scope, favorites, popularity, cursor, fetchLimit);
+            ? assetSearchRepository.relevancePage(state, assetKinds, scope, favorites, popularity, recentlyViewed,
+                relevanceOffset, fetchLimit)
+            : assetSearchRepository.keysetPage(state, assetKinds, scope, favorites, popularity, recentlyViewed,
+                cursor, fetchLimit);
 
         return Mono.zip(pageFlux.collectList(),
-                assetSearchRepository.count(state, assetKinds, scope, favorites, popularity))
+                assetSearchRepository.count(state, assetKinds, scope, favorites, popularity, recentlyViewed))
             .flatMap(pageAndCount -> {
                 final List<AssetSearchPageRow> rows = pageAndCount.getT1();
                 final long total = pageAndCount.getT2();

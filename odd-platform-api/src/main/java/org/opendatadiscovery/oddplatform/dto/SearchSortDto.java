@@ -24,7 +24,15 @@ public enum SearchSortDto {
      * legacy {@code /api/search} session resolves it to the per-context default, exactly as an unknown token
      * ({@code ReactiveDataEntityRepositoryImpl.getSearchResultOrderFields}).
      */
-    POPULARITY;
+    POPULARITY,
+    /**
+     * "Recently viewed" (ST-10 / #1844, ADR unified-asset-search D3): the caller's own {@code last_viewed_at} DESC —
+     * most-recently-opened first. Meaningful ONLY while an {@code AssetSearchFormData.recently_viewed} scope is
+     * present, because that scope is what joins the caller's history into the query; without it there is no column to
+     * order by, so {@link #resolveEffective(String, boolean, boolean)} drops the token to the per-context default
+     * exactly as it drops an unknown one. With the scope present it is also the BROWSE default (see there).
+     */
+    LAST_VIEWED;
 
     public static Optional<SearchSortDto> fromString(final String value) {
         if (value == null || value.isBlank()) {
@@ -43,7 +51,33 @@ public enum SearchSortDto {
      * a query) folds back to the browse default so empty browse is keyset-paged, not offset-paged.
      */
     public static SearchSortDto resolveEffective(final String sortParam, final boolean hasQuery) {
-        final SearchSortDto resolved = fromString(sortParam).orElse(hasQuery ? RELEVANCE : STATUS_PRIORITY);
-        return resolved == RELEVANCE && !hasQuery ? STATUS_PRIORITY : resolved;
+        return resolveEffective(sortParam, hasQuery, false);
+    }
+
+    /**
+     * The sort that actually orders the page, with the recency scope taken into account (ST-10 / #1844).
+     *
+     * <p>Two rules, both of which must hold identically wherever the effective sort is derived — the service (which
+     * also scopes the cursor) and the repository (which builds the ORDER BY) each resolve it independently, and a
+     * disagreement between them would page one way and order another:
+     *
+     * <ul>
+     *   <li>{@link #LAST_VIEWED} REQUIRES the scope. Without it the caller's history is not joined, so there is no
+     *       column to order by; the token then degrades to the per-context default exactly as an unknown token does
+     *       (the {@link #POPULARITY}-on-the-legacy-path precedent), never to an error.</li>
+     *   <li>WITH the scope, {@code LAST_VIEWED} replaces {@code STATUS_PRIORITY} as the BROWSE default: an empty
+     *       query resolves to it, so "the assets I opened" reads as a history rather than as a status-ordered list.
+     *       A non-empty query still resolves to {@link #RELEVANCE} — the scope changes the browse default only.</li>
+     * </ul>
+     *
+     * @param hasRecencyScope whether the request carries an {@code AssetSearchFormData.recently_viewed} object
+     */
+    public static SearchSortDto resolveEffective(final String sortParam, final boolean hasQuery,
+                                                 final boolean hasRecencyScope) {
+        final SearchSortDto browseDefault = hasRecencyScope ? LAST_VIEWED : STATUS_PRIORITY;
+        final SearchSortDto resolved = fromString(sortParam)
+            .filter(requested -> requested != LAST_VIEWED || hasRecencyScope)
+            .orElse(hasQuery ? RELEVANCE : browseDefault);
+        return resolved == RELEVANCE && !hasQuery ? browseDefault : resolved;
     }
 }

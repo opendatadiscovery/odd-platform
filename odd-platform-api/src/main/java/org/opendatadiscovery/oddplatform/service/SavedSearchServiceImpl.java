@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class SavedSearchServiceImpl implements SavedSearchService {
     private static final String ASSET_KINDS_FIELD = "asset_kinds";
     private static final String FAVORITES_FIELD = "favorites";
     private static final String POPULARITY_FIELD = "popularity";
+    private static final String RECENTLY_VIEWED_FIELD = "recently_viewed";
     private static final Set<String> KNOWN_ASSET_KINDS = Arrays.stream(AssetKind.values())
         .map(AssetKind::getValue)
         .collect(Collectors.toUnmodifiableSet());
@@ -173,6 +175,54 @@ public class SavedSearchServiceImpl implements SavedSearchService {
             spec.remove(FAVORITES_FIELD);
         }
         sanitisePopularity(spec);
+        sanitiseRecentlyViewed(spec);
+    }
+
+    /**
+     * ST-10 (#1844): a stored {@code recently_viewed} scope is read back exactly as the search would apply it.
+     *
+     * <p>A non-object is dropped whole. A bound that is not a parseable {@code date-time} is dropped field-level —
+     * the spec keeps the scope, losing only the unreadable bound. An INVERTED window (after &gt; before) drops BOTH
+     * bounds and KEEPS the scope: on a live request such a window answers an empty page, but a saved search must
+     * reapply as the search it can still run, and "every asset in my history" is that search. The FE projection
+     * mirrors this exact rule, so the two surfaces can never disagree about what a stored inverted window means.
+     *
+     * <p>Note the deliberate difference from {@link #sanitisePopularity}: a stored {@code popularity: {}} means no
+     * range, while a stored {@code recently_viewed: {}} is a REAL scope (any time). Presence is the switch here, and
+     * an empty object is therefore left exactly as it is.
+     */
+    private void sanitiseRecentlyViewed(final ObjectNode spec) {
+        final JsonNode scope = spec.get(RECENTLY_VIEWED_FIELD);
+        if (scope == null || scope.isNull()) {
+            return;
+        }
+        if (!scope.isObject()) {
+            log.warn("Saved-search spec carries a non-object recently_viewed ({}); dropping it", scope.getNodeType());
+            spec.remove(RECENTLY_VIEWED_FIELD);
+            return;
+        }
+        final ObjectNode window = (ObjectNode) scope;
+        final OffsetDateTime[] bounds = new OffsetDateTime[2];
+        final String[] names = {"viewed_after", "viewed_before"};
+        for (int i = 0; i < names.length; i++) {
+            final JsonNode value = window.get(names[i]);
+            if (value == null || value.isNull()) {
+                continue;
+            }
+            try {
+                bounds[i] = OffsetDateTime.parse(value.asText());
+            } catch (final Exception e) {
+                log.warn("Saved-search spec carries an unparseable recently_viewed {} ({}); dropping the bound",
+                    names[i], value.getNodeType());
+                window.remove(names[i]);
+            }
+        }
+        if (bounds[0] != null && bounds[1] != null && bounds[0].isAfter(bounds[1])) {
+            log.warn("Saved-search spec carries an inverted recently_viewed window; dropping both bounds "
+                + "(the scope survives as \"any time\")");
+            window.remove(names[0]);
+            window.remove(names[1]);
+        }
     }
 
     /**

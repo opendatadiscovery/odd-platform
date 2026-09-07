@@ -104,6 +104,38 @@ const SEARCH_FAVORITES_VALUES: SearchFavoritesValue[] = ['yes', 'no'];
  * BEING URL-ONLY IS LOAD-BEARING: `Search.tsx`'s facet→URL mirror MUST merge these two params back (the #1858
  * dropped-selection class — see the comment there).
  */
+/**
+ * The Recently-viewed (Last viewed) scope params (ST-10 / #1844, ADR unified-asset-search D3) — the caller's own
+ * viewing history as a search scope, optionally windowed by when they last opened each asset.
+ *
+ * ONE CANONICAL REPRESENTATION PER STATE, which is what keeps the mirror's equality guard from thrashing:
+ * a set bound is written as its own ISO-8601 UTC (`Z`) param, and `recently_viewed=yes` is written ONLY for the
+ * bounded-by-nothing state ("any time"). Bounds imply the scope is on, so the two never appear together.
+ *
+ * FAIL CLOSED, mirroring the popularity rule: a bound that is not a parseable instant — or a bare `YYYY-MM-DD`,
+ * which is zone-ambiguous and which the server's own date-time binding also rejects with 400 — drops the WHOLE
+ * dimension (no chip, unfiltered list; the junk sits in the address bar until the next mirror write normalises it).
+ * An inverted window drops the whole dimension too. A parsed bound is CANONICALISED to `Z` on the way in, so a
+ * link written with an offset (`...T00:00:00+03:00`) round-trips as the same instant in the canonical spelling.
+ *
+ * BEING URL-ONLY IS LOAD-BEARING: `Search.tsx`'s facet→URL mirror rebuilds the URL from the redux facet state,
+ * which carries none of these, so they MUST be merged back there — otherwise any sidebar facet toggle silently
+ * drops an active recency scope (the #1858 dropped-selection class).
+ */
+export const SEARCH_RECENTLY_VIEWED_PARAM = 'recently_viewed';
+export const SEARCH_VIEWED_AFTER_PARAM = 'viewed_after';
+export const SEARCH_VIEWED_BEFORE_PARAM = 'viewed_before';
+
+/**
+ * A recency scope in canonical ISO-8601 UTC instants. An object with NO bounds is a real, meaningful state —
+ * "every asset in my history" — which is why the field's PRESENCE is the switch and `{}` is never collapsed to
+ * `undefined` (the opposite of {@link SearchPopularityRange}, where no bounds means no filter at all).
+ */
+export interface SearchRecentlyViewedScope {
+  viewedAfter?: string;
+  viewedBefore?: string;
+}
+
 export const SEARCH_POPULARITY_MIN_PARAM = 'popularity_min';
 export const SEARCH_POPULARITY_MAX_PARAM = 'popularity_max';
 /** The score domain — mirrors `PopularityBands.MIN_SCORE/MAX_SCORE` server-side. */
@@ -151,7 +183,8 @@ export type SearchSortValue =
   | 'status_priority'
   | 'updated_at'
   | 'name'
-  | 'popularity';
+  | 'popularity'
+  | 'last_viewed';
 
 export interface SearchSortOption {
   value: SearchSortValue;
@@ -165,6 +198,7 @@ export const SEARCH_SORT_OPTIONS: SearchSortOption[] = [
   { value: 'updated_at', labelKey: 'Recently updated' },
   { value: 'name', labelKey: 'Name' },
   { value: 'popularity', labelKey: 'Most popular' },
+  { value: 'last_viewed', labelKey: 'Recently viewed' },
 ];
 
 export const SEARCH_SORT_VALUES: SearchSortValue[] = SEARCH_SORT_OPTIONS.map(
@@ -179,13 +213,18 @@ export const SEARCH_SORT_VALUES: SearchSortValue[] = SEARCH_SORT_OPTIONS.map(
  * better, resolve PLT-254 (have the server echo the applied sort) so the control reads truth instead of re-deriving it.
  */
 export function defaultSortForContext(
-  query: string | number | boolean | null | undefined
+  query: string | number | boolean | null | undefined,
+  hasRecencyScope = false
 ): SearchSortValue {
   // `query` may arrive as a number or boolean — `useQueryParams` parses `?q=123` → 123 and `?q=true` → true
   // (parseNumbers/parseBooleans). Coerce defensively: a numeric/boolean query must NEVER throw in a caller's render,
   // because there is no error boundary in odd-platform-ui — an uncaught throw white-screens the whole app (IT-006).
   const text = query == null ? '' : String(query);
-  return text.trim() ? 'relevance' : 'status_priority';
+  if (text.trim()) return 'relevance';
+  // ST-10 — with the recency scope on, the BROWSE default becomes "recently viewed", so "the assets I opened"
+  // reads as a history rather than as a status-ordered list. Mirrors SearchSortDto.resolveEffective server-side;
+  // a text query still wins with relevance.
+  return hasRecencyScope ? 'last_viewed' : 'status_priority';
 }
 
 /**
@@ -195,14 +234,21 @@ export function defaultSortForContext(
  */
 export function resolveActiveSort(
   rawSort: string | number | boolean | null | undefined,
-  query: string | number | boolean | null | undefined
+  query: string | number | boolean | null | undefined,
+  hasRecencyScope = false
 ): SearchSortValue {
   // `rawSort` may also arrive coerced (`?sort=2024` → 2024); stringify before the allow-list check — a numeric token
   // is simply not a known sort, so it falls through to the per-context default. Never throws (review B1).
   const token = rawSort == null ? undefined : String(rawSort);
-  return SEARCH_SORT_VALUES.includes(token as SearchSortValue)
+  // ST-10 — `last_viewed` is meaningless without the scope (nothing joins the caller's history), so it degrades to
+  // the per-context default there, exactly as the server drops it. Same rule both sides, or the dropdown would
+  // display an ordering the list does not have.
+  const known =
+    SEARCH_SORT_VALUES.includes(token as SearchSortValue) &&
+    (token !== 'last_viewed' || hasRecencyScope);
+  return known
     ? (token as SearchSortValue)
-    : defaultSortForContext(query);
+    : defaultSortForContext(query, hasRecencyScope);
 }
 
 export interface SearchUrlState {
@@ -227,6 +273,8 @@ export interface SearchUrlState {
   favorites?: SearchFavoritesValue;
   /** the Popularity range in scores (ST-9); undefined = no popularity narrowing */
   popularity?: SearchPopularityRange;
+  /** the Last-viewed scope (ST-10); undefined = no recency narrowing. An EMPTY object means "any time". */
+  recentlyViewed?: SearchRecentlyViewedScope;
 }
 
 /**
@@ -292,6 +340,17 @@ export function searchStateToParams(state: SearchUrlState): string {
     params[SEARCH_POPULARITY_MIN_PARAM] = state.popularity.min;
   if (state.popularity?.max !== undefined)
     params[SEARCH_POPULARITY_MAX_PARAM] = state.popularity.max;
+  // ST-10 — each set bound, else the explicit ON token for the unbounded ("any time") state. Never both: a bound
+  // already implies the scope is on, and two spellings of one state would make the mirror's equality guard rewrite
+  // the URL forever.
+  if (state.recentlyViewed) {
+    const { viewedAfter, viewedBefore } = state.recentlyViewed;
+    if (viewedAfter !== undefined) params[SEARCH_VIEWED_AFTER_PARAM] = viewedAfter;
+    if (viewedBefore !== undefined) params[SEARCH_VIEWED_BEFORE_PARAM] = viewedBefore;
+    if (viewedAfter === undefined && viewedBefore === undefined) {
+      params[SEARCH_RECENTLY_VIEWED_PARAM] = 'yes';
+    }
+  }
   return stringify(params, QUERY_STRING_OPTIONS);
 }
 
@@ -346,6 +405,62 @@ export function parsePopularity(
   return {
     ...(min !== undefined ? { min } : {}),
     ...(max !== undefined ? { max } : {}),
+  };
+}
+
+/**
+ * One recency bound, FAIL CLOSED: `undefined` = absent (open); `null` = invalid (the caller drops the whole scope);
+ * otherwise a canonical ISO-8601 `Z` instant.
+ *
+ * It accepts a `string` OR a `Date`, and that is load-bearing rather than defensive: the generated client types a
+ * `date-time` field as `Date` and its `FromJSON` really does hand back `new Date(...)` (verified on the generated
+ * `RecentlyViewedScope.ts`), so a saved-search spec arrives with `Date` bounds while a URL arrives with strings.
+ * Rejecting the `Date` would make EVERY saved search with a recency scope reapply unnarrowed while reporting
+ * success — the LSN-042 class this slice exists to close.
+ *
+ * A bare `YYYY-MM-DD` is rejected, never guessed into a zone: `new Date('2026-09-01')` is midnight UTC, which is a
+ * different instant from the user's local day. The server's own date-time binding rejects it with 400 too, so the
+ * two agree by construction.
+ */
+function parseInstant(raw: unknown): string | null | undefined {
+  if (raw === undefined || raw === null || raw === '') return undefined;
+  if (raw instanceof Date) {
+    return Number.isNaN(raw.getTime()) ? null : raw.toISOString();
+  }
+  if (typeof raw !== 'string') return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null; // zone-ambiguous — the server 400s on it as well
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+}
+
+/**
+ * The recency scope from its three raw inputs — the ON token and the two bounds — as ONE fail-closed reading shared
+ * by the URL parser and the saved-spec projection, so a link and a saved search can never disagree about what a
+ * stored scope means.
+ *
+ * `invertedKeepsScope` is the one deliberate difference between the two callers. A URL's inverted window is
+ * hand-edited junk, so the whole dimension drops; a STORED spec's inverted window came from a client that did intend
+ * a recency scope, so both bounds drop and the scope survives as "any time" — which is exactly what the server's
+ * `SavedSearchServiceImpl.sanitiseRecentlyViewed` writes back, so both surfaces answer the same thing.
+ */
+export function parseRecentlyViewed(
+  rawOn: unknown,
+  rawAfter: unknown,
+  rawBefore: unknown,
+  invertedKeepsScope = false
+): SearchRecentlyViewedScope | undefined {
+  const after = parseInstant(rawAfter);
+  const before = parseInstant(rawBefore);
+  if (after === null || before === null) return undefined;
+  if (after === undefined && before === undefined) {
+    return rawOn === 'yes' || rawOn === true ? {} : undefined;
+  }
+  if (after !== undefined && before !== undefined && after > before) {
+    return invertedKeepsScope ? {} : undefined;
+  }
+  return {
+    ...(after !== undefined ? { viewedAfter: after } : {}),
+    ...(before !== undefined ? { viewedBefore: before } : {}),
   };
 }
 
@@ -435,6 +550,14 @@ export function paramsToSearchState(search: string): SearchUrlState {
       parsed[SEARCH_POPULARITY_MAX_PARAM]
     );
 
+    // ST-10 — the recency scope, fail-closed (see parseRecentlyViewed). A URL's inverted window is junk, so the
+    // whole dimension drops here.
+    const recentlyViewed = parseRecentlyViewed(
+      parsed[SEARCH_RECENTLY_VIEWED_PARAM],
+      parsed[SEARCH_VIEWED_AFTER_PARAM],
+      parsed[SEARCH_VIEWED_BEFORE_PARAM]
+    );
+
     return {
       query,
       facets,
@@ -445,6 +568,7 @@ export function paramsToSearchState(search: string): SearchUrlState {
       assetKinds,
       favorites,
       popularity,
+      recentlyViewed,
     };
   } catch {
     return empty;
@@ -501,6 +625,19 @@ export function searchUrlStateToAssetSearchFormData(
     // ST-9 — the range rides the wire as the same {min, max} scores; absent stays absent (no key, so the
     // server never sees an empty object it would have to treat as "no range").
     popularity: state.popularity,
+    // ST-10 — the scope rides the wire as instants. The generated model types a date-time as `Date`, and its
+    // ToJSON calls `.toISOString()`, so hand it Date objects and NOT the canonical strings the URL state holds.
+    // An empty object is sent AS an empty object: presence is the switch, and `{}` means "any time".
+    recentlyViewed: state.recentlyViewed
+      ? {
+          viewedAfter: state.recentlyViewed.viewedAfter
+            ? new Date(state.recentlyViewed.viewedAfter)
+            : undefined,
+          viewedBefore: state.recentlyViewed.viewedBefore
+            ? new Date(state.recentlyViewed.viewedBefore)
+            : undefined,
+        }
+      : undefined,
   };
 }
 
@@ -579,6 +716,21 @@ export function assetSearchFormDataToUrlState(
   // ST-9 — the stored range through the SAME fail-closed reading the URL uses (a stored spec is as untrusted as
   // a URL): a non-object, a non-integer bound, or an inverted pair → no range, never a throw. A row saved before
   // ST-9 carries no `popularity` and reapplies exactly as it did.
+  // ST-10 — the stored scope through the SAME fail-closed reading, with ONE deliberate difference: an inverted
+  // stored window keeps the scope and drops both bounds ("any time"), mirroring the server's
+  // SavedSearchServiceImpl.sanitiseRecentlyViewed, where a URL's inverted window drops the dimension entirely. A
+  // stored spec came from a client that DID intend a recency scope; a hand-edited URL is junk. The bounds arrive as
+  // `Date` objects from the generated FromJSON, which parseInstant handles.
+  const rawScope: unknown = formData?.recentlyViewed;
+  const recentlyViewed =
+    rawScope && typeof rawScope === 'object' && !Array.isArray(rawScope)
+      ? parseRecentlyViewed(
+          'yes',
+          (rawScope as { viewedAfter?: unknown }).viewedAfter,
+          (rawScope as { viewedBefore?: unknown }).viewedBefore,
+          true
+        )
+      : undefined;
   const rawRange: unknown = formData?.popularity;
   const range =
     rawRange && typeof rawRange === 'object' && !Array.isArray(rawRange)
@@ -590,5 +742,6 @@ export function assetSearchFormDataToUrlState(
     ...(assetKinds.length > 0 ? { assetKinds } : {}),
     ...(favorites ? { favorites } : {}),
     ...(popularity ? { popularity } : {}),
+    ...(recentlyViewed ? { recentlyViewed } : {}),
   };
 }

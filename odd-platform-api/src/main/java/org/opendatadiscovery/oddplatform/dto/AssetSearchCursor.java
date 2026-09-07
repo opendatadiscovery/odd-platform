@@ -125,11 +125,14 @@ public final class AssetSearchCursor {
                 return Optional.empty();
             }
             final boolean valueNull = Boolean.TRUE.equals(m.get("vn"));
-            if (valueNull && (sort == SearchSortDto.STATUS_PRIORITY || sort == SearchSortDto.POPULARITY)) {
-                // status_priority and popularity_score are NOT NULL — a null-tail (vn) cursor is structurally
-                // impossible for them, so a tampered one must fail closed here rather than reach the seek and
-                // silently query a different column's NULL tail (R-B4 fail-closed; the null tail is a
-                // nullable-sort-only concept). POPULARITY joined this guard with ST-9 (#1843).
+            if (valueNull && (sort == SearchSortDto.STATUS_PRIORITY || sort == SearchSortDto.POPULARITY
+                || sort == SearchSortDto.LAST_VIEWED)) {
+                // status_priority, popularity_score and recently_viewed.last_viewed_at are all NOT NULL — a
+                // null-tail (vn) cursor is structurally impossible for them, so a tampered one must fail closed
+                // here rather than reach the seek and silently query a different column's NULL tail (R-B4
+                // fail-closed; the null tail is a nullable-sort-only concept). POPULARITY joined this guard with
+                // ST-9 (#1843); LAST_VIEWED with ST-10 (#1844) — its column is NOT NULL by the V0_0_95 schema, and
+                // it is reached only through an INNER JOIN, so a row without a value cannot exist.
                 return Optional.empty();
             }
             final String value = valueNull ? null : (m.get("v") == null ? null : String.valueOf(m.get("v")));
@@ -150,7 +153,7 @@ public final class AssetSearchCursor {
         try {
             switch (sort) {
                 case STATUS_PRIORITY, POPULARITY -> Short.parseShort(value); // both NOT NULL smallint columns
-                case UPDATED_AT -> LocalDateTime.parse(value);
+                case UPDATED_AT, LAST_VIEWED -> LocalDateTime.parse(value); // both timestamp columns
                 default -> {
                     // NAME: any string is a valid sort value.
                 }

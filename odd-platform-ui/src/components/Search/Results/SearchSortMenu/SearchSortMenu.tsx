@@ -1,12 +1,14 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { useQueryParams } from 'lib/hooks';
 import { searchPath } from 'routes';
 import AppSelect from 'components/shared/elements/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import {
   SEARCH_SORT_OPTIONS,
+  paramsToSearchState,
   resolveActiveSort,
   type SearchSortValue,
 } from 'lib/search/searchUrlState';
@@ -29,9 +31,30 @@ const SearchSortMenu: React.FC = () => {
     sort?: string | number | boolean;
   }>({});
 
+  // ST-10 (#1844) — "Recently viewed" is meaningful ONLY while the recency scope is on: without it the caller's
+  // history is not joined, so the server drops the token to the per-context default. Offering a dead option would
+  // let the control claim an ordering the list does not have (the FE-contradicts-BE class). Read through the
+  // canonical parser rather than useQueryParams so the ON rule is defined in exactly one place.
+  const location = useLocation();
+  const hasRecencyScope = React.useMemo(
+    () => paramsToSearchState(location.search).recentlyViewed !== undefined,
+    [location.search]
+  );
+  const options = React.useMemo(
+    () =>
+      SEARCH_SORT_OPTIONS.filter(
+        option => option.value !== 'last_viewed' || hasRecencyScope
+      ),
+    [hasRecencyScope]
+  );
+
   // The active ordering: the URL's `sort` when it is a known token, else the per-context default (fail-closed on
   // absent/garbage/non-string — R6, B1). The default MIRRORS the server so the control never misrepresents the order.
-  const activeSort: SearchSortValue = resolveActiveSort(queryParams.sort, queryParams.q);
+  const activeSort: SearchSortValue = resolveActiveSort(
+    queryParams.sort,
+    queryParams.q,
+    hasRecencyScope
+  );
 
   // Merge into the CURRENT params (spread) so choosing a sort PRESERVES the active query + facet params — never a
   // clobber (the `MainSearchInput` `q` precedent). PUSH a history entry so browser back/forward moves between sorts.
@@ -60,7 +83,7 @@ const SearchSortMenu: React.FC = () => {
         value={activeSort}
         sx={{ minWidth: 200 }}
       >
-        {SEARCH_SORT_OPTIONS.map(({ value, labelKey }) => (
+        {options.map(({ value, labelKey }) => (
           <AppMenuItem key={value} value={value} onClick={handleSortSelect(value)}>
             {t(labelKey)}
           </AppMenuItem>

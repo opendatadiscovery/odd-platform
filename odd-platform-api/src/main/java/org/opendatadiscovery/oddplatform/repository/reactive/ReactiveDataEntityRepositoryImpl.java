@@ -1017,7 +1017,8 @@ public class ReactiveDataEntityRepositoryImpl
         // guard fromString() would resolve it and the else-branch below would order by status priority even WITH a
         // query — a silent change to the legacy path's shipped behaviour (ADR D9).
         final SearchSortDto resolvedSort = SearchSortDto.fromString(sort)
-            .filter(requested -> requested != SearchSortDto.POPULARITY)
+            .filter(requested -> requested != SearchSortDto.POPULARITY
+                && requested != SearchSortDto.LAST_VIEWED)
             .orElse(hasQuery ? SearchSortDto.RELEVANCE : SearchSortDto.STATUS_PRIORITY);
 
         final List<OrderField<?>> orderFields = new ArrayList<>();
