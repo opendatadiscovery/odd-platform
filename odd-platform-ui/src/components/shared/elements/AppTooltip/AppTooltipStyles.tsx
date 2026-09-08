@@ -33,6 +33,12 @@ const getTooltipStylesByType = (theme: Theme, type: TooltipColorTypes): CSSObjec
     color: theme.palette.texts.info,
     borderRadius: '4px',
     backgroundColor: theme.palette.background.default,
+    // A FLOOR, not a style choice. Without it the popper's `maxWidth: 'unset'` lets any long title render as one
+    // unwrapped line straight across the viewport, over whatever it lands on. That shipped on the Last-viewed
+    // facet's help and was only caught on a merged main. Padding stays 0 here so `TooltipBody` call sites are
+    // pixel-identical; the cap costs them nothing (their own body already stops at 360px).
+    maxWidth: '360px',
+    whiteSpace: 'normal',
   };
 };
 
@@ -60,10 +66,12 @@ export const ChildrenContainer = styled(Box)<{ $isOverflowed: boolean }>(
   })
 );
 
-// The shared styled body for an informational AppTooltip. The "light" popper supplies only a flat
-// `background.default` with `padding: 0` and `maxWidth: 'unset'`, so the CONTENT must bring its own padding, a
-// max width (so it wraps), and the border / radius / shadow that make it read as a card. Passing a bare string
-// instead renders one unwrapped, edge-to-edge, background-less row of text - the defect LSN-035 caught.
+// The shared styled body for an informational AppTooltip: padding, a wrap width, and the border / radius /
+// shadow that make it read as a card. The "light" popper supplies only a flat `background.default` with
+// `padding: 0`, so the CONTENT still brings the padding and the card treatment; the popper now also caps at
+// 360px as a floor, so no title can render as one edge-to-edge row again (LSN-035, and its 2026-09 repeat on
+// the Last-viewed facet). `AppTooltip` wraps a plain-string title in this body automatically for informational
+// tooltips (`checkForOverflow={false}`), so a call site cannot reintroduce the bare-string shape by omission.
 // Lives here (next to the tooltip it styles) rather than inside one feature's style sheet, so every inline
 // "(i)" help affordance on the platform shares one body instead of copying it (ADR-0076).
 export const TooltipBody = styled('div')(({ theme }) => ({
