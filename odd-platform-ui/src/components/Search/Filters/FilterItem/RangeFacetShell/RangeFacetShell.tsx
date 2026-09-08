@@ -104,11 +104,9 @@ const RangeFacetShell: React.FC<RangeFacetShellProps> = ({
           <AppTooltip
             checkForOverflow={false}
             title={
-              /* The SHARED TooltipBody, never a bare string. The "light" popper ships `padding: 0` and
-               `maxWidth: 'unset'`, so a bare string renders as ONE unwrapped, edge-to-edge, background-less row
-               of text straight across the page and over the results — which is exactly what shipped here, and
-               exactly what AppTooltipStyles' own comment warns about (LSN-035). The body brings the padding, the
-               360px wrap and the card border. */
+              /* Its own SHARED TooltipBody, because the help is a LIST of records rendered one per line — a
+               plain string would get the same body from AppTooltip itself. The body brings the padding, the 360px
+               wrap and the card border; the "light" popper deliberately brings none (AppTooltipStyles). */
               <TooltipBody data-qa='tooltip-body'>
                 {helpRecords.map(record => (
                   <S.HelpRecord key={record}>{record}</S.HelpRecord>

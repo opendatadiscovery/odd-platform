@@ -46,12 +46,18 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   }, [childrenRef.current, childrenRef.current?.firstElementChild, checkForOverflow]);
 
   // INFORMATIONAL tooltips (`checkForOverflow={false}` — a sentence of help behind an (i), not an echo of a
-  // truncated label) get the shared card body automatically when they are handed a plain string. Fifteen call
-  // sites passed a bare string and every one of them rendered as an unpadded, background-less, edge-to-edge row
-  // — the platform made the wrong thing the easy thing. Doing it HERE means a caller cannot get it wrong, and a
-  // caller that already passes an element (its own TooltipBody, a rich node) is untouched.
+  // truncated label) get the shared card body automatically when they are handed a plain string, so a call site
+  // cannot reintroduce the bare edge-to-edge row (LSN-035, and its 2026-09 repeat on the Last-viewed facet) by
+  // omission. LIGHT type only: the body is a light card — padding, a light border, a shadow, a 360px wrap width —
+  // and drawn inside the dark chip it doubles the chip's height and paints a light border on a dark background,
+  // which is what the first cut of this did to the "Logical type: X" hint on every dataset-structure row. A caller
+  // that passes an element (its own TooltipBody, a rich node) is untouched and keeps whatever width it declared.
+  // Of the fifteen `checkForOverflow={false}` call sites, three hand over a plain string — FavoritesFilter (light,
+  // served here) and DatasetStructureItem + LinkedColumn (dark, left alone); the other twelve pass elements.
   const body =
-    !checkForOverflow && (typeof title === 'string' || typeof title === 'number') ? (
+    type === 'light' &&
+    !checkForOverflow &&
+    (typeof title === 'string' || typeof title === 'number') ? (
       <S.TooltipBody data-qa='tooltip-body'>{title}</S.TooltipBody>
     ) : (
       title

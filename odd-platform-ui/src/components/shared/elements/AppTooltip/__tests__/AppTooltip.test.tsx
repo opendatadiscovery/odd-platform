@@ -12,8 +12,16 @@ import AppTooltip from '../AppTooltip';
  * as ONE unwrapped, background-less row of text straight across the viewport and over the results table, because
  * the "light" popper carries `padding: 0` + `maxWidth: 'unset'` and expects the CONTENT to bring both.
  *
- * Fifteen call sites passed a bare string. The remedy is not "wrap them all" — it is that a caller CANNOT get
- * this wrong any more, which is what these cases hold in place.
+ * The remedy is that a caller CANNOT get this wrong any more — `AppTooltip` supplies the shared card body to a
+ * plain-string informational title itself. These cases hold the exact boundary of that remedy in place, because
+ * the first cut of it overshot in both directions: it wrapped the two `type='dark'` string sites too (a light card
+ * inside the dark chip), and it capped the popper at 360px for EVERY light tooltip, which clamped the callers whose
+ * element titles carry their own width (SearchHighlights at 640px, the DataEntityDetailsPreview card at 400-800px).
+ *
+ * What jsdom cannot see: computed WIDTHS. It does not resolve the styled-components descendant rule on the popper,
+ * so the width half of this contract — an element title keeps the width it declared, a string title wraps at the
+ * body's 360px — is measured in a real browser instead (contributor/CTRIB-068.md in odd-team records the numbers).
+ * What is pinned here is the STRUCTURE that produces those widths: who gets the body, and who is left alone.
  */
 
 const LONG =
@@ -30,15 +38,11 @@ const renderTip = (props: Partial<React.ComponentProps<typeof AppTooltip>>) =>
   );
 
 describe('AppTooltip — an informational tooltip can never render as a runaway line', () => {
-  it('wraps a plain-string informational title in the shared card body, with a wrap width', async () => {
+  it('wraps a plain-string informational title in the shared card body', async () => {
     renderTip({ checkForOverflow: false });
     await userEvent.hover(screen.getByText('anchor'));
 
     const tip = await screen.findByRole('tooltip');
-    // STRUCTURE, not computed width: jsdom does not resolve styled-components' descendant selectors, so a
-    // getComputedStyle assertion here would be testing jsdom. The width is measured in a real browser instead
-    // (a 360px cap, verified against the 1264px runaway line that shipped). What this pins is that the string
-    // reaches the shared card body at all — the half that was missing at fifteen call sites.
     expect(
       tip.querySelector('[data-qa="tooltip-body"]'),
       'a string title must be wrapped in the shared body, not passed through bare'
@@ -71,5 +75,21 @@ describe('AppTooltip — an informational tooltip can never render as a runaway 
       'no card body on a truncated-label echo — that idiom stays compact'
     ).toBeNull();
     expect(tip).toHaveTextContent('CATALOG_RETURNS');
+  });
+
+  it('a DARK informational string stays the compact dark chip — the light card body is never drawn inside it', async () => {
+    // The two shipped dark sites: the "Logical type: X" hint on every dataset-structure field row and on a term's
+    // linked columns. The body is a LIGHT card (padding, a light border, a shadow); inside the dark chip it doubled
+    // the chip's height and painted a light border on a dark background. Measured 137x20px -> 176x43px before this
+    // case existed.
+    renderTip({ checkForOverflow: false, type: 'dark', title: 'Logical type: VARCHAR' });
+    await userEvent.hover(screen.getByText('anchor'));
+
+    const tip = await screen.findByRole('tooltip');
+    expect(
+      tip.querySelector('[data-qa="tooltip-body"]'),
+      'the card body belongs to the light type only'
+    ).toBeNull();
+    expect(tip).toHaveTextContent('Logical type: VARCHAR');
   });
 });
