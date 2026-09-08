@@ -148,7 +148,12 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
         onChange={([begin, end]: DateObject[]) => {
           handleSetRange([begin?.toDate(), end?.toDate()]);
         }}
-        value={rangeStart && rangeEnd ? [rangeStart, rangeEnd] : []}
+        // A HALF-MADE selection must survive. This is a CONTROLLED calendar: whatever is passed here is what it
+        // shows, so collapsing to [] the moment one end is missing wiped the user's first click, turned the second
+        // click back into a first click, and made a two-date range impossible to complete — on this facet AND on
+        // the two shipped Period filters. Pass through however many dates are actually held; [] only when none is.
+        // `handleClickDone` is what refuses to COMMIT a half-made range; showing one is not the same as applying it.
+        value={[rangeStart, rangeEnd].filter(Boolean) as Date[]}
         plugins={[appDateRangePickerFooter]}
         ref={datePickerRef}
       />
