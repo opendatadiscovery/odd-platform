@@ -175,7 +175,7 @@ describe('RecentlyViewedFilter (ST-10 / #1844)', () => {
       "You haven't opened any assets yet."
     );
     expect(screen.queryByText('Today')).toBeNull();
-    expect(screen.queryByText('Custom range')).toBeNull();
+    expect(screen.queryByPlaceholderText('Pick two dates')).toBeNull();
   });
 
   it('while the history is still loading it is USABLE, never announced as empty', () => {
