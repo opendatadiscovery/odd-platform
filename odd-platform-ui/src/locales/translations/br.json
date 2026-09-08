@@ -710,8 +710,6 @@
   "Last viewed (shared)": "Visto por último (compartilhado)",
   "Assets you have opened": "Ativos que você abriu",
   "Assets anyone has opened": "Ativos que qualquer pessoa abriu",
-  "Authentication is disabled, so the viewing history is shared by everyone on this instance. Don't use disabled auth in production.": "A autenticação está desabilitada, portanto o histórico de visualização é compartilhado por todos nesta instância. Não use autenticação desabilitada em produção.",
-  "Narrows to assets you have opened. Dates are your local calendar days; a shared link carries the exact moments, which another time zone may show as different days. History is kept only as long as this deployment's retention settings allow.": "Limita aos ativos que você abriu. As datas são seus dias de calendário locais; um link compartilhado carrega os momentos exatos, que outro fuso horário pode mostrar como dias diferentes. O histórico é mantido apenas enquanto as configurações de retenção desta implantação permitirem.",
   "Today": "Hoje",
   "Last 7 days": "Últimos 7 dias",
   "Last 30 days": "Últimos 30 dias",
@@ -728,5 +726,11 @@
   "3 Day": "3 dias",
   "1 Week": "1 semana",
   "2 Week": "2 semanas",
-  "1 Month": "1 mês"
+  "1 Month": "1 mês",
+  "Narrows to assets anyone on this instance has opened.": "Restringe aos ativos que qualquer pessoa nesta instância abriu.",
+  "Authentication is disabled, so the viewing history is shared by everyone.": "A autenticação está desativada, portanto o histórico de visualização é compartilhado por todos.",
+  "Don't use disabled auth in production.": "Não use autenticação desativada em produção.",
+  "Narrows to the assets you have opened.": "Restringe aos ativos que você abriu.",
+  "You pick local calendar days; the link carries the exact moments, so another time zone may show them as different days.": "Você escolhe dias do calendário local; o link carrega os momentos exatos, então outro fuso horário pode mostrá-los como dias diferentes.",
+  "History is kept only as long as this deployment's retention settings allow.": "O histórico é mantido apenas pelo tempo permitido pelas configurações de retenção desta implantação."
 }

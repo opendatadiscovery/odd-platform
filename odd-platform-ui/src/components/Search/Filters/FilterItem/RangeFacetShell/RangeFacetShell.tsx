@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { AppTooltip, Button } from 'components/shared/elements';
+import { TooltipBody } from 'components/shared/elements/AppTooltip/AppTooltipStyles';
 import { ClearIcon, InformationIcon } from 'components/shared/icons';
 import { Label } from 'components/shared/elements/Input/Input.styles';
 import { Chip } from '../FixedOptionsMultiFilter/FixedOptionsMultiFilterStyles';
@@ -19,10 +20,21 @@ export interface RangeFacetShellProps {
   filterId: string;
   /** the one-line scope qualifier under the heading ("Data entities only") */
   qualifier?: string;
-  /** the inline-help sentence (ADR-0076: information icon + hover tooltip) */
-  help?: string;
-  /** preset links rendered under the body; omit them when the body itself is not usable */
+  /**
+   * The inline help behind the information icon (ADR-0076). Pass ONE SHORT RECORD PER IDEA, not a paragraph:
+   * each entry renders as its own line, so a reader scans three facts instead of parsing one run-on sentence.
+   * A single string is still accepted for the trivial one-fact case.
+   */
+  help?: string | readonly string[];
+  /** preset links rendered with the body; omit them when the body itself is not usable */
   presets?: ReadonlyArray<RangeFacetShellPreset>;
+  /**
+   * Where the presets sit relative to the body. `after` (the default) is the numeric-range shape: the slider IS
+   * the control and "Never viewed" is the shortcut beside it. `before` is the date shape, where the relationship
+   * inverts — almost every reader wants Today / Last 7 days, and only the rare one opens a calendar. Putting the
+   * common path under the rare one is what made this rail feel like work.
+   */
+  presetsPlacement?: 'before' | 'after';
   /** the chip text for the current selection; EMPTY means no selection, so no chip */
   chipText: string;
   /** clear the selection (the chip's ×) */
@@ -57,33 +69,20 @@ const RangeFacetShell: React.FC<RangeFacetShellProps> = ({
   qualifier,
   help,
   presets,
+  presetsPlacement = 'after',
   chipText,
   onClear,
   disabledReason,
   children,
-}) => (
-  <Grid container sx={{ mt: 2 }} data-qa={`filter-${filterId}`}>
-    <Grid container alignItems='center' wrap='nowrap'>
-      <Label>{name}</Label>
-      {help && (
-        <AppTooltip checkForOverflow={false} title={help}>
-          {/* the hook lives on a plain span: MUI's styled SvgIcon does not forward unknown DOM props */}
-          <span
-            data-qa={`filter-${filterId}-info`}
-            style={{ display: 'inline-flex', marginLeft: 4 }}
-          >
-            <InformationIcon width={14} height={14} />
-          </span>
-        </AppTooltip>
-      )}
-    </Grid>
-    {qualifier && (
-      <Typography variant='subtitle2' color='texts.info' sx={{ width: '100%' }}>
-        {qualifier}
-      </Typography>
-    )}
-    {children}
-    {presets && presets.length > 0 && (
+}) => {
+  // One shape downstream: a caller may pass a single sentence or a list of records; the tooltip renders lines.
+  const helpRecords = React.useMemo(
+    () => (help === undefined ? [] : typeof help === 'string' ? [help] : [...help]),
+    [help]
+  );
+
+  const presetRow =
+    presets && presets.length > 0 ? (
       <S.Presets container>
         {presets.map(preset => (
           <Button
@@ -95,34 +94,80 @@ const RangeFacetShell: React.FC<RangeFacetShellProps> = ({
           />
         ))}
       </S.Presets>
-    )}
-    {disabledReason && (
-      <Typography
-        variant='subtitle2'
-        color='texts.hint'
-        sx={{ width: '100%' }}
-        data-qa={`filter-${filterId}-disabled`}
-      >
-        {disabledReason}
-      </Typography>
-    )}
-    {chipText && (
-      <Grid display='inline-flex' item xs={12} sx={{ my: 0.25, mx: -0.25 }} container>
-        <Chip container data-qa={`filter-${filterId}-chip`}>
-          <Typography noWrap title={chipText}>
-            {chipText}
-          </Typography>
-          <Button
-            sx={{ ml: 0.5 }}
-            buttonType='linkGray-m'
-            icon={<ClearIcon />}
-            onClick={onClear}
-            aria-label={`${name}: ${chipText}`}
-          />
-        </Chip>
+    ) : null;
+
+  return (
+    <Grid container sx={{ mt: 2 }} data-qa={`filter-${filterId}`}>
+      <Grid container alignItems='center' wrap='nowrap'>
+        <Label>{name}</Label>
+        {helpRecords.length > 0 && (
+          <AppTooltip
+            checkForOverflow={false}
+            title={
+              /* The SHARED TooltipBody, never a bare string. The "light" popper ships `padding: 0` and
+               `maxWidth: 'unset'`, so a bare string renders as ONE unwrapped, edge-to-edge, background-less row
+               of text straight across the page and over the results — which is exactly what shipped here, and
+               exactly what AppTooltipStyles' own comment warns about (LSN-035). The body brings the padding, the
+               360px wrap and the card border. */
+              <TooltipBody data-qa='tooltip-body'>
+                {helpRecords.map(record => (
+                  <S.HelpRecord key={record}>{record}</S.HelpRecord>
+                ))}
+              </TooltipBody>
+            }
+          >
+            {/* the hook lives on a plain span: MUI's styled SvgIcon does not forward unknown DOM props */}
+            <span
+              data-qa={`filter-${filterId}-info`}
+              style={{ display: 'inline-flex', marginLeft: 4 }}
+            >
+              <InformationIcon width={14} height={14} />
+            </span>
+          </AppTooltip>
+        )}
       </Grid>
-    )}
-  </Grid>
-);
+      {qualifier && (
+        <Typography variant='subtitle2' color='texts.info' sx={{ width: '100%' }}>
+          {qualifier}
+        </Typography>
+      )}
+      {presetsPlacement === 'before' && presetRow}
+      {children}
+      {presetsPlacement === 'after' && presetRow}
+      {disabledReason && (
+        <Typography
+          variant='subtitle2'
+          color='texts.hint'
+          sx={{ width: '100%' }}
+          data-qa={`filter-${filterId}-disabled`}
+        >
+          {disabledReason}
+        </Typography>
+      )}
+      {chipText && (
+        <Grid display='inline-flex' item xs={12} sx={{ my: 0.25, mx: -0.25 }} container>
+          <Chip container data-qa={`filter-${filterId}-chip`}>
+            {/* WRAPS, never truncates. The chip is the only place that states what is actually applied - the
+              docs promise it "always names the resolved moments" - so "Last viewed: since Sep 2, 2..." in a
+              180px rail defeats its whole purpose. A second line costs nothing here. */}
+            <Typography
+              sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
+              title={chipText}
+            >
+              {chipText}
+            </Typography>
+            <Button
+              sx={{ ml: 0.5 }}
+              buttonType='linkGray-m'
+              icon={<ClearIcon />}
+              onClick={onClear}
+              aria-label={`${name}: ${chipText}`}
+            />
+          </Chip>
+        </Grid>
+      )}
+    </Grid>
+  );
+};
 
 export default RangeFacetShell;

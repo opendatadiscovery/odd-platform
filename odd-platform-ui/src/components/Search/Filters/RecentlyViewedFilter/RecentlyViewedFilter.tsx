@@ -128,15 +128,31 @@ const RecentlyViewedFilter: React.FC = () => {
       name={isShared ? t('Last viewed (shared)') : t('Last viewed')}
       filterId='recently_viewed'
       qualifier={isShared ? t('Assets anyone has opened') : t('Assets you have opened')}
+      // ONE SHORT RECORD PER FACT. This was a single 235-character sentence that the tooltip rendered as one
+      // unwrapped line straight across the results table. The width is fixed in AppTooltip now, but a wall of
+      // prose in a filter rail is still the wrong shape: a reader wants three facts they can scan, not a
+      // paragraph they have to parse while holding a dropdown open.
       help={
         isShared
-          ? t(
-              "Authentication is disabled, so the viewing history is shared by everyone on this instance. Don't use disabled auth in production."
-            )
-          : t(
-              "Narrows to assets you have opened. Dates are your local calendar days; a shared link carries the exact moments, which another time zone may show as different days. History is kept only as long as this deployment's retention settings allow."
-            )
+          ? [
+              t('Narrows to assets anyone on this instance has opened.'),
+              t(
+                'Authentication is disabled, so the viewing history is shared by everyone.'
+              ),
+              t("Don't use disabled auth in production."),
+            ]
+          : [
+              t('Narrows to the assets you have opened.'),
+              t(
+                'You pick local calendar days; the link carries the exact moments, so another time zone may show them as different days.'
+              ),
+              t(
+                "History is kept only as long as this deployment's retention settings allow."
+              ),
+            ]
       }
+      // The four windows are what almost everyone wants; the calendar is the exception. Presets first.
+      presetsPlacement='before'
       chipText={chipText}
       onClear={() => commit(undefined)}
       disabledReason={
@@ -164,7 +180,10 @@ const RecentlyViewedFilter: React.FC = () => {
     >
       {isEmptyHistory ? null : (
         <AppDateRangePicker
-          label={t('Custom range')}
+          // No label: "Custom range" was a third stacked text line above the input, saying what the input's own
+          // placeholder ("Pick two dates") already says. Three lines of chrome before any control is what makes
+          // a filter rail feel heavy.
+          label=''
           placeholder={t('Pick two dates')}
           // Sideways, not up: measured at 1280x720, a two-month calendar opening upward from this control (~350px
           // down the rail) overflows the viewport top and takes the month header and its arrows with it, so the

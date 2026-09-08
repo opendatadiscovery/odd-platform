@@ -710,8 +710,6 @@
   "Last viewed (shared)": "Останній перегляд (спільний)",
   "Assets you have opened": "Активи, які ви відкривали",
   "Assets anyone has opened": "Активи, які відкривав будь-хто",
-  "Authentication is disabled, so the viewing history is shared by everyone on this instance. Don't use disabled auth in production.": "Автентифікацію вимкнено, тому історія переглядів спільна для всіх на цьому екземплярі. Не використовуйте вимкнену автентифікацію у продакшені.",
-  "Narrows to assets you have opened. Dates are your local calendar days; a shared link carries the exact moments, which another time zone may show as different days. History is kept only as long as this deployment's retention settings allow.": "Звужує до активів, які ви відкривали. Дати — це ваші місцеві календарні дні; спільне посилання несе точні моменти, які в іншому часовому поясі можуть показуватися як інші дні. Історія зберігається лише стільки, скільки дозволяють налаштування зберігання цього розгортання.",
   "Today": "Сьогодні",
   "Last 7 days": "Останні 7 днів",
   "Last 30 days": "Останні 30 днів",
@@ -728,5 +726,11 @@
   "3 Day": "3 дні",
   "1 Week": "1 тиждень",
   "2 Week": "2 тижні",
-  "1 Month": "1 місяць"
+  "1 Month": "1 місяць",
+  "Narrows to assets anyone on this instance has opened.": "Звужує до активів, які відкривав будь-хто на цьому екземплярі.",
+  "Authentication is disabled, so the viewing history is shared by everyone.": "Автентифікацію вимкнено, тому історія переглядів спільна для всіх.",
+  "Don't use disabled auth in production.": "Не використовуйте вимкнену автентифікацію у продакшені.",
+  "Narrows to the assets you have opened.": "Звужує до активів, які ви відкривали.",
+  "You pick local calendar days; the link carries the exact moments, so another time zone may show them as different days.": "Ви обираєте місцеві календарні дні; посилання несе точні моменти, тож інший часовий пояс може показати їх як інші дні.",
+  "History is kept only as long as this deployment's retention settings allow.": "Історія зберігається лише стільки, скільки дозволяють налаштування зберігання цього розгортання."
 }

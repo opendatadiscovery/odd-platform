@@ -7,3 +7,10 @@ export const Presets = styled(Grid)(({ theme }) => ({
   gap: theme.spacing(1),
   marginTop: theme.spacing(0.5),
 }));
+
+// One help record = one line in the tooltip. Records are separate FACTS, so they get vertical separation
+// rather than being run together into a paragraph a reader has to parse.
+export const HelpRecord = styled('p')(({ theme }) => ({
+  margin: 0,
+  '& + &': { marginTop: theme.spacing(0.75) },
+}));

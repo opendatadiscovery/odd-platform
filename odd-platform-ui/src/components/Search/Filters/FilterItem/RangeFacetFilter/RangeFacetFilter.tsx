@@ -24,8 +24,8 @@ export interface RangeFacetFilterProps {
   filterId: string;
   /** the one-line scope qualifier under the heading ("Data entities only") */
   qualifier?: string;
-  /** the inline-help sentence (ADR-0076: information icon + hover tooltip) */
-  help?: string;
+  /** the inline help (ADR-0076); one short record per idea - see {@link RangeFacetShell}'s `help` */
+  help?: string | readonly string[];
   /** the rail, ascending by value; the caller already restricted it to the bands that exist (∪ the selection) */
   stops: ReadonlyArray<RangeFacetStop>;
   /** the selection in stop VALUES; an undefined bound = that end of the rail */

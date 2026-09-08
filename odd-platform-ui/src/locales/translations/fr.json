@@ -710,8 +710,6 @@
   "Last viewed (shared)": "Vu en dernier (partagé)",
   "Assets you have opened": "Ressources que vous avez ouvertes",
   "Assets anyone has opened": "Ressources ouvertes par n'importe qui",
-  "Authentication is disabled, so the viewing history is shared by everyone on this instance. Don't use disabled auth in production.": "L'authentification est désactivée, donc l'historique de consultation est partagé par tous sur cette instance. N'utilisez pas l'authentification désactivée en production.",
-  "Narrows to assets you have opened. Dates are your local calendar days; a shared link carries the exact moments, which another time zone may show as different days. History is kept only as long as this deployment's retention settings allow.": "Limite aux ressources que vous avez ouvertes. Les dates sont vos jours calendaires locaux ; un lien partagé transporte les instants exacts, qu'un autre fuseau horaire peut afficher comme des jours différents. L'historique n'est conservé que selon les paramètres de rétention de ce déploiement.",
   "Today": "Aujourd'hui",
   "Last 7 days": "7 derniers jours",
   "Last 30 days": "30 derniers jours",
@@ -728,5 +726,11 @@
   "3 Day": "3 jours",
   "1 Week": "1 semaine",
   "2 Week": "2 semaines",
-  "1 Month": "1 mois"
+  "1 Month": "1 mois",
+  "Narrows to assets anyone on this instance has opened.": "Limite aux ressources que n'importe qui sur cette instance a ouvertes.",
+  "Authentication is disabled, so the viewing history is shared by everyone.": "L'authentification est désactivée, donc l'historique de consultation est partagé par tous.",
+  "Don't use disabled auth in production.": "N'utilisez pas l'authentification désactivée en production.",
+  "Narrows to the assets you have opened.": "Limite aux ressources que vous avez ouvertes.",
+  "You pick local calendar days; the link carries the exact moments, so another time zone may show them as different days.": "Vous choisissez des jours calendaires locaux ; le lien transporte les instants exacts, qu'un autre fuseau horaire peut afficher comme des jours différents.",
+  "History is kept only as long as this deployment's retention settings allow.": "L'historique n'est conservé que selon les paramètres de rétention de ce déploiement."
 }

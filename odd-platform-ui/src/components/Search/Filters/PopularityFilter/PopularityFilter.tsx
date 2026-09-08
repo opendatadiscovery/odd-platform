@@ -119,11 +119,14 @@ const PopularityFilter: React.FC = () => {
       name={t('Popularity')}
       filterId='popularity'
       qualifier={t('Data entities only')}
-      help={`${t(
-        'Terms and query examples have no view count, so they are excluded while a Popularity range is active.'
-      )} ${t(
-        "Based on each data entity's view count, grouped into ranges and refreshed every 15 minutes."
-      )}`}
+      help={[
+        t(
+          "Based on each data entity's view count, grouped into ranges and refreshed every 15 minutes."
+        ),
+        t(
+          'Terms and query examples have no view count, so they are excluded while a Popularity range is active.'
+        ),
+      ]}
       stops={stops}
       selected={selected}
       onCommit={handleCommit}
