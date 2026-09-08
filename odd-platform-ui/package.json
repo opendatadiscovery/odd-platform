@@ -9,6 +9,7 @@
     "build": "pnpm generate && tsc --noEmit && vite build",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:ci": "pnpm generate && vitest run",
     "tsc": "tsc",
     "generate": "chmod u+x ./generate.sh && ./generate.sh",
     "lint": "eslint src/",

@@ -51,13 +51,6 @@ const openCalendar = async (container: HTMLElement) => {
   return input;
 };
 
-/**
- * Driving a real two-month calendar through userEvent costs ~3-5s per case, which sits right on vitest's 5s
- * default and times out the moment several heavy suites share the worker pool. A test that only passes when it
- * runs alone is not a gate — so the budget is stated, not left to luck.
- */
-const INTERACTION_TIMEOUT = 20_000;
-
 /** click a day by its visible number inside the open calendar (first match = the earlier month) */
 const clickDay = async (day: string) => {
   const cells = screen.getAllByText(day, { selector: '.rmdp-day span, span' });
@@ -66,60 +59,48 @@ const clickDay = async (day: string) => {
 };
 
 describe('AppDateRangePicker — picking a range actually works', () => {
-  it(
-    'with NO range seeded, two clicks + Done hand back both dates (the Last-viewed / Alerts path)',
-    async () => {
-      const { container, setCurrentRange } = renderPicker();
-      await openCalendar(container);
+  it('with NO range seeded, two clicks + Done hand back both dates (the Last-viewed / Alerts path)', async () => {
+    const { container, setCurrentRange } = renderPicker();
+    await openCalendar(container);
 
-      await clickDay('6');
-      // The first click must SURVIVE. If the component drops a half-made selection, the second click
-      // starts over and the range can never be completed — which is exactly what a user hits.
-      await clickDay('9');
-      await userEvent.click(screen.getByText('Done'));
+    await clickDay('6');
+    // The first click must SURVIVE. If the component drops a half-made selection, the second click
+    // starts over and the range can never be completed — which is exactly what a user hits.
+    await clickDay('9');
+    await userEvent.click(screen.getByText('Done'));
 
-      expect(setCurrentRange).toHaveBeenCalledTimes(1);
-      const [begin, end] = setCurrentRange.mock.calls[0];
-      expect(begin).toBeInstanceOf(Date);
-      expect(end).toBeInstanceOf(Date);
-      expect(begin.getDate()).toBe(6);
-      expect(end.getDate()).toBe(9);
-      expect(begin.getTime()).toBeLessThan(end.getTime());
-    },
-    INTERACTION_TIMEOUT
-  );
+    expect(setCurrentRange).toHaveBeenCalledTimes(1);
+    const [begin, end] = setCurrentRange.mock.calls[0];
+    expect(begin).toBeInstanceOf(Date);
+    expect(end).toBeInstanceOf(Date);
+    expect(begin.getDate()).toBe(6);
+    expect(end.getDate()).toBe(9);
+    expect(begin.getTime()).toBeLessThan(end.getTime());
+  });
 
-  it(
-    'with a range already seeded, re-picking two days replaces it (the Activity path)',
-    async () => {
-      const { container, setCurrentRange } = renderPicker({
-        defaultRange: { beginDate: new Date(2026, 8, 1), endDate: new Date(2026, 8, 8) },
-      });
-      await openCalendar(container);
+  it('with a range already seeded, re-picking two days replaces it (the Activity path)', async () => {
+    const { container, setCurrentRange } = renderPicker({
+      defaultRange: { beginDate: new Date(2026, 8, 1), endDate: new Date(2026, 8, 8) },
+    });
+    await openCalendar(container);
 
-      await clickDay('11');
-      await clickDay('14');
-      await userEvent.click(screen.getByText('Done'));
+    await clickDay('11');
+    await clickDay('14');
+    await userEvent.click(screen.getByText('Done'));
 
-      expect(setCurrentRange).toHaveBeenCalledTimes(1);
-      const [begin, end] = setCurrentRange.mock.calls[0];
-      expect(begin.getDate()).toBe(11);
-      expect(end.getDate()).toBe(14);
-    },
-    INTERACTION_TIMEOUT
-  );
+    expect(setCurrentRange).toHaveBeenCalledTimes(1);
+    const [begin, end] = setCurrentRange.mock.calls[0];
+    expect(begin.getDate()).toBe(11);
+    expect(end.getDate()).toBe(14);
+  });
 
-  it(
-    'a half-made selection does NOT commit — Done with one day picked hands back nothing',
-    async () => {
-      const { container, setCurrentRange } = renderPicker();
-      await openCalendar(container);
+  it('a half-made selection does NOT commit — Done with one day picked hands back nothing', async () => {
+    const { container, setCurrentRange } = renderPicker();
+    await openCalendar(container);
 
-      await clickDay('6');
-      await userEvent.click(screen.getByText('Done'));
+    await clickDay('6');
+    await userEvent.click(screen.getByText('Done'));
 
-      expect(setCurrentRange).not.toHaveBeenCalled();
-    },
-    INTERACTION_TIMEOUT
-  );
+    expect(setCurrentRange).not.toHaveBeenCalled();
+  });
 });

@@ -19,6 +19,15 @@ tasks.register("buildUI", PnpmTask) {
     args = ['run', 'build']
 }
 
+// The frontend unit suite (vitest), on the same pinned node + pnpm the bundle is built with. `test:ci` runs the
+// OpenAPI codegen first because the components import the generated client, which is not checked in. Wired into
+// .github/workflows/run-pr-tests.yaml — before 2026-09 nothing in CI ran this suite: run_tests built the API with
+// -PbundleUI=false and the Playwright job stopped at the image build, so a green PR said nothing about these tests.
+tasks.register("testUI", PnpmTask) {
+    dependsOn pnpmInstall
+    args = ['run', 'test:ci']
+}
+
 jar {
     from buildUI into 'static'
 }
