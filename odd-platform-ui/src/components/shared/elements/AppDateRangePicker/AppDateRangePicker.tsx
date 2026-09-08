@@ -10,8 +10,10 @@ interface AppDateRangePickerProps {
   /**
    * The range the input SHOWS. Optional since ST-10 (#1844): a facet whose window is genuinely unset must show an
    * EMPTY input, not a plausible-looking range it is not applying — a control that displays a filter it does not
-   * hold is a lie the user has no way to check. Both shipped callers (the Activity and Alerts Period filters)
-   * always pass one, and their behaviour is unchanged.
+   * hold is a lie the user has no way to check. Of the two shipped callers, both driven by `CalendarFilter`:
+   * Activity always carries begin/endDate in its query, so that surface is unchanged; Alerts leaves the period
+   * unset by default and therefore now passes NONE, which is what stops its box displaying a last-week range it
+   * was never filtering by — the published manual has always said the Alerts default is all-time.
    */
   defaultRange?: { beginDate: Date; endDate: Date };
   label: string;
