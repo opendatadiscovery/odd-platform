@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.jooq.JSONB;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetKind;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.PopularityRange;
+import org.opendatadiscovery.oddplatform.api.contract.model.RecentlyViewedScope;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearch;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchFormData;
 import org.opendatadiscovery.oddplatform.auth.CurrentUserIdentityResolver;
@@ -295,6 +298,123 @@ class SavedSearchServiceImplTest {
                 assertThat(nullsSpec.getViewedAfter()).isNull();
                 assertThat(nullsSpec.getViewedBefore()).isNull();
                 assertThat(list.getItems().get(4).getSpec().getQuery()).isEqualTo("r5");
+            })
+            .verifyComplete();
+    }
+
+    /**
+     * THE test the two dropped-dimension bugs both needed and neither had: a REAL round trip. Every other case in
+     * this class hands {@code deserializeSpec} a JSON literal someone typed — which asserts the reader against an
+     * ASSUMED encoding and says nothing about what {@code serializeSpec} actually writes. Both halves are exercised
+     * here: {@code create} serialises the spec, the JSONB it persists is captured, and that exact document is fed
+     * back through {@code list}. Nothing in this test is hand-written.
+     *
+     * <p>It is RED on the code that shipped: {@link org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils}'s mapper
+     * writes an {@code OffsetDateTime} as a NUMBER, the sanitiser hand-parsed it as an ISO-8601 string,
+     * {@code OffsetDateTime.parse("1.7882208E9")} threw, and the defensive branch dropped BOTH bounds — so a saved
+     * search reapplied as "any time" and the user's date range was silently discarded (the #1878 favorites bug,
+     * repeated one dimension later).
+     *
+     * <p>Asserted across EVERY dimension the spec carries, not just the one that broke: a round-trip guard that
+     * covers one field is the same mistake at a smaller scale.
+     */
+    @Test
+    void spec_survivesTheRealSerialisationRoundTrip_everyDimension_includingTheRecencyWindow() {
+        identity();
+        final OffsetDateTime after = OffsetDateTime.parse("2026-09-01T00:00:00Z");
+        final OffsetDateTime before = OffsetDateTime.parse("2026-09-08T23:59:59.999Z");
+        final AssetSearchFormData spec = new AssetSearchFormData()
+            .query("orders")
+            .assetKinds(List.of(AssetKind.DATA_ENTITY, AssetKind.TERM))
+            .favorites(true)
+            .popularity(new PopularityRange().min(4).max(9))
+            .recentlyViewed(new RecentlyViewedScope().viewedAfter(after).viewedBefore(before));
+
+        final ArgumentCaptor<JSONB> persisted = ArgumentCaptor.forClass(JSONB.class);
+        when(repository.existsByName("alice", "google", "Everything", null)).thenReturn(Mono.just(false));
+        when(repository.create(eq("alice"), eq("google"), eq("Everything"), persisted.capture()))
+            .thenReturn(Mono.just(pojo(7L, "Everything", "{}")));
+
+        StepVerifier.create(service.create(new SavedSearchFormData().name("Everything").spec(spec)))
+            .expectNextCount(1)
+            .verifyComplete();
+
+        // The document the platform actually wrote, replayed through the read path exactly as the list endpoint does.
+        final String stored = persisted.getValue().data();
+        when(repository.list("alice", "google", 0, 30))
+            .thenReturn(Flux.just(pojo(7L, "Everything", stored)));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(1L));
+
+        StepVerifier.create(service.list(1, 30))
+            .assertNext(list -> {
+                final AssetSearchFormData read = list.getItems().get(0).getSpec();
+                assertThat(read.getQuery()).isEqualTo("orders");
+                assertThat(read.getAssetKinds())
+                    .containsExactly(AssetKind.DATA_ENTITY, AssetKind.TERM);
+                assertThat(read.getFavorites()).isTrue();
+                assertThat(read.getPopularity()).isNotNull();
+                assertThat(read.getPopularity().getMin()).isEqualTo(4);
+                assertThat(read.getPopularity().getMax()).isEqualTo(9);
+
+                assertThat(read.getRecentlyViewed())
+                    .as("the recency scope survives the round trip")
+                    .isNotNull();
+                assertThat(read.getRecentlyViewed().getViewedAfter())
+                    .as("viewed_after survives — dropping it is what made a windowed saved search reapply as "
+                        + "\"any time\" (stored as %s)", stored)
+                    .isNotNull();
+                assertThat(read.getRecentlyViewed().getViewedBefore())
+                    .as("viewed_before survives (stored as %s)", stored)
+                    .isNotNull();
+                // The INSTANT, not just presence: an encoding that round-trips to a different moment is a
+                // subtler version of the same bug.
+                assertThat(read.getRecentlyViewed().getViewedAfter().toInstant())
+                    .isEqualTo(after.toInstant());
+                assertThat(read.getRecentlyViewed().getViewedBefore().toInstant())
+                    .isEqualTo(before.toInstant());
+            })
+            .verifyComplete();
+    }
+
+    /**
+     * The sanitiser must still reject a bound it genuinely cannot read, whatever the writer's encoding — the
+     * defensive behaviour the fix must not trade away. A hand-written ISO instant (what an operator editing the
+     * jsonb, or a future writer, would produce) is ALSO accepted: the reader is the mapper, so it takes every
+     * encoding the mapper can bind and no others.
+     */
+    @Test
+    void list_storedRecencyBound_readsEitherEncoding_andStillRejectsJunk() {
+        identity();
+        final String isoBounds = "{\"query\":\"iso\",\"recently_viewed\":"
+            + "{\"viewed_after\":\"2026-09-01T00:00:00Z\",\"viewed_before\":\"2026-09-08T00:00:00Z\"},"
+            + "\"filters\":{}}";
+        final String numericBounds = "{\"query\":\"numeric\",\"recently_viewed\":"
+            + "{\"viewed_after\":1788220800.000000000,\"viewed_before\":1788825600.000000000},"
+            + "\"filters\":{}}";
+        final String junkBound = "{\"query\":\"junk\",\"recently_viewed\":"
+            + "{\"viewed_after\":true,\"viewed_before\":\"2026-09-08T00:00:00Z\"},\"filters\":{}}";
+        when(repository.list("alice", "google", 0, 30)).thenReturn(Flux.just(
+            pojo(31L, "iso", isoBounds), pojo(32L, "numeric", numericBounds), pojo(33L, "junk", junkBound)));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(3L));
+
+        StepVerifier.create(service.list(1, 30))
+            .assertNext(list -> {
+                final var iso = list.getItems().get(0).getSpec().getRecentlyViewed();
+                assertThat(iso.getViewedAfter().toInstant())
+                    .as("a hand-written ISO instant reads")
+                    .isEqualTo(OffsetDateTime.parse("2026-09-01T00:00:00Z").toInstant());
+
+                final var numeric = list.getItems().get(1).getSpec().getRecentlyViewed();
+                assertThat(numeric.getViewedAfter().toInstant())
+                    .as("the numeric timestamp THIS platform writes reads back as the same instant")
+                    .isEqualTo(OffsetDateTime.parse("2026-09-01T00:00:00Z").toInstant());
+                assertThat(numeric.getViewedBefore().toInstant())
+                    .isEqualTo(OffsetDateTime.parse("2026-09-08T00:00:00Z").toInstant());
+
+                final var junk = list.getItems().get(2).getSpec().getRecentlyViewed();
+                assertThat(junk).as("the scope survives").isNotNull();
+                assertThat(junk.getViewedAfter()).as("an unreadable bound is still dropped").isNull();
+                assertThat(junk.getViewedBefore()).as("and the readable one is still kept").isNotNull();
             })
             .verifyComplete();
     }

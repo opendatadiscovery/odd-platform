@@ -190,6 +190,16 @@ public class SavedSearchServiceImpl implements SavedSearchService {
      * <p>Note the deliberate difference from {@link #sanitisePopularity}: a stored {@code popularity: {}} means no
      * range, while a stored {@code recently_viewed: {}} is a REAL scope (any time). Presence is the switch here, and
      * an empty object is therefore left exactly as it is.
+     *
+     * <p><b>The bounds are read with the mapper that BINDS them, never hand-parsed.</b> The first cut validated with
+     * {@code OffsetDateTime.parse(value.asText())}, which asserts an ISO-8601 STRING — but {@link #serializeSpec}
+     * writes this column through {@link JSONSerDeUtils}, whose mapper leaves Jackson's
+     * {@code WRITE_DATES_AS_TIMESTAMPS} at its enabled default and therefore stores a NUMBER
+     * ({@code {"viewed_after":1788220800.000000000}}). Every real saved window hit the catch below, both bounds
+     * were dropped, and the search reapplied as "any time" — the user picked a date range, the platform silently
+     * ignored it. A validator must never assume an encoding the writer was not asked about; see
+     * {@link JSONSerDeUtils#readFieldOrNull}, which reads whatever this mapper wrote AND a hand-written ISO
+     * instant, and still rejects a genuinely unreadable bound.
      */
     private void sanitiseRecentlyViewed(final ObjectNode spec) {
         final JsonNode scope = spec.get(RECENTLY_VIEWED_FIELD);
@@ -209,10 +219,9 @@ public class SavedSearchServiceImpl implements SavedSearchService {
             if (value == null || value.isNull()) {
                 continue;
             }
-            try {
-                bounds[i] = OffsetDateTime.parse(value.asText());
-            } catch (final Exception e) {
-                log.warn("Saved-search spec carries an unparseable recently_viewed {} ({}); dropping the bound",
+            bounds[i] = JSONSerDeUtils.readFieldOrNull(value, OffsetDateTime.class);
+            if (bounds[i] == null) {
+                log.warn("Saved-search spec carries an unreadable recently_viewed {} ({}); dropping the bound",
                     names[i], value.getNodeType());
                 window.remove(names[i]);
             }

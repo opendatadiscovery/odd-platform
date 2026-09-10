@@ -68,6 +68,39 @@ public class JSONSerDeUtils {
         return OBJECT_MAPPER.treeToValue(node, clazz);
     }
 
+    /**
+     * Read ONE field of a stored tree with the same reader that will bind the whole document, returning
+     * {@code null} when it cannot be read as {@code clazz}.
+     *
+     * <p>This exists because hand-parsing a stored field is a trap. A sanitiser that validates with
+     * {@code SomeType.parse(node.asText())} asserts an encoding it ASSUMED, while the binder that runs two lines
+     * later uses THIS mapper. When the two disagree, the sanitiser rejects the platform's own output and its
+     * defensive branch silently discards real user data. That is exactly what happened to a saved search's
+     * {@code recently_viewed} window (#1889 follow-up): this mapper writes an {@code OffsetDateTime} as a NUMERIC
+     * timestamp — it registers {@link JavaTimeModule} and leaves {@code WRITE_DATES_AS_TIMESTAMPS} at Jackson's
+     * enabled default — and {@code OffsetDateTime.parse("1.7882208E9")} throws.
+     *
+     * <p>The encoding itself is not the bug and is deliberately NOT changed here: this mapper also writes the
+     * outbound generic-webhook alert payload ({@code AlertNotificationMessage.eventAt}), so flipping the global
+     * date format would silently change a published integration's wire shape. Instead: <b>validate with the
+     * reader that binds</b>. A field that survives this call is one the subsequent {@link #treeToValue} is
+     * guaranteed to accept, whatever encoding it was stored in — including a hand-written ISO-8601 instant.
+     *
+     * <p>Returns {@code null} for a JSON null exactly as for an unreadable value, so a caller that must tell
+     * "absent" from "malformed" checks the node itself first.
+     */
+    @Nullable
+    public static <T> T readFieldOrNull(final JsonNode node, final Class<T> clazz) {
+        if (node == null || node.isNull()) {
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.treeToValue(node, clazz);
+        } catch (final Exception e) {
+            return null;
+        }
+    }
+
     public static <T> String serializeJson(final T object) {
         if (object == null) {
             return "{}";
