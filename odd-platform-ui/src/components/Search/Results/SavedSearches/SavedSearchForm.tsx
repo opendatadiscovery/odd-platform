@@ -74,8 +74,13 @@ const SavedSearchForm: React.FC<SavedSearchFormProps> = ({ btnEl, savedSearch })
               // NOT the getSearchUrlState selector: it omits `sort`, which would drop the active ordering.
               // The FULL request projection (#1878): `searchUrlStateToFormData` would drop asset_kinds +
               // favorites exactly the way the old contract did.
+              // `keepRelative` is the ONE place in the app that asks for the unresolved spec, and it is the
+              // difference between a saved "Today" that means today and one that means the day it was saved
+              // (CTRIB-070). Everywhere else the projection resolves the window into instants, because that is
+              // what the search endpoint narrows by; here the word IS the thing being saved.
               spec: searchUrlStateToAssetSearchFormData(
-                paramsToSearchState(location.search)
+                paramsToSearchState(location.search),
+                { keepRelative: true }
               ),
             },
           })

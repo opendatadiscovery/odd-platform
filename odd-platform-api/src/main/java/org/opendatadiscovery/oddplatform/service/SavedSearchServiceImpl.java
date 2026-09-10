@@ -37,6 +37,7 @@ public class SavedSearchServiceImpl implements SavedSearchService {
     private static final String FAVORITES_FIELD = "favorites";
     private static final String POPULARITY_FIELD = "popularity";
     private static final String RECENTLY_VIEWED_FIELD = "recently_viewed";
+    private static final String RECENTLY_VIEWED_WITHIN_FIELD = "viewed_within";
     private static final Set<String> KNOWN_ASSET_KINDS = Arrays.stream(AssetKind.values())
         .map(AssetKind::getValue)
         .collect(Collectors.toUnmodifiableSet());
@@ -191,6 +192,13 @@ public class SavedSearchServiceImpl implements SavedSearchService {
      * range, while a stored {@code recently_viewed: {}} is a REAL scope (any time). Presence is the switch here, and
      * an empty object is therefore left exactly as it is.
      *
+     * <p><b>A window can be declared instead of frozen (CTRIB-070).</b> {@code viewed_within} carries the WORD the
+     * user chose — {@code TODAY}, {@code LAST_7_DAYS}, {@code LAST_30_DAYS} — so a saved search called "today" means
+     * the day it is REAPPLIED, not the day it was saved. It is resolved by the client, in the reader's own time
+     * zone, because only the client knows which calendar the reader is on; the search endpoint narrows by the
+     * instants alone and never reads the token. This method therefore only keeps the field READABLE — it does not
+     * (and must not) try to resolve it.
+     *
      * <p><b>The bounds are read with the mapper that BINDS them, never hand-parsed.</b> The first cut validated with
      * {@code OffsetDateTime.parse(value.asText())}, which asserts an ISO-8601 STRING — but {@link #serializeSpec}
      * writes this column through {@link JSONSerDeUtils}, whose mapper leaves Jackson's
@@ -212,6 +220,18 @@ public class SavedSearchServiceImpl implements SavedSearchService {
             return;
         }
         final ObjectNode window = (ObjectNode) scope;
+        // The LIVING window (CTRIB-070) is a plain string token the CLIENT resolves — `TODAY`, `LAST_7_DAYS`,
+        // `LAST_30_DAYS`. Only its TYPE is checked here, deliberately: an unknown token is already degraded
+        // client-side (dropped, the scope kept, exactly as `sort` and `my_data` degrade), so re-listing the
+        // vocabulary server-side would buy nothing and create two copies of it to drift apart. What a type check
+        // DOES buy is the thing the sibling sanitisers exist for: a stored non-string here would fail the whole
+        // `treeToValue` two lines later, and one unreadable field must cost that field, never the search.
+        final JsonNode within = window.get(RECENTLY_VIEWED_WITHIN_FIELD);
+        if (within != null && !within.isNull() && !within.isTextual()) {
+            log.warn("Saved-search spec carries a non-string recently_viewed {} ({}); dropping it",
+                RECENTLY_VIEWED_WITHIN_FIELD, within.getNodeType());
+            window.remove(RECENTLY_VIEWED_WITHIN_FIELD);
+        }
         final OffsetDateTime[] bounds = new OffsetDateTime[2];
         final String[] names = {"viewed_after", "viewed_before"};
         for (int i = 0; i < names.length; i++) {

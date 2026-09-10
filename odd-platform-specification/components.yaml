@@ -509,9 +509,10 @@ components:
         expresses "assets I have opened", which is exactly what the home page's Recently Viewed panel links to.
 
         Both bounds are inclusive UTC instants; an absent bound is open. A client sends the instants it means —
-        typically the user's local start-of-day and end-of-day converted to UTC — so a shared link reproduces the
-        same result set for a recipient in another time zone, who simply sees those instants as their own local
-        days.
+        typically the user's local start-of-day and end-of-day converted to UTC — so a hand-picked range means the
+        same span of time for a recipient in another zone, who simply sees those instants as their own local days.
+        A window the user asked for in RELATIVE terms ("today", "the last 7 days") is carried instead as
+        `viewed_within` and re-resolved by the client every time it is opened; see that field.
 
         Applies to EVERY asset kind (data entities, terms, query examples): the history is keyed on the
         polymorphic (asset_kind, asset_id) pair, and an asset missing from it is genuinely one this caller has
@@ -539,6 +540,33 @@ components:
           type: string
           format: date-time
           description: Only assets last opened at or before this instant (UTC, inclusive). Absent = no upper bound.
+        viewed_within:
+          type: string
+          description: >-
+            A LIVING window, declared rather than resolved: `TODAY`, `LAST_7_DAYS` or `LAST_30_DAYS`
+            (case-insensitive). Where `viewed_after` freezes a moment, this names one that moves — a saved
+            search or a shared link carrying `TODAY` means the day it is OPENED, not the day it was written.
+            That is the whole reason it exists: a saved search called "Today" that quietly meant one specific
+            past day is the confusion this replaces. A hand-picked range stays absolute and is stored as the
+            two instants above, because "3-9 September" is a statement about those days.
+
+            RESOLVED BY THE CLIENT, IN THE READER'S OWN TIME ZONE. "Today" is a calendar day, and only the
+            client knows which calendar the reader is on — a server-side resolve would make it the server's
+            day and hand two readers in different zones different answers to the same word. So the client
+            converts the token into `viewed_after` (the presets are lower-bound-only: everything from the
+            start of that local day onwards) before it queries.
+
+            CONSEQUENTLY, `POST /api/search/assets` NARROWS ONLY BY `viewed_after` / `viewed_before` AND
+            IGNORES THIS FIELD. It is carried on the shared search object because a saved search stores that
+            object whole (ST-3 / ADR D11 — one canonical spec, two surfaces), and it is the saved row and the
+            URL that need to remember which window the user asked for. A client that sends the token to the
+            search endpoint and no bounds gets NO recency narrowing beyond the scope itself — resolve it
+            yourself, exactly as the UI does.
+
+            Deliberately a plain string rather than a strict enum, for the same reason as `sort` and
+            `my_data`: an unrecognised token degrades gracefully (it is dropped, and any stored bounds still
+            apply) instead of failing the request, so a stale or hand-edited shareable URL can never 400. When
+            it IS recognised it supersedes the bounds: a scope carrying both is read as the living window.
 
     PopularityRange:
       type: object

@@ -719,6 +719,11 @@
   "Last viewed: since {{from}}": "Visto por último: desde {{from}}",
   "Last viewed: {{from}} - {{to}}": "Visto por último: {{from}} - {{to}}",
   "Last viewed: before {{to}}": "Visto por último: antes de {{to}}",
+  "Last viewed: today": "Visto por último: hoje",
+  "Last viewed: last 7 days": "Visto por último: últimos 7 dias",
+  "Last viewed: last 30 days": "Visto por último: últimos 30 dias",
+  "A quick window keeps moving: saved or shared, \"today\" means the day it is opened.": "Uma janela rápida continua andando: salva ou compartilhada, \"hoje\" é o dia em que ela é aberta.",
+  "A range you pick on the calendar is fixed to those days, wherever it is opened.": "Um intervalo escolhido no calendário fica fixo nesses dias, onde quer que seja aberto.",
   "You haven't opened any assets yet.": "Você ainda não abriu nenhum ativo.",
   "You haven't opened any assets yet. Assets you open will appear here.": "Você ainda não abriu nenhum ativo. Os ativos que você abrir aparecerão aqui.",
   "Nothing you opened matches this range.": "Nada do que você abriu corresponde a este intervalo.",
@@ -730,6 +735,5 @@
   "Authentication is disabled, so the viewing history is shared by everyone.": "A autenticação está desativada, portanto o histórico de visualização é compartilhado por todos.",
   "Don't use disabled auth in production.": "Não use autenticação desativada em produção.",
   "Narrows to the assets you have opened.": "Restringe aos ativos que você abriu.",
-  "You pick local calendar days; the link carries the exact moments, so another time zone may show them as different days.": "Você escolhe dias do calendário local; o link carrega os momentos exatos, então outro fuso horário pode mostrá-los como dias diferentes.",
   "History is kept only as long as this deployment's retention settings allow.": "O histórico é mantido apenas pelo tempo permitido pelas configurações de retenção desta implantação."
 }

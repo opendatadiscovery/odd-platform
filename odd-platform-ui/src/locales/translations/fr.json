@@ -719,6 +719,11 @@
   "Last viewed: since {{from}}": "Vu en dernier : depuis {{from}}",
   "Last viewed: {{from}} - {{to}}": "Vu en dernier : {{from}} - {{to}}",
   "Last viewed: before {{to}}": "Vu en dernier : avant {{to}}",
+  "Last viewed: today": "Vu en dernier : aujourd'hui",
+  "Last viewed: last 7 days": "Vu en dernier : 7 derniers jours",
+  "Last viewed: last 30 days": "Vu en dernier : 30 derniers jours",
+  "A quick window keeps moving: saved or shared, \"today\" means the day it is opened.": "Une fenêtre rapide continue d'avancer : enregistrée ou partagée, « aujourd'hui » désigne le jour où elle est ouverte.",
+  "A range you pick on the calendar is fixed to those days, wherever it is opened.": "Une plage choisie dans le calendrier reste fixée à ces jours, où qu'elle soit ouverte.",
   "You haven't opened any assets yet.": "Vous n'avez encore ouvert aucune ressource.",
   "You haven't opened any assets yet. Assets you open will appear here.": "Vous n'avez encore ouvert aucune ressource. Les ressources que vous ouvrez apparaîtront ici.",
   "Nothing you opened matches this range.": "Rien de ce que vous avez ouvert ne correspond à cette plage.",
@@ -730,6 +735,5 @@
   "Authentication is disabled, so the viewing history is shared by everyone.": "L'authentification est désactivée, donc l'historique de consultation est partagé par tous.",
   "Don't use disabled auth in production.": "N'utilisez pas l'authentification désactivée en production.",
   "Narrows to the assets you have opened.": "Limite aux ressources que vous avez ouvertes.",
-  "You pick local calendar days; the link carries the exact moments, so another time zone may show them as different days.": "Vous choisissez des jours calendaires locaux ; le lien transporte les instants exacts, qu'un autre fuseau horaire peut afficher comme des jours différents.",
   "History is kept only as long as this deployment's retention settings allow.": "L'historique n'est conservé que selon les paramètres de rétention de ce déploiement."
 }

@@ -487,8 +487,60 @@ describe('searchUrlState — the Last viewed recency scope (ST-10 / #1844, D3 + 
     });
   });
 
+  /**
+   * CTRIB-070 — the LIVING window in the URL. A word, not an instant, and it is the ONLY thing written when it is
+   * set: the bounds and the ON token are two other spellings of the same dimension, and the mirror's equality
+   * guard rewrites forever if a state has two.
+   */
+  it('round-trips a declared window as its token, alone', () => {
+    (
+      [
+        ['today', 'TODAY'],
+        ['7d', 'LAST_7_DAYS'],
+        ['30d', 'LAST_30_DAYS'],
+      ] as const
+    ).forEach(([within, token]) => {
+      const living = state({ query: 'orders', recentlyViewed: { within } });
+      const params = searchStateToParams(living);
+      expect(params).toContain(`viewed_within=${token}`);
+      expect(params).not.toContain('viewed_after');
+      expect(params).not.toContain('recently_viewed=yes');
+      expect(paramsToSearchState(`?${params}`)).toEqual(living);
+    });
+  });
+
+  it('reads a declared window case-insensitively, and it SUPERSEDES any bounds beside it', () => {
+    expect(paramsToSearchState('?viewed_within=last_7_days').recentlyViewed).toEqual({
+      within: '7d',
+    });
+    // A hand-assembled URL carrying both is read as the living window — one dimension, one meaning.
+    expect(
+      paramsToSearchState('?viewed_within=TODAY&viewed_after=2020-01-01T00:00:00.000Z')
+        .recentlyViewed
+    ).toEqual({ within: 'today' });
+  });
+
+  it('degrades an unknown window token instead of failing — the sort / my_data posture', () => {
+    // The word is dropped; whatever else the URL carries still applies.
+    expect(
+      paramsToSearchState(
+        '?viewed_within=LAST_90_DAYS&viewed_after=2026-09-01T00:00:00.000Z'
+      ).recentlyViewed
+    ).toEqual({ viewedAfter: '2026-09-01T00:00:00.000Z' });
+    expect(
+      paramsToSearchState('?viewed_within=LAST_90_DAYS&recently_viewed=yes')
+        .recentlyViewed
+    ).toEqual({});
+    // Nothing else to fall back on → the dimension drops, exactly as a junk bound does.
+    expect(paramsToSearchState('?viewed_within=nonsense').recentlyViewed).toBeUndefined();
+  });
+
   it('is idempotent under a re-serialise — the mirror can never thrash between two spellings', () => {
-    ['?recently_viewed=yes', '?viewed_after=2026-09-01T00:00:00.000Z'].forEach(url => {
+    [
+      '?recently_viewed=yes',
+      '?viewed_after=2026-09-01T00:00:00.000Z',
+      '?viewed_within=TODAY',
+    ].forEach(url => {
       const once = searchStateToParams(paramsToSearchState(url));
       const twice = searchStateToParams(paramsToSearchState(`?${once}`));
       expect(twice).toBe(once);

@@ -4,14 +4,18 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { buildSearchLink, useRecentlyViewedHistoryEmpty } from 'lib/hooks';
 import { useAppInfo } from 'lib/hooks/api';
+import { paramsToSearchState } from 'lib/search/searchUrlState';
 import {
-  paramsToSearchState,
+  browserTimeZone,
+  presetWindow,
+  resolveRecencyWindow,
+  windowFromPicker,
+  type RecencyPresetKind,
   type SearchRecentlyViewedScope,
-} from 'lib/search/searchUrlState';
+} from 'lib/search/recencyWindow';
 import AppDateRangePicker from 'components/shared/elements/AppDateRangePicker/AppDateRangePicker';
 import { bcp47 } from 'components/shared/elements/AppDateRangePicker/calendarLocale';
 import RangeFacetShell from '../FilterItem/RangeFacetShell/RangeFacetShell';
-import { presetWindow, windowFromPicker } from './recencyPresets';
 
 /**
  * ST-10 (#1844) — the **Last viewed** scope (ADR unified-asset-search D3): narrows the catalog search to the assets
@@ -33,8 +37,15 @@ import { presetWindow, windowFromPicker } from './recencyPresets';
  * the home panel already shows as "Recently Viewed (shared)". The filter therefore WORKS there, labelled, with the
  * consequence spelled out; returning empty would contradict the panel this facet's own "View all" links from.
  *
- * The scope rides the URL-only `viewed_after` / `viewed_before` / `recently_viewed` params, written through the
- * canonical serialiser so a control-written URL is byte-identical to the mirror's. Cleared by the single Clear All.
+ * The scope rides the URL-only `viewed_within` / `viewed_after` / `viewed_before` / `recently_viewed` params,
+ * written through the canonical serialiser so a control-written URL is byte-identical to the mirror's. Cleared by
+ * the single Clear All.
+ *
+ * A PRESET IS A WORD, NOT A DATE (CTRIB-070). Clicking "Today" writes `viewed_within=TODAY`, which the reader's
+ * own browser resolves afresh every time the URL is opened — so a saved search or a shared link called "today"
+ * means today. Only the calendar produces absolute instants, because a hand-picked range is a statement about
+ * those particular days. The chip says which kind is in force; the calendar below it shows what the living
+ * window currently resolves to.
  */
 const RecentlyViewedFilter: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -48,7 +59,18 @@ const RecentlyViewedFilter: React.FC = () => {
     () => paramsToSearchState(location.search).recentlyViewed,
     [location.search]
   );
-  const { viewedAfter, viewedBefore } = scope ?? {};
+  const timeZone = browserTimeZone();
+  /**
+   * What the scope means RIGHT NOW. A living window has no bounds of its own, so everything below that wants to
+   * draw dates — the calendar's seed — has to resolve it first; a chip that named a preset while the box below
+   * sat empty would be the same "the control and the filter disagree" defect the empty-box rule already fixed,
+   * one level up.
+   */
+  const resolved = React.useMemo(
+    () => resolveRecencyWindow(scope, new Date(), timeZone),
+    [scope, timeZone]
+  );
+  const { viewedAfter, viewedBefore } = resolved ?? {};
 
   /**
    * The window the calendar SHOWS — and ONLY when one is actually in force. With no bounds the input stays EMPTY
@@ -91,8 +113,6 @@ const RecentlyViewedFilter: React.FC = () => {
     [location.search, navigate]
   );
 
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-
   /**
    * The chip's dates, in the reader's LANGUAGE and their own TIMEZONE.
    *
@@ -111,8 +131,22 @@ const RecentlyViewedFilter: React.FC = () => {
     return (iso: string) => fmt.format(new Date(iso));
   }, [i18n.language]);
 
+  /**
+   * The chip states WHAT WAS ASKED FOR, not what that happens to resolve to today: a living window reads
+   * "last 7 days" and stays true tomorrow, while a hand-picked one reads its dates because dates are what the
+   * user chose. Naming the resolved date for a preset is what hid the freeze — the chip said "since 10 Sep" and
+   * the user had no way to tell whether that was a moving window or a fixed one.
+   */
   const chipText = React.useMemo(() => {
     if (!scope) return '';
+    if (scope.within) {
+      const relative: Record<RecencyPresetKind, string> = {
+        today: t('Last viewed: today'),
+        '7d': t('Last viewed: last 7 days'),
+        '30d': t('Last viewed: last 30 days'),
+      };
+      return relative[scope.within];
+    }
     const from = viewedAfter && formatBound(viewedAfter);
     const to = viewedBefore && formatBound(viewedBefore);
     if (from && to) return t('Last viewed: {{from}} - {{to}}', { from, to });
@@ -144,7 +178,10 @@ const RecentlyViewedFilter: React.FC = () => {
           : [
               t('Narrows to the assets you have opened.'),
               t(
-                'You pick local calendar days; the link carries the exact moments, so another time zone may show them as different days.'
+                'A quick window keeps moving: saved or shared, "today" means the day it is opened.'
+              ),
+              t(
+                'A range you pick on the calendar is fixed to those days, wherever it is opened.'
               ),
               t(
                 "History is kept only as long as this deployment's retention settings allow."
@@ -164,15 +201,15 @@ const RecentlyViewedFilter: React.FC = () => {
           : [
               {
                 label: t('Today'),
-                onSelect: () => commit(presetWindow('today', new Date(), timeZone)),
+                onSelect: () => commit(presetWindow('today')),
               },
               {
                 label: t('Last 7 days'),
-                onSelect: () => commit(presetWindow('7d', new Date(), timeZone)),
+                onSelect: () => commit(presetWindow('7d')),
               },
               {
                 label: t('Last 30 days'),
-                onSelect: () => commit(presetWindow('30d', new Date(), timeZone)),
+                onSelect: () => commit(presetWindow('30d')),
               },
               { label: t('Any time'), onSelect: () => commit({}) },
             ]

@@ -377,6 +377,89 @@ class SavedSearchServiceImplTest {
     }
 
     /**
+     * CTRIB-070 — a DECLARED window round-trips as the word, and comes back as the word.
+     *
+     * <p>This is the same real round trip as the case above (create serialises, the persisted JSONB is captured, that
+     * exact document is replayed through list) pointed at the thing that actually broke for the user: a saved
+     * search called "Today" that quietly meant one specific past day. Storing the instant is what did that, so the
+     * assertion is not "a window survived" but "NO instant was stored" — the word is the whole payload, and the
+     * reader resolves it against its own clock.
+     */
+    @Test
+    void spec_declaredWindow_isStoredAsTheWordAndNeverFlattenedToAnInstant() {
+        identity();
+        final AssetSearchFormData spec = new AssetSearchFormData()
+            .query("orders")
+            .recentlyViewed(new RecentlyViewedScope().viewedWithin("TODAY"));
+
+        final ArgumentCaptor<JSONB> persisted = ArgumentCaptor.forClass(JSONB.class);
+        when(repository.existsByName("alice", "google", "Today", null)).thenReturn(Mono.just(false));
+        when(repository.create(eq("alice"), eq("google"), eq("Today"), persisted.capture()))
+            .thenReturn(Mono.just(pojo(9L, "Today", "{}")));
+
+        StepVerifier.create(service.create(new SavedSearchFormData().name("Today").spec(spec)))
+            .expectNextCount(1)
+            .verifyComplete();
+
+        final String stored = persisted.getValue().data();
+        assertThat(stored)
+            .as("the word is what is persisted (stored as %s)", stored)
+            .contains("\"viewed_within\":\"TODAY\"");
+
+        when(repository.list("alice", "google", 0, 30))
+            .thenReturn(Flux.just(pojo(9L, "Today", stored)));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(1L));
+
+        StepVerifier.create(service.list(1, 30))
+            .assertNext(list -> {
+                final RecentlyViewedScope read = list.getItems().get(0).getSpec().getRecentlyViewed();
+                assertThat(read).isNotNull();
+                assertThat(read.getViewedWithin()).isEqualTo("TODAY");
+                assertThat(read.getViewedAfter())
+                    .as("no instant was frozen into the row — that freeze is the bug this replaces")
+                    .isNull();
+                assertThat(read.getViewedBefore()).isNull();
+            })
+            .verifyComplete();
+    }
+
+    /**
+     * CTRIB-070 — the sanitiser's grain for the token, which is deliberately a TYPE check and nothing more.
+     *
+     * <p>An unrecognised token is KEPT here and degraded by the client (the `sort` / `my_data` posture: lose the word,
+     * keep the search), because re-listing the vocabulary server-side would create a second copy of it to drift
+     * apart from the first. A stored NON-STRING is a different animal: it would fail the whole `treeToValue` and
+     * cost the reader their entire saved search, so it is dropped field-level and the scope survives.
+     */
+    @Test
+    void list_storedWindowToken_keepsAnUnknownOne_butDropsANonString() {
+        identity();
+        final String unknownToken = "{\"query\":\"unknown\",\"recently_viewed\":"
+            + "{\"viewed_within\":\"LAST_90_DAYS\"},\"filters\":{}}";
+        final String nonString = "{\"query\":\"junk\",\"recently_viewed\":"
+            + "{\"viewed_within\":{\"nested\":1},\"viewed_after\":\"2026-09-01T00:00:00Z\"},\"filters\":{}}";
+        when(repository.list("alice", "google", 0, 30)).thenReturn(Flux.just(
+            pojo(41L, "unknown", unknownToken), pojo(42L, "junk", nonString)));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(2L));
+
+        StepVerifier.create(service.list(1, 30))
+            .assertNext(list -> {
+                final RecentlyViewedScope unknown = list.getItems().get(0).getSpec().getRecentlyViewed();
+                assertThat(unknown.getViewedWithin())
+                    .as("an unrecognised token rides through; the CLIENT degrades it, and the search still runs")
+                    .isEqualTo("LAST_90_DAYS");
+
+                final RecentlyViewedScope junk = list.getItems().get(1).getSpec().getRecentlyViewed();
+                assertThat(junk).as("the scope survives").isNotNull();
+                assertThat(junk.getViewedWithin()).as("a non-string token is dropped field-level").isNull();
+                assertThat(junk.getViewedAfter())
+                    .as("and the readable bound beside it is untouched — one bad field costs one field")
+                    .isNotNull();
+            })
+            .verifyComplete();
+    }
+
+    /**
      * The sanitiser must still reject a bound it genuinely cannot read, whatever the writer's encoding — the
      * defensive behaviour the fix must not trade away. A hand-written ISO instant (what an operator editing the
      * jsonb, or a future writer, would produce) is ALSO accepted: the reader is the mapper, so it takes every

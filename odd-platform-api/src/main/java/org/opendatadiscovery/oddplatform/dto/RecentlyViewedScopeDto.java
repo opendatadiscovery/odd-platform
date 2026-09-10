@@ -26,6 +26,15 @@ import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
  * {@code /api/recently-viewed/list} read path uses, so a client's offset can never shift which rows match. They are
  * INCLUSIVE, mirroring {@code ReactiveRecentlyViewedRepositoryImpl.filterConditions}.
  *
+ * <p><b>{@code viewed_within} is deliberately NOT read here.</b> The wire object may also carry a DECLARED window
+ * — the word the user picked ({@code TODAY}, {@code LAST_7_DAYS}, {@code LAST_30_DAYS}), which is what lets a saved
+ * search called "today" mean the day it is reapplied rather than the day it was saved (CTRIB-070). Resolving it
+ * needs the reader's calendar, and only the client knows which one that is: resolving it here would make "today"
+ * the SERVER's day and hand two readers in different zones different answers to the same word. So the client
+ * resolves the token into the bounds below before it queries, this search narrows by instants alone, and a client
+ * that sends the token without bounds gets no window — which the contract states in as many words. The token is
+ * carried on the shared object only because a saved search stores that object whole (ADR D11).
+ *
  * @param viewedAfter  the earliest last-opened instant included (UTC), or {@code null} for no lower bound
  * @param viewedBefore the latest last-opened instant included (UTC), or {@code null} for no upper bound
  */
