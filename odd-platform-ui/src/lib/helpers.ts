@@ -3,6 +3,7 @@ import { type Theme } from '@mui/material';
 import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
 import type { EventType } from 'lib/interfaces';
+import { HIGHLIGHT_MARK_END, HIGHLIGHT_MARK_START } from 'lib/search/highlightMarkers';
 import {
   type DataEntityStatus,
   type DataQualityTestExpectation,
@@ -149,8 +150,10 @@ export function sliceStringByWidth(
 
   const ellipsis = '...';
   const splitted = str.split(' ');
-  const fitWordStart = splitted.findIndex(el => el.includes('<b>'));
-  const firWordEnd = splitted.findIndex(el => el.includes('</b>'));
+  // ST-12 (#1846): a highlight marks a match with the two private-use sentinels of lib/search/highlightMarkers
+  // (the server's ts_headline StartSel / StopSel), never with <b>/</b>.
+  const fitWordStart = splitted.findIndex(el => el.includes(HIGHLIGHT_MARK_START));
+  const firWordEnd = splitted.findIndex(el => el.includes(HIGHLIGHT_MARK_END));
 
   let resultString: string[] = [];
   if (fitWordStart === firWordEnd) {

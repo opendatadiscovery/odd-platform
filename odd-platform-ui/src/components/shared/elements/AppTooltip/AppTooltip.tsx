@@ -9,6 +9,8 @@ interface AppTooltipProps extends Pick<
   | 'followCursor'
   | 'componentsProps'
   | 'disableHoverListener'
+  | 'enterDelay'
+  | 'enterNextDelay'
   | 'onOpen'
   | 'onClose'
   | 'sx'
@@ -30,6 +32,12 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   childSx,
   componentsProps,
   disableHoverListener,
+  // Both delays are forwarded UNSET by default (MUI's own 100 ms / 0 ms), so no existing call site changes.
+  // A tooltip whose opening costs a request — the search row's (?) "why it matched" (ST-12) — sets both: MUI
+  // keeps a module-global 800 ms hysteresis after any tooltip closes during which `enterNextDelay` (not
+  // `enterDelay`) applies, so setting only one still fires a fetch per row on a pointer sweep.
+  enterDelay,
+  enterNextDelay,
   onOpen,
   onClose,
   sx,
@@ -72,6 +80,8 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
       followCursor={followCursor}
       disableInteractive
       disableHoverListener={disableHoverListener}
+      enterDelay={enterDelay}
+      enterNextDelay={enterNextDelay}
       componentsProps={componentsProps}
       onOpen={onOpen}
       onClose={onClose}

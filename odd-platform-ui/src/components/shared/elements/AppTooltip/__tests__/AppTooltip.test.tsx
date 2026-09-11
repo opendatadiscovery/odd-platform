@@ -1,6 +1,6 @@
 import React from 'react';
-import { describe, expect, it } from 'vitest';
-import { screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import theme from 'theme/mui.theme';
@@ -91,5 +91,48 @@ describe('AppTooltip — an informational tooltip can never render as a runaway 
       'the card body belongs to the light type only'
     ).toBeNull();
     expect(tip).toHaveTextContent('Logical type: VARCHAR');
+  });
+});
+
+describe('AppTooltip — the two enter delays are forwarded, and only when a caller asks (ST-12 / #1846)', () => {
+  // A tooltip whose OPENING costs a request (the search row's (?) "why it matched") must not open on a pointer
+  // sweep. MUI keeps a module-global 800 ms hysteresis after any tooltip closes during which `enterNextDelay`
+  // applies instead of `enterDelay`, so a caller has to set BOTH — and a caller that sets neither keeps MUI's
+  // defaults (100 ms / 0 ms), so the other forty-odd call sites are untouched.
+  it('with both delays set, a hover does not open before the delay and does open after it', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      renderTip({ checkForOverflow: false, enterDelay: 300, enterNextDelay: 300 });
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      await user.hover(screen.getByText('anchor'));
+      await act(async () => {
+        vi.advanceTimersByTime(150);
+      });
+      expect(
+        screen.queryByRole('tooltip'),
+        'not yet — the delay has not elapsed'
+      ).toBeNull();
+      await act(async () => {
+        vi.advanceTimersByTime(200);
+      });
+      expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("without the delays, the default open is immediate after MUI's own 100 ms", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      renderTip({ checkForOverflow: false });
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      await user.hover(screen.getByText('anchor'));
+      await act(async () => {
+        vi.advanceTimersByTime(150);
+      });
+      expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

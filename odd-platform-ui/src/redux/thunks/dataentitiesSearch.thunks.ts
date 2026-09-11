@@ -1,23 +1,16 @@
 import type {
   DataEntityRef,
-  DataEntitySearchHighlight,
   MultipleFacetType,
   SearchApiGetFiltersForFacetRequest,
   SearchApiGetSearchFacetListRequest,
   SearchApiGetSearchResultsRequest,
   SearchApiGetSearchSuggestionsRequest,
-  SearchApiHighlightDataEntityRequest,
   SearchApiSearchRequest,
   SearchApiUpdateSearchFacetsRequest,
   SearchFacetsData,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import type {
-  CurrentPageInfo,
-  DataEntity,
-  FacetOptions,
-  RelatedToEntityId,
-} from 'redux/interfaces';
+import type { CurrentPageInfo, DataEntity, FacetOptions } from 'redux/interfaces';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { castDatesToTimestamp } from 'redux/lib/helpers';
 import { searchApi } from 'lib/api';
@@ -90,19 +83,5 @@ export const fetchSearchSuggestions = handleResponseAsyncThunk<
 >(
   actions.fetchDataEntitySearchSuggestionsActionType,
   async params => await searchApi.getSearchSuggestions(params),
-  {}
-);
-
-export const fetchDataEntitySearchHighlights = handleResponseAsyncThunk<
-  RelatedToEntityId<{ highlights: DataEntitySearchHighlight }>,
-  SearchApiHighlightDataEntityRequest
->(
-  actions.fetchDataEntitySearchHighlightsActionType,
-  async params => {
-    const { dataEntityId } = params;
-    const highlights = await searchApi.highlightDataEntity(params);
-
-    return { highlights, entityId: dataEntityId };
-  },
   {}
 );
