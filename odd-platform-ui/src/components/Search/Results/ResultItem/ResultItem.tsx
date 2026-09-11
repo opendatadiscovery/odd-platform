@@ -37,9 +37,10 @@ interface ResultItemProps {
  * ST-4 (#1838) — one polymorphic cross-kind result row. It switches on `asset.asset_kind` and routes on click
  * to that kind's detail page (Data Entity → /dataentities, Term → /terms, Query Example → the data-modelling
  * query-example page — all via the shared `favoriteAsset*` resolvers). The Data-Entity row keeps its rich
- * affordances that the `DataEntityRef` payload supports (staleness marker, the "why it matched" highlight,
- * the details preview, class chips, status); Term / Query-Example render the clean minimal row the slice calls
- * for (name / definition + the kind label; no highlight — that parity is ST-12). PLT-147 guard: a row whose
+ * affordances that the `DataEntityRef` payload supports (staleness marker, the details preview, class chips,
+ * status). The (?) "why it matched" badge is on EVERY kind with a ref whenever a text query is active (ST-12 /
+ * #1846): its tooltip fetches that one row's per-kind highlight on hover / focus from the stateless
+ * `GET /api/search/assets/{kind}/{id}/highlights?query=` — never on the page render. PLT-147 guard: a row whose
  * per-kind ref is null / absent renders empty cells and a no-op click — it never throws (no error boundary
  * exists in odd-platform-ui, so a throw here would white-screen /search).
  */
@@ -92,14 +93,31 @@ const ResultItem: React.FC<ResultItemProps> = ({ asset }) => {
             )}
           </Box>
           <Box display='flex' flexWrap='nowrap' alignItems='center' sx={{ ml: 1 }}>
-            {/* The DE "why it matched" highlight (fetched via the retained DE session's searchId). ST-12
-                leaves Term / Query-Example without a highlight — they degrade gracefully with no badge. */}
-            {isDataEntity && dataEntity && searchQuery && (
+            {/* ST-12 (#1846) — the (?) "why it matched" badge, every kind, only when a text query is active (a
+                browse / filter-only result has nothing to explain: the filters are the visible reason). The
+                query is the session slice's echo of what this page searched — on the param-URL route that is
+                the URL's q; on a legacy /search/{sessionId} link it is the session's query. `followCursor` is
+                OFF so a keyboard-opened tooltip anchors at the badge (a follow-cursor popper anchors at the last
+                mouse position); both MUI delays are set so a pointer sweep down the list never fetches (the
+                module-global 800 ms hysteresis swaps `enterDelay` for `enterNextDelay`). The badge is a focusable
+                span that names itself for assistive tech (MUI's SvgIcon is aria-hidden by design); a keyboard
+                stop, which MUI's focus listener turns into an open. */}
+            {hasRef && searchQuery && (
               <AppTooltip
                 checkForOverflow={false}
-                title={<SearchHighlights dataEntityId={dataEntity.id} />}
+                followCursor={false}
+                enterDelay={300}
+                enterNextDelay={300}
+                title={<SearchHighlights asset={asset} query={searchQuery} />}
               >
-                <QuestionIcon sx={{ mr: 1 }} />
+                <S.WhyMatchedBadge
+                  tabIndex={0}
+                  role='img'
+                  aria-label={t('Why it matched')}
+                  data-testid='search-result-why-matched'
+                >
+                  <QuestionIcon />
+                </S.WhyMatchedBadge>
               </AppTooltip>
             )}
             {isDataEntity && dataEntity && (

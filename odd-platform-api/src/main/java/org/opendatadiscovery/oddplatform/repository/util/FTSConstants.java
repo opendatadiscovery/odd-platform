@@ -34,6 +34,17 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 public class FTSConstants {
     public static final Field<Object> RANK_FIELD_ALIAS = field("rank", Object.class);
 
+    /**
+     * The marks {@code ts_headline} puts around a matched span in a search-result highlight
+     * ({@code ReactiveDataEntityRepository#getHighlightedResult}): two Unicode private-use code points, U+E000
+     * (start) and U+E001 (end), NOT {@code <b>}/{@code </b>} — PostgreSQL documents ts_headline output as unsafe
+     * for direct inclusion in a web page and catalog text is user-authored, so the highlight travels as verbatim
+     * text a client renders as text (ST-12 / #1846). The service-side document helper
+     * ({@code service.search.SearchHighlightDocument}) re-exports these for the converters.
+     */
+    public static final String HIGHLIGHT_MARK_START = "\uE000"; // U+E000, private use - the StartSel
+    public static final String HIGHLIGHT_MARK_END = "\uE001"; // U+E001, private use - the StopSel
+
     public static final Map<Field<?>, String> DATA_ENTITY_FTS_WEIGHTS = Map.ofEntries(
         Map.entry(DATA_ENTITY.INTERNAL_NAME, "A"),
         Map.entry(DATA_ENTITY.EXTERNAL_NAME, "A"),

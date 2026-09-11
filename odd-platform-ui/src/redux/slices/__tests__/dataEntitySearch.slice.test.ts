@@ -40,7 +40,6 @@ const baseState = (over: Partial<DataEntitySearchState> = {}): DataEntitySearchS
   facets: {},
   facetState: {},
   isFacetsStateSynced: true,
-  dataEntitySearchHighlightById: {},
   ...over,
 });
 

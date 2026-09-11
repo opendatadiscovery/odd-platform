@@ -7,6 +7,8 @@ import {
   DataEntityTypeNameEnum as TypeNameEnum,
   DataQualityTestSeverity,
   type DataSourceHighlight,
+  type QueryExampleSearchHighlight,
+  type TermSearchHighlight,
 } from 'generated-sources';
 
 export const ORDERED_SEVERITY = [
@@ -32,14 +34,21 @@ export const alertTitlesMap = new Map<
 export type SearchHighlightsTitlesKey =
   | keyof DataEntitySearchHighlight
   | keyof DataEntityHighlight
-  | keyof DataSourceHighlight;
+  | keyof DataSourceHighlight
+  | keyof TermSearchHighlight
+  | keyof QueryExampleSearchHighlight
+  | 'term'
+  | 'queryExample';
+// The section / field titles of the search-result "why it matched" tooltip, for every asset kind (ST-12 /
+// #1846). Every value MUST be a key of the locale catalogs (`locales/translations/*.json`) — `t(value)` falls
+// back to English otherwise, silently, on every non-English locale (`searchHighlightsTitles.test.ts` pins it).
 export const searchHighlightsTitlesMap = new Map<SearchHighlightsTitlesKey, string>([
-  ['dataEntity', 'Data entity'],
+  ['dataEntity', 'Data Entity'],
   ['internalName', 'Business name'],
   ['externalName', 'External name'],
-  ['internalDescription', 'Internal Description'],
-  ['externalDescription', 'External Description'],
-  ['dataSource', 'Data source'],
+  ['internalDescription', 'Internal description'],
+  ['externalDescription', 'External description'],
+  ['dataSource', 'Datasource'],
   ['name', 'Name'],
   ['oddrn', 'ODDRN'],
   ['namespace', 'Namespace'],
@@ -47,6 +56,11 @@ export const searchHighlightsTitlesMap = new Map<SearchHighlightsTitlesKey, stri
   ['datasetStructure', 'Dataset structure'],
   ['metadata', 'Metadata'],
   ['owners', 'Owner'],
+  ['term', 'Term'],
+  ['definition', 'Definition'],
+  ['queryExample', 'Query Example'],
+  ['query', 'Query'],
+  ['linkedEntities', 'Linked entities'],
 ]);
 
 export const DataEntityClassLabelMap: Map<

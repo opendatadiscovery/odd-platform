@@ -34,7 +34,6 @@ const initialState: DataEntitySearchState = {
   facets: {},
   facetState: {},
   isFacetsStateSynced: true,
-  dataEntitySearchHighlightById: {},
 };
 
 const isSearchIdsEquals = (oldId: string, newId: string) => oldId === newId;
@@ -304,18 +303,6 @@ export const dataEntitiesSearchSlice = createSlice({
     builder.addCase(thunks.fetchSearchSuggestions.fulfilled, (state, { payload }) => {
       state.suggestions = payload;
     });
-
-    builder.addCase(
-      thunks.fetchDataEntitySearchHighlights.fulfilled,
-      (state, { payload }) => {
-        const { highlights, entityId: dataEntityId } = payload;
-
-        state.dataEntitySearchHighlightById = {
-          ...state.dataEntitySearchHighlightById,
-          [dataEntityId]: highlights,
-        };
-      }
-    );
   },
 });
 

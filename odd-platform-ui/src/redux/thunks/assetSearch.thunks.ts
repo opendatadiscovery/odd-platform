@@ -1,8 +1,14 @@
-import type { Asset, AssetSearchApiSearchAssetsRequest } from 'generated-sources';
+import type {
+  Asset,
+  AssetSearchApiHighlightAssetRequest,
+  AssetSearchApiSearchAssetsRequest,
+  AssetSearchHighlight,
+} from 'generated-sources';
 import type { AssetSearchPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { assetSearchApi } from 'lib/api';
+import { highlightKey } from 'lib/search/highlightMarkers';
 
 /**
  * ST-4 (#1838) / ST-5b (#1839) — the unified cross-kind search fetch. Calls the additive, stateless
@@ -34,4 +40,23 @@ export const searchAssets = handleResponseAsyncThunk<
     };
   },
   {}
+);
+
+/**
+ * ST-12 (#1846) — the per-kind "why it matched" behind a result row's (?) badge, fetched ON DEMAND for one row
+ * (the tooltip mounts on hover / focus and dispatches this; nothing highlight-shaped runs on the page request).
+ * `query` is the same string the page sent to `POST /api/search/assets`, so the server marks exactly what the
+ * search matched. A rejected fetch is answered inside the tooltip ("Couldn't load match details"), not by the
+ * global error toast — the toast would fire on every hover of a row whose explanation cannot load.
+ */
+export const fetchAssetSearchHighlight = handleResponseAsyncThunk<
+  { key: string; highlight: AssetSearchHighlight },
+  AssetSearchApiHighlightAssetRequest
+>(
+  actions.fetchAssetSearchHighlightActionType,
+  async params => {
+    const highlight = await assetSearchApi.highlightAsset(params);
+    return { key: highlightKey(params.assetKind, params.assetId), highlight };
+  },
+  { switchOffErrorMessage: true }
 );

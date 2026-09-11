@@ -187,6 +187,14 @@ def jacocoExcludes = [
     '**/repository/**'
 ]
 
+// JaCoCo 0.8.11+ filters the branch javac synthesises for an exhaustive switch expression (the default arm that
+// throws when the enum/sealed type gains a constant — jacoco/jacoco#1472). Gradle 8.5 defaults to 0.8.9, which
+// counted that unreachable arm against every one of the 18 `return switch (…)` sites in this module, so a small
+// new class could not reach the 98% changed-files floor with tests alone (ST-12 / #1846, 2026-09-11).
+jacoco {
+    toolVersion = '0.8.12'
+}
+
 jacocoTestReport {
     dependsOn test
     reports {
