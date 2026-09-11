@@ -334,11 +334,11 @@ public final class SecurityConstants {
             LOOKUP_TABLE_DEFINITION_CREATE),
         new SecurityRule(NO_CONTEXT,
             new PathPatternParserServerWebExchangeMatcher(
-                "/api/referencedata/table/{lookup_table_id}/column/{column_id}", PATCH),
+                "/api/referencedata/table/{lookup_table_id}/columns/{column_id}", PATCH),
             LOOKUP_TABLE_DEFINITION_UPDATE),
         new SecurityRule(NO_CONTEXT,
             new PathPatternParserServerWebExchangeMatcher(
-                "/api/referencedata/table/{lookup_table_id}/column/{column_id}", DELETE),
+                "/api/referencedata/table/{lookup_table_id}/columns/{column_id}", DELETE),
             LOOKUP_TABLE_DEFINITION_DELETE),
         new SecurityRule(NO_CONTEXT,
             new PathPatternParserServerWebExchangeMatcher(
