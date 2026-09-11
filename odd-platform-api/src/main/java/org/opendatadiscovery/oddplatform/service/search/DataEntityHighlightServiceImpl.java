@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.service.search;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 import lombok.RequiredArgsConstructor;
@@ -80,9 +81,10 @@ public class DataEntityHighlightServiceImpl implements DataEntityHighlightServic
     }
 
     private static boolean isVisibleToSearch(final DataEntityPojo pojo) {
-        return pojo != null
-            && !Boolean.TRUE.equals(pojo.getHollow())
-            && (pojo.getStatus() == null || pojo.getStatus() != DataEntityStatusDto.DELETED.getId())
+        // The pojo is never null here (the search-fields query is keyed on DATA_ENTITY.ID) and data_entity.status
+        // is NOT NULL (V0_0_79) — Objects.equals keeps unit fixtures null-safe without a branch nothing can take.
+        return !Boolean.TRUE.equals(pojo.getHollow())
+            && !Objects.equals(pojo.getStatus(), DataEntityStatusDto.DELETED.getId())
             && !Boolean.TRUE.equals(pojo.getExcludeFromSearch());
     }
 

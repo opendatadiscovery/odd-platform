@@ -202,4 +202,69 @@ class TermHighlightConverterTest {
         assertThat(highlight.getTags()).isNull();
         assertThat(highlight.getOwners()).isNull();
     }
+
+    @Test
+    void convert_noNamespace_ownershipWithoutTitle_ownershipWithoutOwner_emitsEmptyFieldsNotNulls() {
+        final TermRefDto ref = TermRefDto.builder()
+            .term(new TermPojo().setName("Revenue").setDefinition("d"))
+            .namespace(null)
+            .build();
+        final TermDto term = TermDto.builder().termRefDto(ref).ownerships(Set.of(
+            new TermOwnershipDto(new TermOwnershipPojo(), new OwnerPojo().setName("bob"), null),
+            new TermOwnershipDto(new TermOwnershipPojo(), null, new TitlePojo().setName("steward")))).build();
+        final TermDetailsDto details = TermDetailsDto.builder().termDto(term).tags(Set.of()).terms(List.of()).build();
+
+        final String[] sections = converter.convert(details, POLYMORPHIC_FIELD_CAP).split(ENTITY_FIELD_DELIMITER, -1);
+
+        assertThat(sections[1]).isEmpty();
+        assertThat(sections[3].split(GROUP_DELIMITER, -1))
+            .containsExactlyInAnyOrder("bob" + RECORD_DELIMITER, RECORD_DELIMITER + "steward");
+        assertThat(sections[3]).doesNotContain("null");
+    }
+
+    @Test
+    void parse_ownerNameMarked_populatesTheOwnershipWithItsPlainTitle() {
+        final TermDetailsDto details = details(Set.of(), Set.of(ownership("bob", "steward")));
+        final String highlighted = "Revenue" + RECORD_DELIMITER + "d"
+            + ENTITY_FIELD_DELIMITER + "finance"
+            + ENTITY_FIELD_DELIMITER + ""
+            + ENTITY_FIELD_DELIMITER + mark("bob") + RECORD_DELIMITER + "steward"
+            + ENTITY_FIELD_DELIMITER;
+
+        final TermSearchHighlight highlight = converter.parse(highlighted, details);
+
+        assertThat(highlight.getOwners()).hasSize(1);
+        assertThat(highlight.getOwners().get(0).getOwner()).isEqualTo(mark("bob"));
+        assertThat(highlight.getOwners().get(0).getTitle()).isEqualTo("steward");
+    }
+
+    @Test
+    void parse_textWithoutAnyDelimiter_readsItAsTheNameAndNothingElse() {
+        // the whole string is section 0 / record 0: every later section and field is simply absent, not an error
+        final TermDetailsDto details = details(Set.of(), Set.of());
+
+        final TermSearchHighlight highlight = converter.parse(mark("Revenue"), details);
+
+        assertThat(highlight.getName()).isEqualTo(mark("Revenue"));
+        assertThat(highlight.getDefinition()).isNull();
+        assertThat(highlight.getNamespace()).isNull();
+        assertThat(highlight.getTags()).isNull();
+        assertThat(highlight.getOwners()).isNull();
+    }
+
+    @Test
+    void parse_ownershipRecordWithoutATitleField_readsAnEmptyTitle() {
+        final TermDetailsDto details = details(Set.of(), Set.of(ownership("bob", "steward")));
+        final String highlighted = "Revenue" + RECORD_DELIMITER + "d"
+            + ENTITY_FIELD_DELIMITER + ""
+            + ENTITY_FIELD_DELIMITER + ""
+            + ENTITY_FIELD_DELIMITER + mark("bob")
+            + ENTITY_FIELD_DELIMITER;
+
+        final TermSearchHighlight highlight = converter.parse(highlighted, details);
+
+        assertThat(highlight.getOwners()).hasSize(1);
+        assertThat(highlight.getOwners().get(0).getOwner()).isEqualTo(mark("bob"));
+        assertThat(highlight.getOwners().get(0).getTitle()).isEmpty();
+    }
 }

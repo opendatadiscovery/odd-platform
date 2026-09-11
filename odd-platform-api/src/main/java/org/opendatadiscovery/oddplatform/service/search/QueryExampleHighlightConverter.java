@@ -44,7 +44,7 @@ public class QueryExampleHighlightConverter {
         final String[] sections = highlighted.split(ENTITY_FIELD_DELIMITER, -1);
         final QueryExampleSearchHighlight highlight = new QueryExampleSearchHighlight();
         final String[] ownFields = sections[0].split(RECORD_DELIMITER, -1);
-        if (ownFields.length > 0 && isMarked(ownFields[0])) {
+        if (isMarked(ownFields[0])) { // split(…, -1) never yields an empty array
             highlight.setDefinition(ownFields[0]);
         }
         if (ownFields.length > 1 && isMarked(ownFields[1])) {
@@ -54,7 +54,7 @@ public class QueryExampleHighlightConverter {
             final List<DataEntityHighlight> linked = new ArrayList<>();
             for (final String entity : sections[1].split(GROUP_DELIMITER, -1)) {
                 final String[] names = entity.split(RECORD_DELIMITER, -1);
-                final String external = names.length > 0 ? names[0] : "";
+                final String external = names[0]; // split(…, -1) never yields an empty array
                 final String internal = names.length > 1 ? names[1] : "";
                 if (isMarked(external) || isMarked(internal)) {
                     final DataEntityHighlight entityHighlight = new DataEntityHighlight();

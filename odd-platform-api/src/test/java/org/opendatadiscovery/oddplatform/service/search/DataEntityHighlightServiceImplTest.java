@@ -202,4 +202,18 @@ class DataEntityHighlightServiceImplTest {
         verify(dataEntityRepository, never()).getHighlightedResult(anyString(), anyString());
         verify(converter, never()).convert(any(), any(), eq(POLYMORPHIC_FIELD_CAP));
     }
+
+    @Test
+    void withHtmlMarks_toleratesAMetadataValueWithoutAFieldAndAColumnWithoutTags() {
+        final DataEntitySearchHighlight parsed = new DataEntitySearchHighlight()
+            .metadata(List.of(new MetadataFieldValue().value(mark("l"))))
+            .datasetStructure(List.of(new DataSetStructureHighlight().name(mark("m"))));
+
+        final DataEntitySearchHighlight html = DataEntityHighlightServiceImpl.withHtmlMarks(parsed);
+
+        assertThat(html.getMetadata().get(0).getField()).isNull();
+        assertThat(html.getMetadata().get(0).getValue()).isEqualTo("<b>l</b>");
+        assertThat(html.getDatasetStructure().get(0).getName()).isEqualTo("<b>m</b>");
+        assertThat(html.getDatasetStructure().get(0).getTags()).isNull();
+    }
 }

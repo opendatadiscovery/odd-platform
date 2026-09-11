@@ -66,7 +66,7 @@ public class TermHighlightConverter {
         final String[] sections = highlighted.split(ENTITY_FIELD_DELIMITER, -1);
         final TermSearchHighlight highlight = new TermSearchHighlight();
         final String[] termFields = sections[0].split(RECORD_DELIMITER, -1);
-        if (termFields.length > 0 && isMarked(termFields[0])) {
+        if (isMarked(termFields[0])) { // split(…, -1) never yields an empty array
             highlight.setName(termFields[0]);
         }
         if (termFields.length > 1 && isMarked(termFields[1])) {
@@ -110,7 +110,7 @@ public class TermHighlightConverter {
         final List<OwnershipHighlight> owners = new ArrayList<>();
         for (final String ownership : ownershipSection.split(GROUP_DELIMITER, -1)) {
             final String[] fields = ownership.split(RECORD_DELIMITER, -1);
-            final String owner = fields.length > 0 ? fields[0] : "";
+            final String owner = fields[0]; // split(…, -1) never yields an empty array
             final String title = fields.length > 1 ? fields[1] : "";
             if (isMarked(owner) || isMarked(title)) {
                 owners.add(new OwnershipHighlight().owner(owner).title(title));

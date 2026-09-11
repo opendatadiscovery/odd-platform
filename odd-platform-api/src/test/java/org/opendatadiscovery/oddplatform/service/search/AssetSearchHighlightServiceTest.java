@@ -153,4 +153,15 @@ class AssetSearchHighlightServiceTest {
             .expectNextCount(1)
             .verifyComplete();
     }
+
+    @Test
+    void queryExample_visibleButWithoutARelationsRow_isNotFound_neverReachesTheSink() {
+        when(queryExampleRepository.get(6L)).thenReturn(Mono.just(new QueryExamplePojo().setId(6L)));
+        when(queryExampleRelationRepository.getQueryExampleDatasetRelations(6L)).thenReturn(Mono.empty());
+
+        StepVerifier.create(service.highlight(AssetKind.QUERY_EXAMPLE, 6L, "q"))
+            .expectError(NotFoundException.class)
+            .verify();
+        verify(dataEntityRepository, never()).getHighlightedResult(any(), any());
+    }
 }

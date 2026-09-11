@@ -2,12 +2,16 @@ package org.opendatadiscovery.oddplatform.service.search;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntitySearchHighlight;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructureHighlight;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetadataField;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
@@ -247,5 +251,93 @@ class DataEntityHighlightConverterTest {
         assertThat(h.getOwners()).isNull();
         assertThat(h.getMetadata()).isEmpty();
         assertThat(h.getDatasetStructure()).isNull();
+    }
+
+    /** richDetails() plus a second owner and a second INTERNAL metadata entry — records that stay UNMARKED beside
+     *  a marked one in the same section, the arm a single-record fixture can never take. */
+    private static DataEntityDetailsDto richerDetails() {
+        final DataEntityDetailsDto rich = richDetails();
+        return DataEntityDetailsDto.detailsBuilder()
+            .dataEntity(rich.getDataEntity()).dataSource(rich.getDataSource()).namespace(rich.getNamespace())
+            .tags(rich.getTags())
+            .ownership(List.of(rich.getOwnership().get(0), OwnershipDto.builder()
+                .owner(new OwnerPojo().setName("ann")).title(new TitlePojo().setName("dev")).build()))
+            .metadata(Stream.concat(rich.getMetadata().stream(), Stream.of(
+                new MetadataDto(new MetadataFieldPojo().setName("owner_team").setOrigin("INTERNAL"),
+                    new MetadataFieldValuePojo().setValue("data")))).collect(Collectors.toSet()))
+            .build();
+    }
+
+    @Test
+    void parse_dataSourceNameMarked_oddrnNot_reportsTheNameOnly() {
+        final DataEntityDetailsDto details = richDetails();
+        final DatasetStructureDto structure = emptyStructure();
+        when(metadataMapper.mapHighlightedDto(any(MetadataDto.class), anyString(), anyString()))
+            .thenAnswer(inv -> new MetadataFieldValue().value(inv.getArgument(2)));
+        // "postgres" is the data source's name (and an external metadata value); the ODDRN "//pg/orders" stays plain
+        final String highlighted = converter.convert(details, structure, POLYMORPHIC_FIELD_CAP)
+            .replace("postgres", mark("postgres"));
+
+        final DataEntitySearchHighlight h = converter.parseHighlightedString(highlighted, details, structure);
+
+        assertThat(h.getDataSource().getName()).isEqualTo(mark("postgres"));
+        assertThat(h.getDataSource().getOddrn()).isNull();
+    }
+
+    @Test
+    void parse_theOtherArms_internalNameDescription_oddrn_ownerName_metadataName_columnByDescriptionOrTag() {
+        final DataEntityDetailsDto details = richerDetails();
+        final DatasetStructureDto structure = DatasetStructureDto.builder().datasetFields(List.of(
+            DatasetFieldDto.builder()
+                .datasetFieldPojo(new DatasetFieldPojo().setName("customer_id")
+                    .setInternalDescription("the customer key").setExternalDescription("fk"))
+                .tags(List.of(new TagDto(new TagPojo().setName("key"), 0L, false),
+                    new TagDto(new TagPojo().setName("plain"), 0L, false)))
+                .build(),
+            DatasetFieldDto.builder()
+                .datasetFieldPojo(new DatasetFieldPojo().setName("amount").setInternalDescription("gross amount"))
+                .tags(List.of())
+                .build(),
+            DatasetFieldDto.builder()   // nothing of this column matches: it must not be reported
+                .datasetFieldPojo(new DatasetFieldPojo().setName("created_at"))
+                .tags(List.of())
+                .build())).build();
+        when(tagMapper.mapToHighlightedTag(any(TagDto.class), anyString()))
+            .thenAnswer(inv -> new Tag().name(inv.getArgument(1)));
+        when(metadataMapper.mapHighlightedDto(any(MetadataDto.class), anyString(), anyString()))
+            .thenAnswer(inv -> new MetadataFieldValue()
+                .field(new MetadataField().name(inv.getArgument(1))).value(inv.getArgument(2)));
+
+        final String document = converter.convert(details, structure, POLYMORPHIC_FIELD_CAP);
+        final String highlighted = document
+            .replace("Orders table", mark("Orders") + " table")     // the entity's INTERNAL name
+            .replace("internal", mark("internal"))                  // the entity's INTERNAL description
+            .replace("//pg/orders", "//" + mark("pg") + "/orders")  // the data source's ODDRN, its name untouched
+            .replace("bob", mark("bob"))                            // the owner's NAME, the title untouched
+            .replace("retention", mark("retention"))                // a metadata field NAME, its value untouched
+            .replace("gross amount", mark("gross") + " amount")     // a column matched ONLY by its internal description
+            .replace("plain", mark("plain"));                       // a column matched ONLY by one of its two tags
+
+        final DataEntitySearchHighlight h = converter.parseHighlightedString(highlighted, details, structure);
+
+        assertThat(h.getDataEntity().getExternalName()).isNull();
+        assertThat(h.getDataEntity().getInternalName()).isEqualTo(mark("Orders") + " table");
+        assertThat(h.getDataEntity().getInternalDescription()).isEqualTo(mark("internal"));
+        assertThat(h.getDataSource().getName()).isNull();
+        assertThat(h.getDataSource().getOddrn()).isEqualTo("//" + mark("pg") + "/orders");
+        assertThat(h.getNamespace()).isNull();
+        assertThat(h.getOwners()).hasSize(1); // ann/dev is in the marked section but carries no mark: not reported
+        assertThat(h.getOwners().get(0).getOwner()).isEqualTo(mark("bob"));
+        assertThat(h.getOwners().get(0).getTitle()).isEqualTo("steward");
+        assertThat(h.getMetadata()).hasSize(1); // owner_team/data shares the INTERNAL section, unmarked: not reported
+        assertThat(h.getMetadata().get(0).getField().getName()).isEqualTo(mark("retention"));
+        assertThat(h.getMetadata().get(0).getValue()).isEqualTo("30 days");
+        assertThat(h.getDatasetStructure()).extracting(DataSetStructureHighlight::getName)
+            .containsExactly("customer_id", "amount"); // created_at is not reported
+        assertThat(h.getDatasetStructure().get(0).getInternalDescription()).isNull();
+        assertThat(h.getDatasetStructure().get(0).getExternalDescription()).isNull();
+        assertThat(h.getDatasetStructure().get(0).getTags()).extracting(Tag::getName).containsExactly(mark("plain"));
+        assertThat(h.getDatasetStructure().get(1).getInternalDescription()).isEqualTo(mark("gross") + " amount");
+        assertThat(h.getDatasetStructure().get(1).getTags()).isNull();
     }
 }

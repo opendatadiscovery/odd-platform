@@ -100,4 +100,31 @@ class QueryExampleHighlightConverterTest {
         assertThat(highlight.getQuery()).isNull();
         assertThat(highlight.getLinkedEntities()).isNull();
     }
+
+    @Test
+    void parse_textWithoutAnyDelimiter_readsItAsTheDefinitionAndNothingElse() {
+        final QueryExampleSearchHighlight highlight = converter.parse(mark("orders") + " by day");
+
+        assertThat(highlight.getDefinition()).isEqualTo(mark("orders") + " by day");
+        assertThat(highlight.getQuery()).isNull();
+        assertThat(highlight.getLinkedEntities()).isNull();
+    }
+
+    @Test
+    void parse_linkedEntities_internalNameOnly_unmarkedGroupSkipped_recordWithoutInternalField() {
+        final String highlighted = "d" + RECORD_DELIMITER + "q"
+            + ENTITY_FIELD_DELIMITER
+            + "orders" + RECORD_DELIMITER + mark("Orders") + " table"   // only the internal name is marked
+            + GROUP_DELIMITER + "customers" + RECORD_DELIMITER + "Customers" // nothing marked: skipped
+            + GROUP_DELIMITER + mark("payments")                          // a record with no internal field at all
+            + ENTITY_FIELD_DELIMITER;
+
+        final QueryExampleSearchHighlight highlight = converter.parse(highlighted);
+
+        assertThat(highlight.getLinkedEntities()).hasSize(2);
+        assertThat(highlight.getLinkedEntities().get(0).getExternalName()).isNull();
+        assertThat(highlight.getLinkedEntities().get(0).getInternalName()).isEqualTo(mark("Orders") + " table");
+        assertThat(highlight.getLinkedEntities().get(1).getExternalName()).isEqualTo(mark("payments"));
+        assertThat(highlight.getLinkedEntities().get(1).getInternalName()).isNull();
+    }
 }
