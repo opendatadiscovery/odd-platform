@@ -76,6 +76,7 @@
           "then": {
             "properties": {
               "permissions": {
+                "type": "array",
                 "items": {
                   "anyOf": [
                     {
@@ -113,6 +114,7 @@
           "then": {
             "properties": {
               "permissions": {
+                "type": "array",
                 "items": {
                   "anyOf": [
                     {
@@ -149,6 +151,7 @@
           "then": {
             "properties": {
               "permissions": {
+                "type": "array",
                 "items": {
                   "anyOf": [
                     {
@@ -186,6 +189,7 @@
           "then": {
             "properties": {
               "permissions": {
+                "type": "array",
                 "items": {
                   "anyOf": [
                     {
