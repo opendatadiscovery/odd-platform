@@ -1040,6 +1040,62 @@ components:
         - $ref: '#/components/schemas/DataQualityTest'
         - $ref: '#/components/schemas/DataEntityGroup'
 
+    AssetSearchHighlight:
+      type: object
+      description: >-
+        The "why it matched" of one cross-kind search result (ST-12 / #1846). Exactly one of the per-kind branches
+        is populated, selected by asset_kind; the others are absent. Every string inside is the asset's VERBATIM
+        text with matched spans delimited by U+E000 / U+E001 (see GET /api/search/assets/{asset_kind}/{asset_id}/highlights
+        — the marker contract); a branch present with no marked field means the query hit a part of the asset the
+        highlight document does not carry, or beyond the 16384-character field bound.
+      properties:
+        asset_kind:
+          $ref: '#/components/schemas/AssetKind'
+        data_entity:
+          $ref: '#/components/schemas/DataEntitySearchHighlight'
+        term:
+          $ref: '#/components/schemas/TermSearchHighlight'
+        query_example:
+          $ref: '#/components/schemas/QueryExampleSearchHighlight'
+      required:
+        - asset_kind
+
+    TermSearchHighlight:
+      type: object
+      description: >-
+        The fields of a Term the query hit — the five things a Term is indexed on. Each property is present only
+        when it carries a mark; owners carry the owner name and/or the title.
+      properties:
+        name:
+          type: string
+        definition:
+          type: string
+        namespace:
+          $ref: '#/components/schemas/NamespaceHighlight'
+        tags:
+          $ref: '#/components/schemas/TagList'
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnershipHighlight'
+
+    QueryExampleSearchHighlight:
+      type: object
+      description: >-
+        The fields of a Query Example the query hit — its definition, its query text (bounded to the first 16384
+        characters) and the names of its linked data entities, the three things a Query Example is indexed on.
+        Each property is present only when it carries a mark; a linked entity is reported by its external and/or
+        internal name.
+      properties:
+        definition:
+          type: string
+        query:
+          type: string
+        linked_entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityHighlight'
+
     DataEntitySearchHighlight:
       type: object
       properties:
