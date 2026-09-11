@@ -108,18 +108,48 @@ describe('RecentlyViewedFilter (ST-10 / #1844)', () => {
     expect(qa(container, 'chip')).toBeNull();
   });
 
-  it('a preset writes the canonical URL: a resolved instant, and the ON token dropped', async () => {
+  /**
+   * CTRIB-070 — a preset writes the WORD. It used to write the instant it resolved to at click time, which is
+   * what made a saved "Today" mean the day it was saved; the resolve now happens where the query is built, so the
+   * URL a user saves or shares still says "today" tomorrow.
+   */
+  it('a preset writes the canonical URL: the declared window, and no instant or ON token beside it', async () => {
     const user = userEvent.setup();
     renderAt('/search?q=orders&recently_viewed=yes');
     await user.click(screen.getByText('Today'));
     const url = screen.getByTestId('loc').textContent ?? '';
-    expect(url).toContain('viewed_after=');
+    expect(url).toContain('viewed_within=TODAY');
+    // ONE spelling per state: no frozen bound, and not the bounds-free ON token either.
+    expect(url).not.toContain('viewed_after');
     expect(url).not.toContain('recently_viewed=yes');
     expect(url).toContain('q=orders'); // the rest of the search survives
-    // the bound is a real instant, not a bare day the server would 400 on
-    const after = new URLSearchParams(url.split('?')[1]).get('viewed_after') ?? '';
-    expect(Number.isNaN(new Date(after).getTime())).toBe(false);
-    expect(after).not.toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  /**
+   * The chip states WHAT WAS ASKED FOR. Naming the resolved date for a preset is what hid the freeze: the chip
+   * read "since 10 Sep" whether that window was moving or nailed down, and the user had no way to tell which.
+   */
+  it('names a declared window by its word, and a hand-picked one by its dates', () => {
+    const living = renderAt('/search?viewed_within=LAST_7_DAYS').container;
+    expect(qa(living, 'chip')?.textContent).toBe('Last viewed: last 7 days');
+    expect(renderAt('/search?viewed_within=TODAY').container).toBeTruthy();
+
+    const picked = renderAt(
+      '/search?viewed_after=2026-09-01T00:00:00.000Z&viewed_before=2026-09-08T00:00:00.000Z'
+    ).container;
+    expect(qa(picked, 'chip')?.textContent).toMatch(/^Last viewed: \S+.* - /);
+  });
+
+  /**
+   * The calendar below the chip must show what the living window CURRENTLY means. An empty box under a chip that
+   * says "last 7 days" is the same "the control and the filter disagree" defect the empty-box rule already fixed,
+   * one level up — the box would be inviting a selection while a window is in force.
+   */
+  it('seeds the calendar with the resolved window when the scope is a declared one', () => {
+    const { container } = renderAt('/search?viewed_within=TODAY');
+    const input = container.querySelector('input');
+    expect(input).not.toBeNull();
+    expect(input?.value ?? '').not.toBe('');
   });
 
   it('"Any time" widens an existing window instead of clearing the scope', async () => {

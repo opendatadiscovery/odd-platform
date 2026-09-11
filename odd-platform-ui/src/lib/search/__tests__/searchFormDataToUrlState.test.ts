@@ -176,7 +176,12 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
       AssetSearchFormDataFromJSON(
         JSON.parse(
           JSON.stringify(
-            AssetSearchFormDataToJSON(searchUrlStateToAssetSearchFormData(state))
+            AssetSearchFormDataToJSON(
+              // `keepRelative` because this helper models the SAVE path, and the save is the one caller that
+              // must not resolve a living window (CTRIB-070). Using the resolving default here would make the
+              // helper quietly test a path no saved search takes.
+              searchUrlStateToAssetSearchFormData(state, { keepRelative: true })
+            )
           )
         )
       )
@@ -227,6 +232,73 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
       recentlyViewed: { viewedBefore: '2026-09-01T00:00:00.000Z' },
     };
     expect(roundTrip(before)).toEqual(before);
+  });
+
+  /**
+   * CTRIB-070 — the twelfth dimension is not a new key but a new KIND of value: a window declared as a word.
+   *
+   * The bug it closes is invisible to every assertion above, because they all round-trip an instant and an
+   * instant round-trips perfectly. What broke was that the instant was the WRONG THING TO STORE: a saved search
+   * called "Today" reapplied as the day it was saved. So the assertion here is about what is NOT in the stored
+   * spec — no bounds at all — and about the word surviving the generated mapper in both directions.
+   */
+  it('a DECLARED window survives capture → stored spec → reapply as the word, with no instant frozen into it (CTRIB-070)', () => {
+    const living: SearchUrlState = { ...full, recentlyViewed: { within: '7d' } };
+    const spec = searchUrlStateToAssetSearchFormData(living, { keepRelative: true });
+    expect(spec.recentlyViewed?.viewedWithin).toBe('LAST_7_DAYS');
+    expect(spec.recentlyViewed?.viewedAfter).toBeUndefined();
+    expect(spec.recentlyViewed?.viewedBefore).toBeUndefined();
+    expect(roundTrip(living)).toEqual(living);
+
+    // Each of the three, through the real mapper — the tokens are a contract, not a label.
+    (['today', '7d', '30d'] as const).forEach(within => {
+      expect(roundTrip({ ...full, recentlyViewed: { within } })).toEqual({
+        ...full,
+        recentlyViewed: { within },
+      });
+    });
+
+    // An unrecognised stored token loses the WORD and keeps the SCOPE — the `sort` / `my_data` degradation, and
+    // the reason the server only type-checks this field instead of re-listing the vocabulary.
+    expect(
+      assetSearchFormDataToUrlState({
+        query: 'q',
+        filters: {},
+        recentlyViewed: { viewedWithin: 'LAST_90_DAYS' },
+      } as unknown as AssetSearchFormData).recentlyViewed
+    ).toEqual({});
+  });
+
+  /**
+   * The user-visible promise, at the only layer a unit test can hold it: ONE stored spec, TWO days, TWO windows.
+   * This is RED on the shipped code in the most literal way — there `searchUrlStateToAssetSearchFormData` had no
+   * clock to be given, because the instant had already been burned in when the preset was clicked.
+   */
+  it('the SAME stored spec queries a different day tomorrow — a saved "today" means today (CTRIB-070)', () => {
+    const saved = searchUrlStateToAssetSearchFormData(
+      { ...full, recentlyViewed: { within: 'today' } },
+      { keepRelative: true }
+    );
+    const reapplied = assetSearchFormDataToUrlState(
+      AssetSearchFormDataFromJSON(
+        JSON.parse(JSON.stringify(AssetSearchFormDataToJSON(saved)))
+      )
+    );
+
+    const queryOn = (day: string) =>
+      searchUrlStateToAssetSearchFormData(reapplied, {
+        now: new Date(day),
+        timeZone: 'UTC',
+      }).recentlyViewed;
+
+    expect(queryOn('2026-09-07T08:00:00.000Z')?.viewedAfter).toEqual(
+      new Date('2026-09-07T00:00:00.000Z')
+    );
+    expect(queryOn('2026-09-08T08:00:00.000Z')?.viewedAfter).toEqual(
+      new Date('2026-09-08T00:00:00.000Z')
+    );
+    // And the token never reaches the search endpoint, which does not read it.
+    expect(queryOn('2026-09-08T08:00:00.000Z')?.viewedWithin).toBeUndefined();
   });
 
   it('a stored recency scope is read fail-closed, and an inverted window keeps the scope as "any time" — the ONE place it differs from the URL (ST-10)', () => {

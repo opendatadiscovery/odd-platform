@@ -9,6 +9,13 @@ import type {
   SearchFormData,
   SearchFormDataFilters,
 } from 'generated-sources';
+import {
+  RECENCY_PRESET_TOKENS,
+  recencyPresetFromToken,
+  resolveRecencyWindow,
+  browserTimeZone,
+  type SearchRecentlyViewedScope,
+} from './recencyWindow';
 
 /**
  * ST-1 / ADR D10 — the main search's state lives in the URL as parametrised query params, so a search is
@@ -109,8 +116,9 @@ const SEARCH_FAVORITES_VALUES: SearchFavoritesValue[] = ['yes', 'no'];
  * viewing history as a search scope, optionally windowed by when they last opened each asset.
  *
  * ONE CANONICAL REPRESENTATION PER STATE, which is what keeps the mirror's equality guard from thrashing:
- * a set bound is written as its own ISO-8601 UTC (`Z`) param, and `recently_viewed=yes` is written ONLY for the
- * bounded-by-nothing state ("any time"). Bounds imply the scope is on, so the two never appear together.
+ * a LIVING window is written as `viewed_within=<token>` and nothing else, a hand-picked one as its own
+ * ISO-8601 UTC (`Z`) bound params, and `recently_viewed=yes` ONLY for the windowless state ("any time"). Any of
+ * the three implies the scope is on, so they never appear together.
  *
  * FAIL CLOSED, mirroring the popularity rule: a bound that is not a parseable instant — or a bare `YYYY-MM-DD`,
  * which is zone-ambiguous and which the server's own date-time binding also rejects with 400 — drops the WHOLE
@@ -125,16 +133,14 @@ const SEARCH_FAVORITES_VALUES: SearchFavoritesValue[] = ['yes', 'no'];
 export const SEARCH_RECENTLY_VIEWED_PARAM = 'recently_viewed';
 export const SEARCH_VIEWED_AFTER_PARAM = 'viewed_after';
 export const SEARCH_VIEWED_BEFORE_PARAM = 'viewed_before';
-
 /**
- * A recency scope in canonical ISO-8601 UTC instants. An object with NO bounds is a real, meaningful state —
- * "every asset in my history" — which is why the field's PRESENCE is the switch and `{}` is never collapsed to
- * `undefined` (the opposite of {@link SearchPopularityRange}, where no bounds means no filter at all).
+ * The LIVING window (CTRIB-070). `viewed_within=TODAY` in a URL or a saved spec means the day it is OPENED, not
+ * the day it was written — which is the one thing a frozen instant can never say. The bounds above stay the
+ * spelling for a hand-picked range, because "3-9 September" is a statement about those days.
  */
-export interface SearchRecentlyViewedScope {
-  viewedAfter?: string;
-  viewedBefore?: string;
-}
+export const SEARCH_VIEWED_WITHIN_PARAM = 'viewed_within';
+
+export type { SearchRecentlyViewedScope };
 
 export const SEARCH_POPULARITY_MIN_PARAM = 'popularity_min';
 export const SEARCH_POPULARITY_MAX_PARAM = 'popularity_max';
@@ -340,15 +346,20 @@ export function searchStateToParams(state: SearchUrlState): string {
     params[SEARCH_POPULARITY_MIN_PARAM] = state.popularity.min;
   if (state.popularity?.max !== undefined)
     params[SEARCH_POPULARITY_MAX_PARAM] = state.popularity.max;
-  // ST-10 — each set bound, else the explicit ON token for the unbounded ("any time") state. Never both: a bound
-  // already implies the scope is on, and two spellings of one state would make the mirror's equality guard rewrite
-  // the URL forever.
+  // ST-10 — the living window if there is one, else each set bound, else the explicit ON token for the
+  // windowless ("any time") state. Never two of them: each already implies the scope is on, and two spellings of
+  // one state would make the mirror's equality guard rewrite the URL forever. `within` wins over any bounds it
+  // arrives with, so a URL written from a resolved-then-re-declared state cannot carry both.
   if (state.recentlyViewed) {
-    const { viewedAfter, viewedBefore } = state.recentlyViewed;
-    if (viewedAfter !== undefined) params[SEARCH_VIEWED_AFTER_PARAM] = viewedAfter;
-    if (viewedBefore !== undefined) params[SEARCH_VIEWED_BEFORE_PARAM] = viewedBefore;
-    if (viewedAfter === undefined && viewedBefore === undefined) {
-      params[SEARCH_RECENTLY_VIEWED_PARAM] = 'yes';
+    const { viewedAfter, viewedBefore, within } = state.recentlyViewed;
+    if (within !== undefined) {
+      params[SEARCH_VIEWED_WITHIN_PARAM] = RECENCY_PRESET_TOKENS[within];
+    } else {
+      if (viewedAfter !== undefined) params[SEARCH_VIEWED_AFTER_PARAM] = viewedAfter;
+      if (viewedBefore !== undefined) params[SEARCH_VIEWED_BEFORE_PARAM] = viewedBefore;
+      if (viewedAfter === undefined && viewedBefore === undefined) {
+        params[SEARCH_RECENTLY_VIEWED_PARAM] = 'yes';
+      }
     }
   }
   return stringify(params, QUERY_STRING_OPTIONS);
@@ -442,13 +453,21 @@ function parseInstant(raw: unknown): string | null | undefined {
  * hand-edited junk, so the whole dimension drops; a STORED spec's inverted window came from a client that did intend
  * a recency scope, so both bounds drop and the scope survives as "any time" — which is exactly what the server's
  * `SavedSearchServiceImpl.sanitiseRecentlyViewed` writes back, so both surfaces answer the same thing.
+ *
+ * A recognised `rawWithin` token SUPERSEDES the bounds and short-circuits every rule below it: a living window
+ * cannot be inverted and cannot be junk. An UNRECOGNISED token is dropped rather than fatal — the reading falls
+ * through to whatever bounds came with it, which is the `sort` / `my_data` degradation posture, so a stale or
+ * hand-edited link loses the word and keeps the search.
  */
 export function parseRecentlyViewed(
   rawOn: unknown,
   rawAfter: unknown,
   rawBefore: unknown,
+  rawWithin: unknown = undefined,
   invertedKeepsScope = false
 ): SearchRecentlyViewedScope | undefined {
+  const within = recencyPresetFromToken(rawWithin);
+  if (within) return { within };
   const after = parseInstant(rawAfter);
   const before = parseInstant(rawBefore);
   if (after === null || before === null) return undefined;
@@ -555,7 +574,8 @@ export function paramsToSearchState(search: string): SearchUrlState {
     const recentlyViewed = parseRecentlyViewed(
       parsed[SEARCH_RECENTLY_VIEWED_PARAM],
       parsed[SEARCH_VIEWED_AFTER_PARAM],
-      parsed[SEARCH_VIEWED_BEFORE_PARAM]
+      parsed[SEARCH_VIEWED_BEFORE_PARAM],
+      parsed[SEARCH_VIEWED_WITHIN_PARAM]
     );
 
     return {
@@ -613,8 +633,22 @@ export function searchUrlStateToFormData(state: SearchUrlState): SearchFormData 
  * empty kind selection is omitted (→ all kinds) so it never over-constrains the request.
  */
 export function searchUrlStateToAssetSearchFormData(
-  state: SearchUrlState
+  state: SearchUrlState,
+  opts: { keepRelative?: boolean; now?: Date; timeZone?: string } = {}
 ): AssetSearchFormData {
+  // A LIVING window is resolved HERE, at the wire boundary, and resolving is the DEFAULT: every caller that
+  // sends this object to `POST /api/search/assets` needs instants, because the endpoint narrows by instants and
+  // ignores the token (it is carried on the shared object only because a saved search stores that object whole).
+  // The single caller that must NOT resolve is the one that PERSISTS the spec — a saved search has to remember
+  // the word, or it is back to storing one specific past day. Making resolution the default and the exception
+  // explicit is deliberate: a request site added later is correct without knowing this comment exists.
+  const scope = opts.keepRelative
+    ? state.recentlyViewed
+    : resolveRecencyWindow(
+        state.recentlyViewed,
+        opts.now ?? new Date(),
+        opts.timeZone ?? browserTimeZone()
+      );
   return {
     ...searchUrlStateToFormData(state),
     assetKinds:
@@ -625,17 +659,16 @@ export function searchUrlStateToAssetSearchFormData(
     // ST-9 — the range rides the wire as the same {min, max} scores; absent stays absent (no key, so the
     // server never sees an empty object it would have to treat as "no range").
     popularity: state.popularity,
-    // ST-10 — the scope rides the wire as instants. The generated model types a date-time as `Date`, and its
-    // ToJSON calls `.toISOString()`, so hand it Date objects and NOT the canonical strings the URL state holds.
-    // An empty object is sent AS an empty object: presence is the switch, and `{}` means "any time".
-    recentlyViewed: state.recentlyViewed
+    // ST-10 — the scope rides the QUERY wire as instants (see the resolve above). The generated model types a
+    // date-time as `Date`, and its ToJSON calls `.toISOString()`, so hand it Date objects and NOT the canonical
+    // strings the URL state holds. An empty object is sent AS an empty object: presence is the switch, and `{}`
+    // means "any time".
+    recentlyViewed: scope
       ? {
-          viewedAfter: state.recentlyViewed.viewedAfter
-            ? new Date(state.recentlyViewed.viewedAfter)
-            : undefined,
-          viewedBefore: state.recentlyViewed.viewedBefore
-            ? new Date(state.recentlyViewed.viewedBefore)
-            : undefined,
+          viewedAfter: scope.viewedAfter ? new Date(scope.viewedAfter) : undefined,
+          viewedBefore: scope.viewedBefore ? new Date(scope.viewedBefore) : undefined,
+          // Only ever set on the persisted spec (`keepRelative`), and it is the whole point of that path.
+          viewedWithin: scope.within ? RECENCY_PRESET_TOKENS[scope.within] : undefined,
         }
       : undefined,
   };
@@ -728,6 +761,7 @@ export function assetSearchFormDataToUrlState(
           'yes',
           (rawScope as { viewedAfter?: unknown }).viewedAfter,
           (rawScope as { viewedBefore?: unknown }).viewedBefore,
+          (rawScope as { viewedWithin?: unknown }).viewedWithin,
           true
         )
       : undefined;
