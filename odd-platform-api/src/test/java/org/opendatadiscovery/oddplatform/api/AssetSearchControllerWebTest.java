@@ -11,12 +11,23 @@ import org.opendatadiscovery.oddplatform.api.contract.model.AssetSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.PopularityRange;
 import org.opendatadiscovery.oddplatform.api.contract.model.RecentlyViewedScope;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormDataFilters;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.HIGHLIGHT_MARK_END;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.HIGHLIGHT_MARK_START;
 
 /**
  * Web-layer contract for {@code POST /api/search/assets} (CTRIB-056 / #1838 ST-4). The
@@ -40,6 +51,14 @@ public class AssetSearchControllerWebTest extends BaseIntegrationTest {
 
     @Autowired
     private WebTestClient webTestClient;
+    @Autowired
+    private ReactiveTermRepository termRepository;
+    @Autowired
+    private ReactiveNamespaceRepository namespaceRepository;
+    @Autowired
+    private ReactiveQueryExampleRepository queryExampleRepository;
+    @Autowired
+    private ReactiveDataEntityRepository dataEntityRepository;
 
     /**
      * A browse request (empty query) must answer 200 with an {@link AssetList}, NOT 500 SYS001. RED before the
@@ -212,5 +231,132 @@ public class AssetSearchControllerWebTest extends BaseIntegrationTest {
             .jsonPath("$.buckets[20]").value(bucket ->
                 assertThat(((java.util.Map<?, ?>) bucket).get("max_views")).as("the top band is open").isNull())
             .jsonPath("$.buckets[*].count").value(counts -> assertThat((java.util.List<?>) counts).hasSize(21));
+    }
+
+    // ---- ST-12 (#1846): GET /api/search/assets/{asset_kind}/{asset_id}/highlights — the web-layer contract ----
+    // The definitive twelve: 200 for each kind with only that kind's branch populated; 404 for a missing id of
+    // each kind, a soft-deleted term and a DELETED / hollow / excluded data entity (the unified search's own
+    // visibility, indistinguishable from not-found); 400 for an unknown kind (the enum path variable fails to
+    // bind — never a 500); 200 with nothing marked for a blank query. Asserted on the RAW JSON so the wire shape a
+    // browser reads is pinned: snake_case branches, the sentinel marks, absent (not empty) sibling branches.
+
+    @Test
+    void highlightAsset_term_200_termBranchOnly_sentinelMarked() {
+        final long termId = seedTerm("webhlterm");
+
+        webTestClient.get()
+            .uri("/api/search/assets/TERM/{id}/highlights?query=webhlterm", termId)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.asset_kind").isEqualTo("TERM")
+            .jsonPath("$.term.name").isEqualTo(HIGHLIGHT_MARK_START + "webhlterm" + HIGHLIGHT_MARK_END)
+            .jsonPath("$.term.definition").doesNotExist()
+            .jsonPath("$.data_entity").doesNotExist()
+            .jsonPath("$.query_example").doesNotExist();
+    }
+
+    @Test
+    void highlightAsset_queryExample_200_queryExampleBranchOnly() {
+        final long qeId = queryExampleRepository.bulkCreate(List.of(new QueryExamplePojo()
+            .setDefinition("webhlqe totals").setQuery("select 1"))).collectList().block().get(0).getId();
+
+        webTestClient.get()
+            .uri("/api/search/assets/QUERY_EXAMPLE/{id}/highlights?query=webhlqe", qeId)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.asset_kind").isEqualTo("QUERY_EXAMPLE")
+            .jsonPath("$.query_example.definition")
+                .isEqualTo(HIGHLIGHT_MARK_START + "webhlqe" + HIGHLIGHT_MARK_END + " totals")
+            .jsonPath("$.query_example.query").doesNotExist()
+            .jsonPath("$.term").doesNotExist()
+            .jsonPath("$.data_entity").doesNotExist();
+    }
+
+    @Test
+    void highlightAsset_dataEntity_200_dataEntityBranchOnly() {
+        final long deId = seedDataEntity("webhlde", false, DataEntityStatusDto.STABLE, false);
+
+        webTestClient.get()
+            .uri("/api/search/assets/DATA_ENTITY/{id}/highlights?query=webhlde", deId)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.asset_kind").isEqualTo("DATA_ENTITY")
+            .jsonPath("$.data_entity.data_entity.external_name")
+                .isEqualTo(HIGHLIGHT_MARK_START + "webhlde" + HIGHLIGHT_MARK_END)
+            .jsonPath("$.term").doesNotExist()
+            .jsonPath("$.query_example").doesNotExist();
+    }
+
+    @Test
+    void highlightAsset_missingIdOfEachKind_404() {
+        for (final String kind : List.of("TERM", "QUERY_EXAMPLE", "DATA_ENTITY")) {
+            webTestClient.get()
+                .uri("/api/search/assets/" + kind + "/999999/highlights?query=x")
+                .exchange()
+                .expectStatus().isNotFound();
+        }
+    }
+
+    @Test
+    void highlightAsset_softDeletedTerm_404() {
+        final long termId = seedTerm("webhlgone");
+        termRepository.delete(termId).block();
+
+        webTestClient.get()
+            .uri("/api/search/assets/TERM/{id}/highlights?query=webhlgone", termId)
+            .exchange()
+            .expectStatus().isNotFound();
+    }
+
+    @Test
+    void highlightAsset_deletedHollowOrExcludedDataEntity_404() {
+        final long deleted = seedDataEntity("webhlhid1", false, DataEntityStatusDto.DELETED, false);
+        final long hollow = seedDataEntity("webhlhid2", true, DataEntityStatusDto.STABLE, false);
+        final long excluded = seedDataEntity("webhlhid3", false, DataEntityStatusDto.STABLE, true);
+
+        for (final long id : List.of(deleted, hollow, excluded)) {
+            webTestClient.get()
+                .uri("/api/search/assets/DATA_ENTITY/{id}/highlights?query=webhlhid", id)
+                .exchange()
+                .expectStatus().isNotFound();
+        }
+    }
+
+    @Test
+    void highlightAsset_unknownKind_400_never500() {
+        webTestClient.get()
+            .uri("/api/search/assets/BOGUS/1/highlights?query=x")
+            .exchange()
+            .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void highlightAsset_blankQuery_200_nothingMarked() {
+        final long termId = seedTerm("webhlblank");
+
+        webTestClient.get()
+            .uri("/api/search/assets/TERM/{id}/highlights", termId)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.asset_kind").isEqualTo("TERM")
+            .jsonPath("$.term.name").doesNotExist()
+            .jsonPath("$.term.definition").doesNotExist();
+    }
+
+    private long seedTerm(final String name) {
+        final NamespacePojo ns = namespaceRepository.createByName("webhl-ns-" + name).block();
+        return termRepository.create(new TermPojo().setName(name).setDefinition("a definition")
+            .setNamespaceId(ns.getId())).block().getId();
+    }
+
+    private long seedDataEntity(final String name, final boolean hollow, final DataEntityStatusDto status,
+                                final boolean excluded) {
+        return dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()
+            .setOddrn("//webhl/de/" + name).setExternalName(name).setEntityClassIds(new Integer[] {1}).setTypeId(1)
+            .setHollow(hollow).setStatus(status.getId()).setExcludeFromSearch(excluded))).blockLast().getId();
     }
 }
