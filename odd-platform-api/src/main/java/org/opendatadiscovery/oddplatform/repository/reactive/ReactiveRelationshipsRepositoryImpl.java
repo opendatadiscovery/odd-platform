@@ -242,10 +242,15 @@ public class ReactiveRelationshipsRepositoryImpl
             return null;
         }
 
+        // toMap with no merge function throws on a duplicate key rather than
+        // choosing one -- and a column two sources describe differently is exactly
+        // that: two dataset_field rows sharing an ODDRN. Keep the higher id, the
+        // more recently ingested definition, matching what the Structure tab shows.
         final Map<String, DatasetFieldPojo> datasetFieldMap =
             jooqRecordHelper.extractAggRelation(record, AGG_ERD_DATASET_FIELDS, DatasetFieldPojo.class)
                 .stream()
-                .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()));
+                .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity(),
+                    (a, b) -> a.getId() > b.getId() ? a : b));
 
         final List<Pair<
             Pair<String, DatasetFieldPojo>,
