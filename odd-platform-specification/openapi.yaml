@@ -1031,6 +1031,67 @@ paths:
       tags:
         - asset-search
 
+  /api/search/assets/{asset_kind}/{asset_id}/highlights:
+    get:
+      summary: Why one asset of a cross-kind search matched
+      description: >-
+        The per-kind "why it matched" behind the (?) badge of a search result row (ST-12 / #1846, ADR
+        unified-asset-search D6). For the asset addressed by the polymorphic (asset_kind, asset_id) pair and the
+        SAME query string the client sent to POST /api/search/assets, returns the fields of that asset the query
+        hit, with the matched words marked. Exactly one per-kind branch is populated, selected by asset_kind.
+        A Data Entity is explained over the same document the legacy
+        /api/search/{search_id}/data_entities/{data_entity_id}/highlights uses (names, descriptions, data source,
+        namespace, tags, owners, metadata, dataset structure); a Term over its name, definition, namespace, tags
+        and owners; a Query Example over its definition, its query text and the names of its linked data entities
+        — for every kind exactly the fields that kind is indexed on, so every way a row can match has a section.
+        Stateless: the query travels as a parameter, never a search session, so the explanation of a bookmarked
+        or shared /search?q= link never expires. On demand: a client calls it for one row when the user asks
+        (hover / focus), never for a page — the page request carries no highlight work.
+
+        THE MARKER CONTRACT. Every string value is the asset's VERBATIM text, never HTML, and a matched span is
+        delimited by the private-use code points U+E000 (start) and U+E001 (end). A client that renders HTML must
+        escape the text and map the delimiters itself; a client that renders text nodes splits on them. This is
+        deliberate and differs from the legacy endpoint above, whose strings mark matches with <b>/</b>: PostgreSQL
+        documents ts_headline output as not safe for direct inclusion in a web page, and catalog text is
+        user-authored (a description can carry markup, a query can carry `a<b`). The query string is compiled by
+        the same injection-safe sink the search itself uses, so an operator query (a quoted phrase, a -excluded
+        word, `or`) marks exactly what matched and a metacharacter payload never errors. Each field is bounded to
+        its first 16384 characters before highlighting; a match beyond that bound is not marked.
+
+        A missing asset, and one the search itself would not list — a soft-deleted term or query example, a
+        data entity that is hollow, DELETED or excluded from search — answers 404, indistinguishably. An unknown
+        asset_kind answers 400. A blank query answers 200 with no field marked.
+      operationId: highlightAsset
+      parameters:
+        - name: asset_kind
+          in: path
+          schema:
+            $ref: './components.yaml/#/components/schemas/AssetKind'
+          required: true
+        - name: asset_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+          description: The free-text query the result page was searched with — the same value POST /api/search/assets received.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AssetSearchHighlight'
+        '404':
+          description: No such asset, or the asset is not visible to the search
+      tags:
+        - asset-search
+
   /api/search/{search_id}:
     get:
       summary: Get search facets by search ID

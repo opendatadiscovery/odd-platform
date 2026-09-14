@@ -84,6 +84,8 @@ import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQue
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.DATA_ENTITY_CTE_NAME;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.HAS_ALERTS_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.HIGHLIGHT_MARK_END;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.HIGHLIGHT_MARK_START;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 
 @Repository
@@ -834,8 +836,15 @@ public class ReactiveDataEntityRepositoryImpl
         // The text-search config is left implicit on BOTH sides (it was hardcoded 'english' here while the
         // tsquery and the indexed vectors - concatVectorFields' to_tsvector(...) - all use the database default),
         // so highlighting and matching cannot diverge on a deployment that sets a different default.
+        // The match marks are FTSConstants' two private-use code points (U+E000 / U+E001), not <b>/</b>
+        // (ST-12 / #1846): Postgres documents ts_headline output as unsafe for direct inclusion in a web page, and
+        // catalog text is user-authored - with sentinels every field travels verbatim and a client renders it as
+        // TEXT, so no description or query can ever become markup. The legacy session endpoint maps the sentinels
+        // back to <b> after parsing, so its wire output is unchanged. The sentinels are literal in the options
+        // string (they are constants, never user input); verified on postgres:13.2-alpine.
         final var select = DSL.select(DSL.field(
-            "ts_headline({0}, {1}, 'HighlightAll=true')",
+            "ts_headline({0}, {1}, 'HighlightAll=true, StartSel=\"" + HIGHLIGHT_MARK_START
+                + "\", StopSel=\"" + HIGHLIGHT_MARK_END + "\"')",
             String.class, DSL.val(text), jooqFTSHelper.tsQueryExpression(query)));
         return jooqReactiveOperations.mono(select)
             .map(Record1::value1);

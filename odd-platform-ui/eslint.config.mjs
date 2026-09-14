@@ -211,6 +211,8 @@ export default tseslint.config(
               'postMessage', 'getElementById', 'dispatch', 'commit', 'includes', 'indexOf',
               'endsWith', 'startsWith',
               'stringFormatted', 'getHighlights', 'getListedHighlights',
+              // SearchHighlights (ST-12): section titles are looked up by their DTO property key
+              'getTitle',
             ],
           },
           // Allowlist: validate JSX text nodes + ONLY these user-facing text attributes.

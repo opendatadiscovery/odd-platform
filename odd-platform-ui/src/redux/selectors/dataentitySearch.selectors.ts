@@ -15,10 +15,7 @@ import type {
   SearchFacetStateById,
   SearchFilterStateSynced,
 } from 'redux/interfaces';
-import type {
-  DataEntityClassNameEnum,
-  DataEntitySearchHighlight,
-} from 'generated-sources';
+import type { DataEntityClassNameEnum } from 'generated-sources';
 import {
   createErrorSelector,
   createStatusesSelector,
@@ -52,10 +49,6 @@ export const getSearchResultsFetchStatuses = createStatusesSelector(
 
 export const getSearchSuggestionsFetchingStatuses = createStatusesSelector(
   actions.fetchDataEntitySearchSuggestionsActionType
-);
-
-export const getDataEntitySearchHighlightsFetchingStatuses = createStatusesSelector(
-  actions.fetchDataEntitySearchHighlightsActionType
 );
 
 export const getSearchResultsError = createErrorSelector(
@@ -166,13 +159,6 @@ export const getSearchSuggestions = createSelector(
   searchState,
   search => search.suggestions || emptyArr
 );
-
-export const getDataEntitySearchHighlights = (dataEntityId: number) =>
-  createSelector(
-    searchState,
-    (search): DataEntitySearchHighlight | undefined =>
-      search.dataEntitySearchHighlightById[dataEntityId]
-  );
 
 /**
  * ST-1b / ADR D10 — project the current search slice onto the shareable URL state (the selected facet ids per

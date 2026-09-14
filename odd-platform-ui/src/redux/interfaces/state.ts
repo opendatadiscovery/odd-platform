@@ -8,7 +8,6 @@ import type {
   DataEntityClass,
   DataEntityRef,
   DataEntityRun,
-  DataEntitySearchHighlight,
   DataEntityType,
   DataQualityTest,
   DataSetSLAReport,
@@ -179,7 +178,6 @@ export interface DataEntitySearchState {
   results: { items: DataEntity[]; pageInfo: CurrentPageInfo };
   suggestions: DataEntityRef[];
   facetState: SearchFacetsByName;
-  dataEntitySearchHighlightById: Record<number, DataEntitySearchHighlight>;
 }
 
 export interface AlertsState {

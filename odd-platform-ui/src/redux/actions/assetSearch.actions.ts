@@ -6,3 +6,8 @@ export const searchAssetsActionType = createActionType(
   assetSearchActionTypePrefix,
   'searchAssets'
 );
+
+export const fetchAssetSearchHighlightActionType = createActionType(
+  assetSearchActionTypePrefix,
+  'fetchAssetSearchHighlight'
+);

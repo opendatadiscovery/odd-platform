@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.HIGHLIGHT_MARK_END;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.HIGHLIGHT_MARK_START;
 
 /**
  * BEHAVIORAL Testcontainers test for the search-highlight SQL-injection fix in
@@ -27,11 +29,22 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@code JooqFTSHelper.tsQueryExpression} into the same tsquery the match used, out of Postgres constructors
  * that cannot raise, each carrying the user's text as its own bind — so it never reaches SQL as literal either.
  *
+ * <p>The MARK the sink puts around a matched span is {@code FTSConstants.HIGHLIGHT_MARK_START / _END} — two
+ * private-use code points, not {@code <b>}/{@code </b>} — since ST-12 (#1846): PostgreSQL documents ts_headline
+ * output as unsafe for direct inclusion in a web page and catalog text is user-authored, so the highlight now
+ * travels as verbatim text a client renders as text; the legacy session endpoint maps the marks back to
+ * {@code <b>} after parsing. The expected values below read the marks from those constants (the contract), so
+ * this class still discriminates the dialect: on a build that emits {@code <b>} every marked case is RED.
+ *
  * @validates F-017
  * @regresses GHSA-rjp9-9vgm-q94c (PLT-109)
  */
 @DisplayName("getHighlightedResult binds text + query as data, not SQL (GHSA-rjp9-9vgm-q94c)")
 class ReactiveDataEntityHighlightInjectionTest extends BaseIntegrationTest {
+
+    private static String mark(final String word) {
+        return HIGHLIGHT_MARK_START + word + HIGHLIGHT_MARK_END;
+    }
 
     @Autowired
     private ReactiveDataEntityRepository dataEntityRepository;
@@ -41,7 +54,7 @@ class ReactiveDataEntityHighlightInjectionTest extends BaseIntegrationTest {
     void getHighlightedResult_benignQuery_highlightsMatches() {
         dataEntityRepository.getHighlightedResult("the orders table", "orders")
             .as(StepVerifier::create)
-            .assertNext(highlighted -> assertThat(highlighted).isEqualTo("the <b>orders</b> table"))
+            .assertNext(highlighted -> assertThat(highlighted).isEqualTo("the " + mark("orders") + " table"))
             .expectComplete()
             .verify(Duration.ofSeconds(10));
     }
@@ -54,7 +67,7 @@ class ReactiveDataEntityHighlightInjectionTest extends BaseIntegrationTest {
         // term is still highlighted.
         dataEntityRepository.getHighlightedResult("O'Brien orders", "orders")
             .as(StepVerifier::create)
-            .assertNext(highlighted -> assertThat(highlighted).isEqualTo("O'Brien <b>orders</b>"))
+            .assertNext(highlighted -> assertThat(highlighted).isEqualTo("O'Brien " + mark("orders")))
             .expectComplete()
             .verify(Duration.ofSeconds(10));
     }
@@ -93,7 +106,8 @@ class ReactiveDataEntityHighlightInjectionTest extends BaseIntegrationTest {
     void getHighlightedResult_quotedPhrase_highlightsThroughTheSharedExpression() {
         dataEntityRepository.getHighlightedResult("customer orders daily", "\"customer orders\"")
             .as(StepVerifier::create)
-            .assertNext(highlighted -> assertThat(highlighted).isEqualTo("<b>customer</b> <b>orders</b> daily"))
+            .assertNext(highlighted ->
+                assertThat(highlighted).isEqualTo(mark("customer") + " " + mark("orders") + " daily"))
             .expectComplete()
             .verify(Duration.ofSeconds(10));
     }
@@ -110,7 +124,7 @@ class ReactiveDataEntityHighlightInjectionTest extends BaseIntegrationTest {
         // as a valid tsquery and comes back as sane markup rather than raising.
         dataEntityRepository.getHighlightedResult("customer table", "customer -test")
             .as(StepVerifier::create)
-            .assertNext(highlighted -> assertThat(highlighted).isEqualTo("<b>customer</b> table"))
+            .assertNext(highlighted -> assertThat(highlighted).isEqualTo(mark("customer") + " table"))
             .expectComplete()
             .verify(Duration.ofSeconds(10));
     }

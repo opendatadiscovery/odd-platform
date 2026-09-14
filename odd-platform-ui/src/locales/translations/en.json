@@ -735,5 +735,11 @@
   "Authentication is disabled, so the viewing history is shared by everyone.": "Authentication is disabled, so the viewing history is shared by everyone.",
   "Don't use disabled auth in production.": "Don't use disabled auth in production.",
   "Narrows to the assets you have opened.": "Narrows to the assets you have opened.",
-  "History is kept only as long as this deployment's retention settings allow.": "History is kept only as long as this deployment's retention settings allow."
+  "History is kept only as long as this deployment's retention settings allow.": "History is kept only as long as this deployment's retention settings allow.",
+  "External name": "External name",
+  "ODDRN": "ODDRN",
+  "Dataset structure": "Dataset structure",
+  "Why it matched": "Why it matched",
+  "No field matches to show": "No field matches to show",
+  "Couldn't load match details": "Couldn't load match details"
 }

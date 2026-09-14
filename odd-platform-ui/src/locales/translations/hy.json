@@ -735,5 +735,11 @@
   "Authentication is disabled, so the viewing history is shared by everyone.": "Նույնականացումն անջատված է, ուստի դիտումների պատմությունը ընդհանուր է բոլորի համար.",
   "Don't use disabled auth in production.": "Մի օգտագործեք անջատված նույնականացումը արտադրական միջավայրում.",
   "Narrows to the assets you have opened.": "Սահմանափակում է ձեր բացած ակտիվներով.",
-  "History is kept only as long as this deployment's retention settings allow.": "Պատմությունը պահվում է միայն այնքան, որքան թույլ են տալիս այս տեղակայման պահպանման կարգավորումները."
+  "History is kept only as long as this deployment's retention settings allow.": "Պատմությունը պահվում է միայն այնքան, որքան թույլ են տալիս այս տեղակայման պահպանման կարգավորումները.",
+  "External name": "Արտաքին անվանում",
+  "ODDRN": "ODDRN",
+  "Dataset structure": "Տվյալների հավաքածուի կառուցվածք",
+  "Why it matched": "Ինչու է համընկել",
+  "No field matches to show": "Ցուցադրելու դաշտային համընկնումներ չկան",
+  "Couldn't load match details": "Չհաջողվեց բեռնել համընկնման մանրամասները"
 }

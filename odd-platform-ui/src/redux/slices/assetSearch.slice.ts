@@ -8,6 +8,7 @@ const initialState: AssetSearchState = {
     items: [],
     pageInfo: { hasNext: true, total: 0 },
   },
+  highlightByKey: {},
 };
 
 export const assetSearchSlice = createSlice({
@@ -20,7 +21,11 @@ export const assetSearchSlice = createSlice({
       // change) — clear the list so the skeleton shows and the incoming page REPLACES cleanly. A cursor
       // request (the next page in an infinite scroll) keeps the accumulated list.
       if (!action.meta.arg.cursor) {
-        return { results: { items: [], pageInfo: { hasNext: true, total: 0 } } };
+        // ST-12: a new search invalidates every cached "why it matched" — they explain the previous query.
+        return {
+          results: { items: [], pageInfo: { hasNext: true, total: 0 } },
+          highlightByKey: {},
+        };
       }
       return state;
     });
@@ -37,6 +42,15 @@ export const assetSearchSlice = createSlice({
 
         return { ...state, results: { items: paginatedItems, pageInfo } };
       }
+    );
+
+    // ST-12 (#1846) — one row's highlight lands in the map; other rows' entries are untouched.
+    builder.addCase(
+      thunks.fetchAssetSearchHighlight.fulfilled,
+      (state, { payload }): AssetSearchState => ({
+        ...state,
+        highlightByKey: { ...state.highlightByKey, [payload.key]: payload.highlight },
+      })
     );
   },
 });

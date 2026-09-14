@@ -8,8 +8,25 @@ export const Container = styled(Grid)(({ theme }) => ({
   rowGap: theme.spacing(1),
 }));
 
-export const HighlightText = styled(Typography)(({ theme }) => ({
-  '& > b': { backgroundColor: theme.palette.warning.light, fontWeight: 400 },
+// ST-12: the marked spans are real <b> elements built by HighlightedText (never parsed HTML); `$pre` keeps a
+// query example's SQL line breaks and gives it a monospace face.
+export const HighlightText = styled(Typography)<{ $pre?: boolean }>(
+  ({ theme, $pre }) => ({
+    display: 'block',
+    '& > b': { backgroundColor: theme.palette.warning.light, fontWeight: 400 },
+    ...($pre
+      ? {
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word',
+          fontFamily: 'monospace',
+          fontSize: '12px',
+        }
+      : {}),
+  })
+);
+
+export const StateText = styled(Typography)(({ theme }) => ({
+  color: theme.palette.texts.hint,
 }));
 
 export const OwnerItem = styled('span')(({ theme }) => ({

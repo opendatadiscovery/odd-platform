@@ -735,5 +735,11 @@
   "Authentication is disabled, so the viewing history is shared by everyone.": "La autenticación está deshabilitada, por lo que el historial de visualización es compartido por todos.",
   "Don't use disabled auth in production.": "No uses autenticación deshabilitada en producción.",
   "Narrows to the assets you have opened.": "Limita a los activos que has abierto.",
-  "History is kept only as long as this deployment's retention settings allow.": "El historial se conserva solo mientras lo permitan los ajustes de retención de este despliegue."
+  "History is kept only as long as this deployment's retention settings allow.": "El historial se conserva solo mientras lo permitan los ajustes de retención de este despliegue.",
+  "External name": "Nombre externo",
+  "ODDRN": "ODDRN",
+  "Dataset structure": "Estructura del conjunto de datos",
+  "Why it matched": "Por qué coincidió",
+  "No field matches to show": "No hay coincidencias de campo que mostrar",
+  "Couldn't load match details": "No se pudieron cargar los detalles de la coincidencia"
 }

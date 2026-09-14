@@ -35,3 +35,13 @@ export const RCContainer = styled(Typography)(() => ({
   alignItems: 'center',
   justifyContent: 'center',
 }));
+
+// ST-12 (#1846) — the (?) "why it matched" badge: a keyboard-reachable, self-labelled wrapper around the glyph.
+export const WhyMatchedBadge = styled('span')(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  marginRight: theme.spacing(1),
+  borderRadius: '50%',
+  outline: 'none',
+  '&:focus-visible': { boxShadow: `0 0 0 2px ${theme.palette.border.element}` },
+}));

@@ -735,5 +735,11 @@
   "Authentication is disabled, so the viewing history is shared by everyone.": "Автентифікацію вимкнено, тому історія переглядів спільна для всіх.",
   "Don't use disabled auth in production.": "Не використовуйте вимкнену автентифікацію у продакшені.",
   "Narrows to the assets you have opened.": "Звужує до активів, які ви відкривали.",
-  "History is kept only as long as this deployment's retention settings allow.": "Історія зберігається лише стільки, скільки дозволяють налаштування зберігання цього розгортання."
+  "History is kept only as long as this deployment's retention settings allow.": "Історія зберігається лише стільки, скільки дозволяють налаштування зберігання цього розгортання.",
+  "External name": "Зовнішня назва",
+  "ODDRN": "ODDRN",
+  "Dataset structure": "Структура набору даних",
+  "Why it matched": "Чому це збіглося",
+  "No field matches to show": "Немає збігів у полях для показу",
+  "Couldn't load match details": "Не вдалося завантажити деталі збігу"
 }

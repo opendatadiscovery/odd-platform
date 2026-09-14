@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityHighlight;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntitySearchHighlight;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructureHighlight;
@@ -31,30 +30,49 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import static org.opendatadiscovery.oddplatform.service.search.SearchHighlightDocument.DELIMITER;
+import static org.opendatadiscovery.oddplatform.service.search.SearchHighlightDocument.ENTITY_FIELD_DELIMITER;
+import static org.opendatadiscovery.oddplatform.service.search.SearchHighlightDocument.GROUP_DELIMITER;
+import static org.opendatadiscovery.oddplatform.service.search.SearchHighlightDocument.RECORD_DELIMITER;
+import static org.opendatadiscovery.oddplatform.service.search.SearchHighlightDocument.UNBOUNDED;
+import static org.opendatadiscovery.oddplatform.service.search.SearchHighlightDocument.field;
+import static org.opendatadiscovery.oddplatform.service.search.SearchHighlightDocument.isMarked;
+import static org.opendatadiscovery.oddplatform.service.search.SearchHighlightDocument.stripMarks;
+
+/**
+ * Flattens a data entity's searchable fields into the one delimited document {@code ts_headline} highlights, and
+ * parses the highlighted document back per field. The wire shape — the separators, the match marks, the per-field
+ * normalisation — is defined ONCE in {@link SearchHighlightDocument} and shared with the Term and Query Example
+ * converters (ST-12 / #1846).
+ *
+ * <p>Two callers with two contracts: the legacy session endpoint calls {@link #convert(DataEntityDetailsDto,
+ * DatasetStructureDto)} (no field bound, its output byte-identical to what it always was — ADR D9); the polymorphic
+ * {@code /api/search/assets/…/highlights} calls {@link #convert(DataEntityDetailsDto, DatasetStructureDto, int)}
+ * with {@link SearchHighlightDocument#POLYMORPHIC_FIELD_CAP}.
+ */
 @Component
 @RequiredArgsConstructor
 public class DataEntityHighlightConverter {
-    private static final String HIGHLIGHT_TAG = "<b>";
-    private static final String HIGHLIGHT_TAG_END = "</b>";
-
-    private static final String DELIMITER = Character.toString((char) 31);
-    private static final String RECORD_DELIMITER = Character.toString((char) 30);
-    private static final String GROUP_DELIMITER = Character.toString((char) 29);
-    private static final String ENTITY_FIELD_DELIMITER = Character.toString((char) 28);
-
     private final TagMapper tagMapper;
     private final MetadataFieldValueMapper metadataMapper;
 
+    /** The legacy session path: no field bound (ADR D9 — that endpoint's output does not change). */
     public String convert(final DataEntityDetailsDto detailsDto,
                           final DatasetStructureDto structureDto) {
-        final String dataEntityFields = dataEntityDetailsFields(detailsDto.getDataEntity());
-        final String dataSourceFields = dataSourceFields(detailsDto.getDataSource());
-        final String namespaceFields = namespaceFields(detailsDto.getNamespace());
-        final String tagFields = tagFields(detailsDto.getTags());
-        final String ownershipFields = ownershipFields(detailsDto.getOwnership());
-        final String internalMetadataFields = internalMetadataFields(detailsDto.getMetadata());
-        final String externalMetadataFields = externalMetadataFields(detailsDto.getMetadata());
-        final String dataSetStructure = dataSetStructure(structureDto);
+        return convert(detailsDto, structureDto, UNBOUNDED);
+    }
+
+    public String convert(final DataEntityDetailsDto detailsDto,
+                          final DatasetStructureDto structureDto,
+                          final int fieldCap) {
+        final String dataEntityFields = dataEntityDetailsFields(detailsDto.getDataEntity(), fieldCap);
+        final String dataSourceFields = dataSourceFields(detailsDto.getDataSource(), fieldCap);
+        final String namespaceFields = namespaceFields(detailsDto.getNamespace(), fieldCap);
+        final String tagFields = tagFields(detailsDto.getTags(), fieldCap);
+        final String ownershipFields = ownershipFields(detailsDto.getOwnership(), fieldCap);
+        final String internalMetadataFields = internalMetadataFields(detailsDto.getMetadata(), fieldCap);
+        final String externalMetadataFields = externalMetadataFields(detailsDto.getMetadata(), fieldCap);
+        final String dataSetStructure = dataSetStructure(structureDto, fieldCap);
         return Stream.of(dataEntityFields, dataSourceFields, namespaceFields, tagFields, ownershipFields,
                 internalMetadataFields, externalMetadataFields, dataSetStructure)
             .collect(Collectors.joining(ENTITY_FIELD_DELIMITER, "", ENTITY_FIELD_DELIMITER));
@@ -88,145 +106,146 @@ public class DataEntityHighlightConverter {
         return highlight;
     }
 
-    private String dataEntityDetailsFields(final DataEntityPojo pojo) {
+    private String dataEntityDetailsFields(final DataEntityPojo pojo, final int cap) {
         return String.join(RECORD_DELIMITER,
-            searchableString(pojo.getExternalName()),
-            searchableString(pojo.getInternalName()),
-            searchableString(pojo.getExternalDescription()),
-            searchableString(pojo.getInternalDescription())
+            field(pojo.getExternalName(), cap),
+            field(pojo.getInternalName(), cap),
+            field(pojo.getExternalDescription(), cap),
+            field(pojo.getInternalDescription(), cap)
         );
     }
 
-    private String dataSourceFields(final DataSourcePojo pojo) {
+    private String dataSourceFields(final DataSourcePojo pojo, final int cap) {
         if (pojo == null) {
             return "";
         }
         return String.join(RECORD_DELIMITER,
-            searchableString(pojo.getName()),
-            searchableString(pojo.getOddrn())
+            field(pojo.getName(), cap),
+            field(pojo.getOddrn(), cap)
         );
     }
 
-    private String namespaceFields(final NamespacePojo pojo) {
+    private String namespaceFields(final NamespacePojo pojo, final int cap) {
         if (pojo == null) {
             return "";
         }
-        return searchableString(pojo.getName());
+        return field(pojo.getName(), cap);
     }
 
-    private String tagFields(final Collection<TagDto> tags) {
+    private String tagFields(final Collection<TagDto> tags, final int cap) {
         if (CollectionUtils.isEmpty(tags)) {
             return "";
         }
         return tags.stream()
-            .map(t -> searchableString(t.tagPojo().getName()))
+            .map(t -> field(t.tagPojo().getName(), cap))
             .collect(Collectors.joining(DELIMITER));
     }
 
-    private String ownershipFields(final List<OwnershipDto> ownership) {
+    private String ownershipFields(final List<OwnershipDto> ownership, final int cap) {
         if (CollectionUtils.isEmpty(ownership)) {
             return "";
         }
         return ownership.stream()
             .map(o -> {
-                final String ownerName = searchableString(o.getOwner().getName());
-                final String ownerTitle = searchableString(o.getTitle().getName());
+                final String ownerName = field(o.getOwner().getName(), cap);
+                final String ownerTitle = field(o.getTitle().getName(), cap);
                 return String.join(RECORD_DELIMITER, ownerName, ownerTitle);
             })
             .collect(Collectors.joining(GROUP_DELIMITER));
     }
 
-    private String internalMetadataFields(final Collection<MetadataDto> metadata) {
-        return metadataFields(metadata, MetadataOrigin.INTERNAL);
+    private String internalMetadataFields(final Collection<MetadataDto> metadata, final int cap) {
+        return metadataFields(metadata, MetadataOrigin.INTERNAL, cap);
     }
 
-    private String externalMetadataFields(final Collection<MetadataDto> metadata) {
-        return metadataFields(metadata, MetadataOrigin.EXTERNAL);
+    private String externalMetadataFields(final Collection<MetadataDto> metadata, final int cap) {
+        return metadataFields(metadata, MetadataOrigin.EXTERNAL, cap);
     }
 
     private String metadataFields(final Collection<MetadataDto> metadata,
-                                  final MetadataOrigin origin) {
+                                  final MetadataOrigin origin,
+                                  final int cap) {
         if (CollectionUtils.isEmpty(metadata)) {
             return "";
         }
         return metadata.stream()
             .filter(m -> m.metadataField().getOrigin().equalsIgnoreCase(origin.name()))
             .map(m -> {
-                final String key = searchableString(m.metadataField().getName());
-                final String value = searchableString(m.metadataFieldValue().getValue());
+                final String key = field(m.metadataField().getName(), cap);
+                final String value = field(m.metadataFieldValue().getValue(), cap);
                 return String.join(RECORD_DELIMITER, key, value);
             })
             .collect(Collectors.joining(GROUP_DELIMITER));
     }
 
-    private String dataSetStructure(final DatasetStructureDto structureDto) {
+    private String dataSetStructure(final DatasetStructureDto structureDto, final int cap) {
         if (CollectionUtils.isEmpty(structureDto.getDatasetFields())) {
             return "";
         }
         return structureDto.getDatasetFields().stream()
             .map(f -> {
-                final String name = searchableString(f.getDatasetFieldPojo().getName());
-                final String internalDescription = searchableString(f.getDatasetFieldPojo().getInternalDescription());
-                final String externalDescription = searchableString(f.getDatasetFieldPojo().getExternalDescription());
-                final String tags = mapDatasetFieldTags(f.getTags());
+                final String name = field(f.getDatasetFieldPojo().getName(), cap);
+                final String internalDescription = field(f.getDatasetFieldPojo().getInternalDescription(), cap);
+                final String externalDescription = field(f.getDatasetFieldPojo().getExternalDescription(), cap);
+                final String tags = mapDatasetFieldTags(f.getTags(), cap);
                 return String.join(RECORD_DELIMITER, name, internalDescription, externalDescription, tags);
             })
             .collect(Collectors.joining(GROUP_DELIMITER));
     }
 
-    private String mapDatasetFieldTags(final List<TagDto> tags) {
+    private String mapDatasetFieldTags(final List<TagDto> tags, final int cap) {
         if (CollectionUtils.isEmpty(tags)) {
             return "";
         }
         return tags.stream()
-            .map(l -> searchableString(l.tagPojo().getName()))
+            .map(l -> field(l.tagPojo().getName(), cap))
             .collect(Collectors.joining(DELIMITER));
     }
 
     private DataEntityHighlight parseDataEntitySearch(final String dataEntityHighlight) {
-        if (!isHighlighted(dataEntityHighlight)) {
+        if (!isMarked(dataEntityHighlight)) {
             return null;
         }
         final DataEntityHighlight highlight = new DataEntityHighlight();
         final String[] fields = dataEntityHighlight.split(RECORD_DELIMITER, -1);
         final String highlightedExternalName = fields[0];
-        if (isHighlighted(highlightedExternalName)) {
+        if (isMarked(highlightedExternalName)) {
             highlight.setExternalName(highlightedExternalName);
         }
         final String highlightedInternalName = fields[1];
-        if (isHighlighted(highlightedInternalName)) {
+        if (isMarked(highlightedInternalName)) {
             highlight.setInternalName(highlightedInternalName);
         }
         final String highlightedExternalDescription = fields[2];
-        if (isHighlighted(highlightedExternalDescription)) {
+        if (isMarked(highlightedExternalDescription)) {
             highlight.setExternalDescription(highlightedExternalDescription);
         }
         final String highlightedInternalDescription = fields[3];
-        if (isHighlighted(highlightedInternalDescription)) {
+        if (isMarked(highlightedInternalDescription)) {
             highlight.setInternalDescription(highlightedInternalDescription);
         }
         return highlight;
     }
 
     private DataSourceHighlight parseDataSourceSearch(final String dataSourceHighlight) {
-        if (!isHighlighted(dataSourceHighlight)) {
+        if (!isMarked(dataSourceHighlight)) {
             return null;
         }
         final DataSourceHighlight highlight = new DataSourceHighlight();
         final String[] fields = dataSourceHighlight.split(RECORD_DELIMITER, -1);
         final String highlightedName = fields[0];
-        if (isHighlighted(highlightedName)) {
+        if (isMarked(highlightedName)) {
             highlight.setName(highlightedName);
         }
         final String highlightedOddrn = fields[1];
-        if (isHighlighted(highlightedOddrn)) {
+        if (isMarked(highlightedOddrn)) {
             highlight.setOddrn(highlightedOddrn);
         }
         return highlight;
     }
 
     private NamespaceHighlight parseNamespaceSearch(final String namespaceHighlight) {
-        if (!isHighlighted(namespaceHighlight)) {
+        if (!isMarked(namespaceHighlight)) {
             return null;
         }
         final NamespaceHighlight highlight = new NamespaceHighlight();
@@ -236,16 +255,18 @@ public class DataEntityHighlightConverter {
 
     private List<Tag> parseTagSearch(final String tagHighlight,
                                      final Collection<TagDto> originalTags) {
-        if (!isHighlighted(tagHighlight)) {
+        if (!isMarked(tagHighlight)) {
             return null;
         }
         final List<Tag> tags = new ArrayList<>();
         final String[] rawTags = tagHighlight.split(DELIMITER);
         for (final String rawTag : rawTags) {
-            if (isHighlighted(rawTag)) {
-                final String name = rawTag.replace(HIGHLIGHT_TAG, "").replace(HIGHLIGHT_TAG_END, "");
+            if (isMarked(rawTag)) {
+                // Normalised-to-normalised: the parsed name went through field(), so compare against the
+                // original name normalised the same way (a name carrying a stripped code point still resolves).
+                final String name = stripMarks(rawTag);
                 final TagDto tagDto = originalTags.stream()
-                    .filter(t -> t.tagPojo().getName().equals(name))
+                    .filter(t -> field(t.tagPojo().getName(), UNBOUNDED).equals(name))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Tag not found"));
                 tags.add(tagMapper.mapToHighlightedTag(tagDto, rawTag));
@@ -255,7 +276,7 @@ public class DataEntityHighlightConverter {
     }
 
     private List<OwnershipHighlight> parseOwnershipSearch(final String ownershipHighlight) {
-        if (!isHighlighted(ownershipHighlight)) {
+        if (!isMarked(ownershipHighlight)) {
             return null;
         }
         final String[] ownerships = ownershipHighlight.split(GROUP_DELIMITER);
@@ -264,7 +285,7 @@ public class DataEntityHighlightConverter {
             final String[] fields = ownership.split(RECORD_DELIMITER);
             final String highlightedOwnerName = fields[0];
             final String highlightedOwnerTitle = fields[1];
-            if (isHighlighted(highlightedOwnerName) || isHighlighted(highlightedOwnerTitle)) {
+            if (isMarked(highlightedOwnerName) || isMarked(highlightedOwnerTitle)) {
                 final OwnershipHighlight ownershipHighlightDto = new OwnershipHighlight();
                 ownershipHighlightDto.setOwner(highlightedOwnerName);
                 ownershipHighlightDto.setTitle(highlightedOwnerTitle);
@@ -277,7 +298,7 @@ public class DataEntityHighlightConverter {
     private List<MetadataFieldValue> parseMetadata(final String metadataHighlight,
                                                    final MetadataOrigin origin,
                                                    final Collection<MetadataDto> originalMetadata) {
-        if (!isHighlighted(metadataHighlight)) {
+        if (!isMarked(metadataHighlight)) {
             return Collections.emptyList();
         }
         final List<MetadataFieldValue> result = new ArrayList<>();
@@ -286,10 +307,10 @@ public class DataEntityHighlightConverter {
             final String[] fields = metadata.split(RECORD_DELIMITER);
             final String highlightedName = fields[0];
             final String highlightedValue = fields[1];
-            if (isHighlighted(highlightedName) || isHighlighted(highlightedValue)) {
-                final String originalName = highlightedName.replace(HIGHLIGHT_TAG, "").replace(HIGHLIGHT_TAG_END, "");
+            if (isMarked(highlightedName) || isMarked(highlightedValue)) {
+                final String originalName = stripMarks(highlightedName);
                 final MetadataDto metadataDto = originalMetadata.stream()
-                    .filter(m -> m.metadataField().getName().equals(originalName)
+                    .filter(m -> field(m.metadataField().getName(), UNBOUNDED).equals(originalName)
                         && m.metadataField().getOrigin().equals(origin.name()))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Metadata not found"));
@@ -301,7 +322,7 @@ public class DataEntityHighlightConverter {
 
     private List<DataSetStructureHighlight> parseDataSetStructureSearch(final String dataSetStructureHighlight,
                                                                         final DatasetStructureDto structureDto) {
-        if (!isHighlighted(dataSetStructureHighlight)) {
+        if (!isMarked(dataSetStructureHighlight)) {
             return null;
         }
         final String[] dataSetStructures = dataSetStructureHighlight.split(GROUP_DELIMITER);
@@ -312,21 +333,20 @@ public class DataEntityHighlightConverter {
             final String highlightedIntDescription = fields[1];
             final String highlightedExtDescription = fields[2];
             final String highlightedTags = fields[3];
-            if (isHighlighted(highlightedName) || isHighlighted(highlightedIntDescription)
-                || isHighlighted(highlightedExtDescription) || isHighlighted(highlightedTags)) {
+            if (isMarked(highlightedName) || isMarked(highlightedIntDescription)
+                || isMarked(highlightedExtDescription) || isMarked(highlightedTags)) {
                 final DataSetStructureHighlight dataSetStructureHighlightDto = new DataSetStructureHighlight();
                 dataSetStructureHighlightDto.setName(highlightedName);
-                if (isHighlighted(highlightedIntDescription)) {
+                if (isMarked(highlightedIntDescription)) {
                     dataSetStructureHighlightDto.setInternalDescription(highlightedIntDescription);
                 }
-                if (isHighlighted(highlightedExtDescription)) {
+                if (isMarked(highlightedExtDescription)) {
                     dataSetStructureHighlightDto.setExternalDescription(highlightedExtDescription);
                 }
-                if (isHighlighted(highlightedTags)) {
-                    final String datasetFieldName =
-                        highlightedName.replace(HIGHLIGHT_TAG, "").replace(HIGHLIGHT_TAG_END, "");
+                if (isMarked(highlightedTags)) {
+                    final String datasetFieldName = stripMarks(highlightedName);
                     final DatasetFieldDto dataSetFieldDto = structureDto.getDatasetFields().stream()
-                        .filter(f -> f.getDatasetFieldPojo().getName().equals(datasetFieldName))
+                        .filter(f -> field(f.getDatasetFieldPojo().getName(), UNBOUNDED).equals(datasetFieldName))
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("Dataset field not found"));
                     final List<Tag> tags = parseTags(highlightedTags, dataSetFieldDto);
@@ -343,26 +363,15 @@ public class DataEntityHighlightConverter {
         final List<Tag> tags = new ArrayList<>();
         final String[] rawTags = highlightedTags.split(DELIMITER);
         for (final String rawTag : rawTags) {
-            if (isHighlighted(rawTag)) {
-                final String name = rawTag.replace(HIGHLIGHT_TAG, "").replace(HIGHLIGHT_TAG_END, "");
+            if (isMarked(rawTag)) {
+                final String name = stripMarks(rawTag);
                 final TagDto tagDto = dataSetFieldDto.getTags().stream()
-                    .filter(l -> l.tagPojo().getName().equals(name))
+                    .filter(l -> field(l.tagPojo().getName(), UNBOUNDED).equals(name))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Tag not found"));
                 tags.add(tagMapper.mapToHighlightedTag(tagDto, rawTag));
             }
         }
         return tags;
-    }
-
-    private boolean isHighlighted(final String field) {
-        return StringUtils.isNotEmpty(field) && field.contains(HIGHLIGHT_TAG) && field.contains(HIGHLIGHT_TAG_END);
-    }
-
-    private String searchableString(final String value) {
-        // No manual quote-doubling: the assembled highlight text is bound as a SQL parameter in
-        // ReactiveDataEntityRepository.getHighlightedResult, so escaping here would render the
-        // doubled quotes literally in the highlighted output.
-        return StringUtils.defaultIfEmpty(value, "");
     }
 }

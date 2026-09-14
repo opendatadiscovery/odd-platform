@@ -1,4 +1,4 @@
-import type { Asset } from 'generated-sources';
+import type { Asset, AssetSearchHighlight } from 'generated-sources';
 
 /**
  * ST-4 (#1838) / ST-5b (#1839) — the cross-kind asset search results slice. Distinct from
@@ -32,4 +32,10 @@ export interface AssetSearchState {
     items: Asset[];
     pageInfo: AssetSearchPageInfo;
   };
+  /**
+   * ST-12 (#1846) — the per-row "why it matched", keyed by `highlightKey(kind, id)` and fetched on demand when
+   * a row's (?) tooltip mounts. Cleared whenever a FIRST page replaces the list: a highlight is a function of the
+   * query, so a cached one would explain the previous search for one hover.
+   */
+  highlightByKey: Record<string, AssetSearchHighlight>;
 }
