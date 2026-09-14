@@ -741,5 +741,8 @@
   "Dataset structure": "Տվյալների հավաքածուի կառուցվածք",
   "Why it matched": "Ինչու է համընկել",
   "No field matches to show": "Ցուցադրելու դաշտային համընկնումներ չկան",
-  "Couldn't load match details": "Չհաջողվեց բեռնել համընկնման մանրամասները"
+  "Couldn't load match details": "Չհաջողվեց բեռնել համընկնման մանրամասները",
+  "Couldn't load details": "Չհաջողվեց բեռնել մանրամասները",
+  "No owners": "Օգտատերեր չկան",
+  "+{{count}} more": "+{{count}} ևս"
 }

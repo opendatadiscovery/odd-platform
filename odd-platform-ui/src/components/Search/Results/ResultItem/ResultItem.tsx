@@ -5,12 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { AssetKind, type Asset } from 'generated-sources';
 import {
   AppTooltip,
-  DataEntityDetailsPreview,
+  AssetDetailsPreview,
   EntityClassItem,
   EntityStatus,
   FavoriteStar,
   MetadataStale,
   RecentlyViewedTag,
+  TooltipBadge,
 } from 'components/shared/elements';
 import { QuestionIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
@@ -36,13 +37,16 @@ interface ResultItemProps {
 /**
  * ST-4 (#1838) — one polymorphic cross-kind result row. It switches on `asset.asset_kind` and routes on click
  * to that kind's detail page (Data Entity → /dataentities, Term → /terms, Query Example → the data-modelling
- * query-example page — all via the shared `favoriteAsset*` resolvers). The Data-Entity row keeps its rich
- * affordances that the `DataEntityRef` payload supports (staleness marker, the details preview, class chips,
- * status). The (?) "why it matched" badge is on EVERY kind with a ref whenever a text query is active (ST-12 /
- * #1846): its tooltip fetches that one row's per-kind highlight on hover / focus from the stateless
- * `GET /api/search/assets/{kind}/{id}/highlights?query=` — never on the page render. PLT-147 guard: a row whose
- * per-kind ref is null / absent renders empty cells and a no-op click — it never throws (no error boundary
- * exists in odd-platform-ui, so a throw here would white-screen /search).
+ * query-example page — all via the shared `favoriteAsset*` resolvers). The Data-Entity row keeps the affordances
+ * only its `DataEntityRef` payload supports (staleness marker, class chips, status). The two in-row helpers are on
+ * EVERY kind with a ref: the (?) "why it matched" badge whenever a text query is active (ST-12 / #1846 — its tooltip
+ * fetches that one row's per-kind highlight on hover / focus from the stateless
+ * `GET /api/search/assets/{kind}/{id}/highlights?query=`), and the (i) details preview (#1899 — a card read from the
+ * kind's own detail endpoint when it opens). Neither fetches on the page render. A Term row shows its NAME only:
+ * the definition used to sit inline next to it and crushed the name to a few characters in the shared nowrap box;
+ * it lives in the (i) card now. PLT-147 guard: a row whose per-kind ref is null / absent renders empty cells and a
+ * no-op click — it never throws (no error boundary exists in odd-platform-ui, so a throw here would white-screen
+ * /search).
  */
 const ResultItem: React.FC<ResultItemProps> = ({ asset }) => {
   const { t } = useTranslation();
@@ -63,7 +67,6 @@ const ResultItem: React.FC<ResultItemProps> = ({ asset }) => {
   const status = isDataEntity ? dataEntity?.status : undefined;
   const namespace = term?.namespace?.name; // only TermRef embeds a namespace today
   const updatedAt = term?.updatedAt;
-  const definition = asset.assetKind === AssetKind.TERM ? term?.definition : undefined;
 
   const handleOpen = React.useCallback(() => {
     if (detailsLink) navigate(detailsLink);
@@ -86,11 +89,6 @@ const ResultItem: React.FC<ResultItemProps> = ({ asset }) => {
             <Typography ml={0.5} variant='body1' noWrap title={name}>
               {name}
             </Typography>
-            {definition && (
-              <Typography ml={1} variant='subtitle2' noWrap title={definition}>
-                {definition}
-              </Typography>
-            )}
           </Box>
           <Box display='flex' flexWrap='nowrap' alignItems='center' sx={{ ml: 1 }}>
             {/* ST-12 (#1846) — the (?) "why it matched" badge, every kind, only when a text query is active (a
@@ -99,9 +97,10 @@ const ResultItem: React.FC<ResultItemProps> = ({ asset }) => {
                 the URL's q; on a legacy /search/{sessionId} link it is the session's query. `followCursor` is
                 OFF so a keyboard-opened tooltip anchors at the badge (a follow-cursor popper anchors at the last
                 mouse position); both MUI delays are set so a pointer sweep down the list never fetches (the
-                module-global 800 ms hysteresis swaps `enterDelay` for `enterNextDelay`). The badge is a focusable
-                span that names itself for assistive tech (MUI's SvgIcon is aria-hidden by design); a keyboard
-                stop, which MUI's focus listener turns into an open. */}
+                module-global 800 ms hysteresis swaps `enterDelay` for `enterNextDelay`). The badge is the shared
+                TooltipBadge: a focusable span that names itself for assistive tech (MUI's SvgIcon is aria-hidden by
+                design) — a keyboard stop, which MUI's focus listener turns into an open — whose click stays at the
+                badge instead of opening the row. */}
             {hasRef && searchQuery && (
               <AppTooltip
                 checkForOverflow={false}
@@ -110,19 +109,17 @@ const ResultItem: React.FC<ResultItemProps> = ({ asset }) => {
                 enterNextDelay={300}
                 title={<SearchHighlights asset={asset} query={searchQuery} />}
               >
-                <S.WhyMatchedBadge
-                  tabIndex={0}
-                  role='img'
-                  aria-label={t('Why it matched')}
-                  data-testid='search-result-why-matched'
+                <TooltipBadge
+                  label={t('Why it matched')}
+                  testId='search-result-why-matched'
                 >
                   <QuestionIcon />
-                </S.WhyMatchedBadge>
+                </TooltipBadge>
               </AppTooltip>
             )}
-            {isDataEntity && dataEntity && (
-              <DataEntityDetailsPreview dataEntityId={dataEntity.id} />
-            )}
+            {/* #1899 — the (i) details preview, every kind with a ref (the same gate as the star): the card is read
+                from the kind's own detail endpoint when it opens. */}
+            {hasRef && <AssetDetailsPreview assetKind={asset.assetKind} assetId={id} />}
             {hasRef && <FavoriteStar assetKind={asset.assetKind} assetId={id} />}
           </Box>
         </S.NameContainer>

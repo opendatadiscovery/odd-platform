@@ -1,4 +1,9 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { termApi } from 'lib/api';
 import type {
   PageInfo,
@@ -13,6 +18,19 @@ import type {
 import { showSuccessToast, type AppError } from 'lib/errorHandling';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchTermDetails } from 'redux/thunks';
+
+/**
+ * One term's details (`GET /api/terms/{term_id}`), keyed per term — the read behind the search row's (i) details
+ * preview (#1899). The term detail PAGE keeps reading redux (`fetchTermDetails`): its loading status is per action,
+ * not per row, and its slice splits ownership out — the wrong shape for a keyed hover cache. Mounted only while the
+ * card is open, so it needs no `enabled` gate.
+ */
+export function useTermDetails({ termId }: { termId: number }) {
+  return useQuery({
+    queryKey: ['termDetails', termId],
+    queryFn: () => termApi.getTermDetails({ termId }),
+  });
+}
 
 export function useGetTermByNamespaceAndName() {
   const queryClient = useQueryClient();

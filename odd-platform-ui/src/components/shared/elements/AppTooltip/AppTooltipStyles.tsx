@@ -34,7 +34,7 @@ const getTooltipStylesByType = (theme: Theme, type: TooltipColorTypes): CSSObjec
     borderRadius: '4px',
     backgroundColor: theme.palette.background.default,
     // Deliberately NO width cap on this branch. It is the DEFAULT type, and SearchHighlights (640px), the
-    // DataEntityDetailsPreview card (400-800px) and the relationship-key tooltip (430px) hand it elements that
+    // AssetDetailsPreview card (400-800px) and the relationship-key tooltip (430px) hand it elements that
     // carry their own width; a popper-level `maxWidth` clamps the card and lets the content paint outside it
     // (measured 2026-09-08 when a 360px cap was tried here: 280px of overflow on every search-result highlight).
     // The wrap width for plain-string help lives on `TooltipBody`, which `AppTooltip` applies to those itself.
@@ -84,4 +84,18 @@ export const TooltipBody = styled('div')(({ theme }) => ({
   borderRadius: '8px',
   borderColor: theme.palette.border.primary,
   boxShadow: theme.shadows[9],
+}));
+
+// The trigger of a tooltip BADGE — a small glyph (the search row's (?) and (i), the Directory list's (i)) whose
+// tooltip is the whole point of the control. A bare MUI SvgIcon is `aria-hidden` and not focusable, so a keyboard
+// user could never open it; this wrapper is the keyboard stop (`tabIndex=0`, `role='img'`, an `aria-label`) that
+// MUI's focus listener turns into an open, with one focus ring for every badge instead of a copy per call site
+// (the (?) badge's row-local style moved here, #1846 → #1899). The click rule lives in `TooltipBadge`.
+export const Badge = styled('span')(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  marginRight: theme.spacing(1),
+  borderRadius: '50%',
+  outline: 'none',
+  '&:focus-visible': { boxShadow: `0 0 0 2px ${theme.palette.border.element}` },
 }));
