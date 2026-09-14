@@ -199,7 +199,7 @@ describe('AssetDetailsPreview — one (i) for every kind (#1899)', () => {
     expect(within(c).getByText('ctrib072ns')).toBeInTheDocument();
     expect(within(c).getByText('ctrib072owner')).toBeInTheDocument();
     expect(within(c).getByText('ctrib072steward')).toBeInTheDocument();
-    // react-truncate-markup measures widths, which jsdom cannot; it keeps the first tag here — IT-159 case 1 sees both
+    expect(within(c).getByText('ctrib072tag')).toBeInTheDocument();
     expect(within(c).getByText('ctrib072tag2')).toBeInTheDocument();
     const counts = within(c).getByTestId('asset-details-preview-counts');
     for (const [label, value] of [
@@ -213,6 +213,23 @@ describe('AssetDetailsPreview — one (i) for every kind (#1899)', () => {
     }
     // the definition is rendered as markdown (the term page's own sink): the **bold** became an element
     expect(c.querySelector('strong')).toHaveTextContent('ctrib072alpha');
+  });
+
+  it('a Term with seven tags shows five chips and a "+2 more" line (count-capped, never width-truncated)', async () => {
+    getTermDetails.mockResolvedValue({
+      ...term,
+      tags: [1, 2, 3, 4, 5, 6, 7].map(n => ({
+        id: n,
+        name: `ctrib072tag${n}`,
+        important: false,
+      })),
+    });
+    renderBadge(AssetKind.TERM, 1);
+    const c = await openByKeyboard();
+    const tags = await within(c).findByTestId('asset-details-preview-tags');
+    expect(within(tags).getByText('ctrib072tag5')).toBeInTheDocument();
+    expect(within(tags).queryByText('ctrib072tag6')).toBeNull();
+    expect(within(tags).getByText('+2 more')).toBeInTheDocument();
   });
 
   it('a Term with no owners, no tags and zero counts renders the empty lines and zeros', async () => {

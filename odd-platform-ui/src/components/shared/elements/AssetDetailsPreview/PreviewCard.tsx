@@ -5,7 +5,6 @@ import type { Tag } from 'generated-sources';
 import useCollapse from 'lib/hooks/useCollapse';
 import AppCircularProgress from '../AppCircularProgress/AppCircularProgress';
 import NumberFormatted from '../NumberFormatted/NumberFormatted';
-import TruncatedList from '../TruncatedList/TruncatedList';
 import TagItem from '../TagItem/TagItem';
 import * as S from './AssetDetailsPreview.styles';
 
@@ -62,31 +61,6 @@ export const EmptyLine: FC<PropsWithChildren> = ({ children }) => (
   </Typography>
 );
 
-/** The tags of an item — the DE card's one-line truncated list with its "few tags more" ellipsis, or "No tags". */
-export const TagsBlock: FC<{ tags: Tag[] | undefined }> = ({ tags }) => {
-  const { t } = useTranslation();
-  if (!tags?.length) return <EmptyLine>{t('No tags')}</EmptyLine>;
-  return (
-    <TruncatedList
-      items={tags}
-      ellipsis={() => (
-        <Typography variant='body1' color='texts.hint' sx={{ ml: 1 }} component='span'>
-          {t('few tags more')}
-        </Typography>
-      )}
-    >
-      {tag => (
-        <TagItem
-          sx={{ mr: 0.5 }}
-          key={tag.id}
-          important={tag.important}
-          label={tag.name}
-        />
-      )}
-    </TruncatedList>
-  );
-};
-
 /** The overflow line of a capped list: "+N more", in the user's locale. */
 export const MoreLine: FC<{ count: number }> = ({ count }) => {
   const { t } = useTranslation();
@@ -95,6 +69,38 @@ export const MoreLine: FC<{ count: number }> = ({ count }) => {
     <Typography variant='body1' component='div' data-testid='asset-details-preview-more'>
       <S.Muted>{t('+{{count}} more', { count })}</S.Muted>
     </Typography>
+  );
+};
+
+/** The cap of every list a card shows in full: the first five, then "+N more" (the DE card's metadata rule). */
+export const LIST_CAP = 5;
+
+/**
+ * The tags of an item — the first five as chips on a wrapping row, then "+N more", or "No tags". (The DE card used a
+ * width-measured one-line truncation here; measured inside the popper before its width settled, it hid every tag but
+ * the first behind "few tags more" — a card that said "2 tags" and showed one. Capping by count needs no measurement.)
+ */
+export const TagsBlock: FC<{ tags: Tag[] | undefined }> = ({ tags }) => {
+  const { t } = useTranslation();
+  if (!tags?.length) return <EmptyLine>{t('No tags')}</EmptyLine>;
+  return (
+    <Grid
+      container
+      flexDirection='row'
+      flexWrap='wrap'
+      rowGap={0.5}
+      data-testid='asset-details-preview-tags'
+    >
+      {tags.slice(0, LIST_CAP).map(tag => (
+        <TagItem
+          sx={{ mr: 0.5 }}
+          key={tag.id}
+          important={tag.important}
+          label={tag.name}
+        />
+      ))}
+      <MoreLine count={tags.length - LIST_CAP} />
+    </Grid>
   );
 };
 

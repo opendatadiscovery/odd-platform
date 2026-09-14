@@ -10,6 +10,7 @@ import {
   ClampedBlock,
   EmptyLine,
   FailureBody,
+  LIST_CAP,
   LoadingBody,
   MoreLine,
   ready,
@@ -17,9 +18,8 @@ import {
 } from './PreviewCard';
 import { DEFINITION_MAX_HEIGHT } from './TermPreview';
 
-/** The bound of the Query block (px) and the cap of each linked list — the card's height budget (#1899). */
+/** The bound of the Query block (px) — the card's height budget (#1899); the linked lists use the shared LIST_CAP. */
 export const QUERY_MAX_HEIGHT = 200;
-export const LINKED_CAP = 5;
 
 /** The display name of a linked data entity — the row's own rule (`internalName ‖ externalName`). */
 const entityName = (entity: DataEntity) =>
@@ -55,13 +55,13 @@ const QueryExamplePreview: FC<{ id: number }> = ({ id }) => {
         <SectionHeader title={t('Linked entities')} count={entitiesTotal} />
         {entities.length ? (
           <>
-            {entities.slice(0, LINKED_CAP).map(entity => (
+            {entities.slice(0, LIST_CAP).map(entity => (
               <Typography key={entity.id} variant='body1' component='div' noWrap>
                 {entityName(entity)}
                 {entity.dataSource?.name && <S.Muted>· {entity.dataSource.name}</S.Muted>}
               </Typography>
             ))}
-            <MoreLine count={entitiesTotal - LINKED_CAP} />
+            <MoreLine count={entitiesTotal - LIST_CAP} />
           </>
         ) : (
           <EmptyLine>{t('No linked entities')}</EmptyLine>
@@ -71,12 +71,12 @@ const QueryExamplePreview: FC<{ id: number }> = ({ id }) => {
         <SectionHeader title={t('Linked terms')} count={terms.length} />
         {terms.length ? (
           <>
-            {terms.slice(0, LINKED_CAP).map(({ term }) => (
+            {terms.slice(0, LIST_CAP).map(({ term }) => (
               <Typography key={term.id} variant='body1' component='div' noWrap>
                 {term.name}
               </Typography>
             ))}
-            <MoreLine count={terms.length - LINKED_CAP} />
+            <MoreLine count={terms.length - LIST_CAP} />
           </>
         ) : (
           <EmptyLine>{t('No linked terms')}</EmptyLine>
