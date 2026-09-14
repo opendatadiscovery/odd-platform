@@ -16,10 +16,13 @@ import ResultItem from '../ResultItem';
  * is active, and on none when there is no query; it is a keyboard stop that opens the tooltip on focus. The
  * per-row fetch is proven to fire from the keyboard path (the tooltip body mounts → the thunk dispatches).
  */
-const { highlightAsset } = vi.hoisted(() => ({ highlightAsset: vi.fn() }));
+const { highlightAsset, getTermDetails } = vi.hoisted(() => ({
+  highlightAsset: vi.fn(),
+  getTermDetails: vi.fn(),
+}));
 vi.mock('lib/api', async importOriginal => {
   const actual = await importOriginal<Record<string, unknown>>();
-  return { ...actual, assetSearchApi: { highlightAsset } };
+  return { ...actual, assetSearchApi: { highlightAsset }, termApi: { getTermDetails } };
 });
 vi.mock('lib/errorHandling', async importOriginal => {
   const actual = await importOriginal<Record<string, unknown>>();
@@ -31,7 +34,13 @@ beforeAll(() => {
     lng: 'en',
     fallbackLng: 'en',
     resources: {
-      en: { translation: { 'Why it matched': 'Why it matched', Term: 'Term' } },
+      en: {
+        translation: {
+          'Why it matched': 'Why it matched',
+          'Show details': 'Show details',
+          Term: 'Term',
+        },
+      },
     },
     interpolation: { escapeValue: false },
   });
@@ -64,6 +73,7 @@ const renderRow = (asset: Asset, query: string) =>
   );
 
 const badge = () => screen.queryByTestId('search-result-why-matched');
+const preview = () => screen.queryByTestId('asset-details-preview');
 
 describe('ResultItem (?) badge (ST-12 / #1846)', () => {
   it('a Term row carries the badge when a query is active', () => {
@@ -115,5 +125,33 @@ describe('ResultItem (?) badge (ST-12 / #1846)', () => {
     } finally {
       Element.prototype.matches = nativeMatches;
     }
+  });
+});
+
+/**
+ * #1899 — the (i) details preview is on EVERY kind of row with a ref (it used to be Data-Entity-only), and a Term
+ * row shows its NAME only: the inline definition that crushed the name is gone (it lives in the card).
+ */
+describe('ResultItem (i) details preview (#1899)', () => {
+  it('a Term row carries the (i) — with or without a query', () => {
+    renderRow(term, '');
+    expect(preview()).not.toBeNull();
+    expect(preview()).toHaveAttribute('aria-label', 'Show details');
+  });
+
+  it('a Query Example row carries the (i)', () => {
+    renderRow(queryExample, 'orders');
+    expect(preview()).not.toBeNull();
+  });
+
+  it('a Term row does not print its definition inline any more — the name is the row', () => {
+    renderRow(term, 'rev');
+    expect(screen.getByText('Revenue')).toBeInTheDocument();
+    expect(screen.queryByText('def')).toBeNull();
+  });
+
+  it('no (i) on a row whose ref is absent (PLT-147 guard — the same gate as the star)', () => {
+    renderRow(nullRef, 'x');
+    expect(preview()).toBeNull();
   });
 });
