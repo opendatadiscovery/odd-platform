@@ -16,7 +16,7 @@ import AppTooltip from '../AppTooltip';
  * plain-string informational title itself. These cases hold the exact boundary of that remedy in place, because
  * the first cut of it overshot in both directions: it wrapped the two `type='dark'` string sites too (a light card
  * inside the dark chip), and it capped the popper at 360px for EVERY light tooltip, which clamped the callers whose
- * element titles carry their own width (SearchHighlights at 640px, the DataEntityDetailsPreview card at 400-800px).
+ * element titles carry their own width (SearchHighlights at 640px, the AssetDetailsPreview card at 400-800px).
  *
  * What jsdom cannot see: computed WIDTHS. It does not resolve the styled-components descendant rule on the popper,
  * so the width half of this contract — an element title keeps the width it declared, a string title wraps at the
