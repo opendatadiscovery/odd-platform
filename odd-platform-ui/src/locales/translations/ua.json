@@ -741,5 +741,8 @@
   "Dataset structure": "Структура набору даних",
   "Why it matched": "Чому це збіглося",
   "No field matches to show": "Немає збігів у полях для показу",
-  "Couldn't load match details": "Не вдалося завантажити деталі збігу"
+  "Couldn't load match details": "Не вдалося завантажити деталі збігу",
+  "Couldn't load details": "Не вдалося завантажити деталі",
+  "No owners": "Немає власників",
+  "+{{count}} more": "+{{count}} ще"
 }

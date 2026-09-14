@@ -741,5 +741,8 @@
   "Dataset structure": "Dataset structure",
   "Why it matched": "Why it matched",
   "No field matches to show": "No field matches to show",
-  "Couldn't load match details": "Couldn't load match details"
+  "Couldn't load match details": "Couldn't load match details",
+  "Couldn't load details": "Couldn't load details",
+  "No owners": "No owners",
+  "+{{count}} more": "+{{count}} more"
 }

@@ -741,5 +741,8 @@
   "Dataset structure": "Structure du jeu de données",
   "Why it matched": "Pourquoi ce résultat correspond",
   "No field matches to show": "Aucune correspondance de champ à afficher",
-  "Couldn't load match details": "Impossible de charger les détails de la correspondance"
+  "Couldn't load match details": "Impossible de charger les détails de la correspondance",
+  "Couldn't load details": "Impossible de charger les détails",
+  "No owners": "Aucun propriétaire",
+  "+{{count}} more": "+{{count}} de plus"
 }

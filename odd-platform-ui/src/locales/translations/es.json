@@ -741,5 +741,8 @@
   "Dataset structure": "Estructura del conjunto de datos",
   "Why it matched": "Por qué coincidió",
   "No field matches to show": "No hay coincidencias de campo que mostrar",
-  "Couldn't load match details": "No se pudieron cargar los detalles de la coincidencia"
+  "Couldn't load match details": "No se pudieron cargar los detalles de la coincidencia",
+  "Couldn't load details": "No se pudieron cargar los detalles",
+  "No owners": "Sin dueños",
+  "+{{count}} more": "+{{count}} más"
 }

@@ -741,5 +741,8 @@
   "Dataset structure": "数据集结构",
   "Why it matched": "匹配原因",
   "No field matches to show": "没有可显示的字段匹配",
-  "Couldn't load match details": "无法加载匹配详情"
+  "Couldn't load match details": "无法加载匹配详情",
+  "Couldn't load details": "无法加载详情",
+  "No owners": "没有所有者",
+  "+{{count}} more": "还有 {{count}} 个"
 }
