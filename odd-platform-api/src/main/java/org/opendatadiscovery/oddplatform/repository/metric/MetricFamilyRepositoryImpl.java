@@ -36,11 +36,22 @@ public class MetricFamilyRepositoryImpl implements MetricFamilyRepository {
                 insertStep = insertStep.set(rs.get(i)).newRecord();
             }
 
+            // DO UPDATE ... WHERE, not a plain DO UPDATE: the intent is "fill in a
+            // description if the row does not have one yet, never overwrite one it
+            // already does". But a WHERE clause on DO UPDATE also gates RETURNING --
+            // Postgres skips the row entirely, update and RETURNING both, whenever the
+            // condition does not hold. Ingesting the same metric family a second time
+            // (now with a non-null description already stored) hit exactly that: no
+            // row came back, the caller's Map<String, MetricFamilyPojo> ended up
+            // missing an entry it will .get() further down, and that null exploded on
+            // MetricFamilyPojo::getId with no clue this WHERE clause was the cause.
+            // COALESCE keeps the "never overwrite" behaviour, as a value rather than a
+            // condition, so DO UPDATE -- and RETURNING -- always fire.
             return jooqReactiveOperations.flux(insertStep.set(rs.get(rs.size() - 1))
                 .onConflictOnConstraint(METRIC_FAMILY_NAME_TYPE_UNIT_KEY)
                 .doUpdate()
-                .set(METRIC_FAMILY.DESCRIPTION, DSL.excluded(METRIC_FAMILY.DESCRIPTION))
-                .where(METRIC_FAMILY.DESCRIPTION.isNull())
+                .set(METRIC_FAMILY.DESCRIPTION,
+                    DSL.coalesce(METRIC_FAMILY.DESCRIPTION, DSL.excluded(METRIC_FAMILY.DESCRIPTION)))
                 .returning(METRIC_FAMILY.fields()));
         }).map(r -> r.into(MetricFamilyPojo.class));
     }
