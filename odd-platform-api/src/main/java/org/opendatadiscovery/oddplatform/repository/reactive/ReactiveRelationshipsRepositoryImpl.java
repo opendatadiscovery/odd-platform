@@ -2,8 +2,10 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -242,15 +244,19 @@ public class ReactiveRelationshipsRepositoryImpl
             return null;
         }
 
-        // toMap with no merge function throws on a duplicate key rather than
-        // choosing one -- and a column two sources describe differently is exactly
-        // that: two dataset_field rows sharing an ODDRN. Keep the higher id, the
-        // more recently ingested definition, matching what the Structure tab shows.
+        // The query above joins dataset_field on ODDRN alone, across every dataset
+        // version, and a column gets a new dataset_field row each time its
+        // definition changes -- so one ODDRN can bring back several rows, and toMap
+        // without a merge function throws on the second. Keep the highest id: that
+        // is the row the Structure tab shows. DatasetFieldServiceImpl creates a new
+        // row only when the definition differs from the one in the latest version
+        // (getLastVersionDatasetFieldsByOddrns), and reuses that row otherwise, so
+        // the latest version's row is always the newest row for its ODDRN.
         final Map<String, DatasetFieldPojo> datasetFieldMap =
             jooqRecordHelper.extractAggRelation(record, AGG_ERD_DATASET_FIELDS, DatasetFieldPojo.class)
                 .stream()
                 .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity(),
-                    (a, b) -> a.getId() > b.getId() ? a : b));
+                    BinaryOperator.maxBy(Comparator.comparing(DatasetFieldPojo::getId))));
 
         final List<Pair<
             Pair<String, DatasetFieldPojo>,
