@@ -49,6 +49,8 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 * Accumulate scattered data insights in Federated Data catalogue
 * Gain observability through E2E Data objects Lineage
+  Business Use Case: Payment Pipeline Governance & Compliance
+  In complex FinTech ecosystems, tracking data lineage is critical for regulatory audits (such as GDPR or PCI-DSS) and operational troubleshooting. For instance, if an anomaly is detected in a downstream monthly transcaction volume report, data governance teams can use ODD Platform's lineage tracking to trace the data backward through intermediate transformation models directly to the upstream payment gateway source. This drastically reduces the MTTD (mean time to detetction) for data quality issues and ensures robust survivorship compliance across distributed data assets.
 * Benefit from cutting-edge E2E microservices Lineage feature in tracking your data flow through the whole data landscape
 * Be warned and alerted by Pipeline Monitoring tools
 * Store your metadata
