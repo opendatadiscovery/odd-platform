@@ -178,6 +178,7 @@ export const LANGUAGES_MAP = {
   ua: 'Ukrainian',
   hy: 'Armenian',
   br: 'Brazilian Portuguese',
+  tr: 'Turkish',
 } as const;
 
 export const LANG_TO_COUNTRY_CODE_MAP = {
@@ -188,6 +189,7 @@ export const LANG_TO_COUNTRY_CODE_MAP = {
   ua: 'ua',
   hy: 'am',
   br: 'br',
+  tr: 'tr',
 } as const;
 
 // regexp

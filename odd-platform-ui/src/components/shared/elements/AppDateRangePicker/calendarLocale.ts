@@ -30,6 +30,7 @@ export const BCP47: Record<string, string> = {
   br: 'pt-BR',
   ch: 'zh-CN',
   ua: 'uk',
+  tr: 'tr',
 };
 
 /**
