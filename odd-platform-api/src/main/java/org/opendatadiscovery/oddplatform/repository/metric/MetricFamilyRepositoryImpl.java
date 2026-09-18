@@ -36,7 +36,7 @@ public class MetricFamilyRepositoryImpl implements MetricFamilyRepository {
                 insertStep = insertStep.set(rs.get(i)).newRecord();
             }
 
-            // DO UPDATE ... WHERE, not a plain DO UPDATE: the intent is "fill in a
+            // This used to be DO UPDATE ... WHERE description IS NULL: "fill in a
             // description if the row does not have one yet, never overwrite one it
             // already does". But a WHERE clause on DO UPDATE also gates RETURNING --
             // Postgres skips the row entirely, update and RETURNING both, whenever the
@@ -47,6 +47,12 @@ public class MetricFamilyRepositoryImpl implements MetricFamilyRepository {
             // MetricFamilyPojo::getId with no clue this WHERE clause was the cause.
             // COALESCE keeps the "never overwrite" behaviour, as a value rather than a
             // condition, so DO UPDATE -- and RETURNING -- always fire.
+            //
+            // That has a cost, taken on purpose: every re-ingest now locks the row and
+            // writes a new row version, even when nothing changed. Do not add a WHERE
+            // back to avoid it. Even WHERE description IS DISTINCT FROM
+            // excluded.description drops an unchanged row from RETURNING, which is
+            // the bug above.
             return jooqReactiveOperations.flux(insertStep.set(rs.get(rs.size() - 1))
                 .onConflictOnConstraint(METRIC_FAMILY_NAME_TYPE_UNIT_KEY)
                 .doUpdate()
