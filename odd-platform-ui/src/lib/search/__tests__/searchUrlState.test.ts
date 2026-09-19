@@ -10,6 +10,7 @@ import {
   SEARCH_SORT_OPTIONS,
   SEARCH_SORT_VALUES,
   type SearchUrlState,
+  liveSearch,
 } from '../searchUrlState';
 
 /** a full SearchUrlState from a partial (defaults: no facets, no My-data scope) */
@@ -640,5 +641,22 @@ describe('searchUrlState — the Recently-viewed ordering is coupled to the scop
     expect(SEARCH_SORT_OPTIONS.find(o => o.value === 'last_viewed')?.labelKey).toBe(
       'Recently viewed'
     );
+  });
+});
+
+describe("liveSearch — the browser's search when the router is the browser's (ST-13a / #1847)", () => {
+  it('reads the browser once the pathnames agree, the router otherwise; never a leading ?', () => {
+    window.history.replaceState({}, '', '/search?columns[]=owners&q=x');
+    try {
+      // the router lags a navigation: same pathname → the browser's search wins
+      expect(liveSearch({ pathname: '/search', search: '?q=x' })).toBe(
+        'columns[]=owners&q=x'
+      );
+      // a memory router (or a page the browser is not on): the router's own search
+      expect(liveSearch({ pathname: '/other', search: '?q=y' })).toBe('q=y');
+      expect(liveSearch({ pathname: '/other', search: '' })).toBe('');
+    } finally {
+      window.history.replaceState({}, '', '/');
+    }
   });
 });

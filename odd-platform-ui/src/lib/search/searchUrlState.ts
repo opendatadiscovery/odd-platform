@@ -506,6 +506,24 @@ export function parseRecentlyViewed(
   };
 }
 
+/**
+ * The search string the BROWSER is on, for a component that must act on the current URL rather than the
+ * router's view of it. react-router 7's BrowserRouter commits every location change inside
+ * React.startTransition; on the search page that render takes ~0.5 s (measured: a facet toggle's URL write
+ * reaches the router's location 500–700 ms later), and in that window `useLocation().search` still says the
+ * previous URL. The history object is the truth the moment `navigate` returns, so a read that follows a
+ * navigation — a picker action's target, a saved search's capture — takes the browser's search when the
+ * router is the browser's (the pathnames agree); under a memory router (tests) the router's location is all
+ * there is. Returned without the leading `?`.
+ */
+export function liveSearch(location: { pathname: string; search: string }): string {
+  const search =
+    typeof window !== 'undefined' && window.location.pathname === location.pathname
+      ? window.location.search
+      : location.search;
+  return search.replace(/^\?/, '');
+}
+
 export function paramsToSearchState(search: string): SearchUrlState {
   const { parse } = queryStringPackage;
   const empty: SearchUrlState = { query: '', facets: {} };

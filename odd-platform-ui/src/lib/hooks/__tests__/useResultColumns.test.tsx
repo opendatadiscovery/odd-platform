@@ -1,11 +1,12 @@
 import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import {
   DEFAULT_RESULT_COLUMNS,
   RESULT_COLUMNS_STORAGE_KEY,
   serializeStoredColumns,
+  type ResultColumnId,
 } from 'lib/search/resultColumns';
 import useResultColumns from '../useResultColumns';
 
@@ -27,9 +28,10 @@ const wrapper =
   );
 
 function setup(initialPath: string) {
-  return renderHook(() => ({ rc: useResultColumns(), loc: useLocation() }), {
-    wrapper: wrapper(initialPath),
-  });
+  return renderHook(
+    () => ({ rc: useResultColumns(), loc: useLocation(), navigate: useNavigate() }),
+    { wrapper: wrapper(initialPath) }
+  );
 }
 
 const stored = () => window.localStorage.getItem(RESULT_COLUMNS_STORAGE_KEY);
@@ -97,6 +99,41 @@ describe('useResultColumns', () => {
       expect(url(result)).toBe('/search?q=x');
       expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS]);
       expect(stored()).toBe(serializeStoredColumns([...DEFAULT_RESULT_COLUMNS]));
+    } finally {
+      window.history.replaceState({}, '', '/');
+    }
+  });
+
+  it('a reset made while the router still lags a previous visit survives the router catching up', () => {
+    // Measured on the stand (IT-160 case 3/4): visit 1 committed `columns[]=V1`; the router had not yet rendered
+    // it when visit 2 reset the layout. Judged against the router's plain URL the reset's pending layout read as
+    // "already the default" and was dropped; when the router then rendered V1 the header snapped back to V1 and
+    // the close committed nothing. The pending layout must be judged against the URL the browser is on.
+    const V1: ResultColumnId[] = ['type', 'status', 'namespace', 'owners', 'updated_at'];
+    const { result } = setup('/search?q=x');
+    window.history.replaceState(
+      {},
+      '',
+      '/search?columns[]=type,status,namespace,owners,updated_at&q=x'
+    );
+    try {
+      act(() => result.current.rc.reset());
+      expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS]);
+      // the router catches up with visit 1
+      act(() =>
+        result.current.navigate(
+          '/search?columns[]=type,status,namespace,owners,updated_at&q=x'
+        )
+      );
+      expect(result.current.loc.search).toBe(
+        '?columns[]=type,status,namespace,owners,updated_at&q=x'
+      );
+      expect(result.current.rc.columns, 'the reset is not undone by the router').toEqual([
+        ...DEFAULT_RESULT_COLUMNS,
+      ]);
+      expect(result.current.rc.columns).not.toEqual(V1);
+      act(() => result.current.rc.commit());
+      expect(url(result)).toBe('/search?q=x');
     } finally {
       window.history.replaceState({}, '', '/');
     }

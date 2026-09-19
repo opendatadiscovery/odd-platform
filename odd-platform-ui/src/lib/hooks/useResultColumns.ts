@@ -7,7 +7,11 @@ import {
   type ResultColumnId,
 } from 'lib/search/resultColumns';
 import { readStoredColumns, writeStoredColumns } from 'lib/search/resultColumnsStore';
-import { paramsToSearchState, searchStateToParams } from 'lib/search/searchUrlState';
+import {
+  liveSearch as liveLocationSearch,
+  paramsToSearchState,
+  searchStateToParams,
+} from 'lib/search/searchUrlState';
 
 export interface ResultColumnsState {
   /** the ACTIVE layout — the optional column ids in order (the anchors are implicit) */
@@ -74,11 +78,16 @@ export default function useResultColumns(): ResultColumnsState {
   const stored = storedRef.current ?? undefined;
   const [, bump] = React.useReducer((version: number) => version + 1, 0);
 
-  const urlState = React.useMemo(
-    () => paramsToSearchState(location.search),
-    [location.search]
-  );
-  const urlColumns = isParamRoute ? urlState.columns : undefined;
+  // The search the browser is ACTUALLY on (`liveSearch` — the router's view lags a navigation by the page's
+  // render, ~0.5 s measured) — the ONE URL this hook reads, on every render and in every action. Read from the
+  // router's view instead, a reset compared "q=…" with "q=…" and wrote nothing; and a pending layout was judged
+  // against a URL that no longer existed (the router still on the plain URL while the browser carried the
+  // previous visit's layout), cleared as "already the default", and the header snapped back to the previous
+  // layout when the router caught up. `location` stays the dependency: a router commit is what re-renders us.
+  const liveSearch = React.useCallback(() => liveLocationSearch(location), [location]);
+  // parsed on every render (a short query string) so a render that follows a navigation — the router's commit
+  // OR our own `bump` — sees the browser's current layout, never the router's lagging one
+  const urlColumns = isParamRoute ? paramsToSearchState(liveSearch()).columns : undefined;
 
   // A picker action's layout is PENDING until the URL reflects it (or, on the legacy route, until the next
   // render — the store already holds it). Reading the active layout from the URL alone let a burst of clicks
@@ -95,43 +104,29 @@ export default function useResultColumns(): ResultColumnsState {
     if (!isParamRoute || urlSaysIt) pendingRef.current = null;
   }
 
-  const columns = React.useMemo<ResultColumnId[]>(
-    () => pendingRef.current ?? urlColumns ?? stored ?? [...DEFAULT_RESULT_COLUMNS],
-    [urlColumns, stored]
-  );
+  // The active layout, identity-stable across renders that do not change it (the header and every row take it
+  // as a prop).
+  const lastColumnsRef = React.useRef<ResultColumnId[]>([...DEFAULT_RESULT_COLUMNS]);
+  const derived = pendingRef.current ?? urlColumns ?? stored ?? DEFAULT_RESULT_COLUMNS;
+  if (!sameLayout(lastColumnsRef.current, derived)) lastColumnsRef.current = [...derived];
+  const columns = lastColumnsRef.current;
   // The LATEST active layout, for the actions: two picker clicks inside one render (a fast user, a test) must
   // each start from the other's result, not from the layout the render closed over.
   const columnsRef = React.useRef(columns);
   columnsRef.current = columns;
 
-  // The search the browser is ACTUALLY on. react-router 7's BrowserRouter commits every location change inside
-  // React.startTransition, and a results page firing a dozen urgent updates a second (the per-row favorite /
-  // recently-viewed status reads) can starve that transition for seconds — measured on the stand: the address
-  // bar already read the normalised URL while every render, and every callback closed over it, still saw the
-  // previous one, so a reset compared "q=…" with "q=…" and wrote nothing. The history object is the truth the
-  // moment `navigate` returns, so the actions read it from there when the router is the browser's (the pathnames
-  // agree); under a memory router (tests) the render's location is all there is.
-  const liveSearch = React.useCallback((): string => {
-    const live =
-      typeof window !== 'undefined' && window.location.pathname === location.pathname
-        ? window.location.search
-        : location.search;
-    return live.replace(/^\?/, '');
-  }, [location.pathname, location.search]);
-
   // Rule 2 — the normalise effect. `replace` so back/forward never stops on the un-normalised URL; the equality
   // guard (`nextParams !== current`) means a URL that already says it is left alone.
   React.useEffect(() => {
-    if (!isParamRoute || urlColumns !== undefined || !stored || isDefaultLayout(stored))
-      return;
+    if (!isParamRoute || !stored || isDefaultLayout(stored)) return;
     if (pendingRef.current) return; // an action is in flight — its own navigation is the truth
     const live = paramsToSearchState(liveSearch());
-    if (live.columns !== undefined) return; // the browser already carries a layout (a transition still pending)
+    if (live.columns !== undefined) return; // the browser already carries a layout
     const nextParams = searchStateToParams({ ...live, columns: stored });
     if (nextParams !== liveSearch()) {
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`, { replace: true });
     }
-  }, [isParamRoute, urlColumns, stored, liveSearch, navigate]);
+  }, [isParamRoute, stored, liveSearch, navigate]);
 
   // Rule 3 — a picker action: the store and the table now; the URL on `commit`.
   const apply = React.useCallback((next: ResultColumnId[]) => {
