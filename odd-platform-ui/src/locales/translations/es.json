@@ -744,5 +744,18 @@
   "Couldn't load match details": "No se pudieron cargar los detalles de la coincidencia",
   "Couldn't load details": "No se pudieron cargar los detalles",
   "No owners": "Sin dueños",
-  "+{{count}} more": "+{{count}} más"
+  "+{{count}} more": "+{{count}} más",
+  "Not applicable": "No aplicable",
+  "No value": "Sin valor",
+  "No owner": "Sin propietario",
+  "Applies to": "Se aplica a",
+  "Last ingested": "Última ingesta",
+  "Common": "Comunes",
+  "Move {{column}} up": "Mover {{column}} hacia arriba",
+  "Move {{column}} down": "Mover {{column}} hacia abajo",
+  "Fixed column": "Columna fija",
+  "Result columns": "Columnas de resultados",
+  "Reset to default": "Restablecer valores predeterminados",
+  "Last update in the source system for data entities; in the platform for terms and query examples": "Última actualización en el sistema de origen para entidades de datos; en la plataforma para términos y ejemplos de consulta",
+  "The platform description, or the source description when none was written": "La descripción de la plataforma o, si no se escribió ninguna, la descripción de la fuente"
 }

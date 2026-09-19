@@ -744,5 +744,18 @@
   "Couldn't load match details": "无法加载匹配详情",
   "Couldn't load details": "无法加载详情",
   "No owners": "没有所有者",
-  "+{{count}} more": "还有 {{count}} 个"
+  "+{{count}} more": "还有 {{count}} 个",
+  "Not applicable": "不适用",
+  "No value": "无值",
+  "No owner": "无所有者",
+  "Applies to": "适用于",
+  "Last ingested": "最近摄取",
+  "Common": "通用",
+  "Move {{column}} up": "上移 {{column}}",
+  "Move {{column}} down": "下移 {{column}}",
+  "Fixed column": "固定列",
+  "Result columns": "结果列",
+  "Reset to default": "恢复默认",
+  "Last update in the source system for data entities; in the platform for terms and query examples": "数据实体为源系统中的最后更新；术语和查询示例为平台中的最后更新",
+  "The platform description, or the source description when none was written": "平台描述；若未填写，则显示源描述"
 }

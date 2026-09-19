@@ -744,5 +744,18 @@
   "Couldn't load match details": "Não foi possível carregar os detalhes da correspondência",
   "Couldn't load details": "Não foi possível carregar os detalhes",
   "No owners": "Sem proprietários",
-  "+{{count}} more": "+{{count}} mais"
+  "+{{count}} more": "+{{count}} mais",
+  "Not applicable": "Não se aplica",
+  "No value": "Sem valor",
+  "No owner": "Sem proprietário",
+  "Applies to": "Aplica-se a",
+  "Last ingested": "Última ingestão",
+  "Common": "Comuns",
+  "Move {{column}} up": "Mover {{column}} para cima",
+  "Move {{column}} down": "Mover {{column}} para baixo",
+  "Fixed column": "Coluna fixa",
+  "Result columns": "Colunas de resultados",
+  "Reset to default": "Restaurar o padrão",
+  "Last update in the source system for data entities; in the platform for terms and query examples": "Última atualização no sistema de origem para entidades de dados; na plataforma para termos e exemplos de consulta",
+  "The platform description, or the source description when none was written": "A descrição da plataforma ou, quando nenhuma foi escrita, a descrição da origem"
 }

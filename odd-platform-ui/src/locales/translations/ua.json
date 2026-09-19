@@ -744,5 +744,18 @@
   "Couldn't load match details": "Не вдалося завантажити деталі збігу",
   "Couldn't load details": "Не вдалося завантажити деталі",
   "No owners": "Немає власників",
-  "+{{count}} more": "+{{count}} ще"
+  "+{{count}} more": "+{{count}} ще",
+  "Not applicable": "Не застосовується",
+  "No value": "Немає значення",
+  "No owner": "Немає власника",
+  "Applies to": "Застосовується до",
+  "Last ingested": "Останнє надходження",
+  "Common": "Спільні",
+  "Move {{column}} up": "Перемістити {{column}} вгору",
+  "Move {{column}} down": "Перемістити {{column}} вниз",
+  "Fixed column": "Закріплений стовпець",
+  "Result columns": "Стовпці результатів",
+  "Reset to default": "Скинути до типового",
+  "Last update in the source system for data entities; in the platform for terms and query examples": "Останнє оновлення в системі-джерелі для сутностей даних; на платформі для термінів і прикладів запитів",
+  "The platform description, or the source description when none was written": "Опис на платформі або, якщо його не написано, опис із джерела"
 }
