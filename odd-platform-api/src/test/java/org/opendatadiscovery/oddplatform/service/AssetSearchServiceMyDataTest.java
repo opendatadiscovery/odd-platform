@@ -169,7 +169,8 @@ class AssetSearchServiceMyDataTest {
         when(assetSearchRepository.keysetPage(any(), any(), any(), any(), any(), any(), any(), anyInt()))
             .thenReturn(Flux.empty());
         when(assetSearchRepository.count(any(), any(), any(), any(), any(), any())).thenReturn(Mono.just(0L));
-        when(searchAssetResolver.resolve(any())).thenReturn(Mono.just(List.of()));
+        // ST-13a (#1847): the service resolves the page WITH the requested column projection (an empty set here)
+        when(searchAssetResolver.resolve(any(), any())).thenReturn(Mono.just(List.of()));
     }
 
     private void arrangeOwnerAndEmptyPage() {
