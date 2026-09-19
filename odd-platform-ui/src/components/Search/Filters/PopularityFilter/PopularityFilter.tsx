@@ -49,8 +49,11 @@ const PopularityFilter: React.FC = () => {
     [location.search]
   );
   const selected = urlState.popularity;
+  // ST-13a — the histogram counts the SEARCH, not the table: the result-column layout (`columns`, which the
+  // URL carries since #1847) is dropped from its key, so ticking a column never re-fetches the distribution
+  // (the endpoint ignores it anyway; keeping it would re-fire this request on every picker action).
   const formData = React.useMemo(
-    () => searchUrlStateToAssetSearchFormData(urlState),
+    () => searchUrlStateToAssetSearchFormData({ ...urlState, columns: undefined }),
     [urlState]
   );
   const { data, isError } = usePopularityFacet(formData);

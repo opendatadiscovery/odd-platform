@@ -47,10 +47,15 @@ export default function useResultColumns(): ResultColumnsState {
   const { searchId: legacySessionId } = useSearchRouteParams();
   const isParamRoute = !legacySessionId;
 
-  // The store is read once, then re-read after every write of ours (`storeVersion` bumps); it is never read on
-  // a URL change, which is what keeps a URL-carried layout from leaking into it.
-  const [storeVersion, setStoreVersion] = React.useState(0);
-  const stored = React.useMemo(() => readStoredColumns(), [storeVersion]);
+  // The store is read ONCE at mount and then mirrored in a ref that every write of ours updates synchronously —
+  // never re-read on a URL change (that is what keeps a URL-carried layout out of it), and never a step behind a
+  // navigation: a reset that navigated to a plain URL while the render still held the pre-reset store would let
+  // the normalise effect below write the old layout straight back (measured on the stand — the "stale store"
+  // race). A version counter re-renders the readers after a write.
+  const storedRef = React.useRef<ResultColumnId[] | undefined | null>(null);
+  if (storedRef.current === null) storedRef.current = readStoredColumns();
+  const stored = storedRef.current ?? undefined;
+  const [, bump] = React.useReducer((version: number) => version + 1, 0);
 
   const urlState = React.useMemo(
     () => paramsToSearchState(location.search),
@@ -62,6 +67,10 @@ export default function useResultColumns(): ResultColumnsState {
     () => urlColumns ?? stored ?? [...DEFAULT_RESULT_COLUMNS],
     [urlColumns, stored]
   );
+  // The LATEST active layout, for the actions: two picker clicks inside one render (a fast user, a test) must
+  // each start from the other's result, not from the layout the render closed over.
+  const columnsRef = React.useRef(columns);
+  columnsRef.current = columns;
 
   // Rule 2 — the normalise effect. `replace` so back/forward never stops on the un-normalised URL; the equality
   // guard (`nextParams !== current`) means a URL that already says it is left alone.
@@ -78,7 +87,9 @@ export default function useResultColumns(): ResultColumnsState {
   const apply = React.useCallback(
     (next: ResultColumnId[]) => {
       writeStoredColumns(next);
-      setStoreVersion(version => version + 1);
+      storedRef.current = next;
+      columnsRef.current = next;
+      bump();
       if (!isParamRoute) return;
       const nextParams = searchStateToParams({ ...urlState, columns: next });
       if (nextParams !== location.search.replace(/^\?/, '')) {
@@ -89,23 +100,26 @@ export default function useResultColumns(): ResultColumnsState {
   );
 
   const toggle = React.useCallback(
-    (id: ResultColumnId) =>
+    (id: ResultColumnId) => {
+      const current = columnsRef.current;
       apply(
-        columns.includes(id) ? columns.filter(column => column !== id) : [...columns, id]
-      ),
-    [apply, columns]
+        current.includes(id) ? current.filter(column => column !== id) : [...current, id]
+      );
+    },
+    [apply]
   );
 
   const move = React.useCallback(
     (id: ResultColumnId, direction: 'up' | 'down') => {
-      const index = columns.indexOf(id);
+      const current = columnsRef.current;
+      const index = current.indexOf(id);
       const target = direction === 'up' ? index - 1 : index + 1;
-      if (index < 0 || target < 0 || target >= columns.length) return;
-      const next = [...columns];
+      if (index < 0 || target < 0 || target >= current.length) return;
+      const next = [...current];
       [next[index], next[target]] = [next[target], next[index]];
       apply(next);
     },
-    [apply, columns]
+    [apply]
   );
 
   const reset = React.useCallback(() => apply([...DEFAULT_RESULT_COLUMNS]), [apply]);

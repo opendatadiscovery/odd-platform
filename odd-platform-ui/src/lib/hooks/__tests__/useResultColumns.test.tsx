@@ -128,6 +128,33 @@ describe('useResultColumns', () => {
     expect(stored()).toBe(serializeStoredColumns([]));
   });
 
+  it("two picker actions inside one render each start from the other's result — never from a stale layout", () => {
+    // A fast double click (or a burst of unticks) must not lose a change: the actions read the LATEST layout
+    // through a ref, not the one the render closed over. Measured on the stand before the fix: a burst of five
+    // unticks left four columns on.
+    const { result } = setup('/search?q=x');
+    act(() => {
+      result.current.rc.toggle('type');
+      result.current.rc.toggle('namespace');
+      result.current.rc.move('owners', 'down');
+    });
+    // default minus type / namespace = [owners, status, updated_at]; owners moved down = [status, owners, updated_at]
+    expect(result.current.rc.columns).toEqual(['status', 'owners', 'updated_at']);
+    expect(url(result)).toBe('/search?columns[]=status,owners,updated_at&q=x');
+    expect(stored()).toBe(serializeStoredColumns(['status', 'owners', 'updated_at']));
+  });
+
+  it('reset right after a re-order lands on the plain URL and STAYS there (the stale-store race)', () => {
+    const { result } = setup('/search?q=x');
+    act(() => result.current.rc.move('status', 'up'));
+    expect(url(result)).toBe(
+      '/search?columns[]=type,namespace,status,owners,updated_at&q=x'
+    );
+    act(() => result.current.rc.reset());
+    expect(url(result)).toBe('/search?q=x');
+    expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS]);
+  });
+
   it('the first picker action on a shared link starts from the shared layout and stores the result (rule 4)', () => {
     window.localStorage.setItem(
       RESULT_COLUMNS_STORAGE_KEY,
