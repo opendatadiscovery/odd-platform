@@ -108,8 +108,8 @@ describe('the field catalog (RESULT_COLUMNS)', () => {
       'type',
       'recently_viewed',
     ]);
-    expect(minWidthFor(['status', 'type'])).toBe(320 + 130 + 200 + 165);
-    expect(minWidthFor([])).toBe(320 + 165);
+    expect(minWidthFor(['status', 'type'])).toBe(270 + 120 + 150 + 165);
+    expect(minWidthFor([])).toBe(270 + 165);
     expect(minWidthFor([...OPTIONAL_RESULT_COLUMN_IDS])).toBeGreaterThan(
       minWidthFor([...DEFAULT_RESULT_COLUMNS])
     );
@@ -117,6 +117,13 @@ describe('the field catalog (RESULT_COLUMNS)', () => {
     expect(
       resolveResultColumns(['name', 'type'] as never).map(column => column.id)
     ).toEqual(['name', 'type', 'recently_viewed']);
+  });
+
+  it('the DEFAULT layout fits the results area of a 1440-px viewport — no scroll to see "is it fresh"', () => {
+    // 1440 px minus the 216-px filter sidebar and the page gutters = 1184 px beside the filters (measured on the
+    // stand). The shipped fixed table hid its whole Updated column under the pinned Recently-viewed one at that
+    // width; a default whose freshness column needs a horizontal scroll is not a default.
+    expect(minWidthFor([...DEFAULT_RESULT_COLUMNS])).toBeLessThanOrEqual(1184);
   });
 
   it('columnApplies: by kind, and for a class-specific column by the data entity classes', () => {

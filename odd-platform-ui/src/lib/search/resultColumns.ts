@@ -92,7 +92,12 @@ export interface ResultColumn {
    * `batched` = ONE extra batched query per page, fired only while the column is on
    */
   cost: 'ref' | 'free' | 'batched';
-  /** the px the column needs; the table's minimum width is their sum (R9) */
+  /**
+   * the px the column needs; the table's minimum width is their sum (R9). The DEFAULT layout's sum must fit the
+   * results area of a 1440-px viewport (1184 px beside the filter sidebar) — the shipped fixed table hid its whole
+   * Updated column under the pinned Recently-viewed one at that width (measured on main: x 1252 vs 1259), and a
+   * default that needs a scroll to show "is it fresh" is no default. Pinned by `resultColumns.test.ts`.
+   */
   minWidth: number;
   /** the two anchors: pinned, never in a layout list */
   fixed?: 'left' | 'right';
@@ -142,7 +147,7 @@ export const RESULT_COLUMNS: readonly ResultColumn[] = [
     nullable: false,
     sortable: true,
     cost: 'ref',
-    minWidth: 320,
+    minWidth: 270,
     fixed: 'left',
   },
   {
@@ -153,7 +158,7 @@ export const RESULT_COLUMNS: readonly ResultColumn[] = [
     nullable: false,
     sortable: false,
     cost: 'ref',
-    minWidth: 200,
+    minWidth: 150,
     read: asset => ({
       kind: 'type',
       assetKind: asset.assetKind,
@@ -171,7 +176,7 @@ export const RESULT_COLUMNS: readonly ResultColumn[] = [
     nullable: true,
     sortable: false,
     cost: 'free',
-    minWidth: 160,
+    minWidth: 140,
     read: asset => text(asset.fields?.namespace?.name),
   },
   {
@@ -182,7 +187,7 @@ export const RESULT_COLUMNS: readonly ResultColumn[] = [
     nullable: true,
     sortable: false,
     cost: 'free',
-    minWidth: 180,
+    minWidth: 150,
     read: asset =>
       asset.fields?.owners && asset.fields.owners.length > 0
         ? { kind: 'owners', owners: asset.fields.owners }
@@ -196,7 +201,7 @@ export const RESULT_COLUMNS: readonly ResultColumn[] = [
     nullable: false,
     sortable: true,
     cost: 'ref',
-    minWidth: 130,
+    minWidth: 120,
     read: asset =>
       asset.dataEntity?.status
         ? { kind: 'status', status: asset.dataEntity.status }
@@ -210,7 +215,7 @@ export const RESULT_COLUMNS: readonly ResultColumn[] = [
     nullable: true,
     sortable: true,
     cost: 'free',
-    minWidth: 140,
+    minWidth: 130,
     noteKey:
       'Last update in the source system for data entities; in the platform for terms and query examples',
     read: asset => date(asset.fields?.updatedAt, 'relative'),
@@ -223,7 +228,7 @@ export const RESULT_COLUMNS: readonly ResultColumn[] = [
     nullable: true,
     sortable: false,
     cost: 'free',
-    minWidth: 150,
+    minWidth: 130,
     read: asset => date(asset.fields?.createdAt, 'absolute'),
   },
   {
@@ -234,7 +239,7 @@ export const RESULT_COLUMNS: readonly ResultColumn[] = [
     nullable: true,
     sortable: false,
     cost: 'free',
-    minWidth: 150,
+    minWidth: 130,
     read: asset => date(asset.fields?.lastIngestedAt, 'relative'),
   },
   {

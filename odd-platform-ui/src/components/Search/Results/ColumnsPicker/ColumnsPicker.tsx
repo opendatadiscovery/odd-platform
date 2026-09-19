@@ -144,6 +144,9 @@ const ColumnsPicker: React.FC<ColumnsPickerProps> = ({
           buttonType='tertiary-m'
           text={`${t('Columns')} ${shown}/${total}`}
           startIcon={<ColumnsIcon />}
+          // the header row beside it is a full-width grid: without this the trigger is the flex item that gives
+          // way and its own label reads "Columns 9…" (measured at 1280–1920 px)
+          sx={{ flexShrink: 0 }}
           onClick={onClick}
           data-testid='search-columns-trigger'
         />
