@@ -42,13 +42,16 @@ const Filters: React.FC = () => {
   // ST-10 — `sort` is preserved with ONE exception: `last_viewed` is meaningless once the recency scope is gone
   // (the server drops the token without it), so clearing the scope must clear that ordering with it. Leaving it
   // would put a sort in the URL that the list does not have and the menu will not offer.
+  // ST-13a — the result-column layout is not a filter: clearing the filters keeps it (the #1858 class — every
+  // URL writer must carry it, or a user who clears their filters watches their columns snap back too).
   const handleClearAll = React.useCallback(() => {
     dispatch(clearDataEntitySearchFacets());
-    const { query, sort } = paramsToSearchState(location.search);
+    const { query, sort, columns } = paramsToSearchState(location.search);
     const params = searchStateToParams({
       query,
       facets: {},
       sort: sort === 'last_viewed' ? undefined : sort,
+      columns,
     });
     navigate(`${searchPath()}${params ? `?${params}` : ''}`);
   }, [dispatch, navigate, location.search]);

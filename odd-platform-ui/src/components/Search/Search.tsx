@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   paramsToSearchState,
+  searchStateKeyWithoutColumns,
   searchStateToParams,
   searchUrlStateToFormData,
 } from 'lib/search/searchUrlState';
@@ -66,7 +67,12 @@ const Search: React.FC = () => {
     () => paramsToSearchState(location.search),
     [location.search]
   );
-  const urlStateKey = React.useMemo(() => searchStateToParams(urlState), [urlState]);
+  // ST-13a — the LAYOUT is not a facet dimension: keying the session on the whole URL would re-create the
+  // /api/search session (and reload the sidebar) on every picker action. The columns-less key excludes it.
+  const urlStateKey = React.useMemo(
+    () => searchStateKeyWithoutColumns(urlState),
+    [urlState]
+  );
   const lastAppliedStateRef = React.useRef<string | null>(null);
 
   React.useEffect(() => {
@@ -119,6 +125,8 @@ const Search: React.FC = () => {
       favorites: live.favorites,
       popularity: live.popularity,
       recentlyViewed: live.recentlyViewed,
+      // ST-13a — the result-column layout (the same #1858 class: URL-only, so it MUST be merged back).
+      columns: live.columns,
     });
     if (nextParams !== location.search.replace(/^\?/, '')) {
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);
