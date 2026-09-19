@@ -6,9 +6,11 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import theme from 'theme/mui.theme';
+import en from 'locales/translations/en.json';
 import { render } from 'lib/tests/testHelpers';
 import { AssetKind, type Asset } from 'generated-sources';
 import type { RootState } from 'redux/interfaces';
+import { DEFAULT_RESULT_COLUMNS } from 'lib/search/resultColumns';
 import ResultItem from '../ResultItem';
 
 /**
@@ -35,11 +37,8 @@ beforeAll(() => {
     fallbackLng: 'en',
     resources: {
       en: {
-        translation: {
-          'Why it matched': 'Why it matched',
-          'Show details': 'Show details',
-          Term: 'Term',
-        },
+        // ST-13a: the cell tests render catalog labels + the two empty-state texts, so the real en catalog is loaded.
+        translation: en,
       },
     },
     interpolation: { escapeValue: false },
@@ -67,7 +66,7 @@ const withQuery = (query: string): Partial<RootState> =>
 const renderRow = (asset: Asset, query: string) =>
   render(
     <MuiThemeProvider theme={theme}>
-      <ResultItem asset={asset} />
+      <ResultItem asset={asset} columns={[...DEFAULT_RESULT_COLUMNS]} />
     </MuiThemeProvider>,
     { preloadedState: withQuery(query), initialEntries: ['/search?q=' + query] }
   );
@@ -153,5 +152,124 @@ describe('ResultItem (i) details preview (#1899)', () => {
   it('no (i) on a row whose ref is absent (PLT-147 guard — the same gate as the star)', () => {
     renderRow(nullRef, 'x');
     expect(preview()).toBeNull();
+  });
+});
+
+/**
+ * ST-13a (#1847) — the row is rendered FROM THE LAYOUT, and every optional cell has exactly one of three states:
+ * the value, "Not applicable" (the row's kind / class does not carry the column) or "No value" (it does, but
+ * nothing is set) — each empty state an em dash with visually-hidden text (CTRIB-073 R4).
+ */
+describe('ResultItem cells (ST-13a / #1847)', () => {
+  const dataset: Asset = {
+    assetKind: AssetKind.DATA_ENTITY,
+    dataEntity: {
+      id: 7,
+      externalName: 'orders',
+      status: { status: 'STABLE' as never },
+      isStale: false,
+      entityClasses: [{ id: 1, name: 'DATA_SET' as never, types: [] }],
+    },
+    fields: {
+      namespace: { id: 1, name: 'finance' },
+      owners: [
+        { id: 1, owner: { id: 1, name: 'alice' }, title: { id: 1, name: 'steward' } },
+      ],
+      rowsCount: 123456,
+      description: 'the orders table',
+      suiteUrl: undefined,
+    },
+  };
+  const group: Asset = {
+    assetKind: AssetKind.DATA_ENTITY,
+    dataEntity: {
+      id: 8,
+      externalName: 'dag',
+      status: { status: 'DRAFT' as never },
+      isStale: false,
+      entityClasses: [{ id: 8, name: 'DATA_ENTITY_GROUP' as never, types: [] }],
+    },
+    fields: { entitiesCount: 2 },
+  };
+  const termWithFields: Asset = {
+    ...term,
+    fields: { namespace: { id: 1, name: 'finance' } },
+  };
+
+  const cell = (id: string) => screen.getByTestId(`search-cell-${id}`);
+
+  it('renders the layout in order and reads each value through the catalog', () => {
+    render(
+      <MuiThemeProvider theme={theme}>
+        <ResultItem
+          asset={dataset}
+          columns={['namespace', 'owners', 'rows_count', 'description', 'status']}
+        />
+      </MuiThemeProvider>,
+      { preloadedState: withQuery(''), initialEntries: ['/search'] }
+    );
+    const cells = screen.getAllByTestId(/^search-cell-/).map(el => el.dataset.testid);
+    expect(
+      cells.filter(id => !id?.includes('not-applicable') && !id?.includes('no-value'))
+    ).toEqual([
+      'search-cell-namespace',
+      'search-cell-owners',
+      'search-cell-rows_count',
+      'search-cell-description',
+      'search-cell-status',
+    ]);
+    expect(cell('namespace')).toHaveTextContent('finance');
+    expect(cell('owners')).toHaveTextContent('alice');
+    expect(cell('rows_count')).toHaveTextContent('123');
+    expect(cell('description')).toHaveTextContent('the orders table');
+    expect(cell('status')).toHaveTextContent('STABLE');
+  });
+
+  it('a column the kind does not carry says "Not applicable"; a carried-but-unset one says "No value" / "No owner"', () => {
+    render(
+      <MuiThemeProvider theme={theme}>
+        <ResultItem
+          asset={termWithFields}
+          columns={['status', 'namespace', 'owners', 'rows_count']}
+        />
+      </MuiThemeProvider>,
+      { preloadedState: withQuery(''), initialEntries: ['/search'] }
+    );
+    expect(cell('status')).toHaveTextContent('—');
+    expect(
+      cell('status').querySelector('[data-testid="search-cell-not-applicable"]')
+    ).not.toBeNull();
+    expect(cell('status')).toHaveTextContent('Not applicable');
+    expect(cell('namespace')).toHaveTextContent('finance');
+    expect(
+      cell('owners').querySelector('[data-testid="search-cell-no-value"]')
+    ).not.toBeNull();
+    expect(cell('owners')).toHaveTextContent('No owner');
+    expect(cell('rows_count')).toHaveTextContent('Not applicable');
+  });
+
+  it('a class-specific column is "Not applicable" on a data entity of another class, and a real 0 is a value', () => {
+    render(
+      <MuiThemeProvider theme={theme}>
+        <ResultItem
+          asset={group}
+          columns={['rows_count', 'entities_count', 'suite_url']}
+        />
+      </MuiThemeProvider>,
+      { preloadedState: withQuery(''), initialEntries: ['/search'] }
+    );
+    expect(cell('rows_count')).toHaveTextContent('Not applicable');
+    expect(cell('entities_count')).toHaveTextContent('2');
+    expect(cell('suite_url')).toHaveTextContent('Not applicable');
+    const noValueDataset: Asset = { ...dataset, fields: {} };
+    render(
+      <MuiThemeProvider theme={theme}>
+        <ResultItem asset={noValueDataset} columns={['rows_count']} />
+      </MuiThemeProvider>,
+      { preloadedState: withQuery(''), initialEntries: ['/search'] }
+    );
+    expect(screen.getAllByTestId('search-cell-rows_count')[1]).toHaveTextContent(
+      'No value'
+    );
   });
 });

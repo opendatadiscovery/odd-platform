@@ -6,32 +6,36 @@ import { AssetKind, type Asset } from 'generated-sources';
 import {
   AppTooltip,
   AssetDetailsPreview,
-  EntityClassItem,
-  EntityStatus,
   FavoriteStar,
   MetadataStale,
   RecentlyViewedTag,
   TooltipBadge,
 } from 'components/shared/elements';
 import { QuestionIcon } from 'components/shared/icons';
-import { useAppDateTime } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getSearchQuery } from 'redux/selectors';
 // ST-4 (#1838) — REUSE the polymorphic-asset helpers the Favorites list already ships (`Asset` and
 // `FavoriteAsset` are the same `{ asset_kind, data_entity?, term?, query_example? }` shape), so id / name /
 // detail-link / kind-label resolution stays single-sourced instead of duplicated (Gate 1).
 import {
-  assetKindSingularLabel,
   favoriteAssetId as assetItemId,
   favoriteAssetLink as assetItemLink,
   favoriteAssetName as assetItemName,
 } from 'components/Favorites/lib';
-import { ASSET_RESULT_COLS as COL, SearchCol } from '../Results.styles';
+import {
+  minWidthFor,
+  resolveResultColumns,
+  type ResultColumnId,
+} from 'lib/search/resultColumns';
+import { SearchCol } from '../Results.styles';
 import * as S from './ResultItemStyles';
 import SearchHighlights from './SearchHighlights/SearchHighlights';
+import ResultCell from './ResultCell';
 
 interface ResultItemProps {
   asset: Asset;
+  /** the active layout (the optional column ids, in order) — owned by Results.tsx */
+  columns: ResultColumnId[];
 }
 
 /**
@@ -47,11 +51,15 @@ interface ResultItemProps {
  * it lives in the (i) card now. PLT-147 guard: a row whose per-kind ref is null / absent renders empty cells and a
  * no-op click — it never throws (no error boundary exists in odd-platform-ui, so a throw here would white-screen
  * /search).
+ *
+ * ST-13a (#1847) — the row is rendered FROM THE LAYOUT: the Name anchor (this component's own cell, with its
+ * four affordances), then one `ResultCell` per optional column in the user's order (the catalog's `read` decides
+ * the value, the cell decides its look and its two empty states), then the Recently-viewed anchor. The row's
+ * floor is the layout's width, exactly as the header's.
  */
-const ResultItem: React.FC<ResultItemProps> = ({ asset }) => {
+const ResultItem: React.FC<ResultItemProps> = ({ asset, columns }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { formatDistanceToNowStrict } = useAppDateTime();
   const searchQuery = useAppSelector(getSearchQuery);
 
   const id = assetItemId(asset);
@@ -60,23 +68,28 @@ const ResultItem: React.FC<ResultItemProps> = ({ asset }) => {
   const hasRef = id > 0; // PLT-147: a null-details ref → no id → no star / recency / routable link
 
   const isDataEntity = asset.assetKind === AssetKind.DATA_ENTITY;
-  const { dataEntity, term } = asset;
+  const { dataEntity } = asset;
 
-  // Per-kind cell projections — each renders only where its ref carries the value, empty otherwise.
-  const entityClasses = isDataEntity ? dataEntity?.entityClasses : undefined;
-  const status = isDataEntity ? dataEntity?.status : undefined;
-  const namespace = term?.namespace?.name; // only TermRef embeds a namespace today
-  const updatedAt = term?.updatedAt;
+  const rendered = React.useMemo(() => resolveResultColumns(columns), [columns]);
+  const minWidth = React.useMemo(() => minWidthFor(columns), [columns]);
+  const nameColumn = rendered[0];
+  const recencyColumn = rendered[rendered.length - 1];
+  const optional = rendered.slice(1, -1);
 
   const handleOpen = React.useCallback(() => {
     if (detailsLink) navigate(detailsLink);
   }, [detailsLink, navigate]);
 
   return (
-    <S.Container data-testid='search-result-item' container onClick={handleOpen}>
+    <S.Container
+      data-testid='search-result-item'
+      container
+      onClick={handleOpen}
+      $minWidth={minWidth}
+    >
       <SearchCol
-        lg={COL.nm}
-        md={COL.nm}
+        $width={nameColumn.minWidth}
+        $grow
         item
         container
         justifyContent='space-between'
@@ -125,48 +138,21 @@ const ResultItem: React.FC<ResultItemProps> = ({ asset }) => {
         </S.NameContainer>
       </SearchCol>
 
-      <SearchCol item lg={COL.ty} md={COL.ty} container alignItems='center' wrap='nowrap'>
-        <Typography
-          variant='body1'
-          noWrap
-          title={t(assetKindSingularLabel[asset.assetKind])}
+      {optional.map(column => (
+        <SearchCol
+          key={column.id}
+          item
+          container
+          alignItems='center'
+          wrap='nowrap'
+          $width={column.minWidth}
+          data-testid={`search-cell-${column.id}`}
         >
-          {t(assetKindSingularLabel[asset.assetKind])}
-        </Typography>
-        {entityClasses?.map(entityClass => (
-          <EntityClassItem
-            sx={{ ml: 0.5 }}
-            key={entityClass.id}
-            entityClassName={entityClass.name}
-          />
-        ))}
-      </SearchCol>
+          <ResultCell column={column} asset={asset} />
+        </SearchCol>
+      ))}
 
-      <SearchCol item lg={COL.nd} md={COL.nd}>
-        {namespace ? (
-          <Typography variant='body1' noWrap title={namespace}>
-            {namespace}
-          </Typography>
-        ) : null}
-      </SearchCol>
-
-      <SearchCol item lg={COL.st} md={COL.st}>
-        {status ? <EntityStatus entityStatus={status} /> : null}
-      </SearchCol>
-
-      <SearchCol item lg={COL.up} md={COL.up}>
-        {updatedAt ? (
-          <Typography
-            variant='body1'
-            noWrap
-            title={formatDistanceToNowStrict(updatedAt, { addSuffix: true })}
-          >
-            {formatDistanceToNowStrict(updatedAt, { addSuffix: true })}
-          </Typography>
-        ) : null}
-      </SearchCol>
-
-      <SearchCol item lg={COL.rv} md={COL.rv} $stickyRight>
+      <SearchCol item $width={recencyColumn.minWidth} $stickyRight>
         {hasRef && <RecentlyViewedTag assetKind={asset.assetKind} assetId={id} />}
       </SearchCol>
     </S.Container>
