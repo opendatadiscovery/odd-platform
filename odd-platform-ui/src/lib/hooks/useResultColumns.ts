@@ -41,6 +41,11 @@ export interface ResultColumnsState {
  *     the picker alone, so the first picker action on a shared view starts from the layout on screen and stores
  *     the result — "until you change a column yourself".
  */
+const sameLayout = (
+  a: readonly ResultColumnId[],
+  b: readonly ResultColumnId[]
+): boolean => a.length === b.length && a.every((id, index) => id === b[index]);
+
 export default function useResultColumns(): ResultColumnsState {
   const location = useLocation();
   const navigate = useNavigate();
@@ -63,22 +68,44 @@ export default function useResultColumns(): ResultColumnsState {
   );
   const urlColumns = isParamRoute ? urlState.columns : undefined;
 
+  // A picker action's layout is PENDING until the URL reflects it (or, on the legacy route, until the next
+  // render — the store already holds it). Reading the active layout from the URL alone let a burst of clicks
+  // lose changes: react-router renders one navigation behind a fast second click, and a render that recomputed
+  // the layout from a stale URL overwrote the layout the previous click had just applied (measured on the
+  // stand: six unticks left four columns on). The pending layout wins until the URL catches up.
+  const pendingRef = React.useRef<ResultColumnId[] | null>(null);
+  if (pendingRef.current) {
+    const pending = pendingRef.current;
+    const urlSaysIt =
+      urlColumns !== undefined
+        ? sameLayout(urlColumns, pending)
+        : isDefaultLayout(pending);
+    if (!isParamRoute || urlSaysIt) pendingRef.current = null;
+  }
+
   const columns = React.useMemo<ResultColumnId[]>(
-    () => urlColumns ?? stored ?? [...DEFAULT_RESULT_COLUMNS],
-    [urlColumns, stored]
+    () => pendingRef.current ?? urlColumns ?? stored ?? [...DEFAULT_RESULT_COLUMNS],
+    [pendingRef.current, urlColumns, stored]
   );
   // The LATEST active layout, for the actions: two picker clicks inside one render (a fast user, a test) must
   // each start from the other's result, not from the layout the render closed over.
   const columnsRef = React.useRef(columns);
   columnsRef.current = columns;
+  // The last params THIS hook navigated to — the guard for a burst, where the render's location is a step behind.
+  // Re-synced to the rendered location once it caught up, so a facet toggle or a back navigation in between is
+  // never compared against a stale target.
+  const lastNavigatedRef = React.useRef<string | null>(null);
+  if (!pendingRef.current) lastNavigatedRef.current = null;
 
   // Rule 2 — the normalise effect. `replace` so back/forward never stops on the un-normalised URL; the equality
   // guard (`nextParams !== current`) means a URL that already says it is left alone.
   React.useEffect(() => {
     if (!isParamRoute || urlColumns !== undefined || !stored || isDefaultLayout(stored))
       return;
+    if (pendingRef.current) return; // an action is in flight — its own navigation is the truth
     const nextParams = searchStateToParams({ ...urlState, columns: stored });
     if (nextParams !== location.search.replace(/^\?/, '')) {
+      lastNavigatedRef.current = nextParams;
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`, { replace: true });
     }
   }, [isParamRoute, urlColumns, stored, urlState, location.search, navigate]);
@@ -89,10 +116,13 @@ export default function useResultColumns(): ResultColumnsState {
       writeStoredColumns(next);
       storedRef.current = next;
       columnsRef.current = next;
+      pendingRef.current = next;
       bump();
       if (!isParamRoute) return;
       const nextParams = searchStateToParams({ ...urlState, columns: next });
-      if (nextParams !== location.search.replace(/^\?/, '')) {
+      const current = lastNavigatedRef.current ?? location.search.replace(/^\?/, '');
+      if (nextParams !== current) {
+        lastNavigatedRef.current = nextParams;
         navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);
       }
     },
