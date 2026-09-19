@@ -10,4 +10,6 @@ export { default as useRecordRecentlyViewed } from './useRecordRecentlyViewed';
 export { default as useRecentlyViewedHistoryEmpty } from './useRecentlyViewedHistoryEmpty';
 export type { RecentlyViewedHistoryState } from './useRecentlyViewedHistoryEmpty';
 export { default as useTermWiki } from './useTermWiki';
+export { default as useResultColumns } from './useResultColumns';
+export type { ResultColumnsState } from './useResultColumns';
 export * from './api';
