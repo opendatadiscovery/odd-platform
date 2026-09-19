@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.PopularityFacet;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.auth.CurrentUserIdentityResolver;
+import org.opendatadiscovery.oddplatform.dto.AssetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.AssetRefDto;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchCursor;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchPageRow;
@@ -74,11 +75,14 @@ public class AssetSearchServiceImpl implements AssetSearchService {
         final SearchSortDto sort = SearchSortDto.resolveEffective(state.getSort(),
             StringUtils.isNotBlank(state.getQuery()), formData.getRecentlyViewed() != null);
         final AssetSearchCursor cursor = AssetSearchCursor.decode(cursorToken, sort).orElse(null);
+        // ST-13a (#1847): the result columns the caller shows -> the per-row projection (fail-closed: unknown
+        // tokens dropped; absent / empty -> no fields object on any item, the pre-ST-13a payload).
+        final Set<AssetFieldDto> fields = AssetFieldDto.fromTokens(formData.getColumns());
 
         return scoped(formData, Mono.fromSupplier(() -> new AssetList(List.of(), new AssetPageInfo(0L, false))),
             (scope, favorites, recentlyViewed, resolved) ->
                 resolvePage(state, assetKinds, scope, favorites, popularity, recentlyViewed, sort, cursor,
-                        cappedSize)
+                        cappedSize, fields)
                     .map(list -> resolved == null ? list : withTruncation(list, resolved)));
     }
 
@@ -215,7 +219,8 @@ public class AssetSearchServiceImpl implements AssetSearchService {
                                         final AssetSearchScope scope, final FavoritesScopeDto favorites,
                                         final PopularityRangeDto popularity,
                                         final RecentlyViewedScopeDto recentlyViewed, final SearchSortDto sort,
-                                        final AssetSearchCursor cursor, final int cappedSize) {
+                                        final AssetSearchCursor cursor, final int cappedSize,
+                                        final Set<AssetFieldDto> fields) {
         final boolean relevance = sort == SearchSortDto.RELEVANCE;
         final int relevanceOffset = relevance && cursor != null ? cursor.offset() : 0;
 
@@ -245,7 +250,7 @@ public class AssetSearchServiceImpl implements AssetSearchService {
                     ? nextCursor(sort, relevance, relevanceOffset, cappedSize, pageRows)
                     : null;
                 final List<AssetRefDto> refs = pageRows.stream().map(AssetSearchPageRow::toRef).toList();
-                return searchAssetResolver.resolve(refs)
+                return searchAssetResolver.resolve(refs, fields)
                     .map(items -> new AssetList()
                         .items(items)
                         .pageInfo(new AssetPageInfo().total(total).hasNext(hasNext).nextCursor(nextCursor)));

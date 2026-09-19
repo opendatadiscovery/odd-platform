@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
@@ -26,6 +27,14 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
     Mono<List<TermRefDto>> getByNameAndNamespace(final List<TermBaseInfoDto> termBaseInfoDtos);
 
     Mono<TermRefDto> getTermRefDto(final Long id);
+
+    /**
+     * The visible (not soft-deleted) terms among {@code ids}, each with its namespace and its ownership
+     * (owner + title) — ONE query for a whole result page (CTRIB-073 / #1847 ST-13a). The same visibility
+     * predicate and namespace join as {@link #getTermRefDto}, so a ref built from a returned row equals the
+     * per-id read's; the usage counts of {@link TermDto} are NOT computed here (null).
+     */
+    Mono<List<TermDto>> getTermDtosByIds(final Collection<Long> ids);
 
     Mono<TermDetailsDto> getTermDetailsDto(final Long id);
 

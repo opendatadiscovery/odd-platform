@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -188,6 +189,33 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .where(TERM.ID.eq(id).and(TERM.DELETED_AT.isNull()));
         return jooqReactiveOperations.mono(query)
             .map(this::mapRecordToRefDto);
+    }
+
+    @Override
+    public Mono<List<TermDto>> getTermDtosByIds(final Collection<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Mono.just(List.of());
+        }
+        final List<Field<?>> groupByFields = Stream.of(TERM.fields(), NAMESPACE.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+        final var query = DSL.select(groupByFields)
+            .select(jsonArrayAgg(field(TERM_OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIPS_FIELD))
+            .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNERS_FIELD))
+            .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLES_FIELD))
+            .from(TERM)
+            .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
+            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID))
+            .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(TERM_OWNERSHIP.TITLE_ID))
+            .where(TERM.ID.in(ids).and(TERM.DELETED_AT.isNull()))
+            .groupBy(groupByFields);
+        return jooqReactiveOperations.flux(query)
+            .map(record -> TermDto.builder()
+                .termRefDto(mapRecordToRefDto(record))
+                .ownerships(extractOwnershipRelation(record))
+                .build())
+            .collectList();
     }
 
     @Override
