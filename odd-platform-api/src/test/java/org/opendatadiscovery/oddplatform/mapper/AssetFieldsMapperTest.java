@@ -18,7 +18,9 @@ import org.opendatadiscovery.oddplatform.dto.AssetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
@@ -164,6 +166,92 @@ class AssetFieldsMapperTest {
         final AssetFields unrequested = mapper.forDataEntity(dto, EnumSet.of(AssetFieldDto.NAMESPACE), extras);
         assertThat(unrequested.getTags()).isNull();
         assertThat(unrequested.getGroups()).isNull();
+    }
+
+    @Test
+    void forDataEntity_lineageLists_perClass_andAbsentWhenEmptyOrUnresolved() {
+        final Set<AssetFieldDto> lineage = EnumSet.of(AssetFieldDto.SOURCES, AssetFieldDto.TARGETS,
+            AssetFieldDto.INPUTS, AssetFieldDto.OUTPUTS);
+        final DataEntityExtras extras = new DataEntityExtras(Map.of(), Map.of(),
+            Map.of("//a", new DataEntityPojo().setOddrn("//a")), Map.of(), Map.of(), Map.of());
+        when(dataEntityMapper.mapRef(any(DataEntityPojo.class))).thenReturn(new DataEntityRef().id(9L));
+
+        // a transformer: sources AND targets, each de-duplicated; an unresolved-only list is absent
+        final DataTransformerAttributes dta = new DataTransformerAttributes();
+        dta.setSourceOddrnList(Set.of("//a"));
+        dta.setTargetOddrnList(Set.of("//missing"));
+        final AssetFields job = mapper.forDataEntity(
+            entity(3L, "//job", DataEntityClassDto.DATA_TRANSFORMER, Map.of(DataEntityClassDto.DATA_TRANSFORMER, dta)),
+            lineage, extras);
+        assertThat(job.getSources()).hasSize(1);
+        assertThat(job.getTargets()).as("every target oddrn unresolved -> absent").isNull();
+        assertThat(job.getInputs()).isNull();
+        assertThat(job.getOutputs()).isNull();
+
+        // a consumer: inputs only; an input: outputs only
+        final DataConsumerAttributes dca = new DataConsumerAttributes();
+        dca.setInputListOddrn(Set.of("//a"));
+        final AssetFields consumer = mapper.forDataEntity(
+            entity(5L, "//c", DataEntityClassDto.DATA_CONSUMER, Map.of(DataEntityClassDto.DATA_CONSUMER, dca)),
+            lineage, extras);
+        assertThat(consumer.getInputs()).hasSize(1);
+        assertThat(consumer.getSources()).isNull();
+        final DataInputAttributes dia = new DataInputAttributes();
+        dia.setOutputListOddrn(Set.of("//a"));
+        final AssetFields input = mapper.forDataEntity(
+            entity(6L, "//i", DataEntityClassDto.DATA_INPUT, Map.of(DataEntityClassDto.DATA_INPUT, dia)),
+            lineage, extras);
+        assertThat(input.getOutputs()).hasSize(1);
+        assertThat(input.getInputs()).isNull();
+
+        // the class without its attributes row (a hollow entity): the column applies but there is no value
+        for (final DataEntityClassDto cls : List.of(DataEntityClassDto.DATA_TRANSFORMER,
+            DataEntityClassDto.DATA_CONSUMER, DataEntityClassDto.DATA_INPUT, DataEntityClassDto.DATA_QUALITY_TEST,
+            DataEntityClassDto.DATA_SET)) {
+            final AssetFields hollow = mapper.forDataEntity(entity(7L, "//h", cls, Map.of()),
+                EnumSet.allOf(AssetFieldDto.class), extras);
+            assertThat(hollow.getSources()).isNull();
+            assertThat(hollow.getInputs()).isNull();
+            assertThat(hollow.getOutputs()).isNull();
+            assertThat(hollow.getSuiteUrl()).isNull();
+            assertThat(hollow.getRowsCount()).isNull();
+        }
+        // an empty oddrn list is absent too (never an empty list)
+        dta.setSourceOddrnList(Set.of());
+        assertThat(mapper.forDataEntity(
+            entity(3L, "//job", DataEntityClassDto.DATA_TRANSFORMER, Map.of(DataEntityClassDto.DATA_TRANSFORMER, dta)),
+            lineage, extras).getSources()).isNull();
+    }
+
+    @Test
+    void forDataEntity_andForTerm_withNothingToShow_projectNothing() {
+        // a row with no namespace, no datasource, no owners, no tags, no groups, no attributes, every column on
+        final DataEntityPojo pojo = new DataEntityPojo().setId(8L).setOddrn("//bare")
+            .setEntityClassIds(new Integer[] {DataEntityClassDto.DATA_SET.getId()}).setStatus((short) 1);
+        final DataEntityDimensionsDto bare = DataEntityDimensionsDto.dimensionsBuilder()
+            .dataEntity(pojo).hasAlerts(false).specificAttributes(null).ownership(List.of()).build();
+        final DataEntityExtras extras = new DataEntityExtras(Map.of("//bare", Set.of()), Map.of(8L, List.of()),
+            Map.of(), Map.of(), Map.of(), Map.of());
+        final AssetFields fields = mapper.forDataEntity(bare, EnumSet.allOf(AssetFieldDto.class), extras);
+        assertThat(fields.getNamespace()).isNull();
+        assertThat(fields.getDataSource()).isNull();
+        assertThat(fields.getOwners()).isNull();
+        assertThat(fields.getTags()).as("an empty tag list is absent").isNull();
+        assertThat(fields.getGroups()).as("an empty group set is absent").isNull();
+        assertThat(fields.getDescription()).as("no text anywhere -> absent").isNull();
+        assertThat(fields.getRowsCount()).isNull();
+        assertThat(fields.getConsumersCount()).as("a dataset nobody consumes reads 0, not absent").isEqualTo(0L);
+
+        final TermDto term = TermDto.builder()
+            .termRefDto(TermRefDto.builder().term(new TermPojo().setId(9L).setDefinition(" ")).namespace(null).build())
+            .ownerships(null)
+            .build();
+        final AssetFields termFields = mapper.forTerm(term, EnumSet.allOf(AssetFieldDto.class), List.of());
+        assertThat(termFields.getNamespace()).isNull();
+        assertThat(termFields.getOwners()).isNull();
+        assertThat(termFields.getTags()).isNull();
+        assertThat(termFields.getDescription()).as("a blank definition is absent").isNull();
+        assertThat(mapper.forTerm(term, EnumSet.of(AssetFieldDto.TAGS), null).getTags()).isNull();
     }
 
     @Test

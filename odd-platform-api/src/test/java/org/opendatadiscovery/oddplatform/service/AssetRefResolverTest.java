@@ -19,7 +19,9 @@ import org.opendatadiscovery.oddplatform.dto.AssetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.AssetRefDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
 import org.opendatadiscovery.oddplatform.dto.term.TermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
@@ -319,6 +321,92 @@ class AssetRefResolverTest {
             .assertNext(map -> assertThat(map.get("TERM:90").fields()).isNotNull())
             .verifyComplete();
         verify(tagRepository).listTagsByTermIds(Set.of(90L));
+    }
+
+    @Test
+    void resolveByKey_withFields_lineageOddrns_comeFromEveryClass_andSkipARowWithoutAttributes() {
+        // a consumer (inputs), an input (outputs) and a row whose attributes never loaded share ONE oddrn read
+        final DataEntityDimensionsDto consumer = dimensions(81L, (short) 1, false);
+        consumer.getDataEntity().setOddrn("//c")
+            .setEntityClassIds(new Integer[] {DataEntityClassDto.DATA_CONSUMER.getId()});
+        final DataConsumerAttributes dca = new DataConsumerAttributes();
+        dca.setInputListOddrn(Set.of("//in"));
+        when(consumer.getSpecificAttributes()).thenReturn(Map.<DataEntityClassDto, DataEntityAttributes>of(
+            DataEntityClassDto.DATA_CONSUMER, dca));
+        final DataEntityDimensionsDto input = dimensions(82L, (short) 1, false);
+        input.getDataEntity().setOddrn("//i").setEntityClassIds(new Integer[] {DataEntityClassDto.DATA_INPUT.getId()});
+        final DataInputAttributes dia = new DataInputAttributes();
+        dia.setOutputListOddrn(Set.of("//out"));
+        when(input.getSpecificAttributes()).thenReturn(Map.<DataEntityClassDto, DataEntityAttributes>of(
+            DataEntityClassDto.DATA_INPUT, dia));
+        final DataEntityDimensionsDto bare = dimensions(83L, (short) 1, false);
+        bare.getDataEntity().setOddrn("//b").setEntityClassIds(new Integer[] {DataEntityClassDto.DATA_SET.getId()});
+        when(bare.getSpecificAttributes()).thenReturn(null);
+        when(dataEntityRepository.getDimensionsByIds(Set.of(81L, 82L, 83L)))
+            .thenReturn(Mono.just(List.of(consumer, input, bare)));
+        for (final DataEntityDimensionsDto dto : List.of(consumer, input, bare)) {
+            when(dataEntityMapper.mapRef(dto)).thenReturn(mock(DataEntityRef.class));
+            when(assetFieldsMapper.forDataEntity(eq(dto), anySet(), any())).thenReturn(new AssetFields());
+        }
+        // the SAME oddrn twice from the read: one entry, never an exception (oddrn is unique in the table anyway)
+        when(dataEntityRepository.listByOddrns(Set.of("//in", "//out"), false, false))
+            .thenReturn(Flux.just(new DataEntityPojo().setOddrn("//in").setId(1L),
+                new DataEntityPojo().setOddrn("//in").setId(1L)));
+
+        final Set<AssetFieldDto> lists = EnumSet.of(AssetFieldDto.INPUTS, AssetFieldDto.OUTPUTS);
+        StepVerifier.create(resolver.resolveByKey(List.of(new AssetRefDto("DATA_ENTITY", 81L),
+                new AssetRefDto("DATA_ENTITY", 82L), new AssetRefDto("DATA_ENTITY", 83L)), lists))
+            .assertNext(map -> assertThat(map).hasSize(3))
+            .verifyComplete();
+        verify(dataEntityRepository).listByOddrns(Set.of("//in", "//out"), false, false);
+        verify(assetFieldsMapper).forDataEntity(eq(consumer), eq(lists), org.mockito.ArgumentMatchers.argThat(
+            extras -> extras.lineageByOddrn().containsKey("//in") && !extras.lineageByOddrn().containsKey("//out")));
+        // the count extras stay off: no dataset / group on the page and no count column requested
+        verify(lineageRepository, never()).getTargetsCount(anySet());
+        verify(dataEntityRepository, never()).getDEGEntitiesCount(anySet());
+    }
+
+    @Test
+    void resolveByKey_withFields_duplicateTermAndQueryExampleRows_keepTheFirst() {
+        // a batched read that returned the same id twice (a defensive merge, like the data-entity one)
+        final TermRefDto termRefDto = mock(TermRefDto.class);
+        when(termRefDto.getTerm()).thenReturn(new TermPojo().setId(91L));
+        final TermDto termDto = TermDto.builder().termRefDto(termRefDto).build();
+        when(termRepository.getTermDtosByIds(Set.of(91L))).thenReturn(Mono.just(List.of(termDto, termDto)));
+        when(termMapper.mapToRef(termRefDto)).thenReturn(mock(TermRef.class));
+        final QueryExamplePojo qe = new QueryExamplePojo().setId(92L);
+        when(queryExampleRepository.listByIds(Set.of(92L))).thenReturn(Mono.just(List.of(qe, qe)));
+        when(queryExampleMapper.mapToQueryExampleRef(qe)).thenReturn(mock(QueryExampleRef.class));
+
+        StepVerifier.create(resolver.resolveByKey(List.of(new AssetRefDto("TERM", 91L),
+                new AssetRefDto("QUERY_EXAMPLE", 92L))))
+            .assertNext(map -> assertThat(map).containsOnlyKeys("TERM:91", "QUERY_EXAMPLE:92"))
+            .verifyComplete();
+    }
+
+    @Test
+    void resolveByKey_dataEntityWithoutAStatus_isNotVisible_andADuplicateWithoutAnOwnNamespaceKeepsTheFirst() {
+        final DataEntityDimensionsDto noStatus = dimensions(70L, (short) 1, false);
+        noStatus.getDataEntity().setStatus(null);
+        // two rows, neither carrying the entity's own namespace: the first stays
+        final DataEntityDimensionsDto first = dimensions(71L, (short) 1, false);
+        final DataEntityDimensionsDto second = dimensions(71L, (short) 1, false);
+        second.getDataEntity().setNamespaceId(5L);
+        lenient().when(second.getNamespace()).thenReturn(new NamespacePojo().setId(6L));
+        when(dataEntityRepository.getDimensionsByIds(Set.of(70L, 71L)))
+            .thenReturn(Mono.just(List.of(noStatus, first, second)));
+        final DataEntityRef ref = mock(DataEntityRef.class);
+        when(dataEntityMapper.mapRef(first)).thenReturn(ref);
+
+        StepVerifier.create(resolver.resolveByKey(List.of(new AssetRefDto("DATA_ENTITY", 70L),
+                new AssetRefDto("DATA_ENTITY", 71L))))
+            .assertNext(map -> {
+                assertThat(map).containsOnlyKeys("DATA_ENTITY:71");
+                assertThat(map.get("DATA_ENTITY:71").dataEntity()).isSameAs(ref);
+            })
+            .verifyComplete();
+        verify(dataEntityMapper, never()).mapRef(second);
+        verify(dataEntityMapper, never()).mapRef(noStatus);
     }
 
     private static DataEntityDimensionsDto dimensions(final long id, final short status, final boolean hollow) {

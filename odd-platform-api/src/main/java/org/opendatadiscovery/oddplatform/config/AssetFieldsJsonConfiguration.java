@@ -31,12 +31,12 @@ public class AssetFieldsJsonConfiguration {
 
     /** Every property of {@link AssetFields} is written only when set. */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    abstract static class NonNullProperties {
+    interface NonNullProperties {
     }
 
     /** Only {@link Asset#getFields()} — the refs of an {@link Asset} keep the platform's null posture. */
-    abstract static class AssetFieldsProperty {
+    interface AssetFieldsProperty {
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        abstract AssetFields getFields();
+        AssetFields getFields();
     }
 }

@@ -23,13 +23,10 @@ import reactor.core.publisher.Mono;
 public class SearchAssetResolver {
     private final AssetRefResolver assetRefResolver;
 
-    public Mono<List<Asset>> resolve(final List<AssetRefDto> rankedPage) {
-        return resolve(rankedPage, Set.of());
-    }
-
     /**
-     * {@link #resolve(List)} plus the result-column values the request named (CTRIB-073 / #1847 ST-13a): each item
-     * carries {@code fields} only when {@code fields} is non-empty — an empty set is the pre-ST-13a payload.
+     * Resolves the ranked page into renderable assets plus the result-column values the request named
+     * (CTRIB-073 / #1847 ST-13a): each item carries {@code fields} only when {@code fields} is non-empty — an empty
+     * set is the pre-ST-13a payload.
      */
     public Mono<List<Asset>> resolve(final List<AssetRefDto> rankedPage, final Set<AssetFieldDto> fields) {
         if (rankedPage.isEmpty()) {
