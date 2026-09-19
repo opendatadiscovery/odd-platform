@@ -39,6 +39,7 @@ const ColumnsPicker: React.FC<ColumnsPickerProps> = ({
   toggle,
   move,
   reset,
+  commit,
 }) => {
   const { t } = useTranslation();
 
@@ -137,6 +138,9 @@ const ColumnsPicker: React.FC<ColumnsPickerProps> = ({
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       transformOrigin={{ vertical: -8, horizontal: 'right' }}
       childrenSx={{ p: 0 }}
+      // the URL is written once the popover is GONE — the modal's exit transition done and its subtree unmounted
+      // — never while it is open or leaving; see useResultColumns rule 3
+      onTransitionExited={commit}
       renderOpenBtn={({ onClick, ariaDescribedBy }) => (
         <Button
           aria-describedby={ariaDescribedBy}

@@ -18,6 +18,11 @@ export interface ResultColumnsState {
   move: (id: ResultColumnId, direction: 'up' | 'down') => void;
   /** back to the default layout */
   reset: () => void;
+  /**
+   * write the active layout into the URL — called ONCE by the picker when it has fully closed (rule 3); a no-op
+   * when the URL already says it or on the legacy session route
+   */
+  commit: () => void;
 }
 
 /**
@@ -32,11 +37,18 @@ export interface ResultColumnsState {
  *  2. The URL is the single truth for Save / Copy-link / the facet mirror: on the param route, a URL with no
  *     `columns` while the stored layout differs from the default is NORMALISED to carry it, with `replace` (no
  *     history entry — the ST-8 `?my=true` precedent), and only when the URL would actually change.
- *  3. A picker action writes the STORE and — on the param route — the URL, through the ONE serialiser
- *     (`searchStateToParams` over the live state), as a `push` (the `sort` idiom); the serialiser omits `columns`
+ *  3. A picker action writes the STORE at once (the table follows on the same render); the URL is written ONCE,
+ *     when the picker has fully closed (`commit`), through the ONE serialiser (`searchStateToParams` over the
+ *     live state), as a `push` (the `sort` idiom) — so composing a layout of six ticks is one history entry, not
+ *     six, and Back returns to the search as it was before the picker opened. The serialiser omits `columns`
  *     when the layout is the default, so `Reset to default` REMOVES the param rather than writing an explicit
- *     default. On the legacy `/search/{sessionId}` route (no param URL) a picker action writes the store only —
- *     never a navigation away from the session.
+ *     default. On the legacy `/search/{sessionId}` route (no param URL) the store is all that is written —
+ *     never a navigation away from the session. Why not a navigation per tick: react-router 7 commits every
+ *     navigation inside React.startTransition, and on this page (a dozen urgent updates a second while the
+ *     rows load their status) that transition is starved and re-run for seconds; a class `setState` landing in
+ *     that window — the popover's own exit transition — was measured LOST (React 18.2: the update sat in the
+ *     Transition's queue with no lane, the invisible backdrop stayed, and the page was dead until a reload).
+ *     Writing the URL after the popover is unmounted takes the combination off the table by construction.
  *  4. Opening a link that carries `columns` does NOT overwrite the reader's stored layout: the store is written by
  *     the picker alone, so the first picker action on a shared view starts from the layout on screen and stores
  *     the result — "until you change a column yourself".
@@ -121,25 +133,25 @@ export default function useResultColumns(): ResultColumnsState {
     }
   }, [isParamRoute, urlColumns, stored, liveSearch, navigate]);
 
-  // Rule 3 — a picker action.
-  const apply = React.useCallback(
-    (next: ResultColumnId[]) => {
-      writeStoredColumns(next);
-      storedRef.current = next;
-      columnsRef.current = next;
-      pendingRef.current = next;
-      bump();
-      if (!isParamRoute) return;
-      const nextParams = searchStateToParams({
-        ...paramsToSearchState(liveSearch()),
-        columns: next,
-      });
-      if (nextParams !== liveSearch()) {
-        navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);
-      }
-    },
-    [isParamRoute, liveSearch, navigate]
-  );
+  // Rule 3 — a picker action: the store and the table now; the URL on `commit`.
+  const apply = React.useCallback((next: ResultColumnId[]) => {
+    writeStoredColumns(next);
+    storedRef.current = next;
+    columnsRef.current = next;
+    pendingRef.current = next;
+    bump();
+  }, []);
+
+  const commit = React.useCallback(() => {
+    if (!isParamRoute) return;
+    const nextParams = searchStateToParams({
+      ...paramsToSearchState(liveSearch()),
+      columns: columnsRef.current,
+    });
+    if (nextParams !== liveSearch()) {
+      navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);
+    }
+  }, [isParamRoute, liveSearch, navigate]);
 
   const toggle = React.useCallback(
     (id: ResultColumnId) => {
@@ -166,5 +178,5 @@ export default function useResultColumns(): ResultColumnsState {
 
   const reset = React.useCallback(() => apply([...DEFAULT_RESULT_COLUMNS]), [apply]);
 
-  return { columns, toggle, move, reset };
+  return { columns, toggle, move, reset, commit };
 }

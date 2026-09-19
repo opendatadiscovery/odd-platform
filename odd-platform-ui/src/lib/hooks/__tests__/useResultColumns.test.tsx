@@ -12,7 +12,8 @@ import useResultColumns from '../useResultColumns';
 /**
  * ST-13a (#1847) — the layout's state machine (CTRIB-073 R13): the URL is the live truth, the store is the baseline
  * a plain search starts from, a picker action writes both through the one serialiser (on the param route) or the
- * store only (on a legacy session view), and a URL-carried layout never reaches the store on its own.
+ * store only (on a legacy session view), and a URL-carried layout never reaches the store on its own. The URL is
+ * written by `commit` — the picker calls it once when it has closed — never per action.
  */
 const wrapper =
   (initialPath: string) =>
@@ -74,6 +75,7 @@ describe('useResultColumns', () => {
     const { result } = setup('/search?q=x');
     expect(url(result)).toBe('/search?columns[]=status,query&q=x');
     act(() => result.current.rc.reset());
+    act(() => result.current.rc.commit());
     expect(url(result)).toBe('/search?q=x');
     expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS]);
     expect(stored()).toBe(serializeStoredColumns([...DEFAULT_RESULT_COLUMNS]));
@@ -90,6 +92,7 @@ describe('useResultColumns', () => {
     window.history.replaceState({}, '', '/search?columns[]=status,query&q=x');
     try {
       act(() => result.current.rc.reset());
+      act(() => result.current.rc.commit());
       expect(result.current.loc.key).not.toBe(before);
       expect(url(result)).toBe('/search?q=x');
       expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS]);
@@ -115,16 +118,23 @@ describe('useResultColumns', () => {
     expect(url(result)).toBe('/search?q=x');
   });
 
-  it('toggle / move / reset write the store AND the URL through the one serialiser; reset REMOVES the param (rule 3)', () => {
+  it('toggle / move / reset write the store at once and the URL on commit, through the one serialiser; reset REMOVES the param (rule 3)', () => {
     const { result } = setup('/search?q=x');
     act(() => result.current.rc.toggle('datasource'));
     expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS, 'datasource']);
-    expect(url(result)).toBe(
-      '/search?columns[]=type,namespace,owners,status,updated_at,datasource&q=x'
-    );
     expect(stored()).toBe(
       serializeStoredColumns([...DEFAULT_RESULT_COLUMNS, 'datasource'])
     );
+    // the table and the store changed; the URL waits for the picker to close
+    expect(url(result)).toBe('/search?q=x');
+    act(() => result.current.rc.commit());
+    expect(url(result)).toBe(
+      '/search?columns[]=type,namespace,owners,status,updated_at,datasource&q=x'
+    );
+    // a commit with nothing new to say is a no-op (no second history entry)
+    const committed = result.current.loc.key;
+    act(() => result.current.rc.commit());
+    expect(result.current.loc.key).toBe(committed);
 
     act(() => result.current.rc.move('datasource', 'up'));
     expect(result.current.rc.columns).toEqual([
@@ -147,6 +157,7 @@ describe('useResultColumns', () => {
     ]);
 
     act(() => result.current.rc.reset());
+    act(() => result.current.rc.commit());
     expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS]);
     expect(url(result)).toBe('/search?q=x');
     expect(stored()).toBe(serializeStoredColumns([...DEFAULT_RESULT_COLUMNS]));
@@ -157,6 +168,7 @@ describe('useResultColumns', () => {
     // one act per toggle: each reads the layout of the render it came from (the picker works the same way)
     DEFAULT_RESULT_COLUMNS.forEach(id => act(() => result.current.rc.toggle(id)));
     expect(result.current.rc.columns).toEqual([]);
+    act(() => result.current.rc.commit());
     expect(url(result)).toBe('/search?columns[]&q=x');
     expect(stored()).toBe(serializeStoredColumns([]));
   });
@@ -173,6 +185,7 @@ describe('useResultColumns', () => {
     });
     // default minus type / namespace = [owners, status, updated_at]; owners moved down = [status, owners, updated_at]
     expect(result.current.rc.columns).toEqual(['status', 'owners', 'updated_at']);
+    act(() => result.current.rc.commit());
     expect(url(result)).toBe('/search?columns[]=status,owners,updated_at&q=x');
     expect(stored()).toBe(serializeStoredColumns(['status', 'owners', 'updated_at']));
   });
@@ -180,10 +193,12 @@ describe('useResultColumns', () => {
   it('reset right after a re-order lands on the plain URL and STAYS there (the stale-store race)', () => {
     const { result } = setup('/search?q=x');
     act(() => result.current.rc.move('status', 'up'));
+    act(() => result.current.rc.commit());
     expect(url(result)).toBe(
       '/search?columns[]=type,namespace,status,owners,updated_at&q=x'
     );
     act(() => result.current.rc.reset());
+    act(() => result.current.rc.commit());
     expect(url(result)).toBe('/search?q=x');
     expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS]);
   });
@@ -203,6 +218,7 @@ describe('useResultColumns', () => {
     const { result } = setup('/search/abc-123');
     expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS]);
     act(() => result.current.rc.toggle('datasource'));
+    act(() => result.current.rc.commit());
     expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS, 'datasource']);
     expect(url(result)).toBe('/search/abc-123');
     expect(stored()).toBe(

@@ -1,6 +1,6 @@
 import React from 'react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import i18n from 'i18next';
@@ -30,13 +30,20 @@ const renderPicker = (columns: ResultColumnId[]) => {
   const toggle = vi.fn();
   const move = vi.fn();
   const reset = vi.fn();
+  const commit = vi.fn();
   render(
     <MuiThemeProvider theme={theme}>
-      <ColumnsPicker columns={columns} toggle={toggle} move={move} reset={reset} />
+      <ColumnsPicker
+        columns={columns}
+        toggle={toggle}
+        move={move}
+        reset={reset}
+        commit={commit}
+      />
     </MuiThemeProvider>,
     { initialEntries: ['/search?q=x'] }
   );
-  return { toggle, move, reset };
+  return { toggle, move, reset, commit };
 };
 
 describe('ColumnsPicker', () => {
@@ -61,7 +68,7 @@ describe('ColumnsPicker', () => {
   });
 
   it('ticking a row hands its id to toggle; the up / down buttons hand the column and direction to move', async () => {
-    const { toggle, move } = renderPicker(['type', 'namespace', 'status']);
+    const { toggle, move, commit } = renderPicker(['type', 'namespace', 'status']);
     await userEvent.click(screen.getByTestId('search-columns-trigger'));
     const picker = screen.getByTestId('search-columns-picker');
     await userEvent.click(
@@ -70,6 +77,8 @@ describe('ColumnsPicker', () => {
       )
     );
     expect(toggle).toHaveBeenCalledWith('datasource');
+    // a tick changes the table, not the URL: nothing is committed while the picker is open
+    expect(commit).not.toHaveBeenCalled();
 
     const up = within(picker).getByTestId('search-columns-up-status');
     expect(up).toHaveAttribute('aria-label', 'Move Status up');
@@ -84,6 +93,26 @@ describe('ColumnsPicker', () => {
       'aria-label',
       'Move Namespace down'
     );
+  });
+
+  it('the layout is committed to the URL once — when the popover has fully closed, not per tick', async () => {
+    const { toggle, commit } = renderPicker(['type']);
+    await userEvent.click(screen.getByTestId('search-columns-trigger'));
+    const picker = screen.getByTestId('search-columns-picker');
+    await userEvent.click(
+      within(within(picker).getByTestId('search-columns-row-owners')).getByRole(
+        'checkbox'
+      )
+    );
+    await userEvent.click(
+      within(within(picker).getByTestId('search-columns-row-tags')).getByRole('checkbox')
+    );
+    expect(toggle).toHaveBeenCalledTimes(2);
+    expect(commit).not.toHaveBeenCalled();
+    await userEvent.keyboard('{Escape}');
+    // the popover's exit transition runs, its subtree unmounts, THEN the one commit
+    await waitFor(() => expect(screen.queryByTestId('search-columns-picker')).toBeNull());
+    await waitFor(() => expect(commit).toHaveBeenCalledTimes(1));
   });
 
   it('Reset to default calls reset, and is disabled while the layout IS the default', async () => {
