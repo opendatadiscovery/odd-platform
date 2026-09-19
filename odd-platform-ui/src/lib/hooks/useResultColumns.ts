@@ -85,17 +85,27 @@ export default function useResultColumns(): ResultColumnsState {
 
   const columns = React.useMemo<ResultColumnId[]>(
     () => pendingRef.current ?? urlColumns ?? stored ?? [...DEFAULT_RESULT_COLUMNS],
-    [pendingRef.current, urlColumns, stored]
+    [urlColumns, stored]
   );
   // The LATEST active layout, for the actions: two picker clicks inside one render (a fast user, a test) must
   // each start from the other's result, not from the layout the render closed over.
   const columnsRef = React.useRef(columns);
   columnsRef.current = columns;
-  // The last params THIS hook navigated to — the guard for a burst, where the render's location is a step behind.
-  // Re-synced to the rendered location once it caught up, so a facet toggle or a back navigation in between is
-  // never compared against a stale target.
-  const lastNavigatedRef = React.useRef<string | null>(null);
-  if (!pendingRef.current) lastNavigatedRef.current = null;
+
+  // The search the browser is ACTUALLY on. react-router 7's BrowserRouter commits every location change inside
+  // React.startTransition, and a results page firing a dozen urgent updates a second (the per-row favorite /
+  // recently-viewed status reads) can starve that transition for seconds — measured on the stand: the address
+  // bar already read the normalised URL while every render, and every callback closed over it, still saw the
+  // previous one, so a reset compared "q=…" with "q=…" and wrote nothing. The history object is the truth the
+  // moment `navigate` returns, so the actions read it from there when the router is the browser's (the pathnames
+  // agree); under a memory router (tests) the render's location is all there is.
+  const liveSearch = React.useCallback((): string => {
+    const live =
+      typeof window !== 'undefined' && window.location.pathname === location.pathname
+        ? window.location.search
+        : location.search;
+    return live.replace(/^\?/, '');
+  }, [location.pathname, location.search]);
 
   // Rule 2 — the normalise effect. `replace` so back/forward never stops on the un-normalised URL; the equality
   // guard (`nextParams !== current`) means a URL that already says it is left alone.
@@ -103,12 +113,13 @@ export default function useResultColumns(): ResultColumnsState {
     if (!isParamRoute || urlColumns !== undefined || !stored || isDefaultLayout(stored))
       return;
     if (pendingRef.current) return; // an action is in flight — its own navigation is the truth
-    const nextParams = searchStateToParams({ ...urlState, columns: stored });
-    if (nextParams !== location.search.replace(/^\?/, '')) {
-      lastNavigatedRef.current = nextParams;
+    const live = paramsToSearchState(liveSearch());
+    if (live.columns !== undefined) return; // the browser already carries a layout (a transition still pending)
+    const nextParams = searchStateToParams({ ...live, columns: stored });
+    if (nextParams !== liveSearch()) {
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`, { replace: true });
     }
-  }, [isParamRoute, urlColumns, stored, urlState, location.search, navigate]);
+  }, [isParamRoute, urlColumns, stored, liveSearch, navigate]);
 
   // Rule 3 — a picker action.
   const apply = React.useCallback(
@@ -119,14 +130,15 @@ export default function useResultColumns(): ResultColumnsState {
       pendingRef.current = next;
       bump();
       if (!isParamRoute) return;
-      const nextParams = searchStateToParams({ ...urlState, columns: next });
-      const current = lastNavigatedRef.current ?? location.search.replace(/^\?/, '');
-      if (nextParams !== current) {
-        lastNavigatedRef.current = nextParams;
+      const nextParams = searchStateToParams({
+        ...paramsToSearchState(liveSearch()),
+        columns: next,
+      });
+      if (nextParams !== liveSearch()) {
         navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);
       }
     },
-    [isParamRoute, urlState, location.search, navigate]
+    [isParamRoute, liveSearch, navigate]
   );
 
   const toggle = React.useCallback(

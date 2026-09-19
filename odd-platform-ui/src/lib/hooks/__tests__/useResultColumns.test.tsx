@@ -66,6 +66,39 @@ describe('useResultColumns', () => {
     expect(url(result)).toBe('/search?columns[]=status,query&q=x&sort=name');
   });
 
+  it('reset right after the normalise lands on the plain URL (the stand-measured no-op)', () => {
+    window.localStorage.setItem(
+      RESULT_COLUMNS_STORAGE_KEY,
+      serializeStoredColumns(['status', 'query'])
+    );
+    const { result } = setup('/search?q=x');
+    expect(url(result)).toBe('/search?columns[]=status,query&q=x');
+    act(() => result.current.rc.reset());
+    expect(url(result)).toBe('/search?q=x');
+    expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS]);
+    expect(stored()).toBe(serializeStoredColumns([...DEFAULT_RESULT_COLUMNS]));
+  });
+
+  it('a picker action reads the URL the BROWSER is on when the router lags behind it (the starved transition)', () => {
+    // react-router 7 commits a location change inside React.startTransition; on the stand the results page's
+    // urgent updates starved the normalise navigation for seconds, so the address bar already read
+    // `?columns[]=…` while every render still saw `?q=…`. Modelled here: the browser's history is moved on
+    // without the (memory) router. A reset must then NAVIGATE (the browser's URL carries a param to remove);
+    // a hook comparing `q=x` with `q=x` from the router's stale view finds nothing to change and stays put.
+    const { result } = setup('/search?q=x');
+    const before = result.current.loc.key;
+    window.history.replaceState({}, '', '/search?columns[]=status,query&q=x');
+    try {
+      act(() => result.current.rc.reset());
+      expect(result.current.loc.key).not.toBe(before);
+      expect(url(result)).toBe('/search?q=x');
+      expect(result.current.rc.columns).toEqual([...DEFAULT_RESULT_COLUMNS]);
+      expect(stored()).toBe(serializeStoredColumns([...DEFAULT_RESULT_COLUMNS]));
+    } finally {
+      window.history.replaceState({}, '', '/');
+    }
+  });
+
   it('a stored DEFAULT layout is never written to the URL', () => {
     window.localStorage.setItem(
       RESULT_COLUMNS_STORAGE_KEY,
