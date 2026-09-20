@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
+  liveSearch,
   paramsToSearchState,
   searchStateKeyWithoutColumns,
   searchStateToParams,
@@ -111,9 +112,14 @@ const Search: React.FC = () => {
     // That is the #1858 bug class, which ST-7, ST-8, ST-9 and ST-10 all re-derived independently while adding to
     // this object — so the next slice that adds a URL-only param should expect to land here too. IT-148 pins the
     // favorites case; the My-data case is pinned by ST-8's own IT; the Popularity range by IT-156 (ST-9); the
-    // Last-viewed scope by IT-157 (ST-10).
+    // Last-viewed scope by IT-157 (ST-10); the result-column layout by IT-160 (ST-13a).
+    //
+    // `liveSearch`, not `location.search`: the router's view lags a navigation by the page's ~0.5 s render, and a
+    // facet toggled inside that window (measured: right after the column picker closed) rebuilt the URL from the
+    // stale copy and dropped the layout the picker had just written — the table, which derives its layout from the
+    // URL, followed. The browser's URL is the truth at write time (CTRIB-073 / IT-160 case 21).
 
-    const live = paramsToSearchState(location.search);
+    const live = paramsToSearchState(liveSearch(location));
     const nextParams = searchStateToParams({
       ...searchUrlState,
       facets: { ...searchUrlState.facets, entityClasses: live.facets.entityClasses },
@@ -128,7 +134,7 @@ const Search: React.FC = () => {
       // ST-13a — the result-column layout (the same #1858 class: URL-only, so it MUST be merged back).
       columns: live.columns,
     });
-    if (nextParams !== location.search.replace(/^\?/, '')) {
+    if (nextParams !== liveSearch(location)) {
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);
     }
   }, 400);

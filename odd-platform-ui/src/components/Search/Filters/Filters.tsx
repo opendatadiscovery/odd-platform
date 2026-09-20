@@ -14,7 +14,11 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Button, AppCircularProgress } from 'components/shared/elements';
 import { clearDataEntitySearchFacets } from 'redux/slices/dataEntitySearch.slice';
 import { searchPath } from 'routes';
-import { paramsToSearchState, searchStateToParams } from 'lib/search/searchUrlState';
+import {
+  liveSearch,
+  paramsToSearchState,
+  searchStateToParams,
+} from 'lib/search/searchUrlState';
 import AssetTypeFilter from './AssetTypeFilter/AssetTypeFilter';
 import FavoritesFilter from './FavoritesFilter/FavoritesFilter';
 import RecentlyViewedFilter from './RecentlyViewedFilter/RecentlyViewedFilter';
@@ -46,7 +50,9 @@ const Filters: React.FC = () => {
   // URL writer must carry it, or a user who clears their filters watches their columns snap back too).
   const handleClearAll = React.useCallback(() => {
     dispatch(clearDataEntitySearchFacets());
-    const { query, sort, columns } = paramsToSearchState(location.search);
+    // the browser's URL (`liveSearch`), never the router's lagging copy (a Clear-All right after the column picker
+    // closed rebuilt the URL from the stale layout — CTRIB-073)
+    const { query, sort, columns } = paramsToSearchState(liveSearch(location));
     const params = searchStateToParams({
       query,
       facets: {},
@@ -54,7 +60,7 @@ const Filters: React.FC = () => {
       columns,
     });
     navigate(`${searchPath()}${params ? `?${params}` : ''}`);
-  }, [dispatch, navigate, location.search]);
+  }, [dispatch, navigate, location]);
 
   const datasources = useAppSelector(getDataSourcesList);
   const namespaces = useAppSelector(getNamespaceList);
