@@ -272,4 +272,62 @@ describe('ResultItem cells (ST-13a / #1847)', () => {
       'No value'
     );
   });
+
+  const qualityTest = (suiteUrl: string): Asset => ({
+    assetKind: AssetKind.DATA_ENTITY,
+    dataEntity: {
+      id: 9,
+      externalName: 'dq_test',
+      status: { status: 'UNASSIGNED' as never },
+      isStale: false,
+      entityClasses: [{ id: 4, name: 'DATA_QUALITY_TEST' as never, types: [] }],
+    },
+    fields: { suiteUrl },
+  });
+
+  it('the Suite URL cell is a new-tab link for an http(s) URL', () => {
+    render(
+      <MuiThemeProvider theme={theme}>
+        <ResultItem
+          asset={qualityTest('https://example.invalid/suite')}
+          columns={['suite_url']}
+        />
+      </MuiThemeProvider>,
+      { preloadedState: withQuery(''), initialEntries: ['/search'] }
+    );
+    const link = cell('suite_url').querySelector('a');
+    expect(link).not.toBeNull();
+    expect(link).toHaveAttribute('href', 'https://example.invalid/suite');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
+  it('the Suite URL cell never renders an unsafe scheme as an anchor — the value shows as inert text (CTRIB-073 B2)', () => {
+    // The value is collector-ingested. React 18 only warns on a `javascript:` href and renders it; the platform's
+    // render guard for anchors from untrusted content is `sanitizeUrl` (the attachment-link posture), so an unsafe
+    // scheme must reach the DOM as text, never as an `href`.
+    for (const unsafe of [
+      'javascript:alert(1)',
+      'data:text/html,<b>x</b>',
+      'vbscript:msgbox(1)',
+    ]) {
+      const { unmount } = render(
+        <MuiThemeProvider theme={theme}>
+          <ResultItem asset={qualityTest(unsafe)} columns={['suite_url']} />
+        </MuiThemeProvider>,
+        { preloadedState: withQuery(''), initialEntries: ['/search'] }
+      );
+      const suiteCell = cell('suite_url');
+      expect(
+        suiteCell.querySelector('a'),
+        `${unsafe} must not become an anchor`
+      ).toBeNull();
+      expect(
+        suiteCell.querySelector('[data-testid="search-cell-unsafe-link"]')
+      ).not.toBeNull();
+      expect(suiteCell).toHaveTextContent(unsafe);
+      expect(document.querySelector(`a[href="${unsafe}"]`)).toBeNull();
+      unmount();
+    }
+  });
 });

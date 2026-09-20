@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 import type { Asset } from 'generated-sources';
 import {
   DatasourceLogo,
@@ -134,11 +135,28 @@ const ResultCell: React.FC<ResultCellProps> = ({ column, asset }) => {
           ))}
         </Grid>
       );
-    case 'link':
+    case 'link': {
+      // The value is collector-ingested (a quality test's suite_url), so it goes through the platform's render guard
+      // for anchors from untrusted content — `sanitizeUrl`, the attachment-link posture: a `javascript:` / `data:` /
+      // `vbscript:` scheme becomes `about:blank` (React 18 only warns on such an href, it renders it). A value the
+      // guard refuses is shown as inert text — the reader still sees what the source sent, and nothing is clickable.
+      const href = sanitizeUrl(value.href);
+      if (href === 'about:blank') {
+        return (
+          <Typography
+            variant='body1'
+            noWrap
+            title={value.href}
+            data-testid='search-cell-unsafe-link'
+          >
+            {value.href}
+          </Typography>
+        );
+      }
       return (
         <Typography variant='body1' noWrap title={value.href}>
           <a
-            href={value.href}
+            href={href}
             target='_blank'
             rel='noopener noreferrer'
             onClick={event => event.stopPropagation()}
@@ -147,6 +165,7 @@ const ResultCell: React.FC<ResultCellProps> = ({ column, asset }) => {
           </a>
         </Typography>
       );
+    }
     case 'type':
       return (
         <>
