@@ -83,8 +83,8 @@ public class FacetStateDto {
         // A facet-toggle delta carries no sort of its own; preserve the session's current sort so a
         // filter change never silently resets the ordering (CTRIB-053). The match-all mode follows the same rule.
         final String mergedSort = delta.getSort() != null ? delta.getSort() : currentState.getSort();
-        final Set<FacetType> mergedMatchAll = delta.getMatchAll() != null && !delta.getMatchAll().isEmpty()
-            ? delta.getMatchAll() : currentState.getMatchAll();
+        final Set<FacetType> mergedMatchAll = delta.getMatchAll().isEmpty()
+            ? currentState.getMatchAll() : delta.getMatchAll();
         return new FacetStateDto(newState, delta.getQuery(), delta.isMyObjects(), mergedSort, mergedMatchAll);
     }
 

@@ -660,7 +660,7 @@ class SavedSearchServiceImplTest {
         identity();
         when(repository.list("alice", "google", 0, 30)).thenReturn(Flux.just(
             pojo(1L, "logic", "{\"filters\":{\"tags\":[{\"entity_id\":1,\"selected\":true,\"exclude\":true},"
-                + "{\"entity_id\":2,\"selected\":true,\"exclude\":\"yes\"}],"
+                + "{\"entity_id\":2,\"selected\":true,\"exclude\":\"yes\"},\"junk\",7],"
                 + "\"match_all\":[\"tags\",42,\"from_the_future\"]}}"),
             pojo(2L, "not-a-list", "{\"filters\":{\"match_all\":\"tags\"},\"query\":\"x\"}"),
             pojo(3L, "pre-st11", "{\"filters\":{\"tags\":[{\"entity_id\":1,\"selected\":true}]},\"query\":\"y\"}")));
@@ -670,7 +670,8 @@ class SavedSearchServiceImplTest {
             .assertNext(list -> {
                 final var logic = list.getItems().get(0).getSpec().getFilters();
                 assertThat(logic.getTags()).extracting(SearchFilterState::getEntityId, SearchFilterState::getExclude)
-                    .as("a boolean exclude survives; a non-boolean one drops the FLAG and keeps the item")
+                    .as("a boolean exclude survives; a non-boolean one drops the FLAG and keeps the item;"
+                        + " a non-object item is dropped item-level (it would otherwise cost the whole spec)")
                     .containsExactly(tuple(1L, true), tuple(2L, null));
                 assertThat(logic.getMatchAll())
                     .as("a non-string token is dropped item-level; an unknown string token is kept for the mapper")

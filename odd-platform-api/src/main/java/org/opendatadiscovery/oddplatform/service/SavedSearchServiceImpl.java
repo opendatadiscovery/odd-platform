@@ -192,7 +192,9 @@ public class SavedSearchServiceImpl implements SavedSearchService {
      * field, a non-string item is dropped item-level (an unknown token is left for the mapper to drop — that is the
      * {@code sort} / {@code my_data} posture the search endpoint already has). Each facet's items carry an optional
      * boolean {@code exclude}: a non-boolean drops the FLAG, never the item (the value stays a positive selection —
-     * the pre-ST-11 meaning — rather than costing the saved search the facet).
+     * the pre-ST-11 meaning — rather than costing the saved search the facet). A facet item that is not an object
+     * at all is dropped item-level (the {@code columns} / {@code asset_kinds} grain) — left in, it would fail the
+     * whole spec's read and cost the search every field.
      */
     private void sanitiseFacetLogic(final ObjectNode spec) {
         final JsonNode filters = spec.get(FILTERS_FIELD);
@@ -218,11 +220,17 @@ public class SavedSearchServiceImpl implements SavedSearchService {
             }
         }
         filtersNode.fields().forEachRemaining(facet -> {
-            if (!facet.getValue().isArray()) {
+            // every other key of `filters` is a facet's item list; match_all (a token list) was handled above
+            if (MATCH_ALL_FIELD.equals(facet.getKey()) || !facet.getValue().isArray()) {
                 return;
             }
-            for (final JsonNode item : facet.getValue()) {
+            final ArrayNode items = (ArrayNode) facet.getValue();
+            for (int i = items.size() - 1; i >= 0; i--) {
+                final JsonNode item = items.get(i);
                 if (!item.isObject()) {
+                    log.warn("Saved-search spec carries a non-object item on facet {} ({}); dropping it",
+                        facet.getKey(), item.getNodeType());
+                    items.remove(i);
                     continue;
                 }
                 final JsonNode exclude = item.get(EXCLUDE_FIELD);

@@ -77,6 +77,8 @@ class FacetStateDtoTest {
         assertThat(state.getPositiveState().get(FacetType.OWNERS)).extracting(SearchFilterDto::getEntityId)
             .containsExactly(1L);
         assertThat(state.getActiveFacets()).containsExactly(FacetType.OWNERS);
+        assertThat(new FacetStateDto(Map.of(FacetType.TAGS, List.of()), "q", false, null).getActiveFacets())
+            .as("a facet whose list is empty is not active").isEmpty();
     }
 
     @Test
@@ -116,6 +118,17 @@ class FacetStateDtoTest {
 
         assertThat(FacetStateDto.merge(current, delta).isMatchAll(FacetType.OWNERS)).isTrue();
         assertThat(FacetStateDto.merge(current, delta).isMatchAll(FacetType.TAGS)).isFalse();
+    }
+
+    @Test
+    @DisplayName("merge takes the delta's match-all set when it carries one (a mode click replaces, never unions)")
+    void merge_takesTheDeltasMatchAll_whenItCarriesOne() {
+        final FacetStateDto current = new FacetStateDto(Map.of(), "q", false, null, Set.of(FacetType.OWNERS));
+        final FacetStateDto delta = new FacetStateDto(Map.of(), "q", false, null, Set.of(FacetType.TAGS));
+
+        final FacetStateDto merged = FacetStateDto.merge(current, delta);
+        assertThat(merged.isMatchAll(FacetType.TAGS)).isTrue();
+        assertThat(merged.isMatchAll(FacetType.OWNERS)).as("not a union — the delta is the whole mode").isFalse();
     }
 
     @Test
