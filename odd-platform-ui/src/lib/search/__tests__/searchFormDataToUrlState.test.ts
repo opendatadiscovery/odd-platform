@@ -152,13 +152,19 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
     // ST-13a (#1847) — the twelfth: the result-column LAYOUT, an ORDERED list, so the round trip proves order
     // and content (a non-default order, deliberately — the default is never carried).
     columns: ['owners', 'datasource', 'rows_count', 'type'],
+    // ST-11 (#1845) — the thirteenth and fourteenth dimensions ride INSIDE `filters` (an exclusion is a facet item
+    // flagged `exclude: true`; the mode is `filters.match_all`), so the wire-key set below stays at twelve while
+    // this fixture still fails to compile — and this round trip still fails — the moment either is dropped.
+    excluded: { tags: [34], owners: [66], statuses: [9] },
+    matchAll: ['tags', 'owners'],
   };
 
   /**
    * The wire keys of AssetSearchFormData — nine at #1878, ten since ST-9 (#1843) added `popularity`, eleven since
-   * ST-10 (#1844) added `recently_viewed`, twelve since ST-13a (#1847) added `columns`. A regenerated THIRTEENTH
-   * key must fail this, by design: it means a dimension reached the request object without saved-search support
-   * (the LSN-042 class).
+   * ST-10 (#1844) added `recently_viewed`, twelve since ST-13a (#1847) added `columns`; ST-11 (#1845) added its two
+   * dimensions INSIDE `filters` (`exclude` per item, `match_all`), so the count stays twelve. A regenerated
+   * THIRTEENTH key must fail this, by design: it means a dimension reached the request object without
+   * saved-search support (the LSN-042 class).
    */
   const WIRE_KEYS = [
     'asset_kinds',

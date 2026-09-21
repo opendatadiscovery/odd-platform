@@ -86,11 +86,17 @@ describe('searchUrlState — facets + My-data ⇄ URL params (ST-1b / ST-8 / D10
     expect(paramsToSearchState('').facets).toEqual({});
   });
 
-  it('fails closed on malformed facet ids: non-numeric / negative / zero dropped, never throws', () => {
+  it('fails closed on malformed facet ids: non-numeric / zero / a bare or doubled sign dropped, never throws', () => {
     expect(paramsToSearchState('?tags[]=5,notanumber,7&owners[]=abc')).toEqual(
       state({ facets: { tags: [5, 7] } })
     );
+    // RE-GROUNDED by ST-11 (#1845): `-1` is no longer junk — a `-` prefix marks an EXCLUSION (the query syntax's
+    // own `-word`), so it is read as "not 1" (the exclusion cases below); the junk that stays junk is `-0`, `--1`,
+    // a bare `-` and a signed non-number. The assertion is tighter, not weaker: it now states what `-1` MEANS.
     expect(paramsToSearchState('?tags[]=-1,0,3')).toEqual(
+      state({ facets: { tags: [3] }, excluded: { tags: [1] } })
+    );
+    expect(paramsToSearchState('?tags[]=-0,--1,-,-x,3')).toEqual(
       state({ facets: { tags: [3] } })
     );
     // an unknown facet-looking param is ignored (only the 8 known facet dimensions are read)
@@ -658,5 +664,94 @@ describe("liveSearch — the browser's search when the router is the browser's (
     } finally {
       window.history.replaceState({}, '', '/');
     }
+  });
+});
+
+/**
+ * ST-11 (#1845, ADR D13) — the facet-LOGIC grammar: `-<id>` inside a facet param is an EXCLUSION, `match_all[]`
+ * lists the facets in `Match all`. A permanent public contract like the facet params it extends (D10): a link
+ * written before ST-11 parses unchanged, a link written after it degrades on an older build, junk never throws.
+ */
+describe('searchUrlState — facet logic: exclusions + match_all ⇄ URL params (ST-11 / #1845)', () => {
+  it('round-trips positives + exclusions + the mode (identity, byte-identical serialisation)', () => {
+    const s = state({
+      query: 'q',
+      facets: { tags: [7401, 7402], owners: [3] },
+      excluded: { tags: [7403], statuses: [4] },
+      matchAll: ['tags'],
+    });
+    const params = searchStateToParams(s);
+    expect(params).toBe(
+      'match_all[]=tags&owners[]=3&q=q&statuses[]=-4&tags[]=7401,7402,-7403'
+    );
+    expect(paramsToSearchState(params)).toEqual(s);
+    expect(searchStateToParams(paramsToSearchState(params))).toBe(params);
+  });
+
+  it('a pre-ST-11 URL parses unchanged: no exclusions, no mode', () => {
+    const s = paramsToSearchState('?q=x&tags[]=7401,7402');
+    expect(s).toEqual(state({ query: 'x', facets: { tags: [7401, 7402] } }));
+    expect(s.excluded).toBeUndefined();
+    expect(s.matchAll).toBeUndefined();
+    expect(searchStateToParams(s)).toBe('q=x&tags[]=7401,7402');
+  });
+
+  it('a value listed both as a positive and as an exclusion reads as EXCLUDED (one representation)', () => {
+    expect(paramsToSearchState('?tags[]=7401,-7401,7402')).toEqual(
+      state({ facets: { tags: [7402] }, excluded: { tags: [7401] } })
+    );
+    // and the serialiser never writes both: a state that carries a value on both sides writes the exclusion only
+    expect(
+      searchStateToParams(
+        state({ facets: { tags: [7401, 7402] }, excluded: { tags: [7401] } })
+      )
+    ).toBe('tags[]=7402,-7401');
+  });
+
+  it('match_all fails closed: unknown facet names dropped, a mode on a facet with no positive value dropped', () => {
+    expect(paramsToSearchState('?tags[]=1,2&match_all[]=tags,bogus,TAGS')).toEqual(
+      state({ facets: { tags: [1, 2] }, matchAll: ['tags'] })
+    );
+    expect(paramsToSearchState('?match_all[]=tags')).toEqual(state());
+    expect(paramsToSearchState('?tags[]=-1&match_all[]=tags')).toEqual(
+      state({ excluded: { tags: [1] } })
+    );
+    // the wire's own token spelling is accepted for the entity-class facet
+    expect(
+      paramsToSearchState('?entityClasses[]=1,2&match_all[]=entity_classes')
+    ).toEqual(state({ facets: { entityClasses: [1, 2] }, matchAll: ['entityClasses'] }));
+  });
+
+  it('serialises the mode in the canonical facet order and only for facets that still carry a positive', () => {
+    expect(
+      searchStateToParams(
+        state({
+          facets: { owners: [1], tags: [2] },
+          matchAll: ['owners', 'tags', 'groups'],
+        })
+      )
+    ).toBe('match_all[]=tags,owners&owners[]=1&tags[]=2');
+  });
+
+  it('searchUrlStateToFormData → the request: an exclusion is a selected item flagged `exclude`, the mode is `matchAll`', () => {
+    const form = searchUrlStateToFormData(
+      state({
+        facets: { tags: [1] },
+        excluded: { tags: [2], owners: [3] },
+        matchAll: ['tags'],
+      })
+    );
+    expect(form.filters).toEqual({
+      tags: [
+        { entityId: 1, selected: true },
+        { entityId: 2, selected: true, exclude: true },
+      ],
+      owners: [{ entityId: 3, selected: true, exclude: true }],
+      matchAll: ['tags'],
+    });
+    // a request without the new dimensions is byte-identical to before (no `exclude`, no `matchAll` key)
+    expect(searchUrlStateToFormData(state({ facets: { tags: [1] } })).filters).toEqual({
+      tags: [{ entityId: 1, selected: true }],
+    });
   });
 });
