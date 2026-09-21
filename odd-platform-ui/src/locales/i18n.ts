@@ -7,6 +7,7 @@ import fr from './translations/fr.json';
 import ua from './translations/ua.json';
 import hy from './translations/hy.json';
 import br from './translations/br.json';
+import tr from './translations/tr.json';
 
 const resources = {
   en: { translation: en },
@@ -16,6 +17,7 @@ const resources = {
   ua: { translation: ua },
   hy: { translation: hy },
   br: { translation: br },
+  tr: { translation: tr },
 };
 
 const languages = Object.keys(resources);
