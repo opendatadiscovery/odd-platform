@@ -49,6 +49,7 @@ export { default as FeedbackIcon } from './FeedbackIcon';
 export { default as DownstreamArrow } from './DownstreamArrow';
 export { default as UpstreamArrow } from './UpstreamArrow';
 export { default as EmptyIcon } from './EmptyIcon';
+export { default as ExcludeIcon } from './ExcludeIcon';
 export { default as IntegratedIcon } from './IntegratedIcon';
 export { default as NoDataIcon } from './NoDataIcon';
 export { default as TriangularUnionIcon } from './TriangularUnionIcon';

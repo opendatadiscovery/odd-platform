@@ -100,8 +100,8 @@ const Search: React.FC = () => {
   // census fix). The server response sets synced=true, so the mirror never re-fires on repopulation (no
   // loop); the normalised equality guard skips a redundant navigate. The reader above then runs the new URL.
   const writeStateToUrl = useDebouncedCallback(() => {
-    // ST-2b / ST-4 / ST-7 / ST-8 — the mirror rebuilds the URL from the redux facet state, which carries
-    // none of `sort`, `asset_kinds`, `favorites`, `entityClasses`, or the My-data scope (all URL-only, except
+    // ST-2b / ST-4 / ST-7 / ST-8 / ST-11 — the mirror rebuilds the URL from the redux facet state, which carries
+    // none of `sort`, `asset_kinds`, `favorites`, `entityClasses`, `match_all`, or the My-data scope (all URL-only, except
     // entityClasses which is URL-driven by DataEntityTypeFilter because the single-class DE-session facet
     // would collapse a multi-class selection). Merge them ALL back from the live URL so a sidebar facet
     // toggle PRESERVES the active ordering, the Asset-type selection, the Data-entity-type selection, the
@@ -133,6 +133,10 @@ const Search: React.FC = () => {
       recentlyViewed: live.recentlyViewed,
       // ST-13a — the result-column layout (the same #1858 class: URL-only, so it MUST be merged back).
       columns: live.columns,
+      // ST-11 (#1845) — the per-facet `Match all` MODE is URL-only (a redux facet item has no home for it), so it
+      // MUST be merged back too — the same class; the EXCLUSIONS are not URL-only: they ride the redux facet
+      // items (`exclude: true`) and reach `searchUrlState.excluded` through the selector. IT-161 pins both.
+      matchAll: live.matchAll,
     });
     if (nextParams !== liveSearch(location)) {
       navigate(`${searchPath()}${nextParams ? `?${nextParams}` : ''}`);

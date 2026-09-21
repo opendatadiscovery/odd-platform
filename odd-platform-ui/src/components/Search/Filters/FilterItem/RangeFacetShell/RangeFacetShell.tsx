@@ -2,9 +2,9 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { AppTooltip, Button } from 'components/shared/elements';
 import { TooltipBody } from 'components/shared/elements/AppTooltip/AppTooltipStyles';
-import { ClearIcon, InformationIcon } from 'components/shared/icons';
+import { InformationIcon } from 'components/shared/icons';
 import { Label } from 'components/shared/elements/Input/Input.styles';
-import { Chip } from '../FixedOptionsMultiFilter/FixedOptionsMultiFilterStyles';
+import FacetChip from '../FacetChip/FacetChip';
 import * as S from './RangeFacetShellStyles';
 
 /** A preset link under the rail body: a label and what clicking it commits. */
@@ -144,24 +144,17 @@ const RangeFacetShell: React.FC<RangeFacetShellProps> = ({
       )}
       {chipText && (
         <Grid display='inline-flex' item xs={12} sx={{ my: 0.25, mx: -0.25 }} container>
-          <Chip container data-qa={`filter-${filterId}-chip`}>
-            {/* WRAPS, never truncates. The chip is the only place that states what is actually applied - the
-              docs promise it "always names the resolved moments" - so "Last viewed: since Sep 2, 2..." in a
-              180px rail defeats its whole purpose. A second line costs nothing here. */}
-            <Typography
-              sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
-              title={chipText}
-            >
-              {chipText}
-            </Typography>
-            <Button
-              sx={{ ml: 0.5 }}
-              buttonType='linkGray-m'
-              icon={<ClearIcon />}
-              onClick={onClear}
-              aria-label={`${name}: ${chipText}`}
-            />
-          </Chip>
+          {/* The rail's one chip (ST-11). WRAPS, never truncates: the chip is the only place that states what is
+              actually applied - the docs promise it "always names the resolved moments" - so "Last viewed: since
+              Sep 2, 2..." in a 180px rail defeats its whole purpose. A second line costs nothing here. No exclusion
+              toggle: a window's "not" is ST-11b's decision, together with the Created / Updated facets. */}
+          <FacetChip
+            label={chipText}
+            facetName={name}
+            wrap
+            onRemove={onClear}
+            dataQa={`filter-${filterId}-chip`}
+          />
         </Grid>
       )}
     </Grid>

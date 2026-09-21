@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import type { SearchFacetNames } from 'redux/interfaces';
 import { searchPath } from 'routes';
 import {
   liveSearch,
@@ -30,8 +31,9 @@ const DE_CLASS_OPTIONS: ReadonlyArray<{ id: number; labelKey: string }> = [
 /**
  * ST-4 (#1838) — the **Data entity type** filter: a STANDARD, SEPARATE search-filter multiselect (identical
  * control to Statuses / Tag / the Asset-type filter) over the entity classes. It narrows the Data-Entity rows of
- * the cross-kind result to ANY of the selected classes (an OR — `entity_class_ids && [ids]`); other kinds pass
- * through. Like the Asset-type filter, the selection rides the URL (`?entityClasses[]=`) DIRECTLY — never the
+ * the cross-kind result to ANY of the selected classes (an OR — `entity_class_ids && [ids]`) — or, since ST-11
+ * (#1845), to ALL of them (`Match all`, `@>`) — minus the excluded ones; other kinds pass through (this facet
+ * refines the Data-Entity rows; which KINDS appear is the Asset-type filter's decision). Like the Asset-type filter, the selection rides the URL (`?entityClasses[]=`) DIRECTLY — never the
  * redux DE-session facet, whose single-class collapse dropped the second chip on reload and could not carry a
  * multi-class selection. NOT a nested reveal, NOT single-select, no per-filter Clear All (the single
  * Filters-panel "Clear All" clears it, like every other filter).
@@ -41,23 +43,37 @@ const DataEntityTypeFilter: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const selectedIds = React.useMemo(
-    () => paramsToSearchState(location.search).facets.entityClasses ?? [],
+  const urlState = React.useMemo(
+    () => paramsToSearchState(location.search),
     [location.search]
   );
+  const selectedIds = urlState.facets.entityClasses ?? [];
+  // ST-11 (#1845) — the excluded classes and the facet's `Match all` mode ride the URL beside the positives
+  // (`entityClasses[]=1,-4`, `match_all[]=entity_classes`), read and written through the same canonical grammar.
+  const excludedIds = urlState.excluded?.entityClasses ?? [];
+  const matchMode = urlState.matchAll?.includes('entityClasses') ? 'all' : 'any';
 
   const options: FixedFilterOption[] = React.useMemo(
     () => DE_CLASS_OPTIONS.map(({ id, labelKey }) => ({ id, name: t(labelKey) })),
     [t]
   );
 
-  const writeClasses = React.useCallback(
-    (ids: number[]) => {
+  const write = React.useCallback(
+    (ids: number[], excluded: number[], mode: 'any' | 'all') => {
       // the browser's URL (`liveSearch`), never the router's lagging copy — every other dimension is preserved
       const current = paramsToSearchState(liveSearch(location));
+      const matchAll: SearchFacetNames[] = (current.matchAll ?? []).filter(
+        f => f !== 'entityClasses'
+      );
+      if (mode === 'all' && ids.length > 0) matchAll.push('entityClasses');
       const next = {
         ...current,
         facets: { ...current.facets, entityClasses: ids.length ? ids : undefined },
+        excluded: {
+          ...current.excluded,
+          entityClasses: excluded.length ? excluded : undefined,
+        },
+        matchAll: matchAll.length ? matchAll : undefined,
       };
       const params = searchStateToParams(next);
       navigate(`${searchPath()}${params ? `?${params}` : ''}`);
@@ -65,14 +81,42 @@ const DataEntityTypeFilter: React.FC = () => {
     [location, navigate]
   );
 
+  const without = (ids: readonly number[], id: string | number) =>
+    ids.filter(x => x !== id);
+
   return (
     <FixedOptionsMultiFilter
       name={t('Data entity type')}
       filterId='entityClasses'
       options={options}
       selectedIds={selectedIds}
-      onSelect={option => writeClasses([...selectedIds, option.id as number])}
-      onRemove={option => writeClasses(selectedIds.filter(id => id !== option.id))}
+      excludedIds={excludedIds}
+      onSelect={option =>
+        write(
+          [...selectedIds, option.id as number],
+          without(excludedIds, option.id),
+          matchMode
+        )
+      }
+      onRemove={option =>
+        write(without(selectedIds, option.id), without(excludedIds, option.id), matchMode)
+      }
+      onExclude={option =>
+        write(
+          without(selectedIds, option.id),
+          [...without(excludedIds, option.id), option.id as number],
+          matchMode
+        )
+      }
+      onInclude={option =>
+        write(
+          [...without(selectedIds, option.id), option.id as number],
+          without(excludedIds, option.id),
+          matchMode
+        )
+      }
+      matchMode={matchMode}
+      onMatchModeChange={mode => write([...selectedIds], [...excludedIds], mode)}
     />
   );
 };

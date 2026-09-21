@@ -757,5 +757,11 @@
   "Result columns": "Արդյունքների սյունակներ",
   "Reset to default": "Վերականգնել լռելյայնը",
   "Last update in the source system for data entities; in the platform for terms and query examples": "Վերջին թարմացումը աղբյուր համակարգում՝ տվյալների էությունների համար, պլատֆորմում՝ տերմինների և հարցման օրինակների համար",
-  "The platform description, or the source description when none was written": "Պլատֆորմի նկարագրությունը, իսկ եթե այն գրված չէ՝ աղբյուրի նկարագրությունը"
+  "The platform description, or the source description when none was written": "Պլատֆորմի նկարագրությունը, իսկ եթե այն գրված չէ՝ աղբյուրի նկարագրությունը",
+  "not {{name}}": "ոչ {{name}}",
+  "Exclude": "Բացառել",
+  "Include": "Ներառել",
+  "Match": "Համընկնում",
+  "any": "ցանկացած",
+  "all": "բոլորը"
 }

@@ -757,5 +757,11 @@
   "Result columns": "Columnas de resultados",
   "Reset to default": "Restablecer valores predeterminados",
   "Last update in the source system for data entities; in the platform for terms and query examples": "Última actualización en el sistema de origen para entidades de datos; en la plataforma para términos y ejemplos de consulta",
-  "The platform description, or the source description when none was written": "La descripción de la plataforma o, si no se escribió ninguna, la descripción de la fuente"
+  "The platform description, or the source description when none was written": "La descripción de la plataforma o, si no se escribió ninguna, la descripción de la fuente",
+  "not {{name}}": "no {{name}}",
+  "Exclude": "Excluir",
+  "Include": "Incluir",
+  "Match": "Coincidir",
+  "any": "cualquiera",
+  "all": "todos"
 }

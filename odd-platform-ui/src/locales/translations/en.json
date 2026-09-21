@@ -757,5 +757,11 @@
   "Result columns": "Result columns",
   "Reset to default": "Reset to default",
   "Last update in the source system for data entities; in the platform for terms and query examples": "Last update in the source system for data entities; in the platform for terms and query examples",
-  "The platform description, or the source description when none was written": "The platform description, or the source description when none was written"
+  "The platform description, or the source description when none was written": "The platform description, or the source description when none was written",
+  "not {{name}}": "not {{name}}",
+  "Exclude": "Exclude",
+  "Include": "Include",
+  "Match": "Match",
+  "any": "any",
+  "all": "all"
 }

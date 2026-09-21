@@ -26,7 +26,6 @@ import MyDataFilter from './MyDataFilter/MyDataFilter';
 import DataEntityTypeFilter from './DataEntityTypeFilter/DataEntityTypeFilter';
 import PopularityFilter from './PopularityFilter/PopularityFilter';
 import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';
-import SingleFilterItem from './FilterItem/SingleFilterItem/SingleFilterItem';
 import * as S from './FiltersStyles';
 
 const Filters: React.FC = () => {
@@ -53,6 +52,8 @@ const Filters: React.FC = () => {
     // the browser's URL (`liveSearch`), never the router's lagging copy (a Clear-All right after the column picker
     // closed rebuilt the URL from the stale layout — CTRIB-073)
     const { query, sort, columns } = paramsToSearchState(liveSearch(location));
+    // ST-11 (#1845) — the exclusions and the `Match all` mode are filters: neither survives Clear All (the
+    // rebuild below carries no `excluded` / `matchAll`).
     const params = searchStateToParams({
       query,
       facets: {},
@@ -98,20 +99,24 @@ const Filters: React.FC = () => {
             rather than with the global facets below. Unlike My data it renders under auth.type=DISABLED (there is
             a shared history to scope, and the home panel already shows it); unlike Popularity it is cross-kind. */}
         <RecentlyViewedFilter />
-        <SingleFilterItem
+        {/* ST-11 (#1845) — Datasource and Namespace are the same multi-select control as Owner / Tag now (they were
+            single-selects): any of several values, and an exclusion — which a single-select cannot express. Their
+            options are the directories the rail fetches (up to 100, documented), not the session's aggregation, so
+            the rows carry no counts. */}
+        <MultipleFilterItem
           key='ds'
           facetName='datasources'
           name={t('Datasource')}
-          facetOptions={datasources}
+          options={datasources}
         />
         {typeof searchClass === 'number' && searchClass > 0 ? (
           <MultipleFilterItem key='tp' facetName='types' name={t('Type')} />
         ) : null}
-        <SingleFilterItem
+        <MultipleFilterItem
           key='ns'
           facetName='namespaces'
           name={t('Namespace')}
-          facetOptions={namespaces}
+          options={namespaces}
         />
         <MultipleFilterItem key='ow' facetName='owners' name={t('Owner')} />
         <MultipleFilterItem key='tg' facetName='tags' name={t('Tag')} />
