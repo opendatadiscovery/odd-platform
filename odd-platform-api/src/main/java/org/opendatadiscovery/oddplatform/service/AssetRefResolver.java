@@ -69,6 +69,12 @@ import static org.opendatadiscovery.oddplatform.dto.AssetFieldDto.TARGETS;
  * two-argument overload is exactly the one-argument one: same refs, no extras, so the other two surfaces are
  * unaffected. Every kind is resolved with one query per page (the term and query-example reads used to be one
  * per id).
+ *
+ * <p>Visibility is the CALLER's policy on one axis (ST-11 / #1845): a search whose facet state carries a positive
+ * {@code DELETED} status ({@link org.opendatadiscovery.oddplatform.dto.FacetStateDto#isDeletedRequested()}) has
+ * already admitted the deleted data entities in its ranked query and its count, so it resolves them too
+ * ({@link #resolveByKey(Collection, Set, boolean)}); every other caller keeps the default — a deleted entity
+ * resolves to nothing. A hollow entity is never resolved.
  */
 @Component
 @RequiredArgsConstructor
@@ -111,11 +117,22 @@ public class AssetRefResolver {
      */
     public Mono<Map<String, ResolvedAsset>> resolveByKey(final Collection<AssetRefDto> refs,
                                                          final Set<AssetFieldDto> fields) {
+        return resolveByKey(refs, fields, false);
+    }
+
+    /**
+     * {@link #resolveByKey(Collection, Set)} with the data-entity visibility the caller decided: with
+     * {@code includeDeletedDataEntities} a {@code DELETED} data entity resolves like any other (the search page under
+     * {@code Statuses = DELETED}); without it, as before, it resolves to nothing. Hollow entities never resolve.
+     */
+    public Mono<Map<String, ResolvedAsset>> resolveByKey(final Collection<AssetRefDto> refs,
+                                                         final Set<AssetFieldDto> fields,
+                                                         final boolean includeDeletedDataEntities) {
         if (refs.isEmpty()) {
             return Mono.just(Map.of());
         }
         return Mono.zip(
-                resolveDataEntities(idsForKind(refs, AssetKind.DATA_ENTITY), fields),
+                resolveDataEntities(idsForKind(refs, AssetKind.DATA_ENTITY), fields, includeDeletedDataEntities),
                 resolveTerms(idsForKind(refs, AssetKind.TERM), fields),
                 resolveQueryExamples(idsForKind(refs, AssetKind.QUERY_EXAMPLE), fields))
             .map(resolvedByKind -> {
@@ -132,13 +149,14 @@ public class AssetRefResolver {
     }
 
     private Mono<Map<String, ResolvedAsset>> resolveDataEntities(final Set<Long> ids,
-                                                                 final Set<AssetFieldDto> fields) {
+                                                                 final Set<AssetFieldDto> fields,
+                                                                 final boolean includeDeleted) {
         if (ids.isEmpty()) {
             return Mono.just(Map.of());
         }
         return dataEntityRepository.getDimensionsByIds(ids)
             .map(dtos -> dtos.stream()
-                .filter(this::isVisible)
+                .filter(dto -> isVisible(dto, includeDeleted))
                 // The dimensions query LEFT JOINs the namespace by the entity's own id OR its datasource's, so an
                 // entity whose two namespaces differ comes back as two rows; keep the one that is the entity's own.
                 .collect(Collectors.toMap(dto -> dto.getDataEntity().getId(), Function.identity(),
@@ -222,10 +240,10 @@ public class AssetRefResolver {
                     (existing, ignored) -> existing)));
     }
 
-    private boolean isVisible(final DataEntityDimensionsDto dto) {
+    private boolean isVisible(final DataEntityDimensionsDto dto, final boolean includeDeleted) {
         final var dataEntity = dto.getDataEntity();
         return dataEntity.getStatus() != null
-            && dataEntity.getStatus().intValue() != DataEntityStatusDto.DELETED.getId()
+            && (includeDeleted || dataEntity.getStatus().intValue() != DataEntityStatusDto.DELETED.getId())
             && !Boolean.TRUE.equals(dataEntity.getHollow());
     }
 

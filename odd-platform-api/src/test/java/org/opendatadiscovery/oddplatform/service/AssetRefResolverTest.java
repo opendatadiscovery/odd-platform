@@ -132,6 +132,26 @@ class AssetRefResolverTest {
     }
 
     @Test
+    void resolveByKey_includeDeleted_keepsADeletedDataEntity_andStillDropsAHollowOne() {
+        // ST-11 (#1845): the search page under `Statuses = DELETED` — its ranked query and its count admitted the
+        // deleted entities, so the page resolves them too; a hollow entity never resolves, whatever the policy.
+        final DataEntityDimensionsDto deleted = dimensions(11L, (short) 5, false); // DELETED status id = 5
+        final DataEntityDimensionsDto hollow = dimensions(12L, (short) 1, true);
+        when(dataEntityRepository.getDimensionsByIds(Set.of(11L, 12L)))
+            .thenReturn(Mono.just(List.of(deleted, hollow)));
+        final DataEntityRef ref = new DataEntityRef().id(11L);
+        when(dataEntityMapper.mapRef(deleted)).thenReturn(ref);
+
+        StepVerifier.create(resolver.resolveByKey(
+                List.of(new AssetRefDto("DATA_ENTITY", 11L), new AssetRefDto("DATA_ENTITY", 12L)), Set.of(), true))
+            .assertNext(map -> {
+                assertThat(map).containsOnlyKeys("DATA_ENTITY:11");
+                assertThat(map.get("DATA_ENTITY:11").dataEntity()).isSameAs(ref);
+            })
+            .verifyComplete();
+    }
+
+    @Test
     void resolveByKey_term_mapsToRef_fromOneBatchedRead() {
         // ST-13a: the N per-id getTermRefDto reads became ONE getTermDtosByIds per page; the ref the row gets
         // is still termMapper.mapToRef(the same TermRefDto shape), so Favorites / Recently-viewed see no change.

@@ -209,16 +209,24 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
             .verifyComplete();
     }
 
+    /**
+     * RE-GROUNDED by ST-11 (#1845, CTRIB-074 — G-C15). Before ST-11 this test PINNED the pass-through: a term in
+     * another namespace survived a Namespace facet because the shared facets narrowed Data-Entity rows only. The
+     * new expected value traces to the spec (ADR unified-asset-search D3 / D13: one rule across every kind — a
+     * Term is narrowed by the Namespace / Owner / Tag it carries), not to the system's output; the assertion is
+     * TIGHTER (the term is out, the total is 1) and the test is RED on {@code ref:main}, where the term passes.
+     */
     @Test
-    @DisplayName("a shared facet Terms carry (namespace) narrows data entities; a matching Term passes through")
-    void searchAssets_namespaceFacet_narrowsDataEntities_termPassesThrough() {
+    @DisplayName("a shared facet Terms carry (namespace) narrows data entities AND terms;"
+        + " a term in another namespace is out")
+    void searchAssets_namespaceFacet_narrowsDataEntitiesAndTerms() {
         // Two distinct namespace rows -> deterministically distinct serial ids (no reliance on UUID inequality).
         final long keepNsId = namespaceRepository.createByName(UUID.randomUUID().toString()).block().getId();
         final long otherNsId = namespaceRepository.createByName(UUID.randomUUID().toString()).block().getId();
 
         final long keptDeId = seedDataEntityInNamespace("nsfacetepsilon", keepNsId);  // in the selected namespace
         seedDataEntityInNamespace("nsfacetepsilon", otherNsId);                        // other namespace -> dropped
-        seedTerm("nsfacetepsilon");                                    // its own (random) namespace -> passes through
+        seedTerm("nsfacetepsilon");                                    // its own (random) namespace -> dropped too
 
         final AssetSearchFormData form = form("nsfacetepsilon")
             .filters(new SearchFormDataFilters().namespaces(List.of(new SearchFilterState(keepNsId, true))));
@@ -233,11 +241,12 @@ class AssetSearchServiceIntegrationTest extends BaseIntegrationTest {
                     .satisfies(a -> assertThat(a.getDataEntity().getId()).isEqualTo(keptDeId));
                 assertThat(list.getItems())
                     .extracting(Asset::getAssetKind)
-                    .as("the term (a non-DE kind) passes through — the facet is not applied to its own namespace")
-                    .contains(AssetKind.TERM);
+                    .as("the term carries its OWN namespace, which is not the selected one — it is narrowed out, "
+                        + "exactly like the other-namespace DE (ST-11: one rule across every kind)")
+                    .doesNotContain(AssetKind.TERM);
                 assertThat(list.getPageInfo().getTotal())
-                    .as("count = the kept DE + the term (the other-namespace DE is excluded)")
-                    .isEqualTo(2L);
+                    .as("count = the kept DE only")
+                    .isEqualTo(1L);
             })
             .verifyComplete();
     }

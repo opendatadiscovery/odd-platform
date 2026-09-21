@@ -29,6 +29,7 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -170,7 +171,7 @@ class AssetSearchServiceMyDataTest {
             .thenReturn(Flux.empty());
         when(assetSearchRepository.count(any(), any(), any(), any(), any(), any())).thenReturn(Mono.just(0L));
         // ST-13a (#1847): the service resolves the page WITH the requested column projection (an empty set here)
-        when(searchAssetResolver.resolve(any(), any())).thenReturn(Mono.just(List.of()));
+        when(searchAssetResolver.resolve(any(), any(), anyBoolean())).thenReturn(Mono.just(List.of()));
     }
 
     private void arrangeOwnerAndEmptyPage() {
