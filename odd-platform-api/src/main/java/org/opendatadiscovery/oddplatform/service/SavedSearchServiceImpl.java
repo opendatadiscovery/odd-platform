@@ -39,6 +39,10 @@ public class SavedSearchServiceImpl implements SavedSearchService {
     private static final String COLUMNS_FIELD = "columns";
     private static final String RECENTLY_VIEWED_FIELD = "recently_viewed";
     private static final String RECENTLY_VIEWED_WITHIN_FIELD = "viewed_within";
+    /** The wire names of the ST-11 (#1845) facet-logic fields inside the stored {@code filters} object. */
+    private static final String FILTERS_FIELD = "filters";
+    private static final String MATCH_ALL_FIELD = "match_all";
+    private static final String EXCLUDE_FIELD = "exclude";
     private static final Set<String> KNOWN_ASSET_KINDS = Arrays.stream(AssetKind.values())
         .map(AssetKind::getValue)
         .collect(Collectors.toUnmodifiableSet());
@@ -179,6 +183,56 @@ public class SavedSearchServiceImpl implements SavedSearchService {
         sanitisePopularity(spec);
         sanitiseRecentlyViewed(spec);
         sanitiseColumns(spec);
+        sanitiseFacetLogic(spec);
+    }
+
+    /**
+     * ST-11 (#1845): the facet-logic fields inside the stored {@code filters} object are sanitised at the same
+     * per-field grain as their siblings. {@code match_all} is a list of facet-name tokens: a non-list drops the
+     * field, a non-string item is dropped item-level (an unknown token is left for the mapper to drop — that is the
+     * {@code sort} / {@code my_data} posture the search endpoint already has). Each facet's items carry an optional
+     * boolean {@code exclude}: a non-boolean drops the FLAG, never the item (the value stays a positive selection —
+     * the pre-ST-11 meaning — rather than costing the saved search the facet).
+     */
+    private void sanitiseFacetLogic(final ObjectNode spec) {
+        final JsonNode filters = spec.get(FILTERS_FIELD);
+        if (filters == null || !filters.isObject()) {
+            return;
+        }
+        final ObjectNode filtersNode = (ObjectNode) filters;
+        final JsonNode matchAll = filtersNode.get(MATCH_ALL_FIELD);
+        if (matchAll != null && !matchAll.isNull()) {
+            if (matchAll.isArray()) {
+                final ArrayNode kept = filtersNode.arrayNode();
+                for (final JsonNode token : matchAll) {
+                    if (token.isTextual()) {
+                        kept.add(token);
+                    } else {
+                        log.warn("Saved-search spec carries a non-string match_all token {}; dropping it", token);
+                    }
+                }
+                filtersNode.set(MATCH_ALL_FIELD, kept);
+            } else {
+                log.warn("Saved-search spec carries a non-list match_all ({}); dropping it", matchAll.getNodeType());
+                filtersNode.remove(MATCH_ALL_FIELD);
+            }
+        }
+        filtersNode.fields().forEachRemaining(facet -> {
+            if (!facet.getValue().isArray()) {
+                return;
+            }
+            for (final JsonNode item : facet.getValue()) {
+                if (!item.isObject()) {
+                    continue;
+                }
+                final JsonNode exclude = item.get(EXCLUDE_FIELD);
+                if (exclude != null && !exclude.isNull() && !exclude.isBoolean()) {
+                    log.warn("Saved-search spec carries a non-boolean exclude on facet {} ({}); dropping the flag",
+                        facet.getKey(), exclude.getNodeType());
+                    ((ObjectNode) item).remove(EXCLUDE_FIELD);
+                }
+            }
+        });
     }
 
     /**
