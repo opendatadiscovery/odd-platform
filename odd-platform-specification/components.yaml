@@ -1972,6 +1972,13 @@ components:
           format: int64
         name:
           type: string
+        exclude:
+          type: boolean
+          description: >-
+            Present and `true` only when the echoed selection is an EXCLUSION (ST-11 / #1845 — the request carried
+            `SearchFilterState.exclude: true` for this value), so a client rendering the search session's
+            `facet_state` can show the chip as "not <name>" rather than as a positive selection. Absent for every
+            positive selection, which keeps the echo byte-identical to what it was before this field existed.
       required:
         - id
         - name
@@ -2777,6 +2784,26 @@ components:
           type: string
         selected:
           type: boolean
+        exclude:
+          type: boolean
+          description: >-
+            When `true` this value is an EXCLUSION (ST-11 / #1845, ADR unified-asset-search D13): every asset that
+            carries it is removed from the result, whatever else matches. Absent or `false` is a positive selection —
+            exactly what every request before this field existed sent — so a stored saved search or a bookmarked link
+            from an older release reapplies unchanged. A value listed both as a positive and as an exclusion in one
+            request is read as EXCLUDED (the narrower, explicit intent; the UI never writes both).
+
+            Honoured by the cross-kind `POST /api/search/assets` (the list, the count, the popularity histogram): an
+            asset of a kind that carries the facet is dropped when it carries the value; an asset of a kind that
+            cannot carry the facet at all (a query example has no tags, owners or namespace) is ADMITTED, because it
+            cannot carry the excluded value — `v` and `not v` always partition the result set.
+
+            The legacy `/api/search` session STORES an excluded value and ECHOES it back (with `exclude: true` and its
+            resolved name in `facet_state`), so a client can render the chip from an id-only request; the session's
+            own results path applies positive values only (today's semantics), while its `/facet/{facet_type}` option
+            counts honour the exclusion on the facets each count already conditions on, and hide the excluded value
+            from the option list exactly as a selected one is hidden. The Dictionary search `POST /api/terms/search`
+            shares this object and DROPS any item carrying `exclude: true` (it never reads one as a positive).
       required:
         - entity_id
         - name
@@ -2891,6 +2918,25 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/SearchFilterState'
+            match_all:
+              type: array
+              items:
+                type: string
+              description: >-
+                The facets whose selected (positive) values must ALL be carried by an asset for it to match
+                (ST-11 / #1845, ADR unified-asset-search D13) — "Match all" against the default "Match any". Tokens
+                are the facet property names of this object — `tags`, `owners`, `groups`, `entity_classes`,
+                `namespaces`, `datasources`, `statuses`, `types` — matched case-insensitively; an unrecognised token
+                is DROPPED, never a 400 (the `sort` / `my_data` posture, so a stale or hand-edited shareable URL
+                degrades instead of failing). Absent or empty means every facet keeps today's meaning: any of the
+                selected values. It is meaningful on the facets an asset can carry several values of (Tag, Owner,
+                Groups, Data entity type); on a single-valued facet (Datasource, Namespace, Status, Type) "all of"
+                two distinct values is honestly empty — the UI never offers it there. Exclusions (`exclude: true`
+                items) are unaffected by the mode: an excluded value always removes the assets that carry it.
+
+                Honoured by the cross-kind `POST /api/search/assets`. The legacy `/api/search` session stores it
+                and its `/facet/{facet_type}` option counts honour it on the facets each count already conditions
+                on; the session's own results path reads the values as "any" (today's semantics).
       required:
         - filters
 
