@@ -58,14 +58,24 @@ const DataEntityTypeFilter: React.FC = () => {
     [t]
   );
 
+  type Classes = { ids: number[]; excluded: number[] };
+  // Every write EDITS the classes the browser's URL carries right now (`liveSearch`), never the ids this render
+  // was given: the router's copy trails a navigation by the page's 0.3-0.6 s render, so a second click on this
+  // filter inside that window (remove one chip, exclude another) used to compute from the previous selection and
+  // put the removed class back. Every other dimension is preserved from the same live read. The mode is written
+  // as given, or kept as the live URL carries it.
   const write = React.useCallback(
-    (ids: number[], excluded: number[], mode: 'any' | 'all') => {
-      // the browser's URL (`liveSearch`), never the router's lagging copy — every other dimension is preserved
+    (edit: (classes: Classes) => Classes, mode?: 'any' | 'all') => {
       const current = paramsToSearchState(liveSearch(location));
+      const { ids, excluded } = edit({
+        ids: current.facets.entityClasses ?? [],
+        excluded: current.excluded?.entityClasses ?? [],
+      });
+      const liveMode = current.matchAll?.includes('entityClasses') ? 'all' : 'any';
       const matchAll: SearchFacetNames[] = (current.matchAll ?? []).filter(
         f => f !== 'entityClasses'
       );
-      if (mode === 'all' && ids.length > 0) matchAll.push('entityClasses');
+      if ((mode ?? liveMode) === 'all' && ids.length > 0) matchAll.push('entityClasses');
       const next = {
         ...current,
         facets: { ...current.facets, entityClasses: ids.length ? ids : undefined },
@@ -92,31 +102,31 @@ const DataEntityTypeFilter: React.FC = () => {
       selectedIds={selectedIds}
       excludedIds={excludedIds}
       onSelect={option =>
-        write(
-          [...selectedIds, option.id as number],
-          without(excludedIds, option.id),
-          matchMode
-        )
+        write(({ ids, excluded }) => ({
+          ids: [...without(ids, option.id), option.id as number],
+          excluded: without(excluded, option.id),
+        }))
       }
       onRemove={option =>
-        write(without(selectedIds, option.id), without(excludedIds, option.id), matchMode)
+        write(({ ids, excluded }) => ({
+          ids: without(ids, option.id),
+          excluded: without(excluded, option.id),
+        }))
       }
       onExclude={option =>
-        write(
-          without(selectedIds, option.id),
-          [...without(excludedIds, option.id), option.id as number],
-          matchMode
-        )
+        write(({ ids, excluded }) => ({
+          ids: without(ids, option.id),
+          excluded: [...without(excluded, option.id), option.id as number],
+        }))
       }
       onInclude={option =>
-        write(
-          [...without(selectedIds, option.id), option.id as number],
-          without(excludedIds, option.id),
-          matchMode
-        )
+        write(({ ids, excluded }) => ({
+          ids: [...without(ids, option.id), option.id as number],
+          excluded: without(excluded, option.id),
+        }))
       }
       matchMode={matchMode}
-      onMatchModeChange={mode => write([...selectedIds], [...excludedIds], mode)}
+      onMatchModeChange={mode => write(classes => classes, mode)}
     />
   );
 };
