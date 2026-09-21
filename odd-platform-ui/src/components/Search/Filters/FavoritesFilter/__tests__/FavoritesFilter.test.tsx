@@ -89,6 +89,24 @@ describe('FavoritesFilter (ST-7 / #1841)', () => {
     );
   });
 
+  it('CLICKING it builds on the URL the BROWSER is on when the router still lags a previous navigation (ST-13a / CTRIB-073)', async () => {
+    // react-router 7 commits a location change inside React.startTransition; on the search page that render takes
+    // ~0.5 s, and a click inside the window used to spread the router's stale copy — measured: the result-column
+    // layout the picker had just written to the URL was dropped, and the table (which derives its layout from the
+    // URL) reverted. Modelled here: the browser's history has moved on (`columns[]=owners`) while the memory router
+    // still shows the plain URL. The write must carry the browser's dimensions.
+    renderAt('/search?q=orders');
+    window.history.replaceState({}, '', '/search?columns[]=owners&q=orders');
+    try {
+      await userEvent.click(screen.getByRole('checkbox'));
+      expect(screen.getByTestId('loc')).toHaveTextContent(
+        '/search?columns[]=owners&favorites=yes&q=orders'
+      );
+    } finally {
+      window.history.replaceState({}, '', '/');
+    }
+  });
+
   it('CLICKING it off removes the param entirely (not favorites=no — that is a different filter)', async () => {
     renderAt('/search?favorites=yes&q=orders');
     await userEvent.click(screen.getByRole('checkbox'));

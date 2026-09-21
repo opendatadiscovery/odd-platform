@@ -744,5 +744,18 @@
   "Couldn't load match details": "Impossible de charger les détails de la correspondance",
   "Couldn't load details": "Impossible de charger les détails",
   "No owners": "Aucun propriétaire",
-  "+{{count}} more": "+{{count}} de plus"
+  "+{{count}} more": "+{{count}} de plus",
+  "Not applicable": "Non applicable",
+  "No value": "Aucune valeur",
+  "No owner": "Aucun propriétaire",
+  "Applies to": "S'applique à",
+  "Last ingested": "Dernière ingestion",
+  "Common": "Communes",
+  "Move {{column}} up": "Monter {{column}}",
+  "Move {{column}} down": "Descendre {{column}}",
+  "Fixed column": "Colonne fixe",
+  "Result columns": "Colonnes des résultats",
+  "Reset to default": "Rétablir la valeur par défaut",
+  "Last update in the source system for data entities; in the platform for terms and query examples": "Dernière mise à jour dans le système source pour les entités de données ; dans la plateforme pour les termes et les exemples de requête",
+  "The platform description, or the source description when none was written": "La description de la plateforme ou, à défaut, la description de la source"
 }

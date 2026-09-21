@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.dto.TagOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
@@ -28,6 +29,15 @@ public interface ReactiveTagRepository extends ReactiveCRUDRepository<TagPojo> {
     Mono<Page<TagDto>> listMostPopular(final String query, final List<Long> ids, final int page, final int size);
 
     Flux<TagToDataEntityPojo> listTagRelations(final Collection<Long> dataEntityIds);
+
+    /**
+     * The live tags of every data entity in {@code dataEntityIds}, keyed by data entity id — ONE tag-joined
+     * query for a whole result page (CTRIB-073 / #1847 ST-13a); entities without tags are absent from the map.
+     */
+    Mono<Map<Long, List<TagPojo>>> listTagsByDataEntityIds(final Collection<Long> dataEntityIds);
+
+    /** The term-side twin of {@link #listTagsByDataEntityIds}: the live tags of every term, keyed by term id. */
+    Mono<Map<Long, List<TagPojo>>> listTagsByTermIds(final Collection<Long> termIds);
 
     Flux<TagPojo> ingestData(final List<TagPojo> tags);
 

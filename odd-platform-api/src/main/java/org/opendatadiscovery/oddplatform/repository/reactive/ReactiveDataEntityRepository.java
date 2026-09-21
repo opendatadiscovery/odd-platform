@@ -59,6 +59,13 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
 
     Mono<Map<String, Set<DataEntityPojo>>> getDEGEntities(final Collection<String> groupOddrns);
 
+    /**
+     * How many live direct members each group in {@code groupOddrns} has, keyed by group oddrn — a COUNT for a
+     * whole result page (CTRIB-073 / #1847 ST-13a), where {@link #getDEGEntities(Collection)} would load every
+     * member row to count them. Groups without members are absent from the map.
+     */
+    Mono<Map<String, Long>> getDEGEntitiesCount(final Collection<String> groupOddrns);
+
     Mono<List<DataEntityDimensionsDto>> getDEGExperimentRuns(final Long dataEntityGroupId,
                                                              final Integer page,
                                                              final Integer size);

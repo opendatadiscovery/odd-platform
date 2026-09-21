@@ -328,7 +328,10 @@ class SavedSearchServiceImplTest {
             .assetKinds(List.of(AssetKind.DATA_ENTITY, AssetKind.TERM))
             .favorites(true)
             .popularity(new PopularityRange().min(4).max(9))
-            .recentlyViewed(new RecentlyViewedScope().viewedAfter(after).viewedBefore(before));
+            .recentlyViewed(new RecentlyViewedScope().viewedAfter(after).viewedBefore(before))
+            // ST-13a (#1847): the result-column LAYOUT is a dimension of the spec (GATE-1 D2) — a NON-empty,
+            // ORDERED list, so the round trip proves order and content, not just presence (CTRIB-069's class).
+            .columns(List.of("owners", "datasource", "rows_count"));
 
         final ArgumentCaptor<JSONB> persisted = ArgumentCaptor.forClass(JSONB.class);
         when(repository.existsByName("alice", "google", "Everything", null)).thenReturn(Mono.just(false));
@@ -372,6 +375,38 @@ class SavedSearchServiceImplTest {
                     .isEqualTo(after.toInstant());
                 assertThat(read.getRecentlyViewed().getViewedBefore().toInstant())
                     .isEqualTo(before.toInstant());
+                assertThat(read.getColumns())
+                    .as("the column layout survives the round trip, in order (stored as %s)", stored)
+                    .containsExactly("owners", "datasource", "rows_count");
+            })
+            .verifyComplete();
+    }
+
+    /**
+     * ST-13a (#1847): the stored layout is sanitised by SHAPE only — a non-list drops the field, a non-string item
+     * is dropped item-level — and an id this release does not know is KEPT (the client parses it fail-closed; the
+     * search endpoint drops it at projection time), so a layout saved from a newer release degrades, never dies.
+     */
+    @Test
+    void list_storedColumns_dropsANonStringItem_keepsUnknownIds_andDropsANonList() {
+        identity();
+        when(repository.list("alice", "google", 0, 30)).thenReturn(Flux.just(
+            pojo(1L, "mixed", "{\"columns\":[\"owners\",42,null,\"from_the_future\"]}"),
+            pojo(2L, "not-a-list", "{\"columns\":\"owners\",\"query\":\"x\"}"),
+            pojo(3L, "absent", "{\"query\":\"y\"}")));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(3L));
+
+        StepVerifier.create(service.list(1, 30))
+            .assertNext(list -> {
+                assertThat(list.getItems().get(0).getSpec().getColumns())
+                    .containsExactly("owners", "from_the_future");
+                assertThat(list.getItems().get(1).getSpec().getColumns())
+                    .as("a non-list columns is dropped field-level; the search survives")
+                    .isNull();
+                assertThat(list.getItems().get(1).getSpec().getQuery()).isEqualTo("x");
+                assertThat(list.getItems().get(2).getSpec().getColumns())
+                    .as("a row saved before ST-13a reads back with no layout = the reader's own")
+                    .isNull();
             })
             .verifyComplete();
     }

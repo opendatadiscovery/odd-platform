@@ -2,8 +2,10 @@ package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.Asset;
+import org.opendatadiscovery.oddplatform.dto.AssetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.AssetRefDto;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -21,11 +23,16 @@ import reactor.core.publisher.Mono;
 public class SearchAssetResolver {
     private final AssetRefResolver assetRefResolver;
 
-    public Mono<List<Asset>> resolve(final List<AssetRefDto> rankedPage) {
+    /**
+     * Resolves the ranked page into renderable assets plus the result-column values the request named
+     * (CTRIB-073 / #1847 ST-13a): each item carries {@code fields} only when {@code fields} is non-empty — an empty
+     * set is the pre-ST-13a payload.
+     */
+    public Mono<List<Asset>> resolve(final List<AssetRefDto> rankedPage, final Set<AssetFieldDto> fields) {
         if (rankedPage.isEmpty()) {
             return Mono.just(List.of());
         }
-        return assetRefResolver.resolveByKey(rankedPage)
+        return assetRefResolver.resolveByKey(rankedPage, fields)
             .map(resolved -> rankedPage.stream()
                 .map(ref -> resolved.get(AssetRefResolver.key(ref.assetKind(), ref.assetId())))
                 .filter(Objects::nonNull)
@@ -33,7 +40,8 @@ public class SearchAssetResolver {
                     .assetKind(r.assetKind())
                     .dataEntity(r.dataEntity())
                     .term(r.term())
-                    .queryExample(r.queryExample()))
+                    .queryExample(r.queryExample())
+                    .fields(r.fields()))
                 .toList());
     }
 }

@@ -3,7 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { AssetKind } from 'generated-sources';
 import { searchPath } from 'routes';
-import { paramsToSearchState, searchStateToParams } from 'lib/search/searchUrlState';
+import {
+  liveSearch,
+  paramsToSearchState,
+  searchStateToParams,
+} from 'lib/search/searchUrlState';
 import { ASSET_KIND_OPTIONS } from 'components/Favorites/lib';
 import FixedOptionsMultiFilter, {
   type FixedFilterOption,
@@ -34,14 +38,15 @@ const AssetTypeFilter: React.FC = () => {
 
   const writeKinds = React.useCallback(
     (kinds: AssetKind[]) => {
+      // the browser's URL (`liveSearch`), never the router's lagging copy — every other dimension is preserved
       const next = {
-        ...paramsToSearchState(location.search),
+        ...paramsToSearchState(liveSearch(location)),
         assetKinds: kinds.length ? kinds : undefined,
       };
       const params = searchStateToParams(next);
       navigate(`${searchPath()}${params ? `?${params}` : ''}`);
     },
-    [location.search, navigate]
+    [location, navigate]
   );
 
   return (

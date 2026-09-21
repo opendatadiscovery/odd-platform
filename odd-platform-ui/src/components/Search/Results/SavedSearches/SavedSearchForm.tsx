@@ -12,6 +12,7 @@ import {
   getSavedSearchUpdatingStatuses,
 } from 'redux/selectors';
 import {
+  liveSearch,
   paramsToSearchState,
   searchUrlStateToAssetSearchFormData,
 } from 'lib/search/searchUrlState';
@@ -78,8 +79,10 @@ const SavedSearchForm: React.FC<SavedSearchFormProps> = ({ btnEl, savedSearch })
               // difference between a saved "Today" that means today and one that means the day it was saved
               // (CTRIB-070). Everywhere else the projection resolves the window into instants, because that is
               // what the search endpoint narrows by; here the word IS the thing being saved.
+              // `liveSearch`, not `location.search`: a save that follows a navigation (the column picker's
+              // close, a facet click) inside the router's ~0.5 s commit window would capture the previous URL.
               spec: searchUrlStateToAssetSearchFormData(
-                paramsToSearchState(location.search),
+                paramsToSearchState(liveSearch(location)),
                 { keepRelative: true }
               ),
             },

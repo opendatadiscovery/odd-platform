@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppInfo } from 'lib/hooks/api';
 import { buildSearchLink } from 'lib/hooks';
-import { paramsToSearchState } from 'lib/search/searchUrlState';
+import { liveSearch, paramsToSearchState } from 'lib/search/searchUrlState';
 import { AppTooltip, Checkbox } from 'components/shared/elements';
 import { InformationIcon } from 'components/shared/icons';
 
@@ -49,16 +49,18 @@ const FavoritesFilter: React.FC = () => {
   const isInverted = scope === 'no';
 
   const handleToggle = React.useCallback(() => {
-    // Re-read the LIVE URL rather than closing over parsed state: the whole search state is preserved and
-    // only this dimension changes, exactly as AssetTypeFilter does. Derived from `scope`, not from the
+    // Re-read the LIVE URL — the browser's, via `liveSearch`, not the router's `location.search`, which lags a
+    // navigation by the page's ~0.5 s render (CTRIB-073: a click here right after the column picker closed spread
+    // the stale state and dropped the layout the picker had just written). The whole search state is preserved
+    // and only this dimension changes, exactly as AssetTypeFilter does. Derived from `scope`, not from the
     // event's `checked`, because an indeterminate box reports `checked=true` on click — so from EITHER
     // active state a click clears the scope, and the inverted state is always escapable.
     const next = {
-      ...paramsToSearchState(location.search),
+      ...paramsToSearchState(liveSearch(location)),
       favorites: scope ? undefined : ('yes' as const),
     };
     navigate(buildSearchLink(next));
-  }, [location.search, navigate, scope]);
+  }, [location, navigate, scope]);
 
   return (
     <Grid container alignItems='center' flexWrap='nowrap' sx={{ mt: 2 }}>

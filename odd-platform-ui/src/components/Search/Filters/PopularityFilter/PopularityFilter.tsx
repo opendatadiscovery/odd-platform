@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { buildSearchLink } from 'lib/hooks';
 import { usePopularityFacet } from 'lib/hooks/api';
 import {
+  liveSearch,
   paramsToSearchState,
   searchUrlStateToAssetSearchFormData,
   type SearchPopularityRange,
@@ -49,8 +50,11 @@ const PopularityFilter: React.FC = () => {
     [location.search]
   );
   const selected = urlState.popularity;
+  // ST-13a — the histogram counts the SEARCH, not the table: the result-column layout (`columns`, which the
+  // URL carries since #1847) is dropped from its key, so ticking a column never re-fetches the distribution
+  // (the endpoint ignores it anyway; keeping it would re-fire this request on every picker action).
   const formData = React.useMemo(
-    () => searchUrlStateToAssetSearchFormData(urlState),
+    () => searchUrlStateToAssetSearchFormData({ ...urlState, columns: undefined }),
     [urlState]
   );
   const { data, isError } = usePopularityFacet(formData);
@@ -105,13 +109,16 @@ const PopularityFilter: React.FC = () => {
 
   const handleCommit = React.useCallback(
     (range: SearchPopularityRange | undefined) => {
-      // Re-read the LIVE URL rather than closing over parsed state: every other dimension is preserved and only this
-      // one changes — the AssetTypeFilter / FavoritesFilter pattern.
+      // Re-read the LIVE URL — the browser's (`liveSearch`), not the router's lagging `location.search` — so every
+      // other dimension is preserved and only this one changes — the AssetTypeFilter / FavoritesFilter pattern.
       navigate(
-        buildSearchLink({ ...paramsToSearchState(location.search), popularity: range })
+        buildSearchLink({
+          ...paramsToSearchState(liveSearch(location)),
+          popularity: range,
+        })
       );
     },
-    [location.search, navigate]
+    [location, navigate]
   );
 
   return (

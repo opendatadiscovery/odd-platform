@@ -744,5 +744,18 @@
   "Couldn't load match details": "Չհաջողվեց բեռնել համընկնման մանրամասները",
   "Couldn't load details": "Չհաջողվեց բեռնել մանրամասները",
   "No owners": "Օգտատերեր չկան",
-  "+{{count}} more": "+{{count}} ևս"
+  "+{{count}} more": "+{{count}} ևս",
+  "Not applicable": "Կիրառելի չէ",
+  "No value": "Արժեք չկա",
+  "No owner": "Սեփականատեր չկա",
+  "Applies to": "Կիրառվում է",
+  "Last ingested": "Վերջին ներմուծում",
+  "Common": "Ընդհանուր",
+  "Move {{column}} up": "Տեղափոխել {{column}} վերև",
+  "Move {{column}} down": "Տեղափոխել {{column}} ներքև",
+  "Fixed column": "Ամրացված սյունակ",
+  "Result columns": "Արդյունքների սյունակներ",
+  "Reset to default": "Վերականգնել լռելյայնը",
+  "Last update in the source system for data entities; in the platform for terms and query examples": "Վերջին թարմացումը աղբյուր համակարգում՝ տվյալների էությունների համար, պլատֆորմում՝ տերմինների և հարցման օրինակների համար",
+  "The platform description, or the source description when none was written": "Պլատֆորմի նկարագրությունը, իսկ եթե այն գրված չէ՝ աղբյուրի նկարագրությունը"
 }

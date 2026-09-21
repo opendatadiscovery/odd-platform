@@ -5,7 +5,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum, Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useRecentlyViewedHistoryEmpty } from 'lib/hooks';
+import { useRecentlyViewedHistoryEmpty, useResultColumns } from 'lib/hooks';
 import {
   getAssetSearchError,
   getAssetSearchFetchingStatuses,
@@ -29,8 +29,10 @@ import { WithPermissions } from 'components/shared/contexts';
 import { useSearchRouteParams } from 'routes';
 import {
   paramsToSearchState,
+  searchStateKeyWithoutColumns,
   searchUrlStateToAssetSearchFormData,
 } from 'lib/search/searchUrlState';
+import { serverFieldsFor } from 'lib/search/resultColumns';
 import { favoriteAssetId } from 'components/Favorites/lib';
 import TableHeader from './TableHeader/TableHeader';
 import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
@@ -39,6 +41,7 @@ import SearchSortMenu from './SearchSortMenu/SearchSortMenu';
 import SavedSearches from './SavedSearches';
 import ResultItem from './ResultItem/ResultItem';
 import SearchResultsSkeleton from './SearchResultsSkeleton/SearchResultsSkeleton';
+import ColumnsPicker from './ColumnsPicker/ColumnsPicker';
 import * as S from './Results.styles';
 
 const Results: React.FC = () => {
@@ -82,11 +85,35 @@ const Results: React.FC = () => {
     [searchClass, searchTotals]
   );
 
-  // The cross-kind request is derived straight from the URL (the search's source of truth — ADR D10): query +
-  // facets + sort + asset_kinds + the ST-8 My-data scope and its per-direction depths. Page 1 is owned by the settle-effect; scroll extends it.
-  const assetSearchFormData = React.useMemo(
-    () => searchUrlStateToAssetSearchFormData(paramsToSearchState(location.search)),
+  // ST-13a (#1847) — the result-column layout: ONE owner (this hook, here), passed down as props; the header, rows,
+  // skeleton and picker never read the store or the URL themselves (CTRIB-073 R13).
+  const resultColumns = useResultColumns();
+  const { columns } = resultColumns;
+  // The layout's SERVER-resolved subset, as one string: the only part of a column change the request cares about.
+  const serverFieldsKey = React.useMemo(
+    () => serverFieldsFor(columns).join(','),
+    [columns]
+  );
+  // The search state WITHOUT its layout: the part of the URL a picker action must not re-fire page 1 for.
+  const searchKey = React.useMemo(
+    () => searchStateKeyWithoutColumns(paramsToSearchState(location.search)),
     [location.search]
+  );
+  const columnsRef = React.useRef(columns);
+  columnsRef.current = columns;
+
+  // The cross-kind request is derived straight from the URL (the search's source of truth — ADR D10): query +
+  // facets + sort + asset_kinds + the ST-8 My-data scope and its per-direction depths — plus the ACTIVE layout as
+  // `columns` (read through a ref at build time, so the body says what the table shows). The memo is keyed on the
+  // columns-less search key + the server-token string: a client-only column toggle (Type / Status / Query) rewrites
+  // the URL but neither rebuilds the request nor re-fires page 1; enabling a server-resolved column does (the page
+  // needs its values). Page 1 is owned by the settle-effect; scroll extends it.
+  const assetSearchFormData = React.useMemo(
+    () => ({
+      ...searchUrlStateToAssetSearchFormData(paramsToSearchState(location.search)),
+      columns: [...columnsRef.current],
+    }),
+    [searchKey, serverFieldsKey]
   );
 
   // ST-7 (#1841) — with the Favorites scope on, an empty result is almost always "you have not starred
@@ -193,15 +220,20 @@ const Results: React.FC = () => {
       {/* ST-8 — the match count + the scope-truncation warning. Deliberately OUTSIDE the `!routerSearchId`
           gate above: the retired tab strip rendered unconditionally, so gating the count would silently
           remove it from the legacy /search/{sessionId} route that ADR D9 keeps alive (IT-125 exercises it). */}
-      <SearchResultsHeader
-        total={total}
-        isLoading={isFirstLoading}
-        scopeTruncated={scopeTruncated}
-        scopeTruncationReason={scopeTruncationReason}
-      />
+      {/* ST-13a — the count and the Columns picker share the UNGATED header row, so the constructor is available on
+          the legacy /search/{sessionId} route too (where it writes the browser's stored layout only). */}
+      <Grid container justifyContent='space-between' alignItems='flex-end' wrap='nowrap'>
+        <SearchResultsHeader
+          total={total}
+          isLoading={isFirstLoading}
+          scopeTruncated={scopeTruncated}
+          scopeTruncationReason={scopeTruncationReason}
+        />
+        <ColumnsPicker {...resultColumns} />
+      </Grid>
       <S.ListContainer id='results-list'>
-        <TableHeader />
-        {isFirstLoading && <SearchResultsSkeleton />}
+        <TableHeader columns={columns} />
+        {isFirstLoading && <SearchResultsSkeleton columns={columns} />}
         {!isAssetSearchNotLoaded && !isFirstLoading && (
           <>
             <InfiniteScroll
@@ -210,7 +242,7 @@ const Results: React.FC = () => {
               hasMore={hasNext}
               loader={
                 isAssetSearchLoading &&
-                searchResults.length > 0 && <SearchResultsSkeleton />
+                searchResults.length > 0 && <SearchResultsSkeleton columns={columns} />
               }
               scrollThreshold='200px'
               scrollableTarget='results-list'
@@ -220,6 +252,7 @@ const Results: React.FC = () => {
                 <ResultItem
                   key={`${asset.assetKind}:${favoriteAssetId(asset)}`}
                   asset={asset}
+                  columns={columns}
                 />
               ))}
             </InfiniteScroll>

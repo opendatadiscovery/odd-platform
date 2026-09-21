@@ -2,7 +2,9 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.DeleteResultStep;
@@ -168,6 +170,44 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
                 this::mapTag,
                 fetchCount(query, ids)
             ));
+    }
+
+    @Override
+    public Mono<Map<Long, List<TagPojo>>> listTagsByDataEntityIds(final Collection<Long> dataEntityIds) {
+        if (dataEntityIds == null || dataEntityIds.isEmpty()) {
+            return Mono.just(Map.of());
+        }
+        final var query = DSL.select(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID)
+            .select(TAG.fields())
+            .from(TAG_TO_DATA_ENTITY)
+            .join(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .where(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.in(dataEntityIds).and(TAG.DELETED_AT.isNull()))
+            .orderBy(TAG.NAME);
+        return jooqReactiveOperations.flux(query)
+            .collectMultimap(r -> r.get(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID), r -> r.into(TAG).into(TagPojo.class))
+            .map(ReactiveTagRepositoryImpl::toListValues);
+    }
+
+    @Override
+    public Mono<Map<Long, List<TagPojo>>> listTagsByTermIds(final Collection<Long> termIds) {
+        if (termIds == null || termIds.isEmpty()) {
+            return Mono.just(Map.of());
+        }
+        final var query = DSL.select(TAG_TO_TERM.TERM_ID)
+            .select(TAG.fields())
+            .from(TAG_TO_TERM)
+            .join(TAG).on(TAG.ID.eq(TAG_TO_TERM.TAG_ID))
+            .where(TAG_TO_TERM.TERM_ID.in(termIds).and(TAG.DELETED_AT.isNull()))
+            .orderBy(TAG.NAME);
+        return jooqReactiveOperations.flux(query)
+            .collectMultimap(r -> r.get(TAG_TO_TERM.TERM_ID), r -> r.into(TAG).into(TagPojo.class))
+            .map(ReactiveTagRepositoryImpl::toListValues);
+    }
+
+    private static Map<Long, List<TagPojo>> toListValues(final Map<Long, Collection<TagPojo>> multimap) {
+        final Map<Long, List<TagPojo>> byId = new HashMap<>();
+        multimap.forEach((id, tags) -> byId.put(id, List.copyOf(tags)));
+        return byId;
     }
 
     @Override

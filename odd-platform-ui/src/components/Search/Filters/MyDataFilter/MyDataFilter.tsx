@@ -8,6 +8,7 @@ import {
   MY_DATA_DEPTH_OPTIONS,
   MY_DATA_SCOPES,
   type MyDataScope,
+  liveSearch,
   paramsToSearchState,
   searchStateToParams,
 } from 'lib/search/searchUrlState';
@@ -73,10 +74,15 @@ const MyDataFilter: React.FC = () => {
 
   const write = React.useCallback(
     (next: Partial<typeof urlState>) => {
-      const params = searchStateToParams({ ...urlState, ...next });
+      // the browser's URL (`liveSearch`) at write time, never the router's lagging memo — every other dimension
+      // (incl. a result-column layout the picker just wrote) is preserved and only this one changes
+      const params = searchStateToParams({
+        ...paramsToSearchState(liveSearch(location)),
+        ...next,
+      });
       navigate(`${searchPath()}${params ? `?${params}` : ''}`);
     },
-    [urlState, navigate]
+    [location, navigate]
   );
 
   const writeScopes = React.useCallback(

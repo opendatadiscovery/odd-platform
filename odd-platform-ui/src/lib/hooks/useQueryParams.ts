@@ -59,12 +59,24 @@ const useQueryParams = <Params extends object>(
 
   const setQueryParams = React.useCallback<SetURLQueryParams<Params>>(
     (value, options) => {
-      const newParams = typeof value === 'function' ? value(queryParams) : value;
+      // A functional update builds on the params the BROWSER is on, not on the router's memo above: react-router 7
+      // commits every location change inside React.startTransition, so `location.search` lags a navigation by the
+      // page's render (~0.5 s measured on the search page), and an updater called inside that window would spread a
+      // stale URL and silently drop whatever the previous navigation had just written (CTRIB-073: the result-column
+      // layout, lost to a sort change right after the picker closed). The browser's history is the truth the moment
+      // `navigate` returns; under a memory router (tests) the pathnames differ and the router's memo is all there is.
+      const live =
+        typeof window !== 'undefined' && window.location.pathname === location.pathname
+          ? window.location.search
+            ? (createQueryParams(window.location.search) as QueryParams<Params>)
+            : defaultVal
+          : queryParams;
+      const newParams = typeof value === 'function' ? value(live) : value;
       const newQueryStr = createQueryString(newParams);
       const pathname = options?.pathname ?? location.pathname;
       navigate(`${pathname}?${newQueryStr}`, { replace: options?.replace ?? false });
     },
-    [queryParams, location.pathname]
+    [queryParams, defaultVal, location.pathname]
   );
 
   return React.useMemo(

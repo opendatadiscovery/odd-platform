@@ -16,6 +16,7 @@ import {
   browserTimeZone,
   type SearchRecentlyViewedScope,
 } from './recencyWindow';
+import { isDefaultLayout, parseColumnsList, type ResultColumnId } from './resultColumns';
 
 /**
  * ST-1 / ADR D10 — the main search's state lives in the URL as parametrised query params, so a search is
@@ -142,6 +143,21 @@ export const SEARCH_VIEWED_WITHIN_PARAM = 'viewed_within';
 
 export type { SearchRecentlyViewedScope };
 
+/**
+ * The result-column LAYOUT param (ST-13a / #1847, ADR unified-asset-search D7 + D12; the maintainer's GATE-1 call that
+ * the layout is a search dimension like `sort`): the ordered optional column ids of the results table, as ONE
+ * bracket-array param — `columns[]=type,namespace,…`, the `asset_kinds[]=` serialiser shape. It is written ONLY when
+ * the layout differs from the default (the ST-1 "only modified values" rule), so a default table keeps a clean URL;
+ * an EMPTY list (`columns[]`) is the valid anchors-only layout, not "absent". Parsed TOKEN-LEVEL fail-closed: an
+ * unknown / duplicate / fixed-column id is dropped and the rest kept; absent → no layout in the URL (the reader's own
+ * stored layout applies — `lib/hooks/useResultColumns`).
+ *
+ * BEING URL-ONLY IS LOAD-BEARING: `Search.tsx`'s facet→URL mirror and `Filters.tsx`'s Clear-All rebuild the URL
+ * from state that carries none of this, so `columns` MUST be merged back there (the #1858 dropped-selection class).
+ * And it is NOT part of the legacy DE-session key (`searchStateKeyWithoutColumns`): a picker action never re-creates
+ * the `/api/search` session.
+ */
+export const SEARCH_COLUMNS_PARAM = 'columns';
 export const SEARCH_POPULARITY_MIN_PARAM = 'popularity_min';
 export const SEARCH_POPULARITY_MAX_PARAM = 'popularity_max';
 /** The score domain — mirrors `PopularityBands.MIN_SCORE/MAX_SCORE` server-side. */
@@ -281,6 +297,8 @@ export interface SearchUrlState {
   popularity?: SearchPopularityRange;
   /** the Last-viewed scope (ST-10); undefined = no recency narrowing. An EMPTY object means "any time". */
   recentlyViewed?: SearchRecentlyViewedScope;
+  /** the result-column layout (ST-13a); undefined = no layout carried (the reader's own). An EMPTY list = anchors only. */
+  columns?: ResultColumnId[];
 }
 
 /**
@@ -333,6 +351,11 @@ export function searchStateToParams(state: SearchUrlState): string {
     params[SEARCH_DOWNSTREAM_DEPTH_PARAM] = state.downstreamDepth;
   }
   if (state.sort) params[SEARCH_SORT_PARAM] = state.sort;
+  // ST-13a — the layout only when it differs from the default; an EMPTY list is a real (anchors-only) layout and is
+  // written as `columns[]`, which the parser reads back as `[]`.
+  if (state.columns !== undefined && !isDefaultLayout(state.columns)) {
+    params[SEARCH_COLUMNS_PARAM] = [...state.columns];
+  }
   // Serialise the asset-type kinds only when a narrowing is active (like `sort`): an empty selection is
   // "all kinds" → omitted, so the default state stays a clean URL and the round-trip is byte-identical.
   if (state.assetKinds && state.assetKinds.length > 0) {
@@ -483,6 +506,24 @@ export function parseRecentlyViewed(
   };
 }
 
+/**
+ * The search string the BROWSER is on, for a component that must act on the current URL rather than the
+ * router's view of it. react-router 7's BrowserRouter commits every location change inside
+ * React.startTransition; on the search page that render takes ~0.5 s (measured: a facet toggle's URL write
+ * reaches the router's location 500–700 ms later), and in that window `useLocation().search` still says the
+ * previous URL. The history object is the truth the moment `navigate` returns, so a read that follows a
+ * navigation — a picker action's target, a saved search's capture — takes the browser's search when the
+ * router is the browser's (the pathnames agree); under a memory router (tests) the router's location is all
+ * there is. Returned without the leading `?`.
+ */
+export function liveSearch(location: { pathname: string; search: string }): string {
+  const search =
+    typeof window !== 'undefined' && window.location.pathname === location.pathname
+      ? window.location.search
+      : location.search;
+  return search.replace(/^\?/, '');
+}
+
 export function paramsToSearchState(search: string): SearchUrlState {
   const { parse } = queryStringPackage;
   const empty: SearchUrlState = { query: '', facets: {} };
@@ -578,6 +619,11 @@ export function paramsToSearchState(search: string): SearchUrlState {
       parsed[SEARCH_VIEWED_WITHIN_PARAM]
     );
 
+    // ST-13a — the layout, token-level fail-closed; absent stays absent (the reader's own layout). A bare
+    // `columns=a,b` (no brackets) parses as ONE string → not an array → absent: the serialiser never writes it.
+    const rawColumns = parsed[SEARCH_COLUMNS_PARAM];
+    const columns = parseColumnsList(rawColumns);
+
     return {
       query,
       facets,
@@ -589,10 +635,20 @@ export function paramsToSearchState(search: string): SearchUrlState {
       favorites,
       popularity,
       recentlyViewed,
+      ...(columns !== undefined ? { columns } : {}),
     };
   } catch {
     return empty;
   }
+}
+
+/**
+ * ST-13a — the search state WITHOUT its layout, serialised: the key for anything that must not react to a column
+ * change — the legacy DE-session create in `Search.tsx` (a picker action must never re-create the facet session)
+ * and the page-1 effect in `Results.tsx` (which additionally keys on the SERVER-resolved subset of the layout).
+ */
+export function searchStateKeyWithoutColumns(state: SearchUrlState): string {
+  return searchStateToParams({ ...state, columns: undefined });
 }
 
 /**
@@ -659,6 +715,9 @@ export function searchUrlStateToAssetSearchFormData(
     // ST-9 — the range rides the wire as the same {min, max} scores; absent stays absent (no key, so the
     // server never sees an empty object it would have to treat as "no range").
     popularity: state.popularity,
+    // ST-13a — the layout the URL carries (a saved search stores this object whole — D11). `Results.tsx` overrides
+    // it with the ACTIVE layout at request time, so a request body always says what the table shows.
+    columns: state.columns !== undefined ? [...state.columns] : undefined,
     // ST-10 — the scope rides the QUERY wire as instants (see the resolve above). The generated model types a
     // date-time as `Date`, and its ToJSON calls `.toISOString()`, so hand it Date objects and NOT the canonical
     // strings the URL state holds. An empty object is sent AS an empty object: presence is the switch, and `{}`
@@ -771,11 +830,16 @@ export function assetSearchFormDataToUrlState(
       ? (rawRange as { min?: unknown; max?: unknown })
       : undefined;
   const popularity = range ? parsePopularity(range.min, range.max) : undefined;
+  // ST-13a — the stored layout through the SAME token-level reading the URL uses: an id this release does not know
+  // is dropped and the rest kept (a layout saved from a newer release degrades, never dies); a row saved before
+  // ST-13a carries no `columns` and reapplies in the reader's own layout.
+  const columns = parseColumnsList(formData?.columns);
   return {
     ...base,
     ...(assetKinds.length > 0 ? { assetKinds } : {}),
     ...(favorites ? { favorites } : {}),
     ...(popularity ? { popularity } : {}),
     ...(recentlyViewed ? { recentlyViewed } : {}),
+    ...(columns !== undefined ? { columns } : {}),
   };
 }

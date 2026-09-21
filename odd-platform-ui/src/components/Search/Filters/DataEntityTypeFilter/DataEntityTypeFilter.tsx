@@ -2,7 +2,11 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { searchPath } from 'routes';
-import { paramsToSearchState, searchStateToParams } from 'lib/search/searchUrlState';
+import {
+  liveSearch,
+  paramsToSearchState,
+  searchStateToParams,
+} from 'lib/search/searchUrlState';
 import FixedOptionsMultiFilter, {
   type FixedFilterOption,
 } from '../FilterItem/FixedOptionsMultiFilter/FixedOptionsMultiFilter';
@@ -49,7 +53,8 @@ const DataEntityTypeFilter: React.FC = () => {
 
   const writeClasses = React.useCallback(
     (ids: number[]) => {
-      const current = paramsToSearchState(location.search);
+      // the browser's URL (`liveSearch`), never the router's lagging copy — every other dimension is preserved
+      const current = paramsToSearchState(liveSearch(location));
       const next = {
         ...current,
         facets: { ...current.facets, entityClasses: ids.length ? ids : undefined },
@@ -57,7 +62,7 @@ const DataEntityTypeFilter: React.FC = () => {
       const params = searchStateToParams(next);
       navigate(`${searchPath()}${params ? `?${params}` : ''}`);
     },
-    [location.search, navigate]
+    [location, navigate]
   );
 
   return (

@@ -744,5 +744,18 @@
   "Couldn't load match details": "Couldn't load match details",
   "Couldn't load details": "Couldn't load details",
   "No owners": "No owners",
-  "+{{count}} more": "+{{count}} more"
+  "+{{count}} more": "+{{count}} more",
+  "Not applicable": "Not applicable",
+  "No value": "No value",
+  "No owner": "No owner",
+  "Applies to": "Applies to",
+  "Last ingested": "Last ingested",
+  "Common": "Common",
+  "Move {{column}} up": "Move {{column}} up",
+  "Move {{column}} down": "Move {{column}} down",
+  "Fixed column": "Fixed column",
+  "Result columns": "Result columns",
+  "Reset to default": "Reset to default",
+  "Last update in the source system for data entities; in the platform for terms and query examples": "Last update in the source system for data entities; in the platform for terms and query examples",
+  "The platform description, or the source description when none was written": "The platform description, or the source description when none was written"
 }

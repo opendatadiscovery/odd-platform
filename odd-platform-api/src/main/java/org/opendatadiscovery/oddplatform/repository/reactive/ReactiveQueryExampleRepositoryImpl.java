@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,6 +69,17 @@ public class ReactiveQueryExampleRepositoryImpl
         super(jooqReactiveOperations, jooqQueryHelper, QUERY_EXAMPLE, QueryExamplePojo.class);
         this.jooqRecordHelper = jooqRecordHelper;
         this.jooqFTSHelper = jooqFTSHelper;
+    }
+
+    @Override
+    public Mono<List<QueryExamplePojo>> listByIds(final Collection<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Mono.just(List.of());
+        }
+        return jooqReactiveOperations
+            .flux(DSL.selectFrom(QUERY_EXAMPLE).where(idCondition(ids)))
+            .map(this::recordToPojo)
+            .collectList();
     }
 
     @Override

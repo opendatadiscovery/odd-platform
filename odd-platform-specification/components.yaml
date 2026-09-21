@@ -411,8 +411,92 @@ components:
           $ref: '#/components/schemas/TermRef'
         query_example:
           $ref: '#/components/schemas/QueryExampleRef'
+        fields:
+          $ref: '#/components/schemas/AssetFields'
       required:
         - asset_kind
+
+    AssetFields:
+      type: object
+      description: >-
+        The extra column values a result row carries beyond its per-kind ref (ST-13a / #1847, ADR D7): present on
+        an item ONLY when the request's `columns` named a server-resolved column, and each property only when that
+        column was named AND the item's kind (or data-entity class) has the value. Property names follow the
+        existing schema vocabulary; the request tokens map as: namespace -> namespace; owners -> owners;
+        updated_at -> updated_at; created_at -> created_at; last_ingested_at -> last_ingested_at; datasource ->
+        data_source; groups -> groups; tags -> tags; description -> description; popularity -> view_count;
+        rows_count -> rows_count; fields_count -> fields_count; suite_url -> suite_url; sources -> sources;
+        targets -> targets; inputs -> inputs; outputs -> outputs; consumers_count -> consumers_count;
+        entities_count -> entities_count. The kind-only tokens (type, status, query) have no property here — the
+        ref already carries them. Which kinds carry what: namespace, owners, tags, description, updated_at and
+        created_at exist for data entities and terms (description and the two dates for query examples as well);
+        data_source, last_ingested_at and view_count for data entities; rows_count, fields_count and
+        consumers_count for datasets; suite_url for quality tests; sources and targets for transformers; inputs
+        for consumers; outputs for data inputs; entities_count for groups; groups (the parent groups) for any
+        data entity. A term's or a query example's values come from its own row; a data entity's updated_at and
+        created_at are the SOURCE system's timestamps (source_updated_at / source_created_at) and its description
+        is the platform-authored internal description, else the source's external description.
+      properties:
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+        data_source:
+          $ref: '#/components/schemas/DataSourceSafe'
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ownership'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        last_ingested_at:
+          type: string
+          format: date-time
+        description:
+          type: string
+        view_count:
+          type: integer
+          format: int64
+        rows_count:
+          type: integer
+          format: int64
+        fields_count:
+          type: integer
+          format: int64
+        consumers_count:
+          type: integer
+          format: int64
+        entities_count:
+          type: integer
+          format: int64
+        suite_url:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityRef'
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityRef'
+        targets:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityRef'
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityRef'
+        outputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityRef'
 
     AssetList:
       type: object
@@ -494,6 +578,30 @@ components:
                 The identity is taken from the security context only — never from this request — so a caller
                 can never read another user's favorites; under `auth.type=DISABLED` there is no principal and
                 all callers share one instance-wide bucket.
+            columns:
+              type: array
+              items:
+                type: string
+              description: >-
+                The result-table LAYOUT the caller is showing (ST-13a / #1847, ADR unified-asset-search D7 + D12):
+                the ordered ids of the optional result columns, from the field catalog the UI ships — type,
+                namespace, owners, status, updated_at, created_at, last_ingested_at, datasource, groups, tags,
+                description, query, popularity, rows_count, fields_count, suite_url, sources, targets, inputs,
+                outputs, consumers_count, entities_count (the two fixed columns, name and recently_viewed, are
+                never sent). Tokens are matched case-insensitively; an unknown, duplicate or fixed-column token is
+                DROPPED, never a 400 — the `sort` / `my_data` posture, so a stale or hand-edited shareable URL or
+                a saved search from an older release degrades instead of failing.
+
+                Two effects, one field. (1) It is a SEARCH DIMENSION like `sort`: the UI writes it to the shareable
+                URL and a saved search stores it (this object IS `SavedSearch.spec`), so a shared link or a saved
+                search carries the layout its author chose; absent means "the reader's own layout" (a row saved
+                before this field existed reads it back absent). (2) It is the PROJECTION of the response: for
+                every id in it that names a server-resolved value, each returned item carries that value in
+                `Asset.fields` when the item's kind (or data-entity class) has one — nothing else is added, so the
+                page pays only for the columns that are on. Absent or empty ⇒ `Asset.fields` is absent on every
+                item and the payload is byte-identical to a request from before this field existed (ADR D9).
+                Honoured by the cross-kind `POST /api/search/assets`; the popularity histogram and the legacy
+                `/api/search` session ignore it.
 
     RecentlyViewedScope:
       type: object

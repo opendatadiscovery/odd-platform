@@ -344,6 +344,21 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
+    public Mono<Map<String, Long>> getDEGEntitiesCount(final Collection<String> groupOddrns) {
+        if (groupOddrns == null || groupOddrns.isEmpty()) {
+            return Mono.just(Map.of());
+        }
+        final Field<Long> membersCount = field("members_count", Long.class);
+        final var query = DSL.select(GROUP_ENTITY_RELATIONS.GROUP_ODDRN)
+            .select(count().cast(Long.class).as(membersCount))
+            .from(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns).and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()))
+            .groupBy(GROUP_ENTITY_RELATIONS.GROUP_ODDRN);
+        return jooqReactiveOperations.flux(query)
+            .collectMap(r -> r.get(GROUP_ENTITY_RELATIONS.GROUP_ODDRN), r -> r.get(membersCount));
+    }
+
+    @Override
     public Mono<List<DataEntityDimensionsDto>> getDEGExperimentRuns(final Long dataEntityGroupId,
                                                                     final Integer page,
                                                                     final Integer size) {

@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { buildSearchLink, useRecentlyViewedHistoryEmpty } from 'lib/hooks';
 import { useAppInfo } from 'lib/hooks/api';
-import { paramsToSearchState } from 'lib/search/searchUrlState';
+import { liveSearch, paramsToSearchState } from 'lib/search/searchUrlState';
 import {
   browserTimeZone,
   presetWindow,
@@ -97,11 +97,11 @@ const RecentlyViewedFilter: React.FC = () => {
 
   const commit = React.useCallback(
     (next: SearchRecentlyViewedScope | undefined) => {
-      // Re-read the LIVE URL rather than closing over parsed state, so every other dimension is preserved and only
-      // this one changes (the sibling filters' pattern). Clearing the scope also clears a now-meaningless
-      // `sort=last_viewed`: the server drops that token without the scope, so leaving it would show an ordering the
-      // list does not have.
-      const live = paramsToSearchState(location.search);
+      // Re-read the LIVE URL — the browser's (`liveSearch`), not the router's lagging `location.search` — so every
+      // other dimension is preserved and only this one changes (the sibling filters' pattern). Clearing the scope
+      // also clears a now-meaningless `sort=last_viewed`: the server drops that token without the scope, so leaving
+      // it would show an ordering the list does not have.
+      const live = paramsToSearchState(liveSearch(location));
       navigate(
         buildSearchLink({
           ...live,
@@ -110,7 +110,7 @@ const RecentlyViewedFilter: React.FC = () => {
         })
       );
     },
-    [location.search, navigate]
+    [location, navigate]
   );
 
   /**

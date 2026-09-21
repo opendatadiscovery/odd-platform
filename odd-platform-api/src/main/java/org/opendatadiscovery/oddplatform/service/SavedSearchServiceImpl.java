@@ -36,6 +36,7 @@ public class SavedSearchServiceImpl implements SavedSearchService {
     private static final String ASSET_KINDS_FIELD = "asset_kinds";
     private static final String FAVORITES_FIELD = "favorites";
     private static final String POPULARITY_FIELD = "popularity";
+    private static final String COLUMNS_FIELD = "columns";
     private static final String RECENTLY_VIEWED_FIELD = "recently_viewed";
     private static final String RECENTLY_VIEWED_WITHIN_FIELD = "viewed_within";
     private static final Set<String> KNOWN_ASSET_KINDS = Arrays.stream(AssetKind.values())
@@ -177,6 +178,35 @@ public class SavedSearchServiceImpl implements SavedSearchService {
         }
         sanitisePopularity(spec);
         sanitiseRecentlyViewed(spec);
+        sanitiseColumns(spec);
+    }
+
+    /**
+     * ST-13a (#1847): the stored result-column LAYOUT is a plain list of column ids. It is kept as the client
+     * saved it — the ids are the UI's field catalog, which the client parses fail-closed and the search endpoint
+     * projects fail-closed (an unknown id is dropped on both sides), so a token this release no longer knows is
+     * not a reason to lose the field here. Only a shape the client could never have written is sanitised:
+     * a non-list drops the field; a non-string item is dropped item-level (the {@code asset_kinds} grain).
+     */
+    private void sanitiseColumns(final ObjectNode spec) {
+        final JsonNode columns = spec.get(COLUMNS_FIELD);
+        if (columns == null || columns.isNull()) {
+            return;
+        }
+        if (!columns.isArray()) {
+            log.warn("Saved-search spec carries a non-list columns ({}); dropping it", columns.getNodeType());
+            spec.remove(COLUMNS_FIELD);
+            return;
+        }
+        final ArrayNode kept = spec.arrayNode();
+        for (final JsonNode column : columns) {
+            if (column.isTextual()) {
+                kept.add(column);
+            } else {
+                log.warn("Saved-search spec carries a non-string column id {}; dropping it", column);
+            }
+        }
+        spec.set(COLUMNS_FIELD, kept);
     }
 
     /**

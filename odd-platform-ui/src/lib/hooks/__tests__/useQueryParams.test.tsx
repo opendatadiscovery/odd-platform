@@ -42,6 +42,33 @@ describe('useQueryParams', () => {
     expect(result.current.loc.search).toBe('?q=orders');
   });
 
+  it('a functional update builds on the params the BROWSER is on when the router lags a navigation (CTRIB-073)', () => {
+    // The router's `location.search` trails a `navigate` by the page's render (react-router 7 commits inside
+    // startTransition; ~0.5 s measured on the search page). An updater called inside that window — the sort menu
+    // right after the column picker closed — spread the router's stale copy and dropped the `columns[]` the picker
+    // had just written. Modelled: the browser's history has moved on while the memory router shows the old URL.
+    const { result } = setup('/search?q=x');
+    window.history.replaceState({}, '', '/search?columns[]=owners&q=x');
+    try {
+      act(() =>
+        result.current.qp.setQueryParams(
+          prev => ({ ...prev, sort: 'name' }) as unknown as { q: string },
+          { pathname: '/search' }
+        )
+      );
+      expect(result.current.loc.search).toBe('?columns[]=owners&q=x&sort=name');
+    } finally {
+      window.history.replaceState({}, '', '/');
+    }
+  });
+
+  it('keeps the router as the source of `prev` under a memory router whose pathname the browser is not on', () => {
+    const { result } = setup('/activity?q=a');
+    // the browser (jsdom) is on `/`; the router on `/activity` — the pathnames differ, so the router's memo is used
+    act(() => result.current.qp.setQueryParams(prev => ({ ...prev, q: 'b' })));
+    expect(result.current.loc.search).toBe('?q=b');
+  });
+
   it('threads the replace option without changing the target URL', () => {
     const { result } = setup('/search?q=a');
     act(() =>

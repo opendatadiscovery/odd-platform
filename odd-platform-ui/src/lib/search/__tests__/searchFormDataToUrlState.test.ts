@@ -149,15 +149,20 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
       viewedAfter: '2026-08-31T21:00:00.000Z',
       viewedBefore: '2026-09-06T20:59:59.999Z',
     },
+    // ST-13a (#1847) — the twelfth: the result-column LAYOUT, an ORDERED list, so the round trip proves order
+    // and content (a non-default order, deliberately — the default is never carried).
+    columns: ['owners', 'datasource', 'rows_count', 'type'],
   };
 
   /**
    * The wire keys of AssetSearchFormData — nine at #1878, ten since ST-9 (#1843) added `popularity`, eleven since
-   * ST-10 (#1844) added `recently_viewed`. A regenerated TWELFTH key must fail this, by design: it means a
-   * dimension reached the request object without saved-search support (the LSN-042 class).
+   * ST-10 (#1844) added `recently_viewed`, twelve since ST-13a (#1847) added `columns`. A regenerated THIRTEENTH
+   * key must fail this, by design: it means a dimension reached the request object without saved-search support
+   * (the LSN-042 class).
    */
   const WIRE_KEYS = [
     'asset_kinds',
+    'columns',
     'downstream_depth',
     'favorites',
     'filters',
@@ -194,6 +199,29 @@ describe('saved-search round-trip — one canonical spec, two surfaces (D11 / #1
   it('the wire carries exactly the known dimensions — a dimension regenerated onto the request object without saved-search support fails here', () => {
     const wire = AssetSearchFormDataToJSON(searchUrlStateToAssetSearchFormData(full));
     expect(Object.keys(wire).sort()).toEqual(WIRE_KEYS);
+  });
+
+  it('the anchors-only layout (an EMPTY list) survives capture → stored spec → reapply as [] — never as "absent" (ST-13a)', () => {
+    // The user who unticks every optional column has a real, non-default layout; a round trip that collapsed
+    // [] to undefined would reapply their saved search in the reader's own layout instead.
+    const anchorsOnly: SearchUrlState = { query: 'x', facets: {}, columns: [] };
+    expect(roundTrip(anchorsOnly).columns).toEqual([]);
+    // A stored layout from a newer release: the unknown id is dropped token-level, the rest kept in order.
+    const fromTheFuture = AssetSearchFormDataFromJSON({
+      query: 'x',
+      filters: {},
+      columns: ['owners', 'from_the_future', 42, 'type'],
+    });
+    expect(assetSearchFormDataToUrlState(fromTheFuture).columns).toEqual([
+      'owners',
+      'type',
+    ]);
+    // A row saved before ST-13a: no layout carried → the reader's own.
+    expect(
+      assetSearchFormDataToUrlState(
+        AssetSearchFormDataFromJSON({ query: 'x', filters: {} })
+      ).columns
+    ).toBeUndefined();
   });
 
   it('a popularity range survives capture → stored spec → reapply, including a bound of 0 and an open end (ST-9)', () => {
