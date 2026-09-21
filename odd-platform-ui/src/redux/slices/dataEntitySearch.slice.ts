@@ -3,7 +3,6 @@ import mapValues from 'lodash/mapValues';
 import reduce from 'lodash/reduce';
 import values from 'lodash/values';
 import pickBy from 'lodash/pickBy';
-import get from 'lodash/get';
 import { dataEntitiesSearchActionTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 import type {
@@ -11,7 +10,6 @@ import type {
   FacetStateUpdate,
   SearchFacetNames,
   SearchFacetStateById,
-  SearchFilterStateSynced,
 } from 'redux/interfaces';
 import type {
   CountableSearchFilter,
@@ -62,6 +60,10 @@ const updateSearchState = (
             facetOption.name ??
             state.facetState[facetName as SearchFacetNames]?.[facetOption.id]?.entityName,
           selected: 'selected' in facetOption ? !!facetOption.selected : true,
+          // ST-11 — the echo carries `exclude: true` for an excluded value (and nothing for a positive one), so
+          // an exclusion survives the round trip as an exclusion; a pre-ST-11 echo reads as positives.
+          exclude:
+            'exclude' in facetOption && facetOption.exclude === true ? true : undefined,
           syncedState: true,
         },
       }),
@@ -86,7 +88,11 @@ const updateSearchState = (
       currFacetState || {},
       newSearchFacetsById[facetName as SearchFacetNames] || {},
       (currFilterState, syncedFilterState) => {
-        if (currFilterState && currFilterState.selected !== syncedFilterState.selected) {
+        if (
+          currFilterState &&
+          (currFilterState.selected !== syncedFilterState.selected ||
+            (currFilterState.exclude === true) !== (syncedFilterState.exclude === true))
+        ) {
           return { ...currFilterState, syncedState: false }; // Keep unsynced filter state (due to debounce).
         }
         return syncedFilterState;
@@ -111,21 +117,26 @@ const updateSearchState = (
   // none → requested empty → a clean REPLACE (correct: a legacy load has no optimistic locals to reconcile).
   const requestedFilters = (meta?.arg as { searchFormData?: SearchFormData } | undefined)
     ?.searchFormData?.filters;
-  const requestedSelectedIds = (facetName: SearchFacetNames): Set<number> =>
-    new Set(
+  // ST-11 — the requested state per option is (selected, excluded): an include→exclude toggle made while a
+  // create is in flight is a PENDING change exactly like a select / deselect, and must survive the echo.
+  const requestedOptions = (facetName: SearchFacetNames): Map<number, boolean> =>
+    new Map(
       (requestedFilters?.[facetName] ?? [])
         .filter(filter => filter.selected)
-        .map(filter => filter.entityId)
+        .map(filter => [filter.entityId, filter.exclude === true] as [number, boolean])
     );
 
   const carryPendingLocals = (facetName: string): SearchFacetStateById => {
     const serverFacet = newSearchFacetsById[facetName as SearchFacetNames] || {};
     const oldFacet = state.facetState[facetName as SearchFacetNames] || {};
-    const requestedSelected = requestedSelectedIds(facetName as SearchFacetNames);
+    const requested = requestedOptions(facetName as SearchFacetNames);
     const pendingLocals = pickBy(
       oldFacet,
       option =>
-        !option.syncedState && option.selected !== requestedSelected.has(option.entityId)
+        !option.syncedState &&
+        (option.selected !== requested.has(option.entityId) ||
+          (option.selected && option.exclude === true) !==
+            (requested.get(option.entityId) ?? false))
     );
     return { ...serverFacet, ...pendingLocals };
   };
@@ -196,35 +207,20 @@ export const dataEntitiesSearchSlice = createSlice({
       state: DataEntitySearchState,
       { payload }: { payload: FacetStateUpdate }
     ): DataEntitySearchState => {
-      const { facetName, facetOptionId, facetOptionName, facetOptionState, facetSingle } =
-        payload;
+      const {
+        facetName,
+        facetOptionId,
+        facetOptionName,
+        facetOptionState,
+        facetOptionExclude,
+      } = payload;
 
       const currentFacetState = state.facetState[facetName];
 
       if (!facetName) return state;
-      // Unselect previous type
-      let selectedOptionState: SearchFilterStateSynced | undefined;
-      if (facetSingle) {
-        const selectedOption = values(currentFacetState).find(filter => filter.selected);
-
-        if (selectedOption) {
-          const entityId = get(selectedOption, 'entityId', get(selectedOption, 'id'));
-          const entityName = get(
-            selectedOption,
-            'entityName',
-            get(selectedOption, 'name')
-          );
-
-          selectedOptionState = entityId
-            ? {
-                entityId,
-                entityName,
-                selected: false,
-                syncedState: false,
-              }
-            : undefined;
-        }
-      }
+      // ST-11 (#1845): the `facetSingle` branch (unselect the previous value first) is gone with the single-select
+      // Datasource / Namespace controls it served — every facet is a multi-select now; an exclusion cannot be
+      // expressed on a single-select, which is why they were promoted.
 
       // ST-8 (#1842): the `entityClasses`/`'my'` special-case that used to live here is gone with the
       // My-Objects TAB that was its only writer. It is not merely dead — it was a trap: `entityClasses` is
@@ -240,15 +236,15 @@ export const dataEntitiesSearchSlice = createSlice({
           ...state.facetState,
           [facetName]: {
             ...currentFacetState,
-            ...(selectedOptionState && {
-              [selectedOptionState.entityId]: selectedOptionState,
-            }),
             ...(facetOptionId &&
               typeof facetOptionId === 'number' && {
                 [facetOptionId]: {
                   entityId: facetOptionId,
                   entityName: facetOptionName,
                   selected: facetOptionState,
+                  // ST-11 — an exclusion is a selected item flagged; a deselect clears the flag with the item.
+                  exclude:
+                    facetOptionState && facetOptionExclude === true ? true : undefined,
                   syncedState: false,
                 },
               }),

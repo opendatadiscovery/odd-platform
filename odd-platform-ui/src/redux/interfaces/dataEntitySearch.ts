@@ -15,7 +15,11 @@ export interface FacetStateUpdate {
   facetOptionId?: number | string;
   facetOptionName?: string;
   facetOptionState: boolean;
-  facetSingle?: boolean;
+  /**
+   * ST-11 (#1845): `true` makes the option an EXCLUSION ("not <value>") — an active part of the search that rides
+   * the same facet item as a positive selection with `exclude: true`; absent / `false` = a positive selection.
+   */
+  facetOptionExclude?: boolean;
 }
 
 export type SearchTotalsByName = Partial<

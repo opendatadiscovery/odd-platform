@@ -168,6 +168,7 @@ export const getSearchSuggestions = createSelector(
  */
 export const getSearchUrlState = createSelector(searchState, (search): SearchUrlState => {
   const facets: SearchUrlFacets = {};
+  const excluded: SearchUrlFacets = {};
   SEARCH_FACET_PARAMS.forEach(name => {
     // entityClasses is driven DIRECTLY on the URL by DataEntityTypeFilter (like assetKinds), NOT mirrored from
     // the redux facet: the DE session is single-class, so its facetState echo collapses a multi-class selection
@@ -176,13 +177,28 @@ export const getSearchUrlState = createSelector(searchState, (search): SearchUrl
     if (name === 'entityClasses') return;
     const byId = search.facetState[name];
     if (!byId) return;
-    const ids = values(byId)
-      .filter(option => option.selected && typeof option.entityId === 'number')
+    const selected = values(byId).filter(
+      option => option.selected && typeof option.entityId === 'number'
+    );
+    // ST-11 (#1845): an EXCLUSION is a selected facet item flagged `exclude: true` — it lives in the same redux
+    // facet as the positives (so the echo names it and the chip row shows it) and is written to the URL as `-id`.
+    const ids = selected
+      .filter(option => option.exclude !== true)
+      .map(option => option.entityId as number);
+    const excludedIds = selected
+      .filter(option => option.exclude === true)
       .map(option => option.entityId as number);
     if (ids.length > 0) facets[name] = ids;
+    if (excludedIds.length > 0) excluded[name] = excludedIds;
   });
   // ST-8 (#1842): the My-data scope is a URL-ONLY dimension (like `sort` and `asset_kinds`) — it has no redux
   // facet to mirror, so it is deliberately absent here and re-merged from the live URL by the Search.tsx
   // mirror. Omitting that merge is the #1858 bug class: any sidebar toggle would silently drop the scope.
-  return { query: search.query, facets };
+  // ST-11: the per-facet `Match all` MODE is URL-only for the same reason (a facet item has no home for it) and is
+  // re-merged there too; the exclusions are NOT — they ride the facet items above.
+  return {
+    query: search.query,
+    facets,
+    ...(Object.keys(excluded).length > 0 ? { excluded } : {}),
+  };
 });
