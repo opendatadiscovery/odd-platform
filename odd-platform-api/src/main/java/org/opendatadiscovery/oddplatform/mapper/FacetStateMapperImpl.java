@@ -3,13 +3,16 @@ package org.opendatadiscovery.oddplatform.mapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
@@ -32,6 +35,7 @@ import org.springframework.stereotype.Component;
 
 import static java.util.stream.Collectors.groupingBy;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class FacetStateMapperImpl implements FacetStateMapper {
@@ -55,6 +59,25 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             TermSearchFormDataFilters::getOwners, FacetType.OWNERS,
             TermSearchFormDataFilters::getTags, FacetType.TAGS
         );
+
+    /**
+     * ST-11 (#1845): the wire tokens of {@code SearchFormDataFilters.match_all} — the facet property names of the
+     * filters object (the way a client names a facet) plus the enum names, matched case-insensitively. An
+     * unrecognised token is DROPPED, never a 400: a stale or hand-edited shareable URL degrades instead of failing
+     * (the {@code sort} / {@code my_data} posture).
+     */
+    private static final Map<String, FacetType> MATCH_ALL_TOKENS = Map.ofEntries(
+        Map.entry("TAGS", FacetType.TAGS),
+        Map.entry("OWNERS", FacetType.OWNERS),
+        Map.entry("GROUPS", FacetType.GROUPS),
+        Map.entry("ENTITY_CLASSES", FacetType.ENTITY_CLASSES),
+        Map.entry("ENTITYCLASSES", FacetType.ENTITY_CLASSES),
+        Map.entry("NAMESPACES", FacetType.NAMESPACES),
+        Map.entry("DATASOURCES", FacetType.DATA_SOURCES),
+        Map.entry("DATA_SOURCES", FacetType.DATA_SOURCES),
+        Map.entry("STATUSES", FacetType.STATUSES),
+        Map.entry("TYPES", FacetType.TYPES)
+    );
 
     private final SearchMapper searchMapper;
 
@@ -103,7 +126,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             state,
             formData.getQuery(),
             myObjects,
-            formData.getSort()
+            formData.getSort(),
+            matchAllFacets(filters.getMatchAll())
         );
     }
 
@@ -111,6 +135,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
     public FacetStateDto mapForm(final TermSearchFormData formData) {
         final TermSearchFormDataFilters filters = formData.getFilters();
 
+        // ST-11 (#1845): the Dictionary search shares SearchFilterState but has no exclusion — an item carrying
+        // `exclude: true` is REMOVED here (never read as a positive, which would invert the caller's intent).
         final Map<FacetType, List<SearchFilterDto>> state = TERM_FORM_MAPPINGS.entrySet().stream()
             .map(e -> {
                 final List<SearchFilterState> filterList = e.getKey().apply(filters);
@@ -120,6 +146,7 @@ public class FacetStateMapperImpl implements FacetStateMapper {
 
                 return filterList
                     .stream()
+                    .filter(f -> !Boolean.TRUE.equals(f.getExclude()))
                     .map(f -> mapFilter(f, e.getValue()))
                     .collect(Collectors.toList());
             })
@@ -153,6 +180,23 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             false,
             null
         );
+    }
+
+    /** ST-11: the {@code match_all} tokens → facet types; unknown tokens dropped (logged), never a failure. */
+    static Set<FacetType> matchAllFacets(final List<String> tokens) {
+        final Set<FacetType> facets = EnumSet.noneOf(FacetType.class);
+        if (tokens == null) {
+            return facets;
+        }
+        for (final String token : tokens) {
+            final FacetType facet = token == null ? null : MATCH_ALL_TOKENS.get(token.trim().toUpperCase());
+            if (facet == null) {
+                log.debug("Unknown match_all facet token {} dropped", token);
+            } else {
+                facets.add(facet);
+            }
+        }
+        return facets;
     }
 
     @Override
@@ -191,6 +235,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             .entityName(f.getEntityName())
             .selected(f.getSelected())
             .type(type)
+            // ST-11: an absent flag is a positive selection (every pre-ST-11 request)
+            .exclude(Boolean.TRUE.equals(f.getExclude()))
             .build();
     }
 

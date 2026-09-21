@@ -32,7 +32,6 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
-import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 import org.opendatadiscovery.oddplatform.dto.SearchSortDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -459,7 +458,7 @@ public class ReactiveDataEntityRepositoryImpl
     public Mono<Long> countByState(final FacetStateDto state, final OwnerPojo owner) {
         final List<Condition> conditions = new ArrayList<>(jooqFTSHelper
             .facetStateConditions(state, DATA_ENTITY_CONDITIONS, List.of(FacetType.ENTITY_CLASSES)));
-        if (!deletedEntitiesAreRequested(state.getState())) {
+        if (!state.isDeletedRequested()) {
             conditions.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
         }
         conditions.add(DATA_ENTITY.HOLLOW.isFalse());
@@ -712,7 +711,7 @@ public class ReactiveDataEntityRepositoryImpl
         final Pair<List<Condition>, List<Condition>> conditionsPair = jooqFTSHelper.resultFacetStateConditions(state);
         final var builder = DataEntityCTEQueryConfig.builder()
             .conditions(conditionsPair.getLeft());
-        if (deletedEntitiesAreRequested(state.getState())) {
+        if (state.isDeletedRequested()) {
             builder.includeDeleted(true);
         }
         if (StringUtils.isNotEmpty(state.getQuery())) {
@@ -1068,10 +1067,5 @@ public class ReactiveDataEntityRepositoryImpl
         conditions.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
         conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
         return conditions;
-    }
-
-    private boolean deletedEntitiesAreRequested(final Map<FacetType, List<SearchFilterDto>> facetStateMap) {
-        return facetStateMap.getOrDefault(FacetType.STATUSES, List.of()).stream()
-            .anyMatch(f -> f.getEntityId() == DataEntityStatusDto.DELETED.getId());
     }
 }

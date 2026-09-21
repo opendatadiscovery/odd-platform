@@ -21,9 +21,15 @@ public class SearchMapperImpl implements SearchMapper {
 
     @Override
     public SearchFilter mapDto(final SearchFilterDto dto) {
-        return new SearchFilter()
+        final SearchFilter filter = new SearchFilter()
             .id(dto.getEntityId())
             .name(dto.getEntityName());
+        // ST-11 (#1845): the echo carries the exclusion flag ONLY when set, so a positive selection's echo stays
+        // byte-identical to the pre-ST-11 shape while an excluded value can be rendered as "not <name>".
+        if (dto.isExclude()) {
+            filter.exclude(true);
+        }
+        return filter;
     }
 
     @Override

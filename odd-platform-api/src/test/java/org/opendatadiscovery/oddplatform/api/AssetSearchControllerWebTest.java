@@ -359,4 +359,28 @@ public class AssetSearchControllerWebTest extends BaseIntegrationTest {
             .setOddrn("//webhl/de/" + name).setExternalName(name).setEntityClassIds(new Integer[] {1}).setTypeId(1)
             .setHollow(hollow).setStatus(status.getId()).setExcludeFromSearch(excluded))).blockLast().getId();
     }
+
+    /**
+     * ST-11 (#1845): the facet-logic fields carry no free text into SQL — a hostile {@code match_all} token is an
+     * unknown facet name and is DROPPED (200), while a wrong JSON TYPE for {@code exclude} is rejected by the
+     * request binding (400 — the {@code sort} / depth posture), never a 500.
+     */
+    @Test
+    void searchAssets_facetLogic_hostileMatchAllIsDropped_wrongTypedExcludeIs400_never500() {
+        webTestClient.post()
+            .uri("/api/search/assets?size=30")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("{\"query\":\"\",\"filters\":{\"tags\":[{\"entity_id\":1,\"selected\":true,\"exclude\":true}],"
+                + "\"match_all\":[\"tags\",\"'; drop table data_entity; --\"]}}")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AssetList.class);
+        webTestClient.post()
+            .uri("/api/search/assets?size=30")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("{\"query\":\"\",\"filters\":{\"tags\":"
+                + "[{\"entity_id\":1,\"selected\":true,\"exclude\":\"yes\"}]}}")
+            .exchange()
+            .expectStatus().isBadRequest();
+    }
 }

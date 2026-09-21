@@ -5,7 +5,9 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
+import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.FacetState;
+import org.opendatadiscovery.oddplatform.api.contract.model.MultipleFacetType;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilterState;
@@ -14,6 +16,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormDataFilter
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,6 +143,49 @@ class SearchServiceFacetNameEchoTest extends BaseIntegrationTest {
                 assertThat(state).as("the facet state is present on a no-facet search").isNotNull();
                 assertThat(state.getTags()).as("no tag filter selected").isEmpty();
             })
+            .verifyComplete();
+    }
+
+    /**
+     * ST-11 (#1845, CTRIB-074): an EXCLUDED facet value requested by id only rides the same path — it is stored in
+     * the session, its name is resolved, and it is echoed back FLAGGED ({@code SearchFilter.exclude = true}) so a
+     * fresh shared link renders a named "not &lt;tag&gt;" chip; and it leaves that facet's option list exactly as a
+     * selected value does (the same session's {@code getFilterOptions} no longer offers it).
+     *
+     * <p>RED on {@code ref:main}: the contract has no {@code exclude}, so the echo is a positive chip and the value
+     * stays in the option list.
+     */
+    @Test
+    @DisplayName("an EXCLUDED tag requested by id only echoes back named + flagged,"
+        + " and leaves the tag option list (ST-11)")
+    void search_echoesExcludedTagNamedAndFlagged_andHidesItFromTheOptionList() {
+        final String tagName = "st11tag" + UUID.randomUUID().toString().substring(0, 8);
+        final TagPojo tag = tagRepository.create(new TagPojo().setName(tagName).setImportant(false)).block();
+        final DataEntityPojo de = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()
+            .setOddrn("//st11/echo/" + tagName).setExternalName(tagName).setEntityClassIds(new Integer[] {DATA_SET})
+            .setTypeId(1).setHollow(false).setStatus(DataEntityStatusDto.UNASSIGNED.getId())
+            .setExcludeFromSearch(false))).blockLast();
+        tagRepository.createDataEntityRelations(List.of(new TagToDataEntityPojo().setDataEntityId(de.getId())
+            .setTagId(tag.getId()))).collectList().block();
+
+        final SearchFormData formData = new SearchFormData()
+            .query("")
+            .filters(new SearchFormDataFilters()
+                .tags(List.of(new SearchFilterState().entityId(tag.getId()).selected(true).exclude(true))));
+
+        final SearchFacetsData session = searchService.search(formData).block();
+        assertThat(session.getFacetState().getTags())
+            .extracting(SearchFilter::getId, SearchFilter::getName, SearchFilter::getExclude)
+            .as("the echoed chip is NAMED and carries the exclusion flag")
+            .contains(tuple(tag.getId(), tagName, true));
+
+        searchService.getFilterOptions(session.getSearchId(), MultipleFacetType.TAGS, 1, 100, tagName)
+            .map(CountableSearchFilter::getId)
+            .collectList()
+            .as(StepVerifier::create)
+            .assertNext(ids -> assertThat(ids)
+                .as("an excluded value is hidden from its facet's option list exactly like a selected one")
+                .doesNotContain(tag.getId()))
             .verifyComplete();
     }
 }
