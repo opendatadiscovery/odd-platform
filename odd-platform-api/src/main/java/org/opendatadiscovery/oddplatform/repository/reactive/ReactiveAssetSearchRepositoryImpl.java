@@ -22,11 +22,9 @@ import org.opendatadiscovery.oddplatform.dto.AssetSearchPageRow;
 import org.opendatadiscovery.oddplatform.dto.AssetSearchScope;
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
-import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.FavoritesScopeDto;
 import org.opendatadiscovery.oddplatform.dto.PopularityRangeDto;
 import org.opendatadiscovery.oddplatform.dto.RecentlyViewedScopeDto;
-import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 import org.opendatadiscovery.oddplatform.dto.SearchSortDto;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -36,23 +34,19 @@ import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.ASSET_SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.FAVORITE;
-import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
-import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
-import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.QUERY_EXAMPLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.RECENTLY_VIEWED;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM_OWNERSHIP;
-import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
 
 @Repository
 @RequiredArgsConstructor
 public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
     private final JooqFTSHelper jooqFTSHelper;
+    private final AssetSearchFacetConditions facetConditions;
 
     @Override
     public Flux<AssetSearchPageRow> keysetPage(final FacetStateDto state, final List<String> assetKinds,
@@ -377,31 +371,34 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
         // (3) read-time eligibility, KIND-GUARDED: each kind's visibility predicate is gated on its own kind so
         // the NULL side of the outer join can never leak another kind's rows (DE: not hollow, not DELETED, not
         // excluded-from-search; Term/QE: not soft-deleted) — mirrors the per-kind searches' eligibility.
+        //
+        // ST-11 (#1845): a POSITIVE `DELETED` status selection LIFTS the DELETED exclusion, exactly as the legacy
+        // /api/search results path does (ReactiveDataEntityRepositoryImpl.deletedEntitiesAreRequested). Before, the
+        // sidebar offered `DELETED n` from the legacy count while this list ANDed `status IN (DELETED)` with
+        // `status != DELETED` and returned nothing — a front-end / back-end contradiction. An EXCLUSION of DELETED
+        // changes nothing (the status is excluded by default).
+        final boolean deletedRequested = state.isDeletedRequested();
+        Condition dataEntityEligible = ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.DATA_ENTITY.getValue())
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
+        if (!deletedRequested) {
+            dataEntityEligible = dataEntityEligible.and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
+        }
         conditions.add(
-            ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.DATA_ENTITY.getValue())
-                .and(DATA_ENTITY.HOLLOW.isFalse())
-                .and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()))
-                .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
+            dataEntityEligible
                 .or(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.TERM.getValue())
                     .and(TERM.DELETED_AT.isNull()))
                 .or(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.QUERY_EXAMPLE.getValue())
                     .and(QUERY_EXAMPLE.DELETED_AT.isNull())));
 
-        // (4) entity-class refinement — a DE-only predicate; non-DE rows pass through (when the DE branch of the
-        // Asset-type control is chosen the asset-kind filter (2) excludes the other kinds). Applied BEFORE the
-        // limit so paging + counts stay correct. The class selection is a MULTISELECT with OR semantics — a
-        // Data Entity matches if it is in ANY selected class — so this is array OVERLAP (`&&`), NOT contains-all
-        // (`@>`). `@>` would require the entity to hold EVERY selected class at once, so selecting
-        // [Datasets, Transformers] returned nothing (no entity is both a dataset AND a transformer).
-        final List<SearchFilterDto> entityClasses = state.getFacetEntities(FacetType.ENTITY_CLASSES);
-        if (!entityClasses.isEmpty()) {
-            final Integer[] classIds = entityClasses.stream()
-                .map(f -> (int) f.getEntityId())
-                .toArray(Integer[]::new);
-            conditions.add(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.ne(AssetKind.DATA_ENTITY.getValue())
-                .or(DSL.condition("{0} && {1}", DATA_ENTITY.ENTITY_CLASS_IDS,
-                    DSL.val(classIds, DATA_ENTITY.ENTITY_CLASS_IDS.getDataType()))));
-        }
+        // (4) + (6) + (7) — EVERY facet (the entity classes, the six shared sidebar facets, the Data-Entity-only
+        // kind rule) compiles in ONE place since ST-11 (#1845): AssetSearchFacetConditions — positives with their
+        // mode (any / all), exclusions, and the cross-kind carriage rule (a Term is narrowed by the Namespace /
+        // Owner / Tag it carries; a kind that cannot carry a facet is dropped by a positive selection and admitted
+        // by an exclusion). Before ST-11 the shared facets narrowed Data-Entity rows only and every Term / Query
+        // Example passed through unfiltered ("Tag = pii" listed an untagged term) — the pass-through this replaces.
+        // Applied BEFORE the limit so paging + counts stay correct; the count and the popularity histogram inherit it.
+        conditions.addAll(facetConditions.assetConditions(state));
 
         // (5) MY-DATA scope (ST-8 / #1842) — the generalisation of the old my-objects boolean. Only reached when
         // an owner resolved; the service short-circuits to an empty page when a scope is selected but no owner
@@ -512,49 +509,6 @@ public class ReactiveAssetSearchRepositoryImpl implements ReactiveAssetSearchRep
                 .and(FAVORITE.ASSET_KIND.eq(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND))
                 .and(FAVORITE.ASSET_ID.eq(ASSET_SEARCH_ENTRYPOINT.ASSET_ID)));
             conditions.add(favorites.favorited() ? favorited : DSL.not(favorited));
-        }
-
-        // (6) shared sidebar facets — namespace / owner / tag / group / status / datasource carried on
-        // FacetStateDto. Applied to DE rows through a DE-id semi-join that REUSES the exact DE facet predicate
-        // builders the /search result query uses (FTSConstants.DATA_ENTITY_CONDITIONS) — never a hand-rolled
-        // predicate. entity_class (already applied at (4)) and type (an Asset-type-filter concern) are ignored
-        // so only the six shared facets compile here; the list is empty (and the whole join skipped) unless at
-        // least one shared facet is actually selected.
-        final List<Condition> deFacetConditions = jooqFTSHelper.facetStateConditions(
-            state, DATA_ENTITY_CONDITIONS, List.of(FacetType.ENTITY_CLASSES, FacetType.TYPES));
-        if (!deFacetConditions.isEmpty()) {
-            // FROM mirrors ReactiveDataEntityRepositoryImpl.findByState's facet joins so every shared facet's
-            // table is reachable: DATA_SOURCE (+ its namespace), NAMESPACE, OWNERSHIP -> OWNER,
-            // GROUP_ENTITY_RELATIONS. tag/group resolve through their own nested sub-selects on data_entity.id,
-            // so no tag / dataset-structure joins are needed here. Duplicate DE ids from the fan-out joins are
-            // irrelevant — it feeds an IN (...) semi-join.
-            final var deFacetMatches = DSL.select(DATA_ENTITY.ID)
-                .from(DATA_ENTITY
-                    .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-                    .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID)
-                        .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID)))
-                    .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-                    .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
-                    .leftJoin(GROUP_ENTITY_RELATIONS)
-                    .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN)))
-                .where(deFacetConditions);
-            // Kind-guarded like (4): DE rows must be in the facet-matching set; non-DE rows pass through here
-            // (cross-kind facet application over Terms / Query Examples is ST-11, out of scope).
-            conditions.add(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.ne(AssetKind.DATA_ENTITY.getValue())
-                .or(DATA_ENTITY.ID.in(deFacetMatches)));
-        }
-
-        // (7) ADR D3 — Terms / Query Examples carry no datasource / status / group / type. When any of those
-        // DE-only facets is selected the non-DE kinds cannot satisfy it, so exclude them outright (only DE rows
-        // survive). The Terms-carrying shared facets (namespace / owner / tag) narrow DE rows at (6) but let
-        // non-DE rows pass.
-        final boolean deOnlyFacetSelected =
-            !state.getFacetEntities(FacetType.DATA_SOURCES).isEmpty()
-                || !state.getFacetEntities(FacetType.STATUSES).isEmpty()
-                || !state.getFacetEntities(FacetType.GROUPS).isEmpty()
-                || !state.getFacetEntities(FacetType.TYPES).isEmpty();
-        if (deOnlyFacetSelected) {
-            conditions.add(ASSET_SEARCH_ENTRYPOINT.ASSET_KIND.eq(AssetKind.DATA_ENTITY.getValue()));
         }
 
         // (8) POPULARITY range (ST-9 / #1843, ADR D5): a closed range over the SNAPSHOTTED popularity_score — the

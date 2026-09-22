@@ -250,7 +250,9 @@ public class AssetSearchServiceImpl implements AssetSearchService {
                     ? nextCursor(sort, relevance, relevanceOffset, cappedSize, pageRows)
                     : null;
                 final List<AssetRefDto> refs = pageRows.stream().map(AssetSearchPageRow::toRef).toList();
-                return searchAssetResolver.resolve(refs, fields)
+                // ST-11 (#1845): under a positive DELETED status the ranked query and the count admitted the deleted
+                // entities, so the page resolves them too — otherwise "1 result" above an empty list.
+                return searchAssetResolver.resolve(refs, fields, state.isDeletedRequested())
                     .map(items -> new AssetList()
                         .items(items)
                         .pageInfo(new AssetPageInfo().total(total).hasNext(hasNext).nextCursor(nextCursor)));

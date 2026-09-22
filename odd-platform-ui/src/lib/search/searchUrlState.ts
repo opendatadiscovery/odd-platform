@@ -6,6 +6,7 @@ import type { SearchFacetNames } from 'redux/interfaces';
 import { AssetKind } from 'generated-sources';
 import type {
   AssetSearchFormData,
+  SearchFilterState,
   SearchFormData,
   SearchFormDataFilters,
 } from 'generated-sources';
@@ -192,6 +193,76 @@ export const SEARCH_FACET_PARAMS: SearchFacetNames[] = [
 export type SearchUrlFacets = Partial<Record<SearchFacetNames, number[]>>;
 
 /**
+ * ST-11 (#1845, ADR unified-asset-search D13) — the facet-LOGIC grammar, a permanent public contract like the facet
+ * params it extends:
+ *
+ * - an EXCLUSION is the facet's own param with a `-` prefix on the id — `tags[]=7401,7402,-7403` reads "tagged pii or
+ *   finance, and not legacy" — the same spelling the query syntax uses for `-word` (ST-6). Positives and exclusions
+ *   of one facet live in ONE param, so a facet's whole state is in one place; a value listed both ways is read as
+ *   EXCLUDED (the narrower, explicit intent — the UI never writes both).
+ * - the MODE is `match_all[]=tags,owners` — the facets whose positive values must ALL be carried; absent = "any"
+ *   (today's meaning) on every facet. Written only while the facet still has a positive value (a mode on nothing is
+ *   nothing), and only for facets in `all` mode (the ST-1 "only modified values" rule).
+ *
+ * FAIL CLOSED, like every facet id: a token that is not `-?<positive integer>` is dropped, an unknown facet name in
+ * `match_all[]` is dropped, and nothing ever throws. An old build reading a NEW link drops the signed tokens (its
+ * parser keeps positive integers only) and ignores `match_all[]` — the search degrades to a broader one, never a 400.
+ *
+ * BEING URL-ONLY IS LOAD-BEARING for the mode: `Search.tsx`'s facet→URL mirror rebuilds the URL from the redux facet
+ * state, which carries the positives AND the exclusions (an exclusion is a facet item with `exclude: true`) but has
+ * no home for a per-facet mode, so `matchAll` MUST be merged back there (the #1858 dropped-selection class).
+ */
+export const SEARCH_MATCH_ALL_PARAM = 'match_all';
+
+/** The facets an asset can carry several values of — the only ones a `Match all` mode is offered on. */
+export const MULTI_VALUED_FACETS: SearchFacetNames[] = [
+  'tags',
+  'owners',
+  'groups',
+  'entityClasses',
+];
+
+/** The facet-name tokens of `match_all[]` as they ride the URL and the wire — the facet's own wire property name. */
+const MATCH_ALL_TOKENS: Record<SearchFacetNames, string> = {
+  entityClasses: 'entity_classes',
+  types: 'types',
+  tags: 'tags',
+  namespaces: 'namespaces',
+  datasources: 'datasources',
+  owners: 'owners',
+  groups: 'groups',
+  statuses: 'statuses',
+};
+
+/** Read a `match_all` token (URL or wire) back to its facet name, case-insensitively; `undefined` = unknown. */
+export function matchAllFacetFromToken(raw: unknown): SearchFacetNames | undefined {
+  if (typeof raw !== 'string') return undefined;
+  const token = raw.trim().toLowerCase();
+  return SEARCH_FACET_PARAMS.find(
+    name => MATCH_ALL_TOKENS[name] === token || name.toLowerCase() === token
+  );
+}
+
+/**
+ * The mode list, fail-closed and canonical: known facet names only, each at most once, in the facet-param order,
+ * and only for facets that still carry a positive value — the ONE reading the URL parser, the wire projection and
+ * the saved-spec reading share, so a link and a saved search can never disagree about which facets are in `all`.
+ */
+export function parseMatchAll(
+  raw: unknown,
+  facets: SearchUrlFacets
+): SearchFacetNames[] | undefined {
+  const rawValues = Array.isArray(raw) ? raw : raw != null ? [raw] : [];
+  const named = new Set<SearchFacetNames>();
+  rawValues.forEach(value => {
+    const name = matchAllFacetFromToken(value);
+    if (name && (facets[name]?.length ?? 0) > 0) named.add(name);
+  });
+  const ordered = SEARCH_FACET_PARAMS.filter(name => named.has(name));
+  return ordered.length > 0 ? ordered : undefined;
+}
+
+/**
  * The named orderings the global sort dropdown offers (ST-2b / #1836) — the server-side `sort` contract's tokens
  * (ST-2a / `SearchSortDto`): relevance, status priority, recently updated, name, and — since ST-9 (#1843), on the
  * ST-5c popularity snapshot — most popular (it was deliberately absent until that snapshot existed, because the
@@ -299,6 +370,10 @@ export interface SearchUrlState {
   recentlyViewed?: SearchRecentlyViewedScope;
   /** the result-column layout (ST-13a); undefined = no layout carried (the reader's own). An EMPTY list = anchors only. */
   columns?: ResultColumnId[];
+  /** EXCLUDED facet option ids per facet (ST-11): an asset carrying any of them is out; empty/absent = no exclusion */
+  excluded?: SearchUrlFacets;
+  /** the facets in `Match all` mode (ST-11); undefined / empty = `Match any` on every facet (today's meaning) */
+  matchAll?: SearchFacetNames[];
 }
 
 /**
@@ -327,9 +402,26 @@ export function searchStateToParams(state: SearchUrlState): string {
     [SEARCH_QUERY_PARAM]: state.query || undefined,
   };
   SEARCH_FACET_PARAMS.forEach(name => {
-    const ids = state.facets[name];
-    if (ids && ids.length > 0) params[name] = ids;
+    // ST-11 — one param per facet: the positives, then each exclusion as `-<id>` (a value listed both ways is
+    // written as excluded only, the canonical single representation).
+    const excludedIds = state.excluded?.[name] ?? [];
+    const excludedSet = new Set(excludedIds);
+    const ids = (state.facets[name] ?? []).filter(id => !excludedSet.has(id));
+    const tokens: string[] = [
+      ...ids.map(id => String(id)),
+      ...excludedIds.map(id => `-${id}`),
+    ];
+    if (tokens.length > 0) params[name] = tokens;
   });
+  // ST-11 — the mode only for facets in `all` that still carry a positive value, in the canonical order.
+  const matchAll = (state.matchAll ?? []).filter(
+    name => (state.facets[name]?.length ?? 0) > 0
+  );
+  if (matchAll.length > 0) {
+    params[SEARCH_MATCH_ALL_PARAM] = SEARCH_FACET_PARAMS.filter(name =>
+      matchAll.includes(name)
+    ).map(name => MATCH_ALL_TOKENS[name]);
+  }
   // ST-8: only `my_data` is WRITTEN — a legacy `?my=true` read earlier round-trips forward into it, so the
   // canonical URL has exactly one representation of the scope and old links normalise on first write.
   if (state.myData && state.myData.length > 0)
@@ -540,12 +632,16 @@ export function paramsToSearchState(search: string): SearchUrlState {
           : '';
 
     const facets: SearchUrlFacets = {};
+    const excluded: SearchUrlFacets = {};
     SEARCH_FACET_PARAMS.forEach(name => {
       const raw = parsed[name];
       const rawValues = Array.isArray(raw) ? raw : raw != null ? [raw] : [];
-      const ids = rawValues.map(v => Number(v)).filter(n => Number.isInteger(n) && n > 0);
-      if (ids.length > 0) facets[name] = ids;
+      const split = splitSignedFacetTokens(rawValues);
+      if (split.ids.length > 0) facets[name] = split.ids;
+      if (split.excluded.length > 0) excluded[name] = split.excluded;
     });
+    // ST-11 — the mode, fail-closed: known facet names with a positive value only (see parseMatchAll).
+    const matchAll = parseMatchAll(parsed[SEARCH_MATCH_ALL_PARAM], facets);
 
     // ST-8 — the My-data scopes, fail-closed on the same allow-list pattern as `asset_kinds`: unknown tokens
     // are dropped and an empty result collapses to `undefined` (the All state), so a garbage or stale URL
@@ -636,10 +732,45 @@ export function paramsToSearchState(search: string): SearchUrlState {
       popularity,
       recentlyViewed,
       ...(columns !== undefined ? { columns } : {}),
+      ...(Object.keys(excluded).length > 0 ? { excluded } : {}),
+      ...(matchAll !== undefined ? { matchAll } : {}),
     };
   } catch {
     return empty;
   }
+}
+
+/**
+ * ST-11 — one facet param's tokens → positive ids + excluded ids, FAIL CLOSED: a token is `<positive integer>` (a
+ * positive) or `-<positive integer>` (an exclusion); anything else is dropped; a value listed both ways is read as
+ * EXCLUDED. Shared by the URL parser and the saved-spec reading (`searchFormDataToUrlState` applies the same rule to
+ * the wire's `exclude` flag), so a link and a saved search can never disagree about what a listed value means.
+ */
+export function splitSignedFacetTokens(rawValues: unknown[]): {
+  ids: number[];
+  excluded: number[];
+} {
+  const ids: number[] = [];
+  const excluded: number[] = [];
+  rawValues.forEach(raw => {
+    const token =
+      typeof raw === 'number' ? String(raw) : typeof raw === 'string' ? raw.trim() : '';
+    const negative = token.startsWith('-');
+    const n = Number(negative ? token.slice(1) : token);
+    if (
+      !Number.isInteger(n) ||
+      n <= 0 ||
+      token === '' ||
+      (negative && token.length === 1)
+    )
+      return;
+    (negative ? excluded : ids).push(n);
+  });
+  const excludedSet = new Set(excluded);
+  return {
+    ids: [...new Set(ids.filter(id => !excludedSet.has(id)))],
+    excluded: [...new Set(excluded)],
+  };
 }
 
 /**
@@ -660,11 +791,22 @@ export function searchStateKeyWithoutColumns(state: SearchUrlState): string {
 export function searchUrlStateToFormData(state: SearchUrlState): SearchFormData {
   const filters: SearchFormDataFilters = {};
   SEARCH_FACET_PARAMS.forEach(name => {
-    const ids = state.facets[name];
-    if (ids && ids.length > 0) {
-      filters[name] = ids.map(entityId => ({ entityId, selected: true }));
-    }
+    // ST-11 — an excluded value rides the SAME list as a selected item flagged `exclude: true` (the wire is one
+    // list per facet); the positives carry no flag, so a request without exclusions is byte-identical to before.
+    const ids = state.facets[name] ?? [];
+    const excludedIds = state.excluded?.[name] ?? [];
+    const items: SearchFilterState[] = [
+      ...ids.map(entityId => ({ entityId, selected: true })),
+      ...excludedIds.map(entityId => ({ entityId, selected: true, exclude: true })),
+    ];
+    if (items.length > 0) filters[name] = items;
   });
+  // ST-11 — the mode as the wire's facet-name tokens, only when some facet is in `all`.
+  const matchAll = (state.matchAll ?? []).filter(
+    name => (state.facets[name]?.length ?? 0) > 0
+  );
+  if (matchAll.length > 0)
+    filters.matchAll = matchAll.map(name => MATCH_ALL_TOKENS[name]);
   return {
     query: state.query,
     // ST-8: `my_objects` is STILL emitted whenever MY_OBJECTS is selected. The legacy /api/search session
@@ -750,13 +892,20 @@ export function searchUrlStateToAssetSearchFormData(
 export function searchFormDataToUrlState(formData: SearchFormData): SearchUrlState {
   const filters: SearchFormDataFilters = formData.filters ?? {};
   const facets: SearchUrlFacets = {};
+  const excluded: SearchUrlFacets = {};
   SEARCH_FACET_PARAMS.forEach(name => {
-    const ids = (filters[name] ?? [])
-      .filter(state => state?.selected !== false)
-      .map(state => Number(state?.entityId))
-      .filter(id => Number.isInteger(id) && id > 0);
-    if (ids.length > 0) facets[name] = ids;
+    // ST-11 — the stored `exclude` flag → the signed-token reading the URL parser uses (one rule, both surfaces):
+    // an item with `exclude: true` is an exclusion; a value stored both ways reads as excluded.
+    const items = (filters[name] ?? []).filter(state => state?.selected !== false);
+    const split = splitSignedFacetTokens(
+      items.map(state => `${state?.exclude === true ? '-' : ''}${state?.entityId}`)
+    );
+    if (split.ids.length > 0) facets[name] = split.ids;
+    if (split.excluded.length > 0) excluded[name] = split.excluded;
   });
+  // ST-11 — the stored mode through the same fail-closed reading as the URL (unknown tokens dropped; a facet
+  // with no positive value carries no mode).
+  const matchAll = parseMatchAll(filters.matchAll, facets);
   const sort = SEARCH_SORT_VALUES.includes(formData.sort as SearchSortValue)
     ? (formData.sort as SearchSortValue)
     : undefined;
@@ -779,6 +928,8 @@ export function searchFormDataToUrlState(formData: SearchFormData): SearchUrlSta
     upstreamDepth: parseDepth(formData.upstreamDepth),
     downstreamDepth: parseDepth(formData.downstreamDepth),
     sort,
+    ...(Object.keys(excluded).length > 0 ? { excluded } : {}),
+    ...(matchAll !== undefined ? { matchAll } : {}),
   };
 }
 

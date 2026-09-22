@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,14 +13,11 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.Record3;
-import org.jooq.SelectOrderByStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
@@ -27,10 +25,10 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
-import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterId;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchFacetsRecord;
+import org.opendatadiscovery.oddplatform.repository.util.FTSConstants;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.utils.Pair;
@@ -43,9 +41,6 @@ import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.select;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
@@ -55,7 +50,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_FACETS;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
-import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
@@ -68,6 +62,17 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
 
     private final JooqReactiveOperations jooqReactiveOperations;
     private final JooqFTSHelper jooqFTSHelper;
+    private final AssetSearchFacetConditions facetConditions;
+
+    // ST-11 (#1845): the facet set each count query conditions on — EXACTLY the facets it conditioned on before, now
+    // read through the shared compiler: positives with their mode (any / all), exclusions, and a count of ENTITIES
+    // (the shipped INNER JOINs on the relation tables double-counted an entity carrying two selected values).
+    private static final Set<FacetType> ENTITY_CLASS_COUNT_FACETS = EnumSet.of(FacetType.DATA_SOURCES,
+        FacetType.OWNERS, FacetType.NAMESPACES, FacetType.TAGS, FacetType.GROUPS, FacetType.TYPES, FacetType.STATUSES);
+    private static final Set<FacetType> TYPE_AND_STATUS_COUNT_FACETS = EnumSet.of(FacetType.ENTITY_CLASSES,
+        FacetType.DATA_SOURCES, FacetType.OWNERS, FacetType.NAMESPACES, FacetType.TAGS, FacetType.GROUPS);
+    private static final Set<FacetType> OWNER_TAG_GROUP_COUNT_FACETS =
+        EnumSet.of(FacetType.ENTITY_CLASSES, FacetType.DATA_SOURCES);
 
     private static final Collector<Record3<Long, String, Integer>, ?, Map<SearchFilterId, Long>> FACET_COLLECTOR
         = Collectors.toMap(
@@ -168,14 +173,14 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
         final List<Condition> conditions = new ArrayList<>();
         conditions.add(DATA_ENTITY.HOLLOW.isFalse());
         conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
-        if (!deletedEntitiesAreRequested(state.getState())) {
+        if (!state.isDeletedRequested()) {
             conditions.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
         }
 
         final String entityClassUnnestedField = "entity_class_id";
         final String deCountField = "data_entity_count";
 
-        var select = DSL
+        final var select = DSL
             .select(field("unnest(?)", DATA_ENTITY.ENTITY_CLASS_IDS).as(entityClassUnnestedField))
             .select(count(DATA_ENTITY.ID).as(deCountField))
             .from(DATA_ENTITY);
@@ -184,50 +189,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             select.join(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
             conditions.add(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
         }
-        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
-        if (!CollectionUtils.isEmpty(dataSourceIds)) {
-            conditions.add(DATA_ENTITY.DATA_SOURCE_ID.in(dataSourceIds));
-        }
-        final Set<Long> ownerIds = state.getFacetEntitiesIds(FacetType.OWNERS);
-        if (!CollectionUtils.isEmpty(ownerIds)) {
-            select.join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
-            conditions.add(OWNERSHIP.OWNER_ID.in(ownerIds));
-        }
-        final Set<Long> namespaceIds = state.getFacetEntitiesIds(FacetType.NAMESPACES);
-        if (!CollectionUtils.isEmpty(namespaceIds)) {
-            select.leftJoin(DATA_SOURCE)
-                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-                .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
-                .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID));
-            conditions.add(NAMESPACE.ID.in(namespaceIds));
-        }
-        final Set<Long> tagIds = state.getFacetEntitiesIds(FacetType.TAGS);
-        if (!CollectionUtils.isEmpty(tagIds)) {
-            final var dataEntities = getRelatedEntitiesAndFieldsToTag(tagIds);
-
-            conditions.add(DATA_ENTITY.ID.in(dataEntities));
-        }
-
-        final Set<Long> groupIds = state.getFacetEntitiesIds(FacetType.GROUPS);
-        if (!CollectionUtils.isEmpty(groupIds)) {
-            select = select.join(GROUP_ENTITY_RELATIONS)
-                .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN));
-
-            final var groupOddrns = DSL.select(DATA_ENTITY.ODDRN)
-                .from(DATA_ENTITY)
-                .where(DATA_ENTITY.ID.in(groupIds));
-            conditions.add(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns));
-        }
-
-        final Set<Long> typeIds = state.getFacetEntitiesIds(FacetType.TYPES);
-        if (!CollectionUtils.isEmpty(typeIds)) {
-            conditions.add(DATA_ENTITY.TYPE_ID.in(typeIds));
-        }
-
-        final Set<Long> statusIds = state.getFacetEntitiesIds(FacetType.STATUSES);
-        if (!CollectionUtils.isEmpty(statusIds)) {
-            conditions.add(DATA_ENTITY.STATUS.in(statusIds));
-        }
+        conditions.addAll(facetConditions.dataEntityConditions(state, ENTITY_CLASS_COUNT_FACETS));
 
         select
             .where(conditions)
@@ -261,7 +223,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             return Mono.empty();
         }
         final List<Condition> conditions = getDataEntityDefaultConditions();
-        var select = DSL
+        final var select = DSL
             .select(DATA_ENTITY.TYPE_ID, count(DATA_ENTITY.ID))
             .from(DATA_ENTITY);
 
@@ -270,41 +232,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             conditions.add(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
         }
 
-        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
-        if (!CollectionUtils.isEmpty(dataSourceIds)) {
-            conditions.add(DATA_ENTITY.DATA_SOURCE_ID.in(dataSourceIds));
-        }
-        final Set<Long> ownerIds = state.getFacetEntitiesIds(FacetType.OWNERS);
-        if (!CollectionUtils.isEmpty(ownerIds)) {
-            select.join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
-            conditions.add(OWNERSHIP.OWNER_ID.in(ownerIds));
-        }
-        final Set<Long> namespaceIds = state.getFacetEntitiesIds(FacetType.NAMESPACES);
-        if (!CollectionUtils.isEmpty(namespaceIds)) {
-            select.leftJoin(DATA_SOURCE)
-                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-                .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
-                .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID));
-            conditions.add(NAMESPACE.ID.in(namespaceIds));
-        }
-        final Set<Long> tagIds = state.getFacetEntitiesIds(FacetType.TAGS);
-        if (!CollectionUtils.isEmpty(tagIds)) {
-            select = select.join(TAG_TO_DATA_ENTITY)
-                .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
-            conditions.add(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds));
-        }
-
-        final Set<Long> groupIds = state.getFacetEntitiesIds(FacetType.GROUPS);
-        if (!CollectionUtils.isEmpty(groupIds)) {
-            select = select.join(GROUP_ENTITY_RELATIONS)
-                .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN));
-
-            final var groupOddrns = DSL.select(DATA_ENTITY.ODDRN)
-                .from(DATA_ENTITY)
-                .where(DATA_ENTITY.ID.in(groupIds));
-            conditions.add(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns));
-        }
-        conditions.add(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {selectedEntityClass.intValue()}));
+        conditions.addAll(facetConditions.dataEntityConditions(state, TYPE_AND_STATUS_COUNT_FACETS));
         final List<Integer> typeIds = typeIdsByName(facetQuery);
         if (!typeIds.isEmpty()) {
             conditions.add(DATA_ENTITY.TYPE_ID.in(typeIds));
@@ -351,14 +279,8 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             .leftJoin(DATA_ENTITY).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
 
         final List<Condition> conditions = getDataEntityDefaultConditions();
-
-        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
-        if (!dataSourceIds.isEmpty()) {
-            select.join(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID));
-            conditions.add(DATA_SOURCE.ID.in(dataSourceIds));
-        }
-
-        conditions.addAll(getQueryAndEntityClassConditions(state));
+        conditions.addAll(facetConditions.dataEntityConditions(state, OWNER_TAG_GROUP_COUNT_FACETS));
+        conditions.addAll(getQueryConditions(state));
         if (StringUtils.isNotEmpty(facetQuery)) {
             conditions.add(OWNER.NAME.containsIgnoreCase(facetQuery));
         }
@@ -386,14 +308,8 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             .leftJoin(DATA_ENTITY).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
 
         final List<Condition> conditions = getDataEntityDefaultConditions();
-
-        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
-        if (!dataSourceIds.isEmpty()) {
-            select.join(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID));
-            conditions.add(DATA_SOURCE.ID.in(dataSourceIds));
-        }
-
-        conditions.addAll(getQueryAndEntityClassConditions(state));
+        conditions.addAll(facetConditions.dataEntityConditions(state, OWNER_TAG_GROUP_COUNT_FACETS));
+        conditions.addAll(getQueryConditions(state));
         if (StringUtils.isNotEmpty(facetQuery)) {
             conditions.add(TAG.NAME.containsIgnoreCase(facetQuery));
         }
@@ -421,13 +337,8 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             .leftJoin(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
 
         final List<Condition> cteConditions = getDataEntityDefaultConditions();
-
-        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
-        if (!dataSourceIds.isEmpty()) {
-            cteSelect.join(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID));
-            cteConditions.add(DATA_SOURCE.ID.in(dataSourceIds));
-        }
-        cteConditions.addAll(getQueryAndEntityClassConditions(state));
+        cteConditions.addAll(facetConditions.dataEntityConditions(state, OWNER_TAG_GROUP_COUNT_FACETS));
+        cteConditions.addAll(getQueryConditions(state));
 
         cteSelect
             .where(cteConditions)
@@ -462,8 +373,8 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
         final List<Condition> conditions = new ArrayList<>();
         conditions.add(DATA_ENTITY.HOLLOW.isFalse());
         conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
-        conditions.addAll(getQueryAndEntityClassConditions(state));
-        var select = DSL
+        conditions.addAll(facetConditions.dataEntityConditions(state, TYPE_AND_STATUS_COUNT_FACETS));
+        final var select = DSL
             .select(DATA_ENTITY.STATUS, count(DATA_ENTITY.ID))
             .from(DATA_ENTITY);
 
@@ -472,40 +383,6 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             conditions.add(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
         }
 
-        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
-        if (!CollectionUtils.isEmpty(dataSourceIds)) {
-            conditions.add(DATA_ENTITY.DATA_SOURCE_ID.in(dataSourceIds));
-        }
-        final Set<Long> ownerIds = state.getFacetEntitiesIds(FacetType.OWNERS);
-        if (!CollectionUtils.isEmpty(ownerIds)) {
-            select.join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
-            conditions.add(OWNERSHIP.OWNER_ID.in(ownerIds));
-        }
-        final Set<Long> namespaceIds = state.getFacetEntitiesIds(FacetType.NAMESPACES);
-        if (!CollectionUtils.isEmpty(namespaceIds)) {
-            select.leftJoin(DATA_SOURCE)
-                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-                .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
-                .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID));
-            conditions.add(NAMESPACE.ID.in(namespaceIds));
-        }
-        final Set<Long> tagIds = state.getFacetEntitiesIds(FacetType.TAGS);
-        if (!CollectionUtils.isEmpty(tagIds)) {
-            select = select.join(TAG_TO_DATA_ENTITY)
-                .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
-            conditions.add(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds));
-        }
-
-        final Set<Long> groupIds = state.getFacetEntitiesIds(FacetType.GROUPS);
-        if (!CollectionUtils.isEmpty(groupIds)) {
-            select = select.join(GROUP_ENTITY_RELATIONS)
-                .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN));
-
-            final var groupOddrns = DSL.select(DATA_ENTITY.ODDRN)
-                .from(DATA_ENTITY)
-                .where(DATA_ENTITY.ID.in(groupIds));
-            conditions.add(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns));
-        }
         final List<Short> statusIds = statusIdsByName(query);
         if (!statusIds.isEmpty()) {
             conditions.add(DATA_ENTITY.STATUS.in(statusIds));
@@ -656,43 +533,17 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
         return conditions;
     }
 
-    private List<Condition> getQueryAndEntityClassConditions(final FacetStateDto state) {
+    /**
+     * The FTS condition of the session's query. The entity-class narrowing that used to sit beside it now comes from
+     * the shared compiler ({@code AssetSearchFacetConditions.dataEntityConditions} with {@code ENTITY_CLASSES} in the
+     * count's facet set): any-of over EVERY selected class exactly as the list reads it (the previous single-class
+     * {@code contains} read only the first selected class), plus a class exclusion (ST-11 / #1845).
+     */
+    private List<Condition> getQueryConditions(final FacetStateDto state) {
         final List<Condition> conditions = new ArrayList<>();
         if (StringUtils.isNotEmpty(state.getQuery())) {
             conditions.add(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
         }
-        final Long selectedEntityClass = state.selectedDataEntityClass().orElse(null);
-        if (selectedEntityClass != null) {
-            conditions.add(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {selectedEntityClass.intValue()}));
-        }
         return conditions;
-    }
-
-    private boolean deletedEntitiesAreRequested(final Map<FacetType, List<SearchFilterDto>> facetStateMap) {
-        return facetStateMap.getOrDefault(FacetType.STATUSES, List.of()).stream()
-            .anyMatch(f -> f.getEntityId() == DataEntityStatusDto.DELETED.getId());
-    }
-
-    private  SelectOrderByStep<Record1<Long>> getRelatedEntitiesAndFieldsToTag(final Set<Long> tagIds) {
-        return select(DATA_ENTITY.ID)
-            .from(TAG_TO_DATA_ENTITY, DATA_ENTITY)
-            .where(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds))
-            .and(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .union(select(DATA_ENTITY.ID)
-                .from(DATASET_VERSION, DATA_ENTITY)
-                .where(DATASET_VERSION.ID.in(
-                            select(DATASET_STRUCTURE.DATASET_VERSION_ID)
-                                .from(DATASET_STRUCTURE, DATASET_FIELD, TAG_TO_DATASET_FIELD)
-                                .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(
-                                    select(DSL.max(DATASET_VERSION.ID))
-                                        .from(DATASET_VERSION)
-                                        .groupBy(DATASET_VERSION.DATASET_ODDRN)))
-                                .and(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
-                                .and(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-                                .and(TAG_TO_DATASET_FIELD.TAG_ID.in(tagIds))
-                        )
-                        .and(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
-                )
-            );
     }
 }

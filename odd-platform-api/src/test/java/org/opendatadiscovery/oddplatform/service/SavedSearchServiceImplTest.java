@@ -16,6 +16,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.PopularityRange;
 import org.opendatadiscovery.oddplatform.api.contract.model.RecentlyViewedScope;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearch;
 import org.opendatadiscovery.oddplatform.api.contract.model.SavedSearchFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilterState;
 import org.opendatadiscovery.oddplatform.auth.CurrentUserIdentityResolver;
 import org.opendatadiscovery.oddplatform.dto.security.UserDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -28,6 +29,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -644,6 +646,45 @@ class SavedSearchServiceImplTest {
 
         StepVerifier.create(service.delete(404L))
             .verifyError(NotFoundException.class);
+    }
+
+    /**
+     * ST-11 (#1845): the facet-logic fields inside the stored {@code filters} are sanitised per field, at the grain
+     * of their siblings — a non-list {@code match_all} drops the field, a non-string token is dropped item-level, a
+     * KNOWN-shape token this release does not recognise is KEPT (the mapper drops it at request time); a non-boolean
+     * {@code exclude} drops the FLAG and keeps the item (a positive selection — the pre-ST-11 meaning), and a row
+     * saved before ST-11 reads back with no mode and no exclusion.
+     */
+    @Test
+    void list_storedFacetLogic_isSanitisedPerField_andAPreSt11RowReadsBackUnchanged() {
+        identity();
+        when(repository.list("alice", "google", 0, 30)).thenReturn(Flux.just(
+            pojo(1L, "logic", "{\"filters\":{\"tags\":[{\"entity_id\":1,\"selected\":true,\"exclude\":true},"
+                + "{\"entity_id\":2,\"selected\":true,\"exclude\":\"yes\"},\"junk\",7],"
+                + "\"match_all\":[\"tags\",42,\"from_the_future\"]}}"),
+            pojo(2L, "not-a-list", "{\"filters\":{\"match_all\":\"tags\"},\"query\":\"x\"}"),
+            pojo(3L, "pre-st11", "{\"filters\":{\"tags\":[{\"entity_id\":1,\"selected\":true}]},\"query\":\"y\"}")));
+        when(repository.count("alice", "google")).thenReturn(Mono.just(3L));
+
+        StepVerifier.create(service.list(1, 30))
+            .assertNext(list -> {
+                final var logic = list.getItems().get(0).getSpec().getFilters();
+                assertThat(logic.getTags()).extracting(SearchFilterState::getEntityId, SearchFilterState::getExclude)
+                    .as("a boolean exclude survives; a non-boolean one drops the FLAG and keeps the item;"
+                        + " a non-object item is dropped item-level (it would otherwise cost the whole spec)")
+                    .containsExactly(tuple(1L, true), tuple(2L, null));
+                assertThat(logic.getMatchAll())
+                    .as("a non-string token is dropped item-level; an unknown string token is kept for the mapper")
+                    .containsExactly("tags", "from_the_future");
+                assertThat(list.getItems().get(1).getSpec().getFilters().getMatchAll())
+                    .as("a non-list match_all is dropped field-level; the search survives")
+                    .isNull();
+                assertThat(list.getItems().get(1).getSpec().getQuery()).isEqualTo("x");
+                final var pre = list.getItems().get(2).getSpec().getFilters();
+                assertThat(pre.getMatchAll()).isNull();
+                assertThat(pre.getTags()).extracting(SearchFilterState::getExclude).containsExactly((Boolean) null);
+            })
+            .verifyComplete();
     }
 
     private void identity() {

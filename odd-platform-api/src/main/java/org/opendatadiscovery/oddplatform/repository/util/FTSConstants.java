@@ -1,11 +1,14 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Record1;
+import org.jooq.SelectOrderByStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
@@ -95,30 +98,7 @@ public class FTSConstants {
             FacetType.NAMESPACES, filters -> NAMESPACE.ID.in(extractFilterId(filters)),
             FacetType.TYPES, filters -> DATA_ENTITY.TYPE_ID.in(extractFilterId(filters)),
             FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
-            FacetType.TAGS, filters -> {
-                final var dataEntities = select(DATA_ENTITY.ID)
-                    .from(TAG_TO_DATA_ENTITY, DATA_ENTITY)
-                    .where(TAG_TO_DATA_ENTITY.TAG_ID.in(extractFilterId(filters)))
-                    .and(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-                    .union(select(DATA_ENTITY.ID)
-                        .from(DATASET_VERSION, DATA_ENTITY)
-                        .where(DATASET_VERSION.ID.in(
-                                select(DATASET_STRUCTURE.DATASET_VERSION_ID)
-                                    .from(DATASET_STRUCTURE, DATASET_FIELD, TAG_TO_DATASET_FIELD)
-                                    .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(
-                                        select(DSL.max(DATASET_VERSION.ID))
-                                            .from(DATASET_VERSION)
-                                            .groupBy(DATASET_VERSION.DATASET_ODDRN)))
-                                    .and(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
-                                    .and(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-                                    .and(TAG_TO_DATASET_FIELD.TAG_ID.in(extractFilterId(filters)))
-                            )
-                            .and(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
-                        )
-                    );
-
-                return DATA_ENTITY.ID.in(dataEntities);
-            },
+            FacetType.TAGS, filters -> DATA_ENTITY.ID.in(dataEntityIdsByTags(extractFilterId(filters))),
             FacetType.GROUPS, filters -> {
                 final var groupOddrns = DSL.select(DATA_ENTITY.ODDRN)
                     .from(DATA_ENTITY)
@@ -136,6 +116,37 @@ public class FTSConstants {
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> QUERY_EXAMPLE_CONDITIONS = Map.of();
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> LOOKUP_TABLES_CONDITIONS = Map.of();
+
+    /**
+     * The data entities that carry ANY of the given tags — on the entity itself OR on a field of its latest dataset
+     * version (a column-level tag makes the dataset findable by that tag). THE one definition of "tagged with": the
+     * legacy result facet ({@link #DATA_ENTITY_CONDITIONS}), the legacy facet counts
+     * ({@code ReactiveSearchFacetRepositoryImpl}) and the unified search's facet compiler
+     * ({@code AssetSearchFacetConditions}, ST-11 / #1845) all read it, so the list and every count agree on which
+     * entities a tag names.
+     */
+    public static SelectOrderByStep<Record1<Long>> dataEntityIdsByTags(final Collection<Long> tagIds) {
+        return select(DATA_ENTITY.ID)
+            .from(TAG_TO_DATA_ENTITY, DATA_ENTITY)
+            .where(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds))
+            .and(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .union(select(DATA_ENTITY.ID)
+                .from(DATASET_VERSION, DATA_ENTITY)
+                .where(DATASET_VERSION.ID.in(
+                        select(DATASET_STRUCTURE.DATASET_VERSION_ID)
+                            .from(DATASET_STRUCTURE, DATASET_FIELD, TAG_TO_DATASET_FIELD)
+                            .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(
+                                select(DSL.max(DATASET_VERSION.ID))
+                                    .from(DATASET_VERSION)
+                                    .groupBy(DATASET_VERSION.DATASET_ODDRN)))
+                            .and(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+                            .and(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+                            .and(TAG_TO_DATASET_FIELD.TAG_ID.in(tagIds))
+                    )
+                    .and(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
+                )
+            );
+    }
 
     private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
         return filters.stream()

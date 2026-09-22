@@ -757,5 +757,11 @@
   "Result columns": "Стовпці результатів",
   "Reset to default": "Скинути до типового",
   "Last update in the source system for data entities; in the platform for terms and query examples": "Останнє оновлення в системі-джерелі для сутностей даних; на платформі для термінів і прикладів запитів",
-  "The platform description, or the source description when none was written": "Опис на платформі або, якщо його не написано, опис із джерела"
+  "The platform description, or the source description when none was written": "Опис на платформі або, якщо його не написано, опис із джерела",
+  "not {{name}}": "не {{name}}",
+  "Exclude": "Виключити",
+  "Include": "Включити",
+  "Match": "Збіг",
+  "any": "будь-який",
+  "all": "усі"
 }

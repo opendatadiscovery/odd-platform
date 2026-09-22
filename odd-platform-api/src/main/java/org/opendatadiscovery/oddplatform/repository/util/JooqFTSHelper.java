@@ -132,7 +132,9 @@ public class JooqFTSHelper {
         final FacetStateDto state,
         final Map<FacetType, Function<List<SearchFilterDto>, Condition>> facetTypeFunctionMap,
         final List<FacetType> ignoredFacets) {
-        return state.getState().entrySet().stream()
+        // ST-11 (#1845): the legacy compilers read POSITIVE values only — an excluded item must never be compiled
+        // as a positive (the inversion). The per-kind searches thereby keep today's any-of semantics untouched.
+        return state.getPositiveState().entrySet().stream()
             .filter(e -> !ignoredFacets.contains(e.getKey()))
             .map(e -> compileFacetCondition(e.getKey(), e.getValue(), facetTypeFunctionMap))
             .filter(Objects::nonNull)
@@ -146,13 +148,15 @@ public class JooqFTSHelper {
                 || e.getKey().equals(FacetType.TYPES)
                 || e.getKey().equals(FacetType.STATUSES);
 
-        final List<Condition> joinConditions = state.getState().entrySet().stream()
+        // ST-11 (#1845): positives only, as in facetStateConditions above.
+        final Map<FacetType, List<SearchFilterDto>> positiveState = state.getPositiveState();
+        final List<Condition> joinConditions = positiveState.entrySet().stream()
             .filter(not(cteFilters))
             .map(e -> compileFacetCondition(e.getKey(), e.getValue(), DATA_ENTITY_CONDITIONS))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-        final List<Condition> cteConditions = state.getState().entrySet().stream()
+        final List<Condition> cteConditions = positiveState.entrySet().stream()
             .filter(cteFilters)
             .filter(e -> {
                 if (state.isMyObjects()) {

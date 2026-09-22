@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import reducer from 'redux/slices/dataEntitySearch.slice';
+import reducer, {
+  changeDataEntitySearchFacet,
+} from 'redux/slices/dataEntitySearch.slice';
 import { createDataEntitiesSearch } from 'redux/thunks';
 import type { DataEntitySearchState, SearchFacetStateById } from 'redux/interfaces';
 import type { SearchFacetsData, SearchFormDataFilters } from 'generated-sources';
@@ -185,5 +187,120 @@ describe('dataEntitySearch slice — create-per-URL-state facet REPLACE (ST-1b)'
       syncedState: true,
     });
     expect(next.isFacetsStateSynced).toBe(true);
+  });
+});
+
+/**
+ * ST-11 (#1845) — an EXCLUSION is a selected facet item flagged `exclude: true`. It must (1) be written by the
+ * toggle reducer, (2) survive the session echo as an exclusion (the echo carries `exclude: true`), (3) be treated
+ * as a PENDING change when the toggle happened while a create was in flight — an include→exclude flip changes
+ * neither `selected` nor the id, so a reconciliation keyed on `selected` alone would silently drop it.
+ */
+describe('dataEntitySearch slice — exclusions ride the facet item (ST-11 / #1845)', () => {
+  const createdWithExclusion = (
+    searchId: string,
+    positives: number[],
+    excluded: number[]
+  ): SearchFacetsData =>
+    ({
+      searchId,
+      query: '',
+      myObjects: false,
+      total: 1,
+      facetState: {
+        entityClasses: [],
+        tags: [
+          ...positives.map(id => ({ id, name: `tag${id}` })),
+          ...excluded.map(id => ({ id, name: `tag${id}`, exclude: true })),
+        ],
+      },
+    }) as unknown as SearchFacetsData;
+
+  it('the toggle reducer writes an exclusion as a selected item flagged exclude, and a deselect clears the flag', () => {
+    const excluded = reducer(
+      baseState(),
+      changeDataEntitySearchFacet({
+        facetName: 'tags',
+        facetOptionId: 5,
+        facetOptionName: 'tag5',
+        facetOptionState: true,
+        facetOptionExclude: true,
+      })
+    );
+    expect(excluded.facetState.tags?.[5]).toMatchObject({
+      selected: true,
+      exclude: true,
+      syncedState: false,
+    });
+    const included = reducer(
+      excluded,
+      changeDataEntitySearchFacet({
+        facetName: 'tags',
+        facetOptionId: 5,
+        facetOptionName: 'tag5',
+        facetOptionState: true,
+        facetOptionExclude: false,
+      })
+    );
+    expect(included.facetState.tags?.[5].exclude).toBeUndefined();
+    const removed = reducer(
+      included,
+      changeDataEntitySearchFacet({
+        facetName: 'tags',
+        facetOptionId: 5,
+        facetOptionState: false,
+      })
+    );
+    expect(removed.facetState.tags?.[5]).toMatchObject({ selected: false });
+  });
+
+  it('the echo keeps an exclusion as an exclusion, named (a fresh -id deep link renders "not tag7")', () => {
+    const next = reducer(
+      baseState({ searchId: 'session-1', isFacetsStateSynced: true }),
+      fulfil(createdWithExclusion('session-2', [5], [7]), {
+        tags: [
+          { entityId: 5, selected: true },
+          { entityId: 7, selected: true, exclude: true },
+        ],
+      })
+    );
+    expect(next.facetState.tags?.[5]).toMatchObject({
+      selected: true,
+      syncedState: true,
+    });
+    expect(next.facetState.tags?.[5].exclude).toBeUndefined();
+    expect(next.facetState.tags?.[7]).toMatchObject({
+      selected: true,
+      exclude: true,
+      entityName: 'tag7',
+      syncedState: true,
+    });
+    expect(next.isFacetsStateSynced).toBe(true);
+  });
+
+  it('an include→exclude flip made DURING an in-flight create is a PENDING change — carried, not resurrected as positive', () => {
+    // the create was issued with tag 5 as a POSITIVE; the user flipped it to an exclusion before the echo landed
+    const start = baseState({
+      searchId: 'session-1',
+      isFacetsStateSynced: false,
+      facetState: {
+        tags: {
+          5: {
+            entityId: 5,
+            entityName: 'tag5',
+            selected: true,
+            exclude: true,
+            syncedState: false,
+          },
+        },
+      },
+    });
+    const next = reducer(start, fulfil(created('session-2', [5]), reqTags([5])));
+    expect(next.facetState.tags?.[5]).toMatchObject({
+      selected: true,
+      exclude: true,
+      syncedState: false,
+    });
+    expect(next.isFacetsStateSynced).toBe(false);
   });
 });
