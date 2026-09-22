@@ -50,9 +50,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       handleCleanUp?.();
     }, [handleCleanUp, props.onChange, props.inputProps?.onChange]);
 
+    // The label NAMES the input for assistive technology (and focuses it on click) whenever the input has an id —
+    // a MUI Autocomplete hands its id through `inputProps`. Without the association a facet autocomplete was a
+    // combobox with no accessible name (the Datasource / Namespace filters lost theirs when they moved from the
+    // AppSelect, whose label is associated, onto this control — ST-11 / #1845).
+    const inputId = props.id ?? props.inputProps?.id;
+
     return (
       <S.Container $maxWidth={maxWidth} sx={sx}>
-        {props.label && <S.Label>{props.label}</S.Label>}
+        {props.label && <S.Label htmlFor={inputId}>{props.label}</S.Label>}
         <div style={{ position: 'relative' }} ref={props.inputContainerRef}>
           {inputType === 'search' && (
             <S.Adornment $isStart>
