@@ -1,0 +1,28 @@
+{
+  "metric_families": [
+    {
+      "name": "http_requests",
+      "type": "GAUGE",
+      "unit": "req/sec",
+      "help": "Number of HTTP requests",
+      "metrics": [
+        {
+          "labels": [
+            {
+              "name": "env",
+              "value": "prod"
+            }
+          ],
+          "metric_points": [
+            {
+              "timestamp": "1676399903",
+              "gauge_value": {
+                "value": 200
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

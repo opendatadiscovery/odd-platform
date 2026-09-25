@@ -36,11 +36,28 @@ public class MetricFamilyRepositoryImpl implements MetricFamilyRepository {
                 insertStep = insertStep.set(rs.get(i)).newRecord();
             }
 
+            // This used to be DO UPDATE ... WHERE description IS NULL: "fill in a
+            // description if the row does not have one yet, never overwrite one it
+            // already does". But a WHERE clause on DO UPDATE also gates RETURNING --
+            // Postgres skips the row entirely, update and RETURNING both, whenever the
+            // condition does not hold. Ingesting the same metric family a second time
+            // (now with a non-null description already stored) hit exactly that: no
+            // row came back, the caller's Map<String, MetricFamilyPojo> ended up
+            // missing an entry it will .get() further down, and that null exploded on
+            // MetricFamilyPojo::getId with no clue this WHERE clause was the cause.
+            // COALESCE keeps the "never overwrite" behaviour, as a value rather than a
+            // condition, so DO UPDATE -- and RETURNING -- always fire.
+            //
+            // That has a cost, taken on purpose: every re-ingest now locks the row and
+            // writes a new row version, even when nothing changed. Do not add a WHERE
+            // back to avoid it. Even WHERE description IS DISTINCT FROM
+            // excluded.description drops an unchanged row from RETURNING, which is
+            // the bug above.
             return jooqReactiveOperations.flux(insertStep.set(rs.get(rs.size() - 1))
                 .onConflictOnConstraint(METRIC_FAMILY_NAME_TYPE_UNIT_KEY)
                 .doUpdate()
-                .set(METRIC_FAMILY.DESCRIPTION, DSL.excluded(METRIC_FAMILY.DESCRIPTION))
-                .where(METRIC_FAMILY.DESCRIPTION.isNull())
+                .set(METRIC_FAMILY.DESCRIPTION,
+                    DSL.coalesce(METRIC_FAMILY.DESCRIPTION, DSL.excluded(METRIC_FAMILY.DESCRIPTION)))
                 .returning(METRIC_FAMILY.fields()));
         }).map(r -> r.into(MetricFamilyPojo.class));
     }
