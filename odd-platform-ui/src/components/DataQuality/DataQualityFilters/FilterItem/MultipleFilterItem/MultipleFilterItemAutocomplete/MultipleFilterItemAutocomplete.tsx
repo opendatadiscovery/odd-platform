@@ -3,7 +3,7 @@ import React, {
   type FC,
   type HTMLAttributes,
   useCallback,
-  useEffect,
+  useMemo,
   useState,
 } from 'react';
 import { Autocomplete, type AutocompleteRenderOptionState, Grid } from '@mui/material';
@@ -40,8 +40,12 @@ const MultipleFilterItemAutocomplete: FC<Props> = ({
   type Option = Omit<FilterOption, 'id'>;
 
   const [autocompleteOpen, setAutocompleteOpen] = useState(false);
-  const [optionsLoading, setOptionsLoading] = useState(false);
-  const [options, setOptions] = useState<Option[]>([]);
+  // Follow the current query's result as it arrives; React Query keys it by the typed text.
+  const options = useMemo<Option[]>(
+    () => hookResult.data?.items.map(({ id, name }) => ({ id, name })) ?? [],
+    [hookResult.data]
+  );
+  const optionsLoading = hookResult.isFetching;
 
   const filter = createFilterOptions<Option>();
 
@@ -87,21 +91,6 @@ const MultipleFilterItemAutocomplete: FC<Props> = ({
     },
     [searchText, options, selectedOptions]
   );
-
-  useEffect(() => {
-    if (!autocompleteOpen) return;
-    setOptionsLoading(true);
-
-    if (hookResult.isSuccess) {
-      setOptions(
-        hookResult.data.items.map(item => ({
-          name: item.name,
-          id: item.id,
-        }))
-      );
-      setOptionsLoading(false);
-    }
-  }, [searchText, autocompleteOpen]);
 
   const fillOptionMatches = (
     props: HTMLAttributes<HTMLLIElement>,

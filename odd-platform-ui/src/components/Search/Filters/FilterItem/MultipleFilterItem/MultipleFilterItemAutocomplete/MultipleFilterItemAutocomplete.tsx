@@ -64,6 +64,35 @@ const MultipleFilterItemAutocomplete: React.FC<MultipleFilterItemAutocompletePro
     );
   };
 
+  // The server returns only the first page, so every typed query must reach it; a response to an older query
+  // that lands after a newer one is dropped.
+  const latestRequestId = React.useRef(0);
+  // Typing into a closed popup fires onInputChange then onOpen before `searchText` re-renders; onOpen reads this.
+  const latestQuery = React.useRef('');
+  const fetchFacetOptions = useDebouncedCallback((query: string) => {
+    latestRequestId.current += 1;
+    const requestId = latestRequestId.current;
+    setFacetOptionsLoading(true);
+    dispatch(
+      getDataEntitySearchFacetOptions({
+        searchId,
+        facetType: facetName.toUpperCase() as MultipleFacetType,
+        page: 1,
+        size: 30,
+        query,
+      })
+    )
+      .unwrap()
+      .then(response => {
+        if (requestId !== latestRequestId.current) return;
+        setFacetOptions(response.facetOptions);
+        setAutocompleteOpen(true);
+      })
+      .finally(() => {
+        if (requestId === latestRequestId.current) setFacetOptionsLoading(false);
+      });
+  }, 500);
+
   const searchInputChange = React.useCallback(
     (
       _: React.ChangeEvent<unknown>,
@@ -71,12 +100,15 @@ const MultipleFilterItemAutocomplete: React.FC<MultipleFilterItemAutocompletePro
       reason: AutocompleteInputChangeReason
     ) => {
       if (reason === 'input') {
+        latestQuery.current = query;
         setSearchText(query);
+        fetchFacetOptions(query);
       } else {
+        latestQuery.current = '';
         setSearchText(''); // Clear input on select
       }
     },
-    [setSearchText]
+    [setSearchText, fetchFacetOptions]
   );
 
   const getOptionLabel = React.useCallback(
@@ -97,28 +129,6 @@ const MultipleFilterItemAutocomplete: React.FC<MultipleFilterItemAutocompletePro
         params
       ),
     [searchText, facetOptions]
-  );
-
-  const handleFacetSearch = React.useCallback(
-    useDebouncedCallback(() => {
-      setFacetOptionsLoading(true);
-      dispatch(
-        getDataEntitySearchFacetOptions({
-          searchId,
-          facetType: facetName.toUpperCase() as MultipleFacetType,
-          page: 1,
-          size: 30,
-          query: searchText,
-        })
-      )
-        .unwrap()
-        .then(response => {
-          setFacetOptionsLoading(false);
-          setFacetOptions(response.facetOptions);
-          setAutocompleteOpen(true);
-        });
-    }, 500),
-    [getDataEntitySearchFacetOptions, setFacetOptionsLoading, setFacetOptions, searchText]
   );
 
   const fillOptionMatches = (
@@ -164,7 +174,7 @@ const MultipleFilterItemAutocomplete: React.FC<MultipleFilterItemAutocompletePro
     );
   };
 
-  const handleOpen = () => handleFacetSearch();
+  const handleOpen = () => fetchFacetOptions(latestQuery.current);
   const handleClose = () => setAutocompleteOpen(false);
 
   return (

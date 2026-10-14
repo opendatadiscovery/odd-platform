@@ -4,6 +4,7 @@ import React, {
   type HTMLAttributes,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { Autocomplete, type AutocompleteRenderOptionState, Grid } from '@mui/material';
@@ -94,31 +95,34 @@ const MultipleFilterItemAutocomplete: FC<Props> = ({ name, facetName }) => {
 
   const [facetOptionsLoading, setFacetOptionsLoading] = useState(false);
 
-  const handleFacetSearch = useCallback(
-    useDebouncedCallback(() => {
-      setFacetOptionsLoading(true);
-      dispatch(
-        getTermsSearchFacetOptions({
-          searchId,
-          facetType: facetName.toUpperCase() as MultipleFacetType,
-          page: 1,
-          size: 30,
-          query: searchText,
-        })
-      )
-        .unwrap()
-        .then(response => {
-          setFacetOptionsLoading(false);
-          setFacetOptions(response.facetOptions);
-        });
-    }, 500),
-    [getTermsSearchFacetOptions, setFacetOptionsLoading, setFacetOptions, searchText]
-  );
+  // A response to an older query that lands after a newer one is dropped.
+  const latestRequestId = useRef(0);
+  const handleFacetSearch = useDebouncedCallback((query: string) => {
+    latestRequestId.current += 1;
+    const requestId = latestRequestId.current;
+    dispatch(
+      getTermsSearchFacetOptions({
+        searchId,
+        facetType: facetName.toUpperCase() as MultipleFacetType,
+        page: 1,
+        size: 30,
+        query,
+      })
+    )
+      .unwrap()
+      .then(response => {
+        if (requestId !== latestRequestId.current) return;
+        setFacetOptions(response.facetOptions);
+      })
+      .finally(() => {
+        if (requestId === latestRequestId.current) setFacetOptionsLoading(false);
+      });
+  }, 500);
 
   useEffect(() => {
     if (!autocompleteOpen) return;
     setFacetOptionsLoading(true);
-    handleFacetSearch();
+    handleFacetSearch(searchText);
   }, [searchText, autocompleteOpen]);
 
   const fillOptionMatches = (
