@@ -1,10 +1,10 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.api.contract.model.GraphRelationshipAttributes;
 import org.opendatadiscovery.oddplatform.api.contract.model.GraphRelationshipDetails;
@@ -29,18 +29,24 @@ public class GraphRelationshipMapper {
             return List.of();
         }
 
-        final ObjectReader reader = new ObjectMapper().readerFor(Map.class);
-
         try {
-            final Map<String, String> map = reader.readValue(specificAttributes.data());
+            final JsonNode attributes = new ObjectMapper().readTree(specificAttributes.data());
 
-            return map.entrySet().stream()
-                .map(item -> new GraphRelationshipAttributes()
-                    .name(item.getKey())
-                    .value(item.getValue()))
-                .toList();
+            // attributes are free-form: non-string values are shown as their JSON
+            final List<GraphRelationshipAttributes> result = new ArrayList<>();
+            attributes.fields().forEachRemaining(item -> result.add(new GraphRelationshipAttributes()
+                .name(item.getKey())
+                .value(attributeValue(item.getValue()))));
+            return result;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String attributeValue(final JsonNode value) {
+        if (value.isNull()) {
+            return null;
+        }
+        return value.isTextual() ? value.asText() : value.toString();
     }
 }
