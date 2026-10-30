@@ -11,6 +11,8 @@ public class DataEntityDataSourceFieldComparer extends SimpleFieldComparer<DataE
     }
 
     private static DataSourcePojo getDataEntityDataSource(final DataEntityPolicyResolverContext context) {
-        return context.dataEntity().getDataSource();
+        return context.dataEntity().getDataSource() == null
+            ? new DataSourcePojo()
+            : context.dataEntity().getDataSource();
     }
 }

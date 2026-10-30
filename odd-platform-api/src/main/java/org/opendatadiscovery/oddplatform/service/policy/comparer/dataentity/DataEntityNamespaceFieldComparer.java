@@ -11,6 +11,8 @@ public class DataEntityNamespaceFieldComparer extends SimpleFieldComparer<DataEn
     }
 
     private static NamespacePojo getDataEntityNamespace(final DataEntityPolicyResolverContext context) {
-        return context.dataEntity().getNamespace();
+        return context.dataEntity().getNamespace() == null
+            ? new NamespacePojo()
+            : context.dataEntity().getNamespace();
     }
 }
